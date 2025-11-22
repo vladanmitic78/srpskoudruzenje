@@ -145,17 +145,18 @@ const AdminDashboard = () => {
                     <p className="text-gray-600 dark:text-gray-400">No members yet.</p>
                   ) : (
                     users.filter(u => u.role === 'user').map((user) => (
-                    <div key={user.id} className="p-4 border-2 border-gray-200 dark:border-gray-700 rounded-lg">
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <p className="font-semibold text-gray-900 dark:text-white">{user.fullName}</p>
-                          <p className="text-sm text-gray-600 dark:text-gray-400">{user.email}</p>
-                        </div>
-                        <div className="text-sm text-gray-600 dark:text-gray-400">
-                          {user.phone || 'No phone'}
+                      <div key={user.id} className="p-4 border-2 border-gray-200 dark:border-gray-700 rounded-lg">
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <p className="font-semibold text-gray-900 dark:text-white">{user.fullName}</p>
+                            <p className="text-sm text-gray-600 dark:text-gray-400">{user.email}</p>
+                          </div>
+                          <div className="text-sm text-gray-600 dark:text-gray-400">
+                            {user.phone || 'No phone'}
+                          </div>
                         </div>
                       </div>
-                    </div>
+                    ))
                   )}
                 </div>
               </CardContent>
