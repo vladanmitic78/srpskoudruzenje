@@ -62,7 +62,7 @@ const Gallery = () => {
                 </div>
               </CardContent>
             </Card>
-          ))}
+          )))}
         </div>
       </div>
     </div>
