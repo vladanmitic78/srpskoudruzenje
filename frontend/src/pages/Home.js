@@ -154,7 +154,12 @@ const Home = () => {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {mockEvents.map((event) => (
+            {loading ? (
+              <p className="text-gray-600 dark:text-gray-300">Loading events...</p>
+            ) : events.length === 0 ? (
+              <p className="text-gray-600 dark:text-gray-300">No events scheduled yet.</p>
+            ) : (
+              events.map((event) => (
               <Card key={event.id} className="hover:shadow-xl transition-all duration-300 border-2 border-transparent hover:border-[#C1272D]/20">
                 <CardContent className="p-6 space-y-4">
                   <div className="flex items-start justify-between">
