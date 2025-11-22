@@ -222,7 +222,12 @@ const Dashboard = () => {
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
-                  {mockEvents.map((event) => (
+                  {loading ? (
+                    <p className="text-gray-600 dark:text-gray-300">Loading trainings...</p>
+                  ) : events.length === 0 ? (
+                    <p className="text-gray-600 dark:text-gray-300">No trainings scheduled.</p>
+                  ) : (
+                    events.map((event) => (
                     <div key={event.id} className="p-4 border-2 border-gray-200 dark:border-gray-700 rounded-lg">
                       <div className="flex items-start justify-between">
                         <div className="flex-1">
