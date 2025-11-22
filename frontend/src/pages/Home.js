@@ -1,16 +1,38 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useLanguage } from '../context/LanguageContext';
 import { Button } from '../components/ui/button';
 import { Card, CardContent } from '../components/ui/card';
 import { Calendar, MapPin, ChevronRight } from 'lucide-react';
-import { mockNews, mockEvents } from '../utils/mock';
+import { newsAPI, eventsAPI } from '../services/api';
 
 const Home = () => {
   const { language, t } = useLanguage();
   const [showAllNews, setShowAllNews] = useState(false);
+  const [news, setNews] = useState([]);
+  const [events, setEvents] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  const displayedNews = showAllNews ? mockNews : mockNews.slice(0, 3);
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const [newsData, eventsData] = await Promise.all([
+          newsAPI.getAll(10, 0),
+          eventsAPI.getAll()
+        ]);
+        setNews(newsData.news || []);
+        setEvents(eventsData.events || []);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    fetchData();
+  }, []);
+
+  const displayedNews = showAllNews ? news : news.slice(0, 3);
 
   return (
     <div className="min-h-screen">
