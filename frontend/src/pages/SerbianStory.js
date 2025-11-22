@@ -1,12 +1,29 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useLanguage } from '../context/LanguageContext';
 import { Card, CardContent } from '../components/ui/card';
 import { Button } from '../components/ui/button';
 import { ExternalLink } from 'lucide-react';
-import { mockSerbianStories } from '../utils/mock';
+import { storiesAPI } from '../services/api';
 
 const SerbianStory = () => {
   const { language } = useLanguage();
+  const [stories, setStories] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchStories = async () => {
+      try {
+        const data = await storiesAPI.getAll();
+        setStories(data.stories || []);
+      } catch (error) {
+        console.error('Error fetching stories:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    fetchStories();
+  }, []);
 
   return (
     <div className="min-h-screen py-16">
