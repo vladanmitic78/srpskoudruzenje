@@ -1,24 +1,46 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { Navigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../components/ui/tabs';
 import { Users, FileText, Calendar, Settings, BarChart } from 'lucide-react';
-import { mockUsers, mockInvoices, mockEvents } from '../utils/mock';
+import { adminAPI, eventsAPI } from '../services/api';
+import { toast } from 'sonner';
 
 const AdminDashboard = () => {
   const { isAdmin, isSuperAdmin } = useAuth();
+  const [statistics, setStatistics] = useState(null);
+  const [users, setUsers] = useState([]);
+  const [events, setEvents] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const [statsData, usersData, eventsData] = await Promise.all([
+          adminAPI.getStatistics(),
+          adminAPI.getUsers(),
+          eventsAPI.getAll()
+        ]);
+        setStatistics(statsData);
+        setUsers(usersData.users || []);
+        setEvents(eventsData.events || []);
+      } catch (error) {
+        console.error('Error fetching admin data:', error);
+        toast.error('Failed to load admin data');
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    if (isAdmin) {
+      fetchData();
+    }
+  }, [isAdmin]);
 
   if (!isAdmin) {
     return <Navigate to="/dashboard" />;
   }
-
-  const totalMembers = mockUsers.filter(u => u.role === 'user').length;
-  const paidInvoices = mockInvoices.filter(i => i.status === 'paid').length;
-  const unpaidInvoices = mockInvoices.filter(i => i.status === 'unpaid').length;
-  const totalRevenue = mockInvoices
-    .filter(i => i.status === 'paid')
-    .reduce((sum, i) => sum + i.amount, 0);
 
   return (
     <div className="min-h-screen py-16 bg-gray-50 dark:bg-gray-900">
