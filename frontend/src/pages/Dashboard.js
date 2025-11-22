@@ -165,7 +165,12 @@ const Dashboard = () => {
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
-                  {mockInvoices.map((invoice) => (
+                  {loading ? (
+                    <p className="text-gray-600 dark:text-gray-300">Loading invoices...</p>
+                  ) : invoices.length === 0 ? (
+                    <p className="text-gray-600 dark:text-gray-300">No invoices yet.</p>
+                  ) : (
+                    invoices.map((invoice) => (
                     <div 
                       key={invoice.id} 
                       className={`p-4 border-2 rounded-lg ${
