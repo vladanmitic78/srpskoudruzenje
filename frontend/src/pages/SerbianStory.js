@@ -33,7 +33,12 @@ const SerbianStory = () => {
         </h1>
 
         <div className="max-w-4xl mx-auto space-y-8">
-          {mockSerbianStories.map((story) => (
+          {loading ? (
+            <p className="text-center text-gray-600 dark:text-gray-300">Loading stories...</p>
+          ) : stories.length === 0 ? (
+            <p className="text-center text-gray-600 dark:text-gray-300">No stories available yet.</p>
+          ) : (
+            stories.map((story) => (
             <Card key={story.id} className="overflow-hidden border-2 border-[#C1272D]/20 hover:shadow-xl transition-all duration-300">
               {story.image && (
                 <div className="relative h-64 md:h-96 overflow-hidden">
