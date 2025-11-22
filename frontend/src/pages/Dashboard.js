@@ -232,7 +232,7 @@ const Dashboard = () => {
                       <div className="flex items-start justify-between">
                         <div className="flex-1">
                           <h3 className="font-semibold text-lg text-gray-900 dark:text-white">
-                            {event.title[useLanguage().language]}
+                            {event.title[language]}
                           </h3>
                           <p className="text-sm text-gray-600 dark:text-gray-300 mt-1">
                             {event.date} at {event.time}
