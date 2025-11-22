@@ -1,8 +1,8 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useLanguage } from '../context/LanguageContext';
 import { Facebook, Instagram, Youtube, Mail, Phone, MapPin } from 'lucide-react';
-import { mockSettings } from '../utils/mock';
+import { settingsAPI } from '../services/api';
 
 const Footer = () => {
   const { t } = useLanguage();
