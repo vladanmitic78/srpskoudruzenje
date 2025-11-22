@@ -187,7 +187,7 @@ const AdminDashboard = () => {
                   Event management will be fully implemented in Phase 2 with CRUD operations.
                 </p>
                 <div className="space-y-4">
-                  {mockEvents.map((event) => (
+                  {events.map((event) => (
                     <div key={event.id} className="p-4 border-2 border-gray-200 dark:border-gray-700 rounded-lg">
                       <div className="flex items-center justify-between">
                         <div>
