@@ -69,18 +69,18 @@ const Footer = () => {
             <ul className="space-y-3">
               <li className="flex items-start space-x-2 text-sm text-gray-200">
                 <MapPin className="h-4 w-4 mt-0.5 flex-shrink-0" />
-                <span>{mockSettings.address}</span>
+                <span>{settings?.address || 'Loading...'}</span>
               </li>
               <li className="flex items-center space-x-2 text-sm text-gray-200">
                 <Mail className="h-4 w-4 flex-shrink-0" />
-                <a href={`mailto:${mockSettings.contactEmail}`} className="hover:text-white transition-colors">
-                  {mockSettings.contactEmail}
+                <a href={`mailto:${settings?.contactEmail || ''}`} className="hover:text-white transition-colors">
+                  {settings?.contactEmail || 'Loading...'}
                 </a>
               </li>
               <li className="flex items-center space-x-2 text-sm text-gray-200">
                 <Phone className="h-4 w-4 flex-shrink-0" />
-                <a href={`tel:${mockSettings.contactPhone}`} className="hover:text-white transition-colors">
-                  {mockSettings.contactPhone}
+                <a href={`tel:${settings?.contactPhone || ''}`} className="hover:text-white transition-colors">
+                  {settings?.contactPhone || 'Loading...'}
                 </a>
               </li>
             </ul>
