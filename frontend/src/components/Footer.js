@@ -89,36 +89,38 @@ const Footer = () => {
           {/* Social Media and Organization Details */}
           <div>
             <h3 className="text-lg font-semibold mb-4">{t('footer.followUs')}</h3>
-            <div className="flex space-x-4 mb-6">
-              <a
-                href={mockSettings.socialMedia.facebook}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="hover:scale-110 transition-transform duration-200"
-              >
-                <Facebook className="h-6 w-6" />
-              </a>
-              <a
-                href={mockSettings.socialMedia.instagram}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="hover:scale-110 transition-transform duration-200"
-              >
-                <Instagram className="h-6 w-6" />
-              </a>
-              <a
-                href={mockSettings.socialMedia.youtube}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="hover:scale-110 transition-transform duration-200"
-              >
-                <Youtube className="h-6 w-6" />
-              </a>
-            </div>
+            {settings?.socialMedia && (
+              <div className="flex space-x-4 mb-6">
+                <a
+                  href={settings.socialMedia.facebook}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:scale-110 transition-transform duration-200"
+                >
+                  <Facebook className="h-6 w-6" />
+                </a>
+                <a
+                  href={settings.socialMedia.instagram}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:scale-110 transition-transform duration-200"
+                >
+                  <Instagram className="h-6 w-6" />
+                </a>
+                <a
+                  href={settings.socialMedia.youtube}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:scale-110 transition-transform duration-200"
+                >
+                  <Youtube className="h-6 w-6" />
+                </a>
+              </div>
+            )}
             <div className="text-xs text-gray-300 space-y-1">
-              <p>Org. nr: {mockSettings.registrationNumber}</p>
-              <p>VAT: {mockSettings.vatNumber}</p>
-              <p>Bank: {mockSettings.bankAccount}</p>
+              <p>Org. nr: {settings?.registrationNumber || 'Loading...'}</p>
+              <p>VAT: {settings?.vatNumber || 'Loading...'}</p>
+              <p>Bank: {settings?.bankAccount || 'Loading...'}</p>
             </div>
           </div>
         </div>
