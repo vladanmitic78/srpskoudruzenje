@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { mockUsers } from '../utils/mock';
+import { authAPI } from '../services/api';
 
 const AuthContext = createContext();
 
@@ -17,46 +17,50 @@ export const AuthProvider = ({ children }) => {
 
   useEffect(() => {
     const storedUser = localStorage.getItem('user');
-    if (storedUser) {
+    const token = localStorage.getItem('token');
+    if (storedUser && token) {
       setUser(JSON.parse(storedUser));
     }
     setLoading(false);
   }, []);
 
-  const login = (username, password) => {
-    // Mock login
-    const foundUser = mockUsers.find(
-      u => u.username === username && u.password === password
-    );
-    
-    if (foundUser) {
-      const userWithoutPassword = { ...foundUser };
-      delete userWithoutPassword.password;
-      setUser(userWithoutPassword);
-      localStorage.setItem('user', JSON.stringify(userWithoutPassword));
-      return { success: true, user: userWithoutPassword };
+  const login = async (username, password) => {
+    try {
+      const response = await authAPI.login({ username, password });
+      
+      if (response.success) {
+        setUser(response.user);
+        return { success: true, user: response.user };
+      }
+      
+      return { success: false, error: 'Invalid credentials' };
+    } catch (error) {
+      return { 
+        success: false, 
+        error: error.response?.data?.detail || 'Login failed' 
+      };
     }
-    
-    return { success: false, error: 'Invalid credentials' };
   };
 
-  const register = (userData) => {
-    // Mock registration
-    const newUser = {
-      id: Date.now().toString(),
-      ...userData,
-      role: 'user',
-      emailVerified: false,
-      createdAt: new Date().toISOString()
-    };
-    
-    mockUsers.push(newUser);
-    return { success: true, message: 'Registration successful. Please check your email.' };
+  const register = async (userData) => {
+    try {
+      const response = await authAPI.register(userData);
+      return { 
+        success: true, 
+        message: response.message || 'Registration successful. Please check your email.' 
+      };
+    } catch (error) {
+      return { 
+        success: false, 
+        error: error.response?.data?.detail || 'Registration failed' 
+      };
+    }
   };
 
   const logout = () => {
     setUser(null);
     localStorage.removeItem('user');
+    localStorage.removeItem('token');
   };
 
   const value = {
