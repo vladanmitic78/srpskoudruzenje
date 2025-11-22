@@ -141,7 +141,7 @@ const Contact = () => {
                   </div>
                   <div>
                     <h3 className="font-semibold text-gray-900 dark:text-white mb-1">Address</h3>
-                    <p className="text-gray-600 dark:text-gray-300">{mockSettings.address}</p>
+                    <p className="text-gray-600 dark:text-gray-300">{settings?.address || 'Loading...'}</p>
                   </div>
                 </div>
 
@@ -152,10 +152,10 @@ const Contact = () => {
                   <div>
                     <h3 className="font-semibold text-gray-900 dark:text-white mb-1">Email</h3>
                     <a 
-                      href={`mailto:${mockSettings.contactEmail}`}
+                      href={`mailto:${settings?.contactEmail || ''}`}
                       className="text-[#C1272D] hover:underline"
                     >
-                      {mockSettings.contactEmail}
+                      {settings?.contactEmail || 'Loading...'}
                     </a>
                   </div>
                 </div>
@@ -167,10 +167,10 @@ const Contact = () => {
                   <div>
                     <h3 className="font-semibold text-gray-900 dark:text-white mb-1">Phone</h3>
                     <a 
-                      href={`tel:${mockSettings.contactPhone}`}
+                      href={`tel:${settings?.contactPhone || ''}`}
                       className="text-[#C1272D] hover:underline"
                     >
-                      {mockSettings.contactPhone}
+                      {settings?.contactPhone || 'Loading...'}
                     </a>
                   </div>
                 </div>
