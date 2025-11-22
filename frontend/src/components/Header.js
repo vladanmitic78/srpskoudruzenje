@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useLanguage } from '../context/LanguageContext';
 import { useTheme } from '../context/ThemeContext';
@@ -11,7 +11,7 @@ import {
   DropdownMenuTrigger,
 } from './ui/dropdown-menu';
 import { Menu, X, Globe, Sun, Moon, Facebook, Instagram, Youtube } from 'lucide-react';
-import { mockSettings } from '../utils/mock';
+import { settingsAPI } from '../services/api';
 
 const Header = () => {
   const { language, setLanguage, t } = useLanguage();
