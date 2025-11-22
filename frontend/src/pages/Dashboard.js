@@ -250,7 +250,7 @@ const Dashboard = () => {
                         </Button>
                       </div>
                     </div>
-                  ))}
+                  )))}
                 </div>
               </CardContent>
             </Card>
