@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useLanguage } from '../context/LanguageContext';
 import { useAuth } from '../context/AuthContext';
 import { Button } from '../components/ui/button';
@@ -9,13 +9,36 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '../components/ui/tabs'
 import { Badge } from '../components/ui/badge';
 import { toast } from 'sonner';
 import { User, FileText, Calendar, AlertCircle } from 'lucide-react';
-import { mockInvoices, mockEvents } from '../utils/mock';
+import { userAPI, invoicesAPI, eventsAPI } from '../services/api';
 
 const Dashboard = () => {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const { user } = useAuth();
   const [userData, setUserData] = useState(user || {});
+  const [invoices, setInvoices] = useState([]);
+  const [events, setEvents] = useState([]);
   const [confirmedEvents, setConfirmedEvents] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const [invoicesData, eventsData] = await Promise.all([
+          invoicesAPI.getMy(),
+          eventsAPI.getAll()
+        ]);
+        setInvoices(invoicesData.invoices || []);
+        setEvents(eventsData.events || []);
+      } catch (error) {
+        console.error('Error fetching dashboard data:', error);
+        toast.error('Failed to load dashboard data');
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    fetchData();
+  }, []);
 
   const handleSaveProfile = () => {
     toast.success('Profile updated successfully!');
