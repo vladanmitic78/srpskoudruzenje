@@ -76,7 +76,7 @@ const SerbianStory = () => {
                 )}
               </CardContent>
             </Card>
-          ))}
+          )))}
         </div>
       </div>
     </div>
