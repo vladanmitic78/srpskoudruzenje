@@ -31,7 +31,12 @@ const Gallery = () => {
         </h1>
 
         <div className="space-y-12">
-          {mockGallery.map((item) => (
+          {loading ? (
+            <p className="text-center text-gray-600 dark:text-gray-300">Loading gallery...</p>
+          ) : gallery.length === 0 ? (
+            <p className="text-center text-gray-600 dark:text-gray-300">No gallery items yet.</p>
+          ) : (
+            gallery.map((item) => (
             <Card key={item.id} className="overflow-hidden border-2 border-[#C1272D]/20">
               <CardContent className="p-6">
                 <div className="flex items-center justify-between mb-6">
