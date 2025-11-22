@@ -1,0 +1,64 @@
+import React from 'react';
+import { useLanguage } from '../context/LanguageContext';
+import { Card, CardContent } from '../components/ui/card';
+import { Button } from '../components/ui/button';
+import { ExternalLink } from 'lucide-react';
+import { mockSerbianStories } from '../utils/mock';
+
+const SerbianStory = () => {
+  const { language } = useLanguage();
+
+  return (
+    <div className="min-h-screen py-16">
+      <div className="container mx-auto px-4">
+        <h1 className="text-4xl md:text-5xl font-bold text-[#8B1F1F] dark:text-[#C1272D] mb-12 text-center">
+          Srpska priča / Serbian Story
+        </h1>
+
+        <div className="max-w-4xl mx-auto space-y-8">
+          {mockSerbianStories.map((story) => (
+            <Card key={story.id} className="overflow-hidden border-2 border-[#C1272D]/20 hover:shadow-xl transition-all duration-300">
+              {story.image && (
+                <div className="relative h-64 md:h-96 overflow-hidden">
+                  <img
+                    src={story.image}
+                    alt={story.title[language]}
+                    className="w-full h-full object-cover"
+                  />
+                  <div className="absolute top-4 right-4 bg-[#C1272D] text-white px-4 py-2 rounded-full text-sm font-semibold shadow-lg">
+                    {story.date}
+                  </div>
+                </div>
+              )}
+              
+              <CardContent className="p-8">
+                <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-6">
+                  {story.title[language]}
+                </h2>
+                
+                <p className="text-lg text-gray-700 dark:text-gray-300 leading-relaxed mb-6 text-justify">
+                  {story.text[language]}
+                </p>
+                
+                {story.url && (
+                  <Button 
+                    asChild
+                    variant="outline"
+                    className="border-2 border-[#C1272D] text-[#C1272D] hover:bg-[#C1272D] hover:text-white"
+                  >
+                    <a href={story.url} target="_blank" rel="noopener noreferrer">
+                      Learn More
+                      <ExternalLink className="ml-2 h-4 w-4" />
+                    </a>
+                  </Button>
+                )}
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default SerbianStory;
