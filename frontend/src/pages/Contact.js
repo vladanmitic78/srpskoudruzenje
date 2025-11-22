@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useLanguage } from '../context/LanguageContext';
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
@@ -14,7 +14,7 @@ import {
 import { Card, CardContent } from '../components/ui/card';
 import { toast } from 'sonner';
 import { Mail, Phone, MapPin } from 'lucide-react';
-import { mockSettings } from '../utils/mock';
+import { contactAPI, settingsAPI } from '../services/api';
 
 const Contact = () => {
   const { t, language } = useLanguage();
@@ -24,12 +24,35 @@ const Contact = () => {
     topic: '',
     message: ''
   });
+  const [settings, setSettings] = useState(null);
+  const [submitting, setSubmitting] = useState(false);
 
-  const handleSubmit = (e) => {
+  useEffect(() => {
+    const fetchSettings = async () => {
+      try {
+        const data = await settingsAPI.get();
+        setSettings(data);
+      } catch (error) {
+        console.error('Error fetching settings:', error);
+      }
+    };
+    
+    fetchSettings();
+  }, []);
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Mock form submission
-    toast.success('Message sent successfully!');
-    setFormData({ name: '', email: '', topic: '', message: '' });
+    setSubmitting(true);
+    
+    try {
+      await contactAPI.submit(formData);
+      toast.success('Message sent successfully!');
+      setFormData({ name: '', email: '', topic: '', message: '' });
+    } catch (error) {
+      toast.error('Failed to send message. Please try again.');
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
