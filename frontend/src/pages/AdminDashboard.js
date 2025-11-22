@@ -58,7 +58,9 @@ const AdminDashboard = () => {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm text-gray-600 dark:text-gray-400">Total Members</p>
-                  <p className="text-3xl font-bold text-gray-900 dark:text-white">{totalMembers}</p>
+                  <p className="text-3xl font-bold text-gray-900 dark:text-white">
+                    {loading ? '...' : statistics?.totalMembers || 0}
+                  </p>
                 </div>
                 <Users className="h-12 w-12 text-[#C1272D]" />
               </div>
@@ -70,7 +72,9 @@ const AdminDashboard = () => {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm text-gray-600 dark:text-gray-400">Paid Invoices</p>
-                  <p className="text-3xl font-bold text-green-600">{paidInvoices}</p>
+                  <p className="text-3xl font-bold text-green-600">
+                    {loading ? '...' : statistics?.paidInvoices || 0}
+                  </p>
                 </div>
                 <FileText className="h-12 w-12 text-green-600" />
               </div>
@@ -82,7 +86,9 @@ const AdminDashboard = () => {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm text-gray-600 dark:text-gray-400">Unpaid Invoices</p>
-                  <p className="text-3xl font-bold text-red-600">{unpaidInvoices}</p>
+                  <p className="text-3xl font-bold text-red-600">
+                    {loading ? '...' : statistics?.unpaidInvoices || 0}
+                  </p>
                 </div>
                 <FileText className="h-12 w-12 text-red-600" />
               </div>
@@ -94,7 +100,9 @@ const AdminDashboard = () => {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm text-gray-600 dark:text-gray-400">Total Revenue</p>
-                  <p className="text-3xl font-bold text-[#C1272D]">{totalRevenue} SEK</p>
+                  <p className="text-3xl font-bold text-[#C1272D]">
+                    {loading ? '...' : `${statistics?.totalRevenue || 0} SEK`}
+                  </p>
                 </div>
                 <BarChart className="h-12 w-12 text-[#C1272D]" />
               </div>
