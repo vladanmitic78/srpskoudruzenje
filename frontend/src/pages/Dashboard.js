@@ -40,17 +40,28 @@ const Dashboard = () => {
     fetchData();
   }, []);
 
-  const handleSaveProfile = () => {
-    toast.success('Profile updated successfully!');
+  const handleSaveProfile = async () => {
+    try {
+      await userAPI.updateProfile(userData);
+      toast.success('Profile updated successfully!');
+    } catch (error) {
+      toast.error('Failed to update profile');
+    }
   };
 
-  const handleConfirmEvent = (eventId) => {
-    if (confirmedEvents.includes(eventId)) {
-      setConfirmedEvents(confirmedEvents.filter(id => id !== eventId));
-      toast.info('Event participation cancelled');
-    } else {
-      setConfirmedEvents([...confirmedEvents, eventId]);
-      toast.success('Event participation confirmed!');
+  const handleConfirmEvent = async (eventId) => {
+    try {
+      if (confirmedEvents.includes(eventId)) {
+        await eventsAPI.cancelParticipation(eventId);
+        setConfirmedEvents(confirmedEvents.filter(id => id !== eventId));
+        toast.info('Event participation cancelled');
+      } else {
+        await eventsAPI.confirmParticipation(eventId);
+        setConfirmedEvents([...confirmedEvents, eventId]);
+        toast.success('Event participation confirmed!');
+      }
+    } catch (error) {
+      toast.error('Failed to update participation');
     }
   };
 
