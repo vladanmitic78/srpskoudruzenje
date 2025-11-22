@@ -139,7 +139,12 @@ const AdminDashboard = () => {
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
-                  {mockUsers.filter(u => u.role === 'user').map((user) => (
+                  {loading ? (
+                    <p className="text-gray-600 dark:text-gray-400">Loading members...</p>
+                  ) : users.filter(u => u.role === 'user').length === 0 ? (
+                    <p className="text-gray-600 dark:text-gray-400">No members yet.</p>
+                  ) : (
+                    users.filter(u => u.role === 'user').map((user) => (
                     <div key={user.id} className="p-4 border-2 border-gray-200 dark:border-gray-700 rounded-lg">
                       <div className="flex items-center justify-between">
                         <div>
