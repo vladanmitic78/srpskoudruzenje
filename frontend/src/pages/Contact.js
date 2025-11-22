@@ -122,9 +122,10 @@ const Contact = () => {
 
                 <Button 
                   type="submit" 
-                  className="w-full bg-[#C1272D] hover:bg-[#8B1F1F] text-white py-6 text-lg font-semibold"
+                  disabled={submitting}
+                  className="w-full bg-[#C1272D] hover:bg-[#8B1F1F] text-white py-6 text-lg font-semibold disabled:opacity-50"
                 >
-                  {t('contact.send')}
+                  {submitting ? 'Sending...' : t('contact.send')}
                 </Button>
               </form>
             </CardContent>
