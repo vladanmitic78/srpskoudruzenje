@@ -114,24 +114,28 @@ const Header = () => {
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
-                <DropdownMenuItem asChild>
-                  <a href={mockSettings.socialMedia.facebook} target="_blank" rel="noopener noreferrer" className="flex items-center space-x-2">
-                    <Facebook className="h-4 w-4" />
-                    <span>Facebook</span>
-                  </a>
-                </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                  <a href={mockSettings.socialMedia.instagram} target="_blank" rel="noopener noreferrer" className="flex items-center space-x-2">
-                    <Instagram className="h-4 w-4" />
-                    <span>Instagram</span>
-                  </a>
-                </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                  <a href={mockSettings.socialMedia.youtube} target="_blank" rel="noopener noreferrer" className="flex items-center space-x-2">
-                    <Youtube className="h-4 w-4" />
-                    <span>YouTube</span>
-                  </a>
-                </DropdownMenuItem>
+                {settings?.socialMedia && (
+                  <>
+                    <DropdownMenuItem asChild>
+                      <a href={settings.socialMedia.facebook} target="_blank" rel="noopener noreferrer" className="flex items-center space-x-2">
+                        <Facebook className="h-4 w-4" />
+                        <span>Facebook</span>
+                      </a>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                      <a href={settings.socialMedia.instagram} target="_blank" rel="noopener noreferrer" className="flex items-center space-x-2">
+                        <Instagram className="h-4 w-4" />
+                        <span>Instagram</span>
+                      </a>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                      <a href={settings.socialMedia.youtube} target="_blank" rel="noopener noreferrer" className="flex items-center space-x-2">
+                        <Youtube className="h-4 w-4" />
+                        <span>YouTube</span>
+                      </a>
+                    </DropdownMenuItem>
+                  </>
+                )}
               </DropdownMenuContent>
             </DropdownMenu>
 
