@@ -18,7 +18,21 @@ const Header = () => {
   const { theme, toggleTheme } = useTheme();
   const { isAuthenticated, user, logout } = useAuth();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [settings, setSettings] = useState(null);
   const location = useLocation();
+
+  useEffect(() => {
+    const fetchSettings = async () => {
+      try {
+        const data = await settingsAPI.get();
+        setSettings(data);
+      } catch (error) {
+        console.error('Error fetching settings:', error);
+      }
+    };
+    
+    fetchSettings();
+  }, []);
 
   const languages = [
     { code: 'sr-latin', label: 'Srpski' },
