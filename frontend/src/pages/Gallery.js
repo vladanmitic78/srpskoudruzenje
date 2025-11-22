@@ -1,10 +1,27 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useLanguage } from '../context/LanguageContext';
 import { Card, CardContent } from '../components/ui/card';
-import { mockGallery } from '../utils/mock';
+import { galleryAPI } from '../services/api';
 
 const Gallery = () => {
   const { language } = useLanguage();
+  const [gallery, setGallery] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchGallery = async () => {
+      try {
+        const data = await galleryAPI.getAll();
+        setGallery(data.items || []);
+      } catch (error) {
+        console.error('Error fetching gallery:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    fetchGallery();
+  }, []);
 
   return (
     <div className="min-h-screen py-16">
