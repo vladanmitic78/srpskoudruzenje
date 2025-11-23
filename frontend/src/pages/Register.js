@@ -20,15 +20,15 @@ const Register = () => {
     phone: ''
   });
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    const result = register(formData);
+    const result = await register(formData);
     
     if (result.success) {
       toast.success(result.message);
       setTimeout(() => navigate('/login'), 2000);
     } else {
-      toast.error('Registration failed');
+      toast.error(result.error || 'Registration failed');
     }
   };
 
