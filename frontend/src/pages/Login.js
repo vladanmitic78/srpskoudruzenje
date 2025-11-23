@@ -17,9 +17,9 @@ const Login = () => {
     password: ''
   });
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    const result = login(formData.username, formData.password);
+    const result = await login(formData.username, formData.password);
     
     if (result.success) {
       toast.success('Login successful!');
