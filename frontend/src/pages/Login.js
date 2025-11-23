@@ -19,17 +19,25 @@ const Login = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const result = await login(formData.username, formData.password);
+    console.log('Login form submitted', formData);
     
-    if (result.success) {
-      toast.success('Login successful!');
-      if (result.user.role === 'admin' || result.user.role === 'superadmin') {
-        navigate('/admin');
+    try {
+      const result = await login(formData.username, formData.password);
+      console.log('Login result:', result);
+      
+      if (result.success) {
+        toast.success('Login successful!');
+        if (result.user.role === 'admin' || result.user.role === 'superadmin') {
+          navigate('/admin');
+        } else {
+          navigate('/dashboard');
+        }
       } else {
-        navigate('/dashboard');
+        toast.error(result.error || 'Login failed');
       }
-    } else {
-      toast.error(result.error);
+    } catch (error) {
+      console.error('Login error:', error);
+      toast.error('Login failed: ' + error.message);
     }
   };
 
