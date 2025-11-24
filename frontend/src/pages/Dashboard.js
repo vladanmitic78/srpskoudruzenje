@@ -124,17 +124,28 @@ const Dashboard = () => {
 
   const handleConfirmEvent = async (eventId) => {
     try {
-      if (confirmedEvents.includes(eventId)) {
-        await eventsAPI.cancelParticipation(eventId);
-        setConfirmedEvents(confirmedEvents.filter(id => id !== eventId));
-        toast.info('Event participation cancelled');
-      } else {
-        await eventsAPI.confirmParticipation(eventId);
-        setConfirmedEvents([...confirmedEvents, eventId]);
-        toast.success('Event participation confirmed!');
-      }
+      await eventsAPI.confirmParticipation(eventId);
+      setConfirmedEvents([...confirmedEvents, eventId]);
+      toast.success('Event participation confirmed! Admin has been notified.');
     } catch (error) {
-      toast.error('Failed to update participation');
+      toast.error('Failed to confirm participation');
+    }
+  };
+
+  const handleCancelEvent = async (eventId) => {
+    const reason = prompt('Please provide a reason for cancelling (mandatory):');
+    
+    if (!reason || reason.trim() === '') {
+      toast.error('Cancellation reason is required');
+      return;
+    }
+    
+    try {
+      await eventsAPI.cancelParticipation(eventId, reason);
+      setConfirmedEvents(confirmedEvents.filter(id => id !== eventId));
+      toast.info('Event participation cancelled. Admin has been notified.');
+    } catch (error) {
+      toast.error('Failed to cancel participation');
     }
   };
 
