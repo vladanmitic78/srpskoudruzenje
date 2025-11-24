@@ -112,7 +112,7 @@ const AdminDashboard = () => {
 
         {/* Admin Tabs */}
         <Tabs defaultValue="members" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-4 max-w-2xl">
+          <TabsList className="grid w-full grid-cols-5 max-w-3xl">
             <TabsTrigger value="members">
               <Users className="h-4 w-4 mr-2" />
               Members
@@ -124,6 +124,10 @@ const AdminDashboard = () => {
             <TabsTrigger value="events">
               <Calendar className="h-4 w-4 mr-2" />
               Events
+            </TabsTrigger>
+            <TabsTrigger value="content">
+              <Settings className="h-4 w-4 mr-2" />
+              Content
             </TabsTrigger>
             <TabsTrigger value="settings">
               <Settings className="h-4 w-4 mr-2" />
