@@ -42,7 +42,9 @@ const Login = () => {
   };
 
   const handleGoogleLogin = () => {
-    toast.info('Google OAuth will be integrated in Phase 2');
+    // Redirect to Emergent Auth with dashboard as redirect URL
+    const redirectUrl = `${window.location.origin}/dashboard`;
+    window.location.href = `https://auth.emergentagent.com/?redirect=${encodeURIComponent(redirectUrl)}`;
   };
 
   return (
