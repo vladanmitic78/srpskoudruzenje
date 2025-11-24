@@ -48,7 +48,9 @@ async def register(user_data: UserCreate, request: Request):
     
     # Send verification email
     backend_url = os.environ.get('REACT_APP_BACKEND_URL', 'http://localhost:8001')
-    verification_link = f"{backend_url}/api/auth/verify-email?token={verification_token}"
+    # Use frontend URL for verification link
+    frontend_url = backend_url.replace('/api', '')
+    verification_link = f"{frontend_url}/verify-email?token={verification_token}"
     html_content, text_content = get_verification_email_template(
         user_data.fullName,
         verification_link
