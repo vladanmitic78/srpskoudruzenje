@@ -251,6 +251,53 @@ export const adminAPI = {
     const response = await api.delete(`/admin/users/${userId}`);
     return response.data;
   },
+  
+  getUserDetails: async (userId) => {
+    const response = await api.get(`/admin/users/${userId}/details`);
+    return response.data;
+  },
+  
+  exportMembersPDF: async () => {
+    const response = await api.get('/admin/export/members/pdf', {
+      responseType: 'blob'
+    });
+    return response.data;
+  },
+  
+  exportMembersXML: async () => {
+    const response = await api.get('/admin/export/members/xml', {
+      responseType: 'blob'
+    });
+    return response.data;
+  },
+};
+
+// ==================== Content Management APIs ====================
+export const contentAPI = {
+  getPageContent: async (pageId) => {
+    const response = await api.get(`/content/pages/${pageId}`);
+    return response.data;
+  },
+  
+  getAllPages: async () => {
+    const response = await api.get('/content/pages');
+    return response.data;
+  },
+  
+  createContent: async (contentData) => {
+    const response = await api.post('/content/pages', contentData);
+    return response.data;
+  },
+  
+  updateContent: async (contentId, contentData) => {
+    const response = await api.put(`/content/pages/${contentId}`, contentData);
+    return response.data;
+  },
+  
+  deleteContent: async (contentId) => {
+    const response = await api.delete(`/content/pages/${contentId}`);
+    return response.data;
+  },
 };
 
 // ==================== Contact APIs ====================
