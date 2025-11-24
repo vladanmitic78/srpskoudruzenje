@@ -90,6 +90,64 @@ const AdminDashboard = () => {
     }
   };
 
+
+  const handleUploadInvoiceFile = async (invoiceId, event) => {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    const formData = new FormData();
+    formData.append('file', file);
+
+    try {
+      const response = await fetch(
+        `${process.env.REACT_APP_BACKEND_URL}/api/invoices/${invoiceId}/upload`,
+        {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+          },
+          body: formData
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error('Upload failed');
+      }
+
+      toast.success('Invoice file uploaded successfully');
+      // Refresh invoices
+      const invoicesData = await invoicesAPI.getAll();
+      setInvoices(invoicesData.invoices || []);
+    } catch (error) {
+      toast.error('Failed to upload file');
+      console.error(error);
+    }
+  };
+
+  const handleDeleteInvoiceFile = async (invoiceId) => {
+    if (!window.confirm('Remove this invoice file?')) return;
+
+    try {
+      await fetch(
+        `${process.env.REACT_APP_BACKEND_URL}/api/invoices/${invoiceId}/file`,
+        {
+          method: 'DELETE',
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+          }
+        }
+      );
+
+      toast.success('Invoice file removed');
+      // Refresh invoices
+      const invoicesData = await invoicesAPI.getAll();
+      setInvoices(invoicesData.invoices || []);
+    } catch (error) {
+      toast.error('Failed to remove file');
+    }
+  };
+
+
   const getUserName = (userId) => {
     const user = users.find(u => u.id === userId);
     return user ? user.fullName : 'Unknown User';
