@@ -280,6 +280,33 @@ frontend:
         agent: "main"
         comment: "Fixed: Button now has proper navigation. For unauthenticated users -> /login, for authenticated users -> /dashboard (where they can confirm participation). Added useAuth hook. Tested successfully - button navigates correctly."
 
+  - task: "Forgot Password Page"
+    implemented: true
+    working: "NA"
+    file: "/app/frontend/src/pages/ForgotPassword.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: false
+        agent: "user"
+        comment: "User reported: Forgot password is not working on login page"
+      - working: "NA"
+        agent: "main"
+        comment: "Created ForgotPassword page with email input form. Links properly from login page. Calls backend API to send reset email. Shows success message after submission. Page rendering confirmed via screenshot."
+
+  - task: "Reset Password Page"
+    implemented: true
+    working: "NA"
+    file: "/app/frontend/src/pages/ResetPassword.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Created ResetPassword page. Accepts token from URL query params. Password and confirm password fields with validation (min 6 chars, must match). Calls backend API to update password. Redirects to login after success."
+
 metadata:
   created_by: "main_agent"
   version: "1.0"
