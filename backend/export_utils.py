@@ -72,6 +72,61 @@ def generate_members_pdf(members):
     buffer.seek(0)
     return buffer
 
+def generate_members_excel(members):
+    """Generate Excel export of members"""
+    buffer = BytesIO()
+    wb = Workbook()
+    ws = wb.active
+    ws.title = "Members"
+    
+    # Header styling
+    header_fill = PatternFill(start_color="C1272D", end_color="C1272D", fill_type="solid")
+    header_font = Font(bold=True, color="FFFFFF", size=12)
+    
+    # Headers
+    headers = ['Full Name', 'Email', 'Phone', 'Address', 'Year of Birth', 
+               'Parent Name', 'Parent Email', 'Parent Phone', 'Email Verified', 'Member Since']
+    ws.append(headers)
+    
+    # Style header row
+    for cell in ws[1]:
+        cell.fill = header_fill
+        cell.font = header_font
+        cell.alignment = Alignment(horizontal='center', vertical='center')
+    
+    # Add data
+    for member in members:
+        ws.append([
+            member.get('fullName', ''),
+            member.get('email', ''),
+            member.get('phone', ''),
+            member.get('address', ''),
+            member.get('yearOfBirth', ''),
+            member.get('parentName', ''),
+            member.get('parentEmail', ''),
+            member.get('parentPhone', ''),
+            'Yes' if member.get('emailVerified') else 'No',
+            member.get('createdAt', '').strftime('%Y-%m-%d') if hasattr(member.get('createdAt'), 'strftime') else str(member.get('createdAt', ''))
+        ])
+    
+    # Auto-adjust column widths
+    for column in ws.columns:
+        max_length = 0
+        column_letter = column[0].column_letter
+        for cell in column:
+            try:
+                if len(str(cell.value)) > max_length:
+                    max_length = len(str(cell.value))
+            except:
+                pass
+        adjusted_width = min(max_length + 2, 50)
+        ws.column_dimensions[column_letter].width = adjusted_width
+    
+    # Save to buffer
+    wb.save(buffer)
+    buffer.seek(0)
+    return buffer
+
 def generate_members_xml(members):
     """Generate XML export of members"""
     root = ET.Element('members')
