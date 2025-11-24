@@ -271,6 +271,18 @@ def get_contact_form_notification(name: str, email: str, topic: str, message: st
     </html>
     """
     
+    text_content = f"""
+    Kontakt Forma / Contact Form
+    
+    Od/From: {name}
+    Email: {email}
+    Tema/Topic: {topic}
+    
+    Poruka/Message:
+    {message}
+    """
+    
+    return html_content, text_content
 
 
 def get_admin_new_user_notification_template(user_name: str, user_email: str, registration_date: str):
