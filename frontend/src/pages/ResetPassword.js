@@ -70,38 +70,38 @@ const ResetPassword = () => {
             />
           </div>
           <CardTitle className="text-2xl font-bold text-center text-[#8B1F1F] dark:text-[#C1272D]">
-            Reset Your Password
+            {t('auth.resetPasswordTitle')}
           </CardTitle>
         </CardHeader>
         <CardContent>
           <p className="text-center text-gray-600 dark:text-gray-400 mb-6">
-            Enter your new password below.
+            {t('auth.resetPasswordDesc')}
           </p>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="password">New Password</Label>
+              <Label htmlFor="password">{t('auth.newPassword')}</Label>
               <Input
                 id="password"
                 type="password"
                 required
                 value={formData.password}
                 onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                placeholder="Enter new password"
+                placeholder={t('auth.enterNewPassword')}
                 className="border-gray-300 focus:border-[#C1272D]"
                 minLength={6}
               />
-              <p className="text-xs text-gray-500">Minimum 6 characters</p>
+              <p className="text-xs text-gray-500">{t('auth.passwordMinLength')}</p>
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="confirmPassword">Confirm New Password</Label>
+              <Label htmlFor="confirmPassword">{t('auth.confirmPassword')}</Label>
               <Input
                 id="confirmPassword"
                 type="password"
                 required
                 value={formData.confirmPassword}
                 onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
-                placeholder="Confirm new password"
+                placeholder={t('auth.confirmNewPassword')}
                 className="border-gray-300 focus:border-[#C1272D]"
                 minLength={6}
               />
@@ -112,13 +112,13 @@ const ResetPassword = () => {
               disabled={loading}
               className="w-full bg-[#C1272D] hover:bg-[#8B1F1F] text-white py-6"
             >
-              {loading ? 'Resetting...' : 'Reset Password'}
+              {loading ? t('auth.resetting') : t('auth.resetPassword')}
             </Button>
           </form>
 
           <div className="mt-6 text-center">
             <Link to="/login" className="text-sm text-[#C1272D] hover:underline">
-              Back to Login
+              {t('auth.backToLogin')}
             </Link>
           </div>
         </CardContent>
