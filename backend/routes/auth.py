@@ -117,3 +117,71 @@ async def verify_email(token: str, request: Request):
     )
     
     return {"success": True, "message": "Email verified successfully"}
+
+@router.post("/forgot-password")
+async def forgot_password(email: str, request: Request):
+    """Send password reset email"""
+    db = request.app.state.db
+    user = await db.users.find_one({"email": email})
+    
+    if not user:
+        # Don't reveal if email exists
+        return {"success": True, "message": "If email exists, reset instructions sent"}
+    
+    # Generate reset token
+    reset_token = generate_verification_token()
+    await db.users.update_one(
+        {"_id": user["_id"]},
+        {"$set": {"resetToken": reset_token, "resetTokenExpiry": datetime.utcnow() + timedelta(hours=1)}}
+    )
+    
+    # Send reset email
+    backend_url = os.environ.get('REACT_APP_BACKEND_URL', 'http://localhost:8001')
+    reset_link = f"{backend_url.replace('/api', '')}/reset-password?token={reset_token}"
+    
+    html = f"""
+    <html>
+    <body style="font-family: Arial, sans-serif;">
+        <h2>Password Reset Request</h2>
+        <p>Click the link below to reset your password:</p>
+        <p><a href="{reset_link}" style="background: #C1272D; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">Reset Password</a></p>
+        <p>This link expires in 1 hour.</p>
+        <p>If you didn't request this, please ignore this email.</p>
+    </body>
+    </html>
+    """
+    
+    await send_email(
+        user["email"],
+        "Password Reset - SKUD Täby",
+        html,
+        f"Reset your password: {reset_link}"
+    )
+    
+    return {"success": True, "message": "If email exists, reset instructions sent"}
+
+@router.post("/reset-password")
+async def reset_password(token: str, new_password: str, request: Request):
+    """Reset password with token"""
+    db = request.app.state.db
+    user = await db.users.find_one({
+        "resetToken": token,
+        "resetTokenExpiry": {"$gt": datetime.utcnow()}
+    })
+    
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Invalid or expired reset token"
+        )
+    
+    # Update password
+    await db.users.update_one(
+        {"_id": user["_id"]},
+        {
+            "$set": {"hashed_password": hash_password(new_password)},
+            "$unset": {"resetToken": "", "resetTokenExpiry": ""}
+        }
+    )
+    
+    return {"success": True, "message": "Password reset successfully"}
