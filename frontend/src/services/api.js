@@ -284,6 +284,13 @@ export const adminAPI = {
     });
     return response.data;
   },
+  
+  exportMembersExcel: async () => {
+    const response = await api.get('/admin/export/members/excel', {
+      responseType: 'blob'
+    });
+    return response.data;
+  },
 };
 
 // ==================== Content Management APIs ====================
