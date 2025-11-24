@@ -132,6 +132,20 @@ async def export_members_xml(admin: dict = Depends(get_admin_user), request: Req
         headers={"Content-Disposition": f"attachment; filename=members_{datetime.utcnow().strftime('%Y%m%d')}.xml"}
     )
 
+@router.get("/export/members/excel")
+async def export_members_excel(admin: dict = Depends(get_admin_user), request: Request = None):
+    """Export members to Excel"""
+    db = request.app.state.db
+    
+    users = await db.users.find({"role": "user"}).to_list(length=10000)
+    excel_buffer = generate_members_excel(users)
+    
+    return StreamingResponse(
+        excel_buffer,
+        media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        headers={"Content-Disposition": f"attachment; filename=members_{datetime.utcnow().strftime('%Y%m%d')}.xlsx"}
+    )
+
 @router.get("/users/{user_id}/details")
 async def get_user_details(
     user_id: str,
