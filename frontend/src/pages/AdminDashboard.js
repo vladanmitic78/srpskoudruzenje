@@ -95,6 +95,88 @@ const AdminDashboard = () => {
     return user ? user.fullName : 'Unknown User';
   };
 
+  const handleCreateEvent = async () => {
+    try {
+      if (!eventForm.date || !eventForm.time || !eventForm.location) {
+        toast.error('Please fill in all required fields');
+        return;
+      }
+      if (!eventForm.title.en || !eventForm.description.en) {
+        toast.error('Please provide at least English title and description');
+        return;
+      }
+      
+      await eventsAPI.create(eventForm);
+      toast.success('Event created successfully');
+      setCreateEventOpen(false);
+      // Refresh events
+      const eventsData = await eventsAPI.getAll();
+      setEvents(eventsData.events || []);
+    } catch (error) {
+      toast.error('Failed to create event');
+      console.error(error);
+    }
+  };
+
+  const handleUpdateEvent = async () => {
+    try {
+      if (!eventForm.date || !eventForm.time || !eventForm.location) {
+        toast.error('Please fill in all required fields');
+        return;
+      }
+      
+      await eventsAPI.update(selectedEvent.id, eventForm);
+      toast.success('Event updated successfully');
+      setEditEventOpen(false);
+      setSelectedEvent(null);
+      // Refresh events
+      const eventsData = await eventsAPI.getAll();
+      setEvents(eventsData.events || []);
+    } catch (error) {
+      toast.error('Failed to update event');
+      console.error(error);
+    }
+  };
+
+  const handleCancelEvent = async (event) => {
+    const reason = prompt('Please provide a reason for cancellation:');
+    if (!reason) {
+      toast.error('Cancellation reason is required');
+      return;
+    }
+    
+    try {
+      await eventsAPI.update(event.id, {
+        status: 'cancelled',
+        cancellationReason: reason
+      });
+      toast.success('Event cancelled and participants notified via email');
+      // Refresh events
+      const eventsData = await eventsAPI.getAll();
+      setEvents(eventsData.events || []);
+    } catch (error) {
+      toast.error('Failed to cancel event');
+      console.error(error);
+    }
+  };
+
+  const handleDeleteEvent = async (eventId) => {
+    if (!window.confirm('Are you sure you want to delete this event? This action cannot be undone.')) {
+      return;
+    }
+    
+    try {
+      await eventsAPI.delete(eventId);
+      toast.success('Event deleted successfully');
+      // Refresh events
+      const eventsData = await eventsAPI.getAll();
+      setEvents(eventsData.events || []);
+    } catch (error) {
+      toast.error('Failed to delete event');
+      console.error(error);
+    }
+  };
+
   if (!isAdmin) {
     return <Navigate to="/dashboard" />;
   }
