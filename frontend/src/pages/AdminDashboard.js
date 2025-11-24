@@ -349,6 +349,111 @@ const AdminDashboard = () => {
             </Card>
           </TabsContent>
         </Tabs>
+
+        {/* User Details Dialog */}
+        <Dialog open={userDetailsOpen} onOpenChange={setUserDetailsOpen}>
+          <DialogContent className="max-w-3xl max-h-[80vh] overflow-y-auto">
+            <DialogHeader>
+              <DialogTitle>Member Details</DialogTitle>
+            </DialogHeader>
+            {selectedUser && (
+              <div className="space-y-6">
+                {/* Personal Information */}
+                <div>
+                  <h3 className="text-lg font-semibold mb-3 text-[#C1272D]">Personal Information</h3>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <p className="text-sm text-gray-500">Full Name</p>
+                      <p className="font-medium">{selectedUser.user?.fullName}</p>
+                    </div>
+                    <div>
+                      <p className="text-sm text-gray-500">Email</p>
+                      <p className="font-medium">{selectedUser.user?.email}</p>
+                    </div>
+                    <div>
+                      <p className="text-sm text-gray-500">Phone</p>
+                      <p className="font-medium">{selectedUser.user?.phone || 'N/A'}</p>
+                    </div>
+                    <div>
+                      <p className="text-sm text-gray-500">Year of Birth</p>
+                      <p className="font-medium">{selectedUser.user?.yearOfBirth || 'N/A'}</p>
+                    </div>
+                    <div className="col-span-2">
+                      <p className="text-sm text-gray-500">Address</p>
+                      <p className="font-medium">{selectedUser.user?.address || 'N/A'}</p>
+                    </div>
+                    <div>
+                      <p className="text-sm text-gray-500">Email Verified</p>
+                      <p className="font-medium">{selectedUser.user?.emailVerified ? 'Yes' : 'No'}</p>
+                    </div>
+                    <div>
+                      <p className="text-sm text-gray-500">Member Since</p>
+                      <p className="font-medium">
+                        {selectedUser.user?.createdAt ? new Date(selectedUser.user.createdAt).toLocaleDateString() : 'N/A'}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Parent Information (if applicable) */}
+                {(selectedUser.user?.parentName || selectedUser.user?.parentEmail) && (
+                  <div>
+                    <h3 className="text-lg font-semibold mb-3 text-[#C1272D]">Parent/Guardian Information</h3>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <p className="text-sm text-gray-500">Parent Name</p>
+                        <p className="font-medium">{selectedUser.user?.parentName || 'N/A'}</p>
+                      </div>
+                      <div>
+                        <p className="text-sm text-gray-500">Parent Email</p>
+                        <p className="font-medium">{selectedUser.user?.parentEmail || 'N/A'}</p>
+                      </div>
+                      <div>
+                        <p className="text-sm text-gray-500">Parent Phone</p>
+                        <p className="font-medium">{selectedUser.user?.parentPhone || 'N/A'}</p>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* Invoices */}
+                <div>
+                  <h3 className="text-lg font-semibold mb-3 text-[#C1272D]">
+                    Invoices ({selectedUser.invoiceCount || 0})
+                  </h3>
+                  {selectedUser.invoices && selectedUser.invoices.length > 0 ? (
+                    <div className="space-y-2">
+                      {selectedUser.invoices.map((invoice) => (
+                        <div key={invoice._id} className="p-3 border rounded bg-gray-50 dark:bg-gray-800">
+                          <div className="flex justify-between items-start">
+                            <div>
+                              <p className="font-medium">{invoice.description}</p>
+                              <p className="text-sm text-gray-600 dark:text-gray-400">
+                                Due: {invoice.dueDate}
+                              </p>
+                            </div>
+                            <div className="text-right">
+                              <p className="font-bold">{invoice.amount} {invoice.currency}</p>
+                              <span className={`text-xs px-2 py-1 rounded ${
+                                invoice.status === 'paid' 
+                                  ? 'bg-green-100 text-green-800' 
+                                  : 'bg-red-100 text-red-800'
+                              }`}>
+                                {invoice.status.toUpperCase()}
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <p className="text-gray-500">No invoices found</p>
+                  )}
+                </div>
+              </div>
+            )}
+          </DialogContent>
+        </Dialog>
       </div>
     </div>
   );
