@@ -229,6 +229,82 @@ class EventsAPITester:
             self.log_result("Cancel Event", False, f"Exception: {str(e)}")
             return False
 
+    async def create_test_user(self):
+        """Create a test user for participation testing"""
+        try:
+            user_data = {
+                "username": "testuser@example.com",
+                "email": "testuser@example.com",
+                "fullName": "Test User",
+                "password": "TestPass123!"
+            }
+            
+            async with self.session.post(f"{BACKEND_URL}/auth/register", json=user_data) as response:
+                if response.status == 200:
+                    data = await response.json()
+                    if data.get("success"):
+                        # Now login to get token
+                        login_data = {
+                            "username": "testuser@example.com",
+                            "password": "TestPass123!"
+                        }
+                        async with self.session.post(f"{BACKEND_URL}/auth/login", json=login_data) as login_response:
+                            if login_response.status == 200:
+                                login_data = await login_response.json()
+                                if login_data.get("success"):
+                                    self.user_token = login_data["token"]
+                                    self.log_result("Create Test User", True, "Test user created and authenticated")
+                                    return True
+                        self.log_result("Create Test User", False, "User created but login failed")
+                        return False
+                    else:
+                        # User might already exist, try to login
+                        login_data = {
+                            "username": "testuser@example.com",
+                            "password": "TestPass123!"
+                        }
+                        async with self.session.post(f"{BACKEND_URL}/auth/login", json=login_data) as login_response:
+                            if login_response.status == 200:
+                                login_data = await login_response.json()
+                                if login_data.get("success"):
+                                    self.user_token = login_data["token"]
+                                    self.log_result("Create Test User", True, "Using existing test user")
+                                    return True
+                        self.log_result("Create Test User", False, "Failed to create or login test user")
+                        return False
+                else:
+                    text = await response.text()
+                    self.log_result("Create Test User", False, f"HTTP {response.status}: {text}")
+                    return False
+        except Exception as e:
+            self.log_result("Create Test User", False, f"Exception: {str(e)}")
+            return False
+
+    async def test_confirm_participation(self):
+        """Test POST /api/events/{event_id}/confirm - User confirms participation"""
+        if not self.user_token or not self.test_event_id:
+            self.log_result("Confirm Participation", False, "No user token or test event ID available")
+            return False
+
+        try:
+            headers = {"Authorization": f"Bearer {self.user_token}"}
+            async with self.session.post(f"{BACKEND_URL}/events/{self.test_event_id}/confirm", headers=headers) as response:
+                if response.status == 200:
+                    data = await response.json()
+                    if data.get("success") and data.get("confirmed"):
+                        self.log_result("Confirm Participation", True, "User confirmed participation")
+                        return True
+                    else:
+                        self.log_result("Confirm Participation", False, "Confirmation failed - invalid response")
+                        return False
+                else:
+                    text = await response.text()
+                    self.log_result("Confirm Participation", False, f"HTTP {response.status}: {text}")
+                    return False
+        except Exception as e:
+            self.log_result("Confirm Participation", False, f"Exception: {str(e)}")
+            return False
+
     async def test_get_participants(self):
         """Test GET /api/events/{event_id}/participants - Get participant list"""
         if not self.admin_token or not self.test_event_id:
@@ -252,6 +328,31 @@ class EventsAPITester:
                     return False
         except Exception as e:
             self.log_result("Get Participants", False, f"Exception: {str(e)}")
+            return False
+
+    async def test_cancel_participation(self):
+        """Test DELETE /api/events/{event_id}/confirm - User cancels participation"""
+        if not self.user_token or not self.test_event_id:
+            self.log_result("Cancel Participation", False, "No user token or test event ID available")
+            return False
+
+        try:
+            headers = {"Authorization": f"Bearer {self.user_token}"}
+            async with self.session.delete(f"{BACKEND_URL}/events/{self.test_event_id}/confirm", headers=headers) as response:
+                if response.status == 200:
+                    data = await response.json()
+                    if data.get("success") and not data.get("confirmed"):
+                        self.log_result("Cancel Participation", True, "User cancelled participation")
+                        return True
+                    else:
+                        self.log_result("Cancel Participation", False, "Cancellation failed - invalid response")
+                        return False
+                else:
+                    text = await response.text()
+                    self.log_result("Cancel Participation", False, f"HTTP {response.status}: {text}")
+                    return False
+        except Exception as e:
+            self.log_result("Cancel Participation", False, f"Exception: {str(e)}")
             return False
 
     async def test_delete_event(self):
