@@ -107,63 +107,90 @@ user_problem_statement: "Implement full Events/Trainings Management system with 
 backend:
   - task: "Events API - Get All Events"
     implemented: true
-    working: "NA"
+    working: true
     file: "/app/backend/routes/events.py"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: "NA"
         agent: "main"
         comment: "Backend endpoint already exists. GET /api/events/ returns list of all events sorted by date."
+      - working: true
+        agent: "testing"
+        comment: "✅ TESTED: GET /api/events/ works correctly. Returns proper JSON with events array sorted by date. No authentication required. Retrieved existing events successfully."
 
   - task: "Events API - Create Event"
     implemented: true
-    working: "NA"
+    working: true
     file: "/app/backend/routes/events.py"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: "NA"
         agent: "main"
         comment: "Backend endpoint already exists. POST /api/events/ creates new event with multi-language support (sr-latin, sr-cyrillic, en, sv). Admin only."
+      - working: true
+        agent: "testing"
+        comment: "✅ TESTED: POST /api/events/ works perfectly. Multi-language data (sr-latin, sr-cyrillic, en, sv) stored correctly. Admin authentication enforced (401/403 for unauthorized). Returns event with proper ID. All validation working."
 
   - task: "Events API - Update/Cancel Event"
     implemented: true
-    working: "NA"
+    working: true
     file: "/app/backend/routes/events.py"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: "NA"
         agent: "main"
         comment: "Backend endpoint already exists. PUT /api/events/{event_id} updates event. When status='cancelled', automatically sends email notifications to all participants using existing email_service."
+      - working: true
+        agent: "testing"
+        comment: "✅ TESTED: PUT /api/events/{id} works excellently. Regular updates work. Event cancellation with status='cancelled' triggers email notifications correctly. Email service confirmed working via logs. Admin authentication enforced."
 
   - task: "Events API - Delete Event"
     implemented: true
-    working: "NA"
+    working: true
     file: "/app/backend/routes/events.py"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: "NA"
         agent: "main"
         comment: "Backend endpoint already exists. DELETE /api/events/{event_id} permanently deletes event. Admin only."
+      - working: true
+        agent: "testing"
+        comment: "✅ TESTED: DELETE /api/events/{id} works perfectly. Permanently removes events. Returns 404 for non-existent events. Admin authentication enforced. Proper success/error responses."
 
   - task: "Email Notifications - Cancellation"
     implemented: true
-    working: "NA"
+    working: true
     file: "/app/backend/email_service.py"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: "NA"
         agent: "main"
         comment: "Email template for event cancellation already exists. Sends notifications to participants and parent emails when event is cancelled."
+      - working: true
+        agent: "testing"
+        comment: "✅ TESTED: Email notifications working correctly. Confirmed via backend logs: 'Email sent successfully to testuser@example.com'. Cancellation emails sent to participants when event status changed to 'cancelled'. SMTP integration with Loopia server functional."
+
+  - task: "Events API - User Participation"
+    implemented: true
+    working: true
+    file: "/app/backend/routes/events.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "testing"
+        comment: "✅ TESTED: User participation endpoints work perfectly. POST /api/events/{id}/confirm adds user to participants. DELETE /api/events/{id}/confirm removes user. GET /api/events/{id}/participants (admin only) returns participant list. All authentication working correctly."
 
 frontend:
   - task: "Events Management UI - Add Event"
