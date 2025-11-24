@@ -145,23 +145,32 @@ const Dashboard = () => {
                 <CardTitle>{t('dashboard.personalData')}</CardTitle>
               </CardHeader>
               <CardContent>
-                <form className="space-y-4" onSubmit={(e) => { e.preventDefault(); handleSaveProfile(); }}>
+                <form className="space-y-6" onSubmit={(e) => { e.preventDefault(); handleSaveProfile(); }}>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <Label>Full Name</Label>
+                      <Label>Full Name *</Label>
                       <Input 
+                        required
                         value={userData.fullName || ''}
                         onChange={(e) => setUserData({...userData, fullName: e.target.value})}
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label>Year of Birth</Label>
+                      <Label>Year of Birth *</Label>
                       <Input 
+                        required
                         type="number"
                         placeholder="1990"
+                        min="1900"
+                        max={new Date().getFullYear()}
                         value={userData.yearOfBirth || ''}
-                        onChange={(e) => setUserData({...userData, yearOfBirth: e.target.value})}
+                        onChange={(e) => handleYearOfBirthChange(e.target.value)}
                       />
+                      {userData.yearOfBirth && (
+                        <p className="text-sm text-gray-600 dark:text-gray-400">
+                          Age: {calculateAge(userData.yearOfBirth)} years
+                        </p>
+                      )}
                     </div>
                     <div className="space-y-2">
                       <Label>Email</Label>
@@ -187,6 +196,46 @@ const Dashboard = () => {
                       />
                     </div>
                   </div>
+
+                  {/* Parent/Guardian Information - Only shown for users under 18 */}
+                  {showParentFields && (
+                    <div className="border-t-2 border-[#C1272D]/20 pt-6 mt-6">
+                      <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center">
+                        <AlertCircle className="h-5 w-5 mr-2 text-[#C1272D]" />
+                        Parent/Guardian Information (Required for users under 18)
+                      </h3>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                          <Label>Parent/Guardian Name *</Label>
+                          <Input 
+                            required={showParentFields}
+                            value={userData.parentName || ''}
+                            onChange={(e) => setUserData({...userData, parentName: e.target.value})}
+                            placeholder="Full name"
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label>Parent/Guardian Email *</Label>
+                          <Input 
+                            required={showParentFields}
+                            type="email"
+                            value={userData.parentEmail || ''}
+                            onChange={(e) => setUserData({...userData, parentEmail: e.target.value})}
+                            placeholder="parent@example.com"
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label>Parent/Guardian Phone</Label>
+                          <Input 
+                            type="tel"
+                            value={userData.parentPhone || ''}
+                            onChange={(e) => setUserData({...userData, parentPhone: e.target.value})}
+                            placeholder="+46 XX XXX XX XX"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  )}
 
                   <Button type="submit" className="bg-[#C1272D] hover:bg-[#8B1F1F]">
                     Save Changes
