@@ -491,5 +491,3 @@ def get_admin_event_participation_notification(user_name: str, user_email: str, 
     """
     
     return html, text
-
-    return html, text
