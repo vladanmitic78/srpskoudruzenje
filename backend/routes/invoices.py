@@ -105,4 +105,126 @@ async def delete_invoice(
     if result.deleted_count == 0:
         raise HTTPException(status_code=404, detail="Invoice not found")
     
+
+
+@router.post("/{invoice_id}/upload")
+async def upload_invoice_file(
+    invoice_id: str,
+    file: UploadFile = File(...),
+    admin: dict = Depends(get_admin_user),
+    request: Request = None
+):
+    """Upload invoice file (PDF, Word, etc.) - Admin only"""
+    db = request.app.state.db
+    
+    # Check if invoice exists
+    invoice = await db.invoices.find_one({"_id": invoice_id})
+    if not invoice:
+        raise HTTPException(status_code=404, detail="Invoice not found")
+    
+    # Validate file type
+    allowed_extensions = ['.pdf', '.doc', '.docx', '.xlsx', '.xls', '.jpg', '.jpeg', '.png']
+    file_ext = Path(file.filename).suffix.lower()
+    if file_ext not in allowed_extensions:
+        raise HTTPException(status_code=400, detail=f"File type {file_ext} not allowed. Allowed: {', '.join(allowed_extensions)}")
+    
+    # Create uploads directory if it doesn't exist
+    upload_dir = Path("/app/uploads/invoices")
+    upload_dir.mkdir(parents=True, exist_ok=True)
+    
+    # Generate unique filename
+    timestamp = datetime.utcnow().strftime("%Y%m%d_%H%M%S")
+    safe_filename = f"invoice_{invoice_id}_{timestamp}{file_ext}"
+    file_path = upload_dir / safe_filename
+    
+    # Save file
+    try:
+        with open(file_path, "wb") as buffer:
+            shutil.copyfileobj(file.file, buffer)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to upload file: {str(e)}")
+    
+    # Update invoice with file URL
+    file_url = f"/api/invoices/{invoice_id}/download"
+    await db.invoices.update_one(
+        {"_id": invoice_id},
+        {"$set": {"fileUrl": file_url, "fileName": safe_filename}}
+    )
+    
+    return {
+        "success": True,
+        "message": "Invoice file uploaded successfully",
+        "fileUrl": file_url,
+        "fileName": file.filename
+    }
+
+@router.get("/{invoice_id}/download")
+async def download_invoice_file(
+    invoice_id: str,
+    current_user: dict = Depends(get_current_user),
+    request: Request = None
+):
+    """Download invoice file"""
+    from fastapi.responses import FileResponse
+    db = request.app.state.db
+    
+    # Get invoice
+    invoice = await db.invoices.find_one({"_id": invoice_id})
+    if not invoice:
+        raise HTTPException(status_code=404, detail="Invoice not found")
+    
+    # Check if file exists
+    if not invoice.get("fileUrl") or not invoice.get("fileName"):
+        raise HTTPException(status_code=404, detail="Invoice file not found")
+    
+    # Check if user has access (own invoice or admin)
+    is_admin = current_user.get("role") in ["admin", "superadmin"]
+    is_owner = invoice["userId"] == current_user["_id"]
+    
+    if not is_admin and not is_owner:
+        raise HTTPException(status_code=403, detail="Access denied")
+    
+    # Get file path
+    file_path = Path("/app/uploads/invoices") / invoice["fileName"]
+    
+    if not file_path.exists():
+        raise HTTPException(status_code=404, detail="Invoice file not found on server")
+    
+    # Return file
+    return FileResponse(
+        path=str(file_path),
+        filename=invoice["fileName"],
+        media_type="application/octet-stream"
+    )
+
+@router.delete("/{invoice_id}/file")
+async def delete_invoice_file(
+    invoice_id: str,
+    admin: dict = Depends(get_admin_user),
+    request: Request = None
+):
+    """Delete uploaded invoice file - Admin only"""
+    db = request.app.state.db
+    
+    # Get invoice
+    invoice = await db.invoices.find_one({"_id": invoice_id})
+    if not invoice:
+        raise HTTPException(status_code=404, detail="Invoice not found")
+    
+    if not invoice.get("fileName"):
+        raise HTTPException(status_code=404, detail="No file to delete")
+    
+    # Delete file from filesystem
+    file_path = Path("/app/uploads/invoices") / invoice["fileName"]
+    if file_path.exists():
+        file_path.unlink()
+    
+    # Update invoice
+    await db.invoices.update_one(
+        {"_id": invoice_id},
+        {"$unset": {"fileUrl": "", "fileName": ""}}
+    )
+    
+    return {"success": True, "message": "Invoice file deleted successfully"}
+
     return {"success": True, "message": "Invoice deleted successfully"}
