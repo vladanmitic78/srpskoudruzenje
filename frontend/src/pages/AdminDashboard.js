@@ -167,6 +167,26 @@ const AdminDashboard = () => {
                   <button
                     onClick={async () => {
                       try {
+                        const blob = await adminAPI.exportMembersExcel();
+                        const url = window.URL.createObjectURL(blob);
+                        const a = document.createElement('a');
+                        a.href = url;
+                        a.download = `members_${new Date().toISOString().split('T')[0]}.xlsx`;
+                        document.body.appendChild(a);
+                        a.click();
+                        window.URL.revokeObjectURL(url);
+                        toast.success('Excel exported successfully');
+                      } catch (error) {
+                        toast.error('Failed to export Excel');
+                      }
+                    }}
+                    className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 text-sm"
+                  >
+                    Export Excel
+                  </button>
+                  <button
+                    onClick={async () => {
+                      try {
                         const blob = await adminAPI.exportMembersXML();
                         const url = window.URL.createObjectURL(blob);
                         const a = document.createElement('a');
