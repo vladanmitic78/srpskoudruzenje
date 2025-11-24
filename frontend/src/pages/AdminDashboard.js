@@ -28,14 +28,16 @@ const AdminDashboard = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [statsData, usersData, eventsData] = await Promise.all([
+        const [statsData, usersData, eventsData, invoicesData] = await Promise.all([
           adminAPI.getStatistics(),
           adminAPI.getUsers(),
-          eventsAPI.getAll()
+          eventsAPI.getAll(),
+          invoicesAPI.getAll()
         ]);
         setStatistics(statsData);
         setUsers(usersData.users || []);
         setEvents(eventsData.events || []);
+        setInvoices(invoicesData.invoices || []);
       } catch (error) {
         console.error('Error fetching admin data:', error);
         toast.error('Failed to load admin data');
@@ -48,6 +50,38 @@ const AdminDashboard = () => {
       fetchData();
     }
   }, [isAdmin]);
+
+  const handleCreateInvoice = async () => {
+    try {
+      await invoicesAPI.create(newInvoice);
+      toast.success('Invoice created successfully');
+      setCreateInvoiceOpen(false);
+      setNewInvoice({ userId: '', amount: '', dueDate: '', description: '' });
+      // Refresh invoices
+      const invoicesData = await invoicesAPI.getAll();
+      setInvoices(invoicesData.invoices || []);
+    } catch (error) {
+      toast.error('Failed to create invoice');
+    }
+  };
+
+  const handleMarkPaid = async (invoiceId) => {
+    try {
+      const paymentDate = new Date().toISOString().split('T')[0];
+      await invoicesAPI.markPaid(invoiceId, paymentDate);
+      toast.success('Invoice marked as paid');
+      // Refresh invoices
+      const invoicesData = await invoicesAPI.getAll();
+      setInvoices(invoicesData.invoices || []);
+    } catch (error) {
+      toast.error('Failed to update invoice');
+    }
+  };
+
+  const getUserName = (userId) => {
+    const user = users.find(u => u.id === userId);
+    return user ? user.fullName : 'Unknown User';
+  };
 
   if (!isAdmin) {
     return <Navigate to="/dashboard" />;
