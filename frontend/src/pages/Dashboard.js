@@ -22,6 +22,42 @@ const Dashboard = () => {
   const [showParentFields, setShowParentFields] = useState(false);
 
   useEffect(() => {
+    const processGoogleAuth = async () => {
+      // Check if there's a session_id in URL fragment (from Google OAuth)
+      const hash = window.location.hash;
+      if (hash && hash.includes('session_id=')) {
+        setLoading(true);
+        const sessionId = hash.split('session_id=')[1].split('&')[0];
+        
+        try {
+          // Call backend to process session_id
+          const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/auth/session`, {
+            method: 'POST',
+            headers: {
+              'X-Session-ID': sessionId,
+              'Content-Type': 'application/json'
+            },
+            credentials: 'include'  // Important for cookies
+          });
+          
+          if (response.ok) {
+            const data = await response.json();
+            // Update user data in context
+            setUserData(data.user);
+            toast.success('Successfully signed in with Google!');
+            
+            // Clean URL
+            window.history.replaceState({}, document.title, window.location.pathname);
+          } else {
+            toast.error('Failed to authenticate with Google');
+          }
+        } catch (error) {
+          console.error('Google auth error:', error);
+          toast.error('Failed to authenticate with Google');
+        }
+      }
+    };
+
     const fetchData = async () => {
       try {
         const [invoicesData, eventsData] = await Promise.all([
@@ -38,7 +74,8 @@ const Dashboard = () => {
       }
     };
     
-    fetchData();
+    // Process Google auth first, then fetch data
+    processGoogleAuth().then(() => fetchData());
   }, []);
 
   const calculateAge = (yearOfBirth) => {
