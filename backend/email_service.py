@@ -492,3 +492,117 @@ def get_admin_event_participation_notification(user_name: str, user_email: str, 
     """
     
     return html, text
+
+
+def get_invoice_upload_notification(user_name: str, invoice_description: str, amount: float, currency: str, due_date: str, download_link: str):
+    """Generate user notification email for new invoice upload"""
+    html = f"""
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <meta charset="UTF-8">
+        <style>
+            body {{ font-family: Arial, sans-serif; line-height: 1.6; color: #333; }}
+            .container {{ max-width: 600px; margin: 0 auto; padding: 20px; background-color: #f9f9f9; }}
+            .header {{ background-color: #C1272D; color: white; padding: 20px; text-align: center; }}
+            .content {{ background-color: white; padding: 30px; border-radius: 5px; margin-top: 20px; }}
+            .invoice-box {{ background-color: #f5f5f5; padding: 20px; border-left: 4px solid #C1272D; margin: 20px 0; }}
+            .invoice-box p {{ margin: 10px 0; }}
+            .amount {{ font-size: 24px; font-weight: bold; color: #C1272D; }}
+            .button {{ display: inline-block; padding: 12px 30px; background-color: #C1272D; color: white; text-decoration: none; border-radius: 5px; margin: 20px 0; }}
+            .button:hover {{ background-color: #8B1F1F; }}
+            .footer {{ text-align: center; margin-top: 30px; font-size: 12px; color: #666; }}
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <div class="header">
+                <h1>📄 Nova Faktura / Ny Faktura</h1>
+            </div>
+            <div class="content">
+                <h2>Srpski / Serbian</h2>
+                <p>Poštovani/a {user_name},</p>
+                <p>Imate novu fakturu za plaćanje.</p>
+                
+                <div class="invoice-box">
+                    <p><strong>Opis:</strong> {invoice_description}</p>
+                    <p><strong>Iznos:</strong> <span class="amount">{amount} {currency}</span></p>
+                    <p><strong>Rok plaćanja:</strong> {due_date}</p>
+                </div>
+
+                <p>Možete preuzeti fakturu klikom na dugme ispod:</p>
+                <center>
+                    <a href="{download_link}" class="button">📥 Preuzmite Fakturu</a>
+                </center>
+
+                <p style="margin-top: 20px; padding: 15px; background-color: #fff3cd; border-left: 4px solid #ffc107;">
+                    <strong>Napomena:</strong> Molimo vas da izvršite uplatu pre roka plaćanja kako biste izbegli dodatne troškove.
+                </p>
+
+                <hr style="margin: 30px 0; border: none; border-top: 1px solid #ddd;">
+
+                <h2>Svenska / Swedish</h2>
+                <p>Hej {user_name},</p>
+                <p>Du har fått en ny faktura för betalning.</p>
+                
+                <div class="invoice-box">
+                    <p><strong>Beskrivning:</strong> {invoice_description}</p>
+                    <p><strong>Belopp:</strong> <span class="amount">{amount} {currency}</span></p>
+                    <p><strong>Förfallodatum:</strong> {due_date}</p>
+                </div>
+
+                <p>Du kan ladda ner fakturan genom att klicka på knappen nedan:</p>
+                <center>
+                    <a href="{download_link}" class="button">📥 Ladda Ner Faktura</a>
+                </center>
+
+                <p style="margin-top: 20px; padding: 15px; background-color: #fff3cd; border-left: 4px solid #ffc107;">
+                    <strong>OBS:</strong> Vänligen betala före förfallodatumet för att undvika extra avgifter.
+                </p>
+            </div>
+            <div class="footer">
+                <p>Srpsko Kulturno Društvo Täby</p>
+                <p>Detta är ett automatiskt meddelande / Ovo je automatska poruka</p>
+            </div>
+        </div>
+    </body>
+    </html>
+    """
+    
+    text = f"""
+    Nova Faktura / Ny Faktura
+    
+    SRPSKI:
+    Poštovani/a {user_name},
+    
+    Imate novu fakturu za plaćanje.
+    
+    Opis: {invoice_description}
+    Iznos: {amount} {currency}
+    Rok plaćanja: {due_date}
+    
+    Preuzmite fakturu: {download_link}
+    
+    Napomena: Molimo vas da izvršite uplatu pre roka plaćanja.
+    
+    ---
+    
+    SVENSKA:
+    Hej {user_name},
+    
+    Du har fått en ny faktura för betalning.
+    
+    Beskrivning: {invoice_description}
+    Belopp: {amount} {currency}
+    Förfallodatum: {due_date}
+    
+    Ladda ner faktura: {download_link}
+    
+    OBS: Vänligen betala före förfallodatumet.
+    
+    ---
+    
+    Srpsko Kulturno Društvo Täby
+    """
+    
+    return html, text
