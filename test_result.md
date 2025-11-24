@@ -273,11 +273,11 @@ metadata:
 
 test_plan:
   current_focus:
-    - "Events API - Create Event"
-    - "Events API - Update/Cancel Event"
     - "Events Management UI - Add Event"
     - "Events Management UI - Edit Event"
     - "Events Management UI - Cancel Event"
+    - "Events Management UI - Delete Event"
+    - "Events Management UI - Display & Status"
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"
