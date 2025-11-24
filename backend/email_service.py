@@ -271,4 +271,115 @@ def get_contact_form_notification(name: str, email: str, topic: str, message: st
     </html>
     """
     
+
+
+def get_admin_new_user_notification_template(user_name: str, user_email: str, registration_date: str):
+    """Generate admin notification email for new user registration"""
+    html = f"""
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <meta charset="UTF-8">
+        <style>
+            body {{
+                font-family: Arial, sans-serif;
+                line-height: 1.6;
+                color: #333;
+            }}
+            .container {{
+                max-width: 600px;
+                margin: 0 auto;
+                padding: 20px;
+                background-color: #f9f9f9;
+            }}
+            .header {{
+                background-color: #C1272D;
+                color: white;
+                padding: 20px;
+                text-align: center;
+            }}
+            .content {{
+                background-color: white;
+                padding: 30px;
+                border-radius: 5px;
+                margin-top: 20px;
+            }}
+            .user-info {{
+                background-color: #f5f5f5;
+                padding: 15px;
+                border-left: 4px solid #C1272D;
+                margin: 20px 0;
+            }}
+            .user-info p {{
+                margin: 8px 0;
+            }}
+            .footer {{
+                text-align: center;
+                margin-top: 30px;
+                font-size: 12px;
+                color: #666;
+            }}
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <div class="header">
+                <h1>Nova Registracija Korisnika / Ny Användarregistrering</h1>
+            </div>
+            <div class="content">
+                <h2>Srpski / Serbian</h2>
+                <p>Novi korisnik se registrovao na platformi Srpsko Kulturno Društvo Täby.</p>
+                
+                <div class="user-info">
+                    <p><strong>Ime:</strong> {user_name}</p>
+                    <p><strong>Email:</strong> {user_email}</p>
+                    <p><strong>Datum registracije:</strong> {registration_date}</p>
+                </div>
+
+                <p>Molimo vas da pregledate korisničke podatke u admin panelu.</p>
+
+                <hr style="margin: 30px 0; border: none; border-top: 1px solid #ddd;">
+
+                <h2>Svenska / Swedish</h2>
+                <p>En ny användare har registrerat sig på Srpsko Kulturno Društvo Täby-plattformen.</p>
+                
+                <div class="user-info">
+                    <p><strong>Namn:</strong> {user_name}</p>
+                    <p><strong>E-post:</strong> {user_email}</p>
+                    <p><strong>Registreringsdatum:</strong> {registration_date}</p>
+                </div>
+
+                <p>Vänligen granska användardata i adminpanelen.</p>
+            </div>
+            <div class="footer">
+                <p>Detta är ett automatiskt meddelande från Srpsko Kulturno Društvo Täby</p>
+                <p>This is an automated message from Srpsko Kulturno Društvo Täby</p>
+            </div>
+        </div>
+    </body>
+    </html>
+    """
+    
+    text = f"""
+    Nova Registracija Korisnika / Ny Användarregistrering
+    
+    SRPSKI:
+    Novi korisnik se registrovao na platformi.
+    
+    Ime: {user_name}
+    Email: {user_email}
+    Datum registracije: {registration_date}
+    
+    ---
+    
+    SVENSKA:
+    En ny användare har registrerat sig på plattformen.
+    
+    Namn: {user_name}
+    E-post: {user_email}
+    Registreringsdatum: {registration_date}
+    """
+    
+    return html, text
+
     return html_content, f"Contact form: {name} - {topic}"
