@@ -85,6 +85,13 @@ const Dashboard = () => {
   };
 
   useEffect(() => {
+    // Update userData when user context changes
+    if (user) {
+      setUserData(user);
+    }
+  }, [user]);
+
+  useEffect(() => {
     // Check age on component mount
     if (userData.yearOfBirth) {
       const age = calculateAge(userData.yearOfBirth);
