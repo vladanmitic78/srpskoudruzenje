@@ -206,7 +206,8 @@ const AdminDashboard = () => {
                               onClick={async () => {
                                 try {
                                   const details = await adminAPI.getUserDetails(user.id);
-                                  alert(JSON.stringify(details, null, 2));
+                                  setSelectedUser(details);
+                                  setUserDetailsOpen(true);
                                 } catch (error) {
                                   toast.error('Failed to load user details');
                                 }
