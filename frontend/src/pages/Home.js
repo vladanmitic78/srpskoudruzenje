@@ -192,7 +192,9 @@ const Home = () => {
                     variant="link" 
                     className="text-[#C1272D] hover:text-[#8B1F1F] p-0 h-auto font-semibold"
                   >
-                    <Link to="/login">{t('home.seeMore')}</Link>
+                    <Link to={isAuthenticated ? "/dashboard" : "/login"}>
+                      {t('home.seeMore')}
+                    </Link>
                   </Button>
                 </CardContent>
               </Card>
