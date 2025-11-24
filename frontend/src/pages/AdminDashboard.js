@@ -472,6 +472,80 @@ const AdminDashboard = () => {
           </TabsContent>
         </Tabs>
 
+        {/* Create Invoice Dialog */}
+        <Dialog open={createInvoiceOpen} onOpenChange={setCreateInvoiceOpen}>
+          <DialogContent className="max-w-md">
+            <DialogHeader>
+              <DialogTitle>Create New Invoice</DialogTitle>
+            </DialogHeader>
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium mb-2">Select Member</label>
+                <select
+                  value={newInvoice.userId}
+                  onChange={(e) => setNewInvoice({...newInvoice, userId: e.target.value})}
+                  className="w-full p-2 border rounded dark:bg-gray-800 dark:border-gray-600"
+                >
+                  <option value="">Choose a member...</option>
+                  {users.filter(u => u.role === 'user').map(user => (
+                    <option key={user.id} value={user.id}>
+                      {user.fullName} ({user.email})
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium mb-2">Description</label>
+                <input
+                  type="text"
+                  value={newInvoice.description}
+                  onChange={(e) => setNewInvoice({...newInvoice, description: e.target.value})}
+                  placeholder="e.g., Membership Fee - January 2025"
+                  className="w-full p-2 border rounded dark:bg-gray-800 dark:border-gray-600"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium mb-2">Amount (SEK)</label>
+                <input
+                  type="number"
+                  value={newInvoice.amount}
+                  onChange={(e) => setNewInvoice({...newInvoice, amount: e.target.value})}
+                  placeholder="500"
+                  className="w-full p-2 border rounded dark:bg-gray-800 dark:border-gray-600"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium mb-2">Due Date</label>
+                <input
+                  type="date"
+                  value={newInvoice.dueDate}
+                  onChange={(e) => setNewInvoice({...newInvoice, dueDate: e.target.value})}
+                  className="w-full p-2 border rounded dark:bg-gray-800 dark:border-gray-600"
+                />
+              </div>
+
+              <div className="flex gap-2 pt-4">
+                <button
+                  onClick={handleCreateInvoice}
+                  disabled={!newInvoice.userId || !newInvoice.amount || !newInvoice.dueDate || !newInvoice.description}
+                  className="flex-1 px-4 py-2 bg-[#C1272D] text-white rounded hover:bg-[#8B1F1F] disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  Create Invoice
+                </button>
+                <button
+                  onClick={() => setCreateInvoiceOpen(false)}
+                  className="flex-1 px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700"
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          </DialogContent>
+        </Dialog>
+
         {/* User Details Dialog */}
         <Dialog open={userDetailsOpen} onOpenChange={setUserDetailsOpen}>
           <DialogContent className="max-w-3xl max-h-[80vh] overflow-y-auto">
