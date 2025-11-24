@@ -415,28 +415,109 @@ const AdminDashboard = () => {
           {/* Events Tab */}
           <TabsContent value="events">
             <Card className="border-2 border-[#C1272D]/20">
-              <CardHeader>
+              <CardHeader className="flex flex-row items-center justify-between">
                 <CardTitle>Events & Training Management</CardTitle>
+                <button
+                  onClick={() => {
+                    setEventForm({
+                      date: '',
+                      time: '',
+                      title: { 'sr-latin': '', 'sr-cyrillic': '', 'en': '', 'sv': '' },
+                      location: '',
+                      description: { 'sr-latin': '', 'sr-cyrillic': '', 'en': '', 'sv': '' },
+                      status: 'active',
+                      cancellationReason: ''
+                    });
+                    setCreateEventOpen(true);
+                  }}
+                  className="px-4 py-2 bg-[#C1272D] text-white rounded hover:bg-[#8B1F1F] transition-colors"
+                >
+                  + Add Event
+                </button>
               </CardHeader>
               <CardContent>
-                <p className="text-gray-600 dark:text-gray-400 mb-4">
-                  Event management will be fully implemented in Phase 2 with CRUD operations.
-                </p>
                 <div className="space-y-4">
-                  {events.map((event) => (
-                    <div key={event.id} className="p-4 border-2 border-gray-200 dark:border-gray-700 rounded-lg">
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <p className="font-semibold text-gray-900 dark:text-white">
-                            {event.title['en']}
-                          </p>
-                          <p className="text-sm text-gray-600 dark:text-gray-400">
-                            {event.date} at {event.time} - {event.location}
-                          </p>
+                  {events.length === 0 ? (
+                    <p className="text-gray-600 dark:text-gray-400 text-center py-8">
+                      No events scheduled. Click "Add Event" to create one.
+                    </p>
+                  ) : (
+                    events.map((event) => (
+                      <div key={event.id} className={`p-4 border-2 rounded-lg ${
+                        event.status === 'cancelled' 
+                          ? 'border-red-300 bg-red-50 dark:bg-red-900/10' 
+                          : 'border-gray-200 dark:border-gray-700'
+                      }`}>
+                        <div className="flex items-start justify-between">
+                          <div className="flex-1">
+                            <div className="flex items-center gap-2 mb-2">
+                              <p className="font-semibold text-lg text-gray-900 dark:text-white">
+                                {event.title['en']}
+                              </p>
+                              {event.status === 'cancelled' && (
+                                <span className="px-2 py-1 text-xs font-semibold bg-red-600 text-white rounded">
+                                  CANCELLED
+                                </span>
+                              )}
+                            </div>
+                            <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">
+                              📅 {event.date} at {event.time}
+                            </p>
+                            <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">
+                              📍 {event.location}
+                            </p>
+                            <p className="text-sm text-gray-600 dark:text-gray-400">
+                              {event.description['en']}
+                            </p>
+                            {event.status === 'cancelled' && event.cancellationReason && (
+                              <p className="text-sm text-red-600 dark:text-red-400 mt-2">
+                                <strong>Reason:</strong> {event.cancellationReason}
+                              </p>
+                            )}
+                            {event.participants && (
+                              <p className="text-sm text-gray-500 dark:text-gray-400 mt-2">
+                                👥 {event.participants.length} participant(s) confirmed
+                              </p>
+                            )}
+                          </div>
+                          <div className="flex gap-2 ml-4">
+                            <button
+                              onClick={() => {
+                                setSelectedEvent(event);
+                                setEventForm({
+                                  date: event.date,
+                                  time: event.time,
+                                  title: event.title,
+                                  location: event.location,
+                                  description: event.description,
+                                  status: event.status,
+                                  cancellationReason: event.cancellationReason || ''
+                                });
+                                setEditEventOpen(true);
+                              }}
+                              className="px-3 py-1 bg-blue-600 text-white text-sm rounded hover:bg-blue-700 transition-colors"
+                            >
+                              Edit
+                            </button>
+                            {event.status === 'active' && (
+                              <button
+                                onClick={() => handleCancelEvent(event)}
+                                className="px-3 py-1 bg-yellow-600 text-white text-sm rounded hover:bg-yellow-700 transition-colors"
+                              >
+                                Cancel
+                              </button>
+                            )}
+                            <button
+                              onClick={() => handleDeleteEvent(event.id)}
+                              className="px-3 py-1 bg-red-600 text-white text-sm rounded hover:bg-red-700 transition-colors"
+                            >
+                              Delete
+                            </button>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  ))}
+                    ))
+                  )}
                 </div>
               </CardContent>
             </Card>
