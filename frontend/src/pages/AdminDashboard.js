@@ -24,6 +24,18 @@ const AdminDashboard = () => {
     dueDate: '',
     description: ''
   });
+  const [createEventOpen, setCreateEventOpen] = useState(false);
+  const [editEventOpen, setEditEventOpen] = useState(false);
+  const [selectedEvent, setSelectedEvent] = useState(null);
+  const [eventForm, setEventForm] = useState({
+    date: '',
+    time: '',
+    title: { 'sr-latin': '', 'sr-cyrillic': '', 'en': '', 'sv': '' },
+    location: '',
+    description: { 'sr-latin': '', 'sr-cyrillic': '', 'en': '', 'sv': '' },
+    status: 'active',
+    cancellationReason: ''
+  });
 
   useEffect(() => {
     const fetchData = async () => {
