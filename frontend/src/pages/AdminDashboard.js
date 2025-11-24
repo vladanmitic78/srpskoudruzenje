@@ -284,6 +284,33 @@ const AdminDashboard = () => {
             </Card>
           </TabsContent>
 
+          {/* Content Management Tab */}
+          <TabsContent value="content">
+            <Card className="border-2 border-[#C1272D]/20">
+              <CardHeader>
+                <CardTitle>Content Management - Multi-Language Pages</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-gray-600 dark:text-gray-400 mb-4">
+                  Edit pages with support for Serbian Latin, Serbian Cyrillic, English, and Swedish.
+                </p>
+                <div className="space-y-4">
+                  {['home', 'gallery', 'about', 'serbian-story'].map(pageId => (
+                    <div key={pageId} className="p-4 border-2 border-gray-200 dark:border-gray-700 rounded-lg">
+                      <h3 className="font-semibold text-lg capitalize mb-2">{pageId.replace('-', ' ')}</h3>
+                      <button
+                        onClick={() => window.location.href = `/admin/content/${pageId}`}
+                        className="px-4 py-2 bg-[#C1272D] text-white rounded hover:bg-[#8B1F1F]"
+                      >
+                        Edit Page Content
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
           {/* Settings Tab */}
           <TabsContent value="settings">
             <Card className="border-2 border-[#C1272D]/20">
@@ -292,7 +319,7 @@ const AdminDashboard = () => {
               </CardHeader>
               <CardContent>
                 <p className="text-gray-600 dark:text-gray-400">
-                  Settings management (content editing, social media, bank details) will be implemented in Phase 2.
+                  General settings like contact info, social media, and bank details can be edited here.
                 </p>
               </CardContent>
             </Card>
