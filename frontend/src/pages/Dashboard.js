@@ -314,8 +314,8 @@ const Dashboard = () => {
                           : 'border-yellow-200 bg-yellow-50 dark:bg-yellow-900/20'
                       }`}
                     >
-                      <div className="flex items-center justify-between">
-                        <div>
+                      <div className="flex items-start justify-between">
+                        <div className="flex-1">
                           <p className="font-semibold text-gray-900 dark:text-white">
                             {invoice.description}
                           </p>
@@ -326,6 +326,15 @@ const Dashboard = () => {
                             <p className="text-sm text-gray-600 dark:text-gray-300">
                               Paid: {invoice.paymentDate}
                             </p>
+                          )}
+                          {invoice.fileUrl && (
+                            <a
+                              href={`${process.env.REACT_APP_BACKEND_URL}${invoice.fileUrl}`}
+                              download
+                              className="inline-block mt-2 px-3 py-1 bg-blue-600 text-white text-sm rounded hover:bg-blue-700"
+                            >
+                              📄 Download Invoice
+                            </a>
                           )}
                         </div>
                         <div className="text-right">
