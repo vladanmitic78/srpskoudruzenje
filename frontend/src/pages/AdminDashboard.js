@@ -825,6 +825,288 @@ const AdminDashboard = () => {
             )}
           </DialogContent>
         </Dialog>
+
+        {/* Create Event Dialog */}
+        <Dialog open={createEventOpen} onOpenChange={setCreateEventOpen}>
+          <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
+            <DialogHeader>
+              <DialogTitle>Create New Event/Training</DialogTitle>
+            </DialogHeader>
+            <div className="space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium mb-2">Date *</label>
+                  <input
+                    type="date"
+                    value={eventForm.date}
+                    onChange={(e) => setEventForm({...eventForm, date: e.target.value})}
+                    className="w-full p-2 border rounded dark:bg-gray-800 dark:border-gray-600"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-2">Time *</label>
+                  <input
+                    type="time"
+                    value={eventForm.time}
+                    onChange={(e) => setEventForm({...eventForm, time: e.target.value})}
+                    className="w-full p-2 border rounded dark:bg-gray-800 dark:border-gray-600"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium mb-2">Location *</label>
+                <input
+                  type="text"
+                  value={eventForm.location}
+                  onChange={(e) => setEventForm({...eventForm, location: e.target.value})}
+                  placeholder="e.g., Täby Sportshall"
+                  className="w-full p-2 border rounded dark:bg-gray-800 dark:border-gray-600"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium mb-2">Title (English) *</label>
+                <input
+                  type="text"
+                  value={eventForm.title.en}
+                  onChange={(e) => setEventForm({...eventForm, title: {...eventForm.title, en: e.target.value}})}
+                  placeholder="Training Session"
+                  className="w-full p-2 border rounded dark:bg-gray-800 dark:border-gray-600"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium mb-2">Title (Serbian Latin)</label>
+                <input
+                  type="text"
+                  value={eventForm.title['sr-latin']}
+                  onChange={(e) => setEventForm({...eventForm, title: {...eventForm.title, 'sr-latin': e.target.value}})}
+                  placeholder="Trening"
+                  className="w-full p-2 border rounded dark:bg-gray-800 dark:border-gray-600"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium mb-2">Title (Serbian Cyrillic)</label>
+                <input
+                  type="text"
+                  value={eventForm.title['sr-cyrillic']}
+                  onChange={(e) => setEventForm({...eventForm, title: {...eventForm.title, 'sr-cyrillic': e.target.value}})}
+                  placeholder="Тренинг"
+                  className="w-full p-2 border rounded dark:bg-gray-800 dark:border-gray-600"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium mb-2">Title (Swedish)</label>
+                <input
+                  type="text"
+                  value={eventForm.title.sv}
+                  onChange={(e) => setEventForm({...eventForm, title: {...eventForm.title, sv: e.target.value}})}
+                  placeholder="Träning"
+                  className="w-full p-2 border rounded dark:bg-gray-800 dark:border-gray-600"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium mb-2">Description (English) *</label>
+                <textarea
+                  value={eventForm.description.en}
+                  onChange={(e) => setEventForm({...eventForm, description: {...eventForm.description, en: e.target.value}})}
+                  placeholder="Details about the event..."
+                  rows="3"
+                  className="w-full p-2 border rounded dark:bg-gray-800 dark:border-gray-600"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium mb-2">Description (Serbian Latin)</label>
+                <textarea
+                  value={eventForm.description['sr-latin']}
+                  onChange={(e) => setEventForm({...eventForm, description: {...eventForm.description, 'sr-latin': e.target.value}})}
+                  placeholder="Detalji o događaju..."
+                  rows="3"
+                  className="w-full p-2 border rounded dark:bg-gray-800 dark:border-gray-600"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium mb-2">Description (Serbian Cyrillic)</label>
+                <textarea
+                  value={eventForm.description['sr-cyrillic']}
+                  onChange={(e) => setEventForm({...eventForm, description: {...eventForm.description, 'sr-cyrillic': e.target.value}})}
+                  placeholder="Детаљи о догађају..."
+                  rows="3"
+                  className="w-full p-2 border rounded dark:bg-gray-800 dark:border-gray-600"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium mb-2">Description (Swedish)</label>
+                <textarea
+                  value={eventForm.description.sv}
+                  onChange={(e) => setEventForm({...eventForm, description: {...eventForm.description, sv: e.target.value}})}
+                  placeholder="Information om evenemanget..."
+                  rows="3"
+                  className="w-full p-2 border rounded dark:bg-gray-800 dark:border-gray-600"
+                />
+              </div>
+
+              <div className="flex gap-2 pt-4">
+                <button
+                  onClick={handleCreateEvent}
+                  className="flex-1 px-4 py-2 bg-[#C1272D] text-white rounded hover:bg-[#8B1F1F]"
+                >
+                  Create Event
+                </button>
+                <button
+                  onClick={() => setCreateEventOpen(false)}
+                  className="flex-1 px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700"
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          </DialogContent>
+        </Dialog>
+
+        {/* Edit Event Dialog */}
+        <Dialog open={editEventOpen} onOpenChange={setEditEventOpen}>
+          <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
+            <DialogHeader>
+              <DialogTitle>Edit Event/Training</DialogTitle>
+            </DialogHeader>
+            <div className="space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium mb-2">Date *</label>
+                  <input
+                    type="date"
+                    value={eventForm.date}
+                    onChange={(e) => setEventForm({...eventForm, date: e.target.value})}
+                    className="w-full p-2 border rounded dark:bg-gray-800 dark:border-gray-600"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-2">Time *</label>
+                  <input
+                    type="time"
+                    value={eventForm.time}
+                    onChange={(e) => setEventForm({...eventForm, time: e.target.value})}
+                    className="w-full p-2 border rounded dark:bg-gray-800 dark:border-gray-600"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium mb-2">Location *</label>
+                <input
+                  type="text"
+                  value={eventForm.location}
+                  onChange={(e) => setEventForm({...eventForm, location: e.target.value})}
+                  placeholder="e.g., Täby Sportshall"
+                  className="w-full p-2 border rounded dark:bg-gray-800 dark:border-gray-600"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium mb-2">Title (English) *</label>
+                <input
+                  type="text"
+                  value={eventForm.title.en}
+                  onChange={(e) => setEventForm({...eventForm, title: {...eventForm.title, en: e.target.value}})}
+                  className="w-full p-2 border rounded dark:bg-gray-800 dark:border-gray-600"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium mb-2">Title (Serbian Latin)</label>
+                <input
+                  type="text"
+                  value={eventForm.title['sr-latin']}
+                  onChange={(e) => setEventForm({...eventForm, title: {...eventForm.title, 'sr-latin': e.target.value}})}
+                  className="w-full p-2 border rounded dark:bg-gray-800 dark:border-gray-600"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium mb-2">Title (Serbian Cyrillic)</label>
+                <input
+                  type="text"
+                  value={eventForm.title['sr-cyrillic']}
+                  onChange={(e) => setEventForm({...eventForm, title: {...eventForm.title, 'sr-cyrillic': e.target.value}})}
+                  className="w-full p-2 border rounded dark:bg-gray-800 dark:border-gray-600"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium mb-2">Title (Swedish)</label>
+                <input
+                  type="text"
+                  value={eventForm.title.sv}
+                  onChange={(e) => setEventForm({...eventForm, title: {...eventForm.title, sv: e.target.value}})}
+                  className="w-full p-2 border rounded dark:bg-gray-800 dark:border-gray-600"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium mb-2">Description (English) *</label>
+                <textarea
+                  value={eventForm.description.en}
+                  onChange={(e) => setEventForm({...eventForm, description: {...eventForm.description, en: e.target.value}})}
+                  rows="3"
+                  className="w-full p-2 border rounded dark:bg-gray-800 dark:border-gray-600"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium mb-2">Description (Serbian Latin)</label>
+                <textarea
+                  value={eventForm.description['sr-latin']}
+                  onChange={(e) => setEventForm({...eventForm, description: {...eventForm.description, 'sr-latin': e.target.value}})}
+                  rows="3"
+                  className="w-full p-2 border rounded dark:bg-gray-800 dark:border-gray-600"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium mb-2">Description (Serbian Cyrillic)</label>
+                <textarea
+                  value={eventForm.description['sr-cyrillic']}
+                  onChange={(e) => setEventForm({...eventForm, description: {...eventForm.description, 'sr-cyrillic': e.target.value}})}
+                  rows="3"
+                  className="w-full p-2 border rounded dark:bg-gray-800 dark:border-gray-600"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium mb-2">Description (Swedish)</label>
+                <textarea
+                  value={eventForm.description.sv}
+                  onChange={(e) => setEventForm({...eventForm, description: {...eventForm.description, sv: e.target.value}})}
+                  rows="3"
+                  className="w-full p-2 border rounded dark:bg-gray-800 dark:border-gray-600"
+                />
+              </div>
+
+              <div className="flex gap-2 pt-4">
+                <button
+                  onClick={handleUpdateEvent}
+                  className="flex-1 px-4 py-2 bg-[#C1272D] text-white rounded hover:bg-[#8B1F1F]"
+                >
+                  Update Event
+                </button>
+                <button
+                  onClick={() => setEditEventOpen(false)}
+                  className="flex-1 px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700"
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          </DialogContent>
+        </Dialog>
       </div>
     </div>
   );
