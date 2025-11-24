@@ -11,7 +11,7 @@ from typing import Optional, List
 import shutil
 
 # Import routes
-from routes import auth, users, news, events, invoices, gallery, stories, settings, admin, contact
+from routes import auth, users, news, events, invoices, gallery, stories, settings, admin, contact, content
 
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
