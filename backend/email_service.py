@@ -381,5 +381,3 @@ def get_admin_new_user_notification_template(user_name: str, user_email: str, re
     """
     
     return html, text
-
-    return html_content, f"Contact form: {name} - {topic}"
