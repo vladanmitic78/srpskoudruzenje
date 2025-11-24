@@ -186,10 +186,11 @@ const Home = () => {
                   </p>
                   
                   <Button 
+                    asChild
                     variant="link" 
                     className="text-[#C1272D] hover:text-[#8B1F1F] p-0 h-auto font-semibold"
                   >
-                    {t('home.seeMore')}
+                    <Link to="/login">{t('home.seeMore')}</Link>
                   </Button>
                 </CardContent>
               </Card>
