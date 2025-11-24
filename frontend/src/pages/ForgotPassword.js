@@ -42,18 +42,18 @@ const ForgotPassword = () => {
             />
           </div>
           <CardTitle className="text-2xl font-bold text-center text-[#8B1F1F] dark:text-[#C1272D]">
-            {t('auth.forgotPassword')}
+            {t('auth.forgotPasswordTitle')}
           </CardTitle>
         </CardHeader>
         <CardContent>
           {!submitted ? (
             <>
               <p className="text-center text-gray-600 dark:text-gray-400 mb-6">
-                Enter your email address and we'll send you instructions to reset your password.
+                {t('auth.forgotPasswordDesc')}
               </p>
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="email">Email</Label>
+                  <Label htmlFor="email">{t('auth.email')}</Label>
                   <Input
                     id="email"
                     type="email"
@@ -70,7 +70,7 @@ const ForgotPassword = () => {
                   disabled={loading}
                   className="w-full bg-[#C1272D] hover:bg-[#8B1F1F] text-white py-6"
                 >
-                  {loading ? 'Sending...' : 'Send Reset Link'}
+                  {loading ? t('auth.sending') : t('auth.sendResetLink')}
                 </Button>
               </form>
             </>
@@ -81,19 +81,19 @@ const ForgotPassword = () => {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
                 </svg>
               </div>
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Check your email</h3>
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white">{t('auth.checkEmail')}</h3>
               <p className="text-gray-600 dark:text-gray-400">
-                If an account exists with <strong>{email}</strong>, you will receive password reset instructions.
+                {t('auth.resetEmailSent')} <strong>{email}</strong>, {t('auth.resetEmailSent2')}
               </p>
               <p className="text-sm text-gray-500 dark:text-gray-500">
-                The link will expire in 1 hour.
+                {t('auth.linkExpires')}
               </p>
             </div>
           )}
 
           <div className="mt-6 text-center">
             <Link to="/login" className="text-sm text-[#C1272D] hover:underline">
-              Back to Login
+              {t('auth.backToLogin')}
             </Link>
           </div>
         </CardContent>
