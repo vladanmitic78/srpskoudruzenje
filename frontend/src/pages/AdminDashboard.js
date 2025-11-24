@@ -309,13 +309,93 @@ const AdminDashboard = () => {
           {/* Invoices Tab */}
           <TabsContent value="invoices">
             <Card className="border-2 border-[#C1272D]/20">
-              <CardHeader>
+              <CardHeader className="flex flex-row items-center justify-between">
                 <CardTitle>Invoices Management</CardTitle>
+                <button
+                  onClick={() => setCreateInvoiceOpen(true)}
+                  className="px-4 py-2 bg-[#C1272D] text-white rounded hover:bg-[#8B1F1F]"
+                >
+                  Create Invoice
+                </button>
               </CardHeader>
               <CardContent>
-                <p className="text-gray-600 dark:text-gray-400">
-                  Invoice management will be fully implemented in Phase 2 with backend integration.
-                </p>
+                <div className="space-y-4">
+                  {loading ? (
+                    <p className="text-gray-600 dark:text-gray-400">Loading invoices...</p>
+                  ) : invoices.length === 0 ? (
+                    <p className="text-gray-600 dark:text-gray-400">No invoices found.</p>
+                  ) : (
+                    <div className="overflow-x-auto">
+                      <table className="w-full border-collapse">
+                        <thead>
+                          <tr className="bg-gray-100 dark:bg-gray-800">
+                            <th className="p-3 text-left">Member</th>
+                            <th className="p-3 text-left">Description</th>
+                            <th className="p-3 text-left">Amount</th>
+                            <th className="p-3 text-left">Due Date</th>
+                            <th className="p-3 text-left">Payment Date</th>
+                            <th className="p-3 text-left">Status</th>
+                            <th className="p-3 text-left">Actions</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {invoices.map((invoice) => (
+                            <tr key={invoice.id} className="border-b border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800">
+                              <td className="p-3">
+                                <div>
+                                  <p className="font-medium">{getUserName(invoice.userId)}</p>
+                                  <p className="text-xs text-gray-500">{invoice.userId}</p>
+                                </div>
+                              </td>
+                              <td className="p-3">{invoice.description}</td>
+                              <td className="p-3 font-semibold">{invoice.amount} {invoice.currency}</td>
+                              <td className="p-3">{invoice.dueDate}</td>
+                              <td className="p-3">{invoice.paymentDate || '-'}</td>
+                              <td className="p-3">
+                                <span className={`px-3 py-1 rounded-full text-xs font-semibold ${
+                                  invoice.status === 'paid' 
+                                    ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' 
+                                    : 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200'
+                                }`}>
+                                  {invoice.status.toUpperCase()}
+                                </span>
+                              </td>
+                              <td className="p-3">
+                                <div className="flex gap-2">
+                                  {invoice.status === 'unpaid' && (
+                                    <button
+                                      onClick={() => handleMarkPaid(invoice.id)}
+                                      className="px-3 py-1 bg-green-600 text-white text-xs rounded hover:bg-green-700"
+                                    >
+                                      Mark Paid
+                                    </button>
+                                  )}
+                                  <button
+                                    onClick={async () => {
+                                      if (window.confirm('Delete this invoice?')) {
+                                        try {
+                                          await invoicesAPI.delete(invoice.id);
+                                          toast.success('Invoice deleted');
+                                          const invoicesData = await invoicesAPI.getAll();
+                                          setInvoices(invoicesData.invoices || []);
+                                        } catch (error) {
+                                          toast.error('Failed to delete invoice');
+                                        }
+                                      }
+                                    }}
+                                    className="px-3 py-1 bg-red-600 text-white text-xs rounded hover:bg-red-700"
+                                  >
+                                    Delete
+                                  </button>
+                                </div>
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  )}
+                </div>
               </CardContent>
             </Card>
           </TabsContent>
