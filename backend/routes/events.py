@@ -86,13 +86,38 @@ async def confirm_participation(
 ):
     """User confirms participation"""
     db = request.app.state.db
+    
+    # Get event details for email
+    event = await db.events.find_one({"_id": event_id})
+    if not event:
+        raise HTTPException(status_code=404, detail="Event not found")
+    
     result = await db.events.update_one(
         {"_id": event_id},
         {"$addToSet": {"participants": current_user["_id"]}}
     )
     
-    if result.matched_count == 0:
-        raise HTTPException(status_code=404, detail="Event not found")
+    # Send admin notification email
+    from email_service import send_email, get_admin_event_participation_notification
+    admin_email = "info@srpskoudruzenjetaby.se"
+    
+    try:
+        admin_html, admin_text = get_admin_event_participation_notification(
+            user_name=current_user.get("fullName", current_user.get("email")),
+            user_email=current_user.get("email"),
+            event_title=event["title"].get("en", "Event"),
+            event_date=event["date"],
+            event_time=event["time"],
+            action="confirmed"
+        )
+        await send_email(
+            admin_email,
+            "✓ Potvrđeno Učešće / Bekräftat Deltagande - SKUD Täby",
+            admin_html,
+            admin_text
+        )
+    except Exception as e:
+        logger.error(f"Failed to send admin participation notification: {str(e)}")
     
     return {"success": True, "confirmed": True}
 
