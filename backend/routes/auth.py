@@ -63,6 +63,26 @@ async def register(user_data: UserCreate, request: Request):
         text_content
     )
     
+    # Send admin notification email
+    admin_email = "info@srpskoudruzenjetaby.se"
+    registration_date = datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S UTC")
+    admin_html, admin_text = get_admin_new_user_notification_template(
+        user_data.fullName,
+        user_data.email,
+        registration_date
+    )
+    
+    # Send to admin (don't block registration if this fails)
+    try:
+        await send_email(
+            admin_email,
+            "Nova Registracija / Ny Registrering - SKUD Täby",
+            admin_html,
+            admin_text
+        )
+    except Exception as e:
+        logger.error(f"Failed to send admin notification: {str(e)}")
+    
     return RegisterResponse(
         success=True,
         message="Registration successful. Please check your email for verification.",
