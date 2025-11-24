@@ -91,6 +91,10 @@ async def upload_invoice_file(
     request: Request = None
 ):
     """Upload invoice file (PDF, Word, etc.) - Admin only"""
+    import logging
+    import os
+    logger = logging.getLogger(__name__)
+    
     db = request.app.state.db
     
     # Check if invoice exists
@@ -127,9 +131,41 @@ async def upload_invoice_file(
         {"$set": {"fileUrl": file_url, "fileName": safe_filename}}
     )
     
+    # Send email notification to user
+    try:
+        # Get user details
+        user = await db.users.find_one({"_id": invoice["userId"]})
+        if user and user.get("email"):
+            from email_service import send_email, get_invoice_upload_notification
+            
+            # Get backend URL for download link
+            backend_url = os.environ.get('REACT_APP_BACKEND_URL', 'http://localhost:8001')
+            frontend_url = backend_url.replace('/api', '')
+            download_link = f"{frontend_url}/dashboard"  # User goes to dashboard to see invoices
+            
+            html_content, text_content = get_invoice_upload_notification(
+                user_name=user.get("fullName", user.get("email")),
+                invoice_description=invoice["description"],
+                amount=invoice["amount"],
+                currency=invoice["currency"],
+                due_date=invoice["dueDate"],
+                download_link=download_link
+            )
+            
+            await send_email(
+                user["email"],
+                "Nova Faktura / Ny Faktura - SKUD Täby",
+                html_content,
+                text_content
+            )
+            logger.info(f"Invoice notification email sent to {user['email']}")
+    except Exception as e:
+        logger.error(f"Failed to send invoice notification email: {str(e)}")
+        # Don't fail the upload if email fails
+    
     return {
         "success": True,
-        "message": "Invoice file uploaded successfully",
+        "message": "Invoice file uploaded successfully and user notified",
         "fileUrl": file_url,
         "fileName": file.filename
     }
