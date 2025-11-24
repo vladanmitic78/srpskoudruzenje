@@ -265,6 +265,21 @@ frontend:
         agent: "main"
         comment: "API service layer already exists with all CRUD methods (getAll, create, update, delete) for events."
 
+  - task: "Home Page - Events 'Vidi više' Button"
+    implemented: true
+    working: true
+    file: "/app/frontend/src/pages/Home.js"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: false
+        agent: "user"
+        comment: "User reported: 'Vidi Više' button in Events section on Home page is not working"
+      - working: true
+        agent: "main"
+        comment: "Fixed: Button now has proper navigation. For unauthenticated users -> /login, for authenticated users -> /dashboard (where they can confirm participation). Added useAuth hook. Tested successfully - button navigates correctly."
+
 metadata:
   created_by: "main_agent"
   version: "1.0"
