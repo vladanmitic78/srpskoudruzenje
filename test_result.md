@@ -192,6 +192,30 @@ backend:
         agent: "testing"
         comment: "✅ TESTED: User participation endpoints work perfectly. POST /api/events/{id}/confirm adds user to participants. DELETE /api/events/{id}/confirm removes user. GET /api/events/{id}/participants (admin only) returns participant list. All authentication working correctly."
 
+  - task: "Password Reset API - Forgot Password"
+    implemented: true
+    working: "NA"
+    file: "/app/backend/routes/auth.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Backend endpoint already exists. POST /api/auth/forgot-password accepts email as query param. Generates reset token, stores in DB with 1-hour expiry. Sends email with reset link via existing email service."
+
+  - task: "Password Reset API - Reset Password"
+    implemented: true
+    working: "NA"
+    file: "/app/backend/routes/auth.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: true
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Backend endpoint already exists. POST /api/auth/reset-password accepts token and new_password as query params. Validates token and expiry. Updates hashed_password and clears reset token. Returns 400 if token invalid/expired."
+
 frontend:
   - task: "Events Management UI - Add Event"
     implemented: true
