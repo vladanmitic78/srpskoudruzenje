@@ -456,6 +456,37 @@ const AdminDashboard = () => {
                                 </span>
                               </td>
                               <td className="p-3">
+                                <div className="flex flex-col gap-1">
+                                  {invoice.fileUrl ? (
+                                    <>
+                                      <a
+                                        href={`${process.env.REACT_APP_BACKEND_URL}${invoice.fileUrl}`}
+                                        download
+                                        className="px-2 py-1 bg-blue-600 text-white text-xs rounded hover:bg-blue-700 text-center"
+                                      >
+                                        📄 Download
+                                      </a>
+                                      <button
+                                        onClick={() => handleDeleteInvoiceFile(invoice.id)}
+                                        className="px-2 py-1 bg-gray-600 text-white text-xs rounded hover:bg-gray-700"
+                                      >
+                                        🗑️ Remove
+                                      </button>
+                                    </>
+                                  ) : (
+                                    <label className="px-2 py-1 bg-purple-600 text-white text-xs rounded hover:bg-purple-700 cursor-pointer text-center">
+                                      📤 Upload
+                                      <input
+                                        type="file"
+                                        accept=".pdf,.doc,.docx,.xlsx,.xls,.jpg,.jpeg,.png"
+                                        onChange={(e) => handleUploadInvoiceFile(invoice.id, e)}
+                                        className="hidden"
+                                      />
+                                    </label>
+                                  )}
+                                </div>
+                              </td>
+                              <td className="p-3">
                                 <div className="flex gap-2">
                                   {invoice.status === 'unpaid' && (
                                     <button
