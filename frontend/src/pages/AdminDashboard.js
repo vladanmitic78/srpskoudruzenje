@@ -16,6 +16,14 @@ const AdminDashboard = () => {
   const [loading, setLoading] = useState(true);
   const [selectedUser, setSelectedUser] = useState(null);
   const [userDetailsOpen, setUserDetailsOpen] = useState(false);
+  const [invoices, setInvoices] = useState([]);
+  const [createInvoiceOpen, setCreateInvoiceOpen] = useState(false);
+  const [newInvoice, setNewInvoice] = useState({
+    userId: '',
+    amount: '',
+    dueDate: '',
+    description: ''
+  });
 
   useEffect(() => {
     const fetchData = async () => {
