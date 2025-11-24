@@ -7,7 +7,7 @@ import os
 
 from models import UserCreate, LoginRequest, RegisterResponse, UserResponse
 from auth_utils import hash_password, verify_password, create_access_token, generate_verification_token
-from email_service import send_email, get_verification_email_template
+from email_service import send_email, get_verification_email_template, get_admin_new_user_notification_template
 from dependencies import get_db
 
 router = APIRouter()
