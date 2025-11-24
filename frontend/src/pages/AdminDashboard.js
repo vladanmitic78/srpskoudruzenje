@@ -193,12 +193,43 @@ const AdminDashboard = () => {
                     users.filter(u => u.role === 'user').map((user) => (
                       <div key={user.id} className="p-4 border-2 border-gray-200 dark:border-gray-700 rounded-lg">
                         <div className="flex items-center justify-between">
-                          <div>
+                          <div className="flex-1">
                             <p className="font-semibold text-gray-900 dark:text-white">{user.fullName}</p>
                             <p className="text-sm text-gray-600 dark:text-gray-400">{user.email}</p>
+                            <p className="text-xs text-gray-500 dark:text-gray-400">{user.phone || 'No phone'}</p>
                           </div>
-                          <div className="text-sm text-gray-600 dark:text-gray-400">
-                            {user.phone || 'No phone'}
+                          <div className="flex gap-2">
+                            <button
+                              onClick={async () => {
+                                try {
+                                  const details = await adminAPI.getUserDetails(user.id);
+                                  alert(JSON.stringify(details, null, 2));
+                                } catch (error) {
+                                  toast.error('Failed to load user details');
+                                }
+                              }}
+                              className="px-3 py-1 bg-blue-600 text-white text-sm rounded hover:bg-blue-700"
+                            >
+                              View Details
+                            </button>
+                            <button
+                              onClick={async () => {
+                                if (window.confirm(`Are you sure you want to delete ${user.fullName}?`)) {
+                                  try {
+                                    await adminAPI.deleteUser(user.id);
+                                    toast.success('Member deleted successfully');
+                                    // Refresh users list
+                                    const usersData = await adminAPI.getUsers();
+                                    setUsers(usersData.users || []);
+                                  } catch (error) {
+                                    toast.error('Failed to delete member');
+                                  }
+                                }
+                              }}
+                              className="px-3 py-1 bg-red-600 text-white text-sm rounded hover:bg-red-700"
+                            >
+                              Delete
+                            </button>
                           </div>
                         </div>
                       </div>
