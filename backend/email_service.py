@@ -392,6 +392,7 @@ def get_admin_new_user_notification_template(user_name: str, user_email: str, re
     Registreringsdatum: {registration_date}
     """
     
+    return html, text
 
 
 def get_admin_event_participation_notification(user_name: str, user_email: str, event_title: str, event_date: str, event_time: str, action: str, reason: str = None):
