@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useLanguage } from '../context/LanguageContext';
+import { useAuth } from '../context/AuthContext';
 import { Button } from '../components/ui/button';
 import { Card, CardContent } from '../components/ui/card';
 import { Calendar, MapPin, ChevronRight } from 'lucide-react';
@@ -8,6 +9,7 @@ import { newsAPI, eventsAPI } from '../services/api';
 
 const Home = () => {
   const { language, t } = useLanguage();
+  const { isAuthenticated } = useAuth();
   const [showAllNews, setShowAllNews] = useState(false);
   const [news, setNews] = useState([]);
   const [events, setEvents] = useState([]);
