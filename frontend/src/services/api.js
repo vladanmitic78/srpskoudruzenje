@@ -138,8 +138,10 @@ export const eventsAPI = {
     return response.data;
   },
   
-  cancelParticipation: async (id) => {
-    const response = await api.delete(`/events/${id}/confirm`);
+  cancelParticipation: async (id, reason) => {
+    const response = await api.delete(`/events/${id}/confirm`, {
+      params: { reason }
+    });
     return response.data;
   },
   
