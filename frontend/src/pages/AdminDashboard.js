@@ -429,6 +429,7 @@ const AdminDashboard = () => {
                             <th className="p-3 text-left">Due Date</th>
                             <th className="p-3 text-left">Payment Date</th>
                             <th className="p-3 text-left">Status</th>
+                            <th className="p-3 text-left">File</th>
                             <th className="p-3 text-left">Actions</th>
                           </tr>
                         </thead>
