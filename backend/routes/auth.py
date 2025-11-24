@@ -187,4 +187,163 @@ async def reset_password(token: str, new_password: str, request: Request):
         }
     )
     
+
+
+# ==================== Emergent Auth Google OAuth ====================
+
+@router.post("/session")
+async def create_session_from_google(request: Request):
+    """Handle Google OAuth callback - Process session_id and create local session"""
+    db = request.app.state.db
+    
+    # Get session_id from header
+    session_id = request.headers.get("X-Session-ID")
+    if not session_id:
+        raise HTTPException(status_code=400, detail="Missing X-Session-ID header")
+    
+    # Call Emergent Auth API to get user data
+    async with httpx.AsyncClient() as client:
+        try:
+            response = await client.get(
+                "https://demobackend.emergentagent.com/auth/v1/env/oauth/session-data",
+                headers={"X-Session-ID": session_id}
+            )
+            response.raise_for_status()
+            auth_data = response.json()
+        except httpx.HTTPError as e:
+            raise HTTPException(status_code=400, detail=f"Failed to get session data: {str(e)}")
+    
+    # Extract user data from Emergent Auth response
+    user_email = auth_data.get("email")
+    user_name = auth_data.get("name")
+    user_picture = auth_data.get("picture")
+    session_token = auth_data.get("session_token")
+    
+    if not all([user_email, session_token]):
+        raise HTTPException(status_code=400, detail="Invalid session data")
+    
+    # Check if user exists
+    existing_user = await db.users.find_one({"email": user_email})
+    
+    if existing_user:
+        user_id = existing_user["_id"]
+    else:
+        # Create new user
+        user_id = f"user_{int(datetime.now(timezone.utc).timestamp() * 1000)}"
+        new_user = {
+            "_id": user_id,
+            "email": user_email,
+            "fullName": user_name or user_email.split('@')[0],
+            "username": user_email,
+            "picture": user_picture,
+            "role": "user",
+            "emailVerified": True,  # Google OAuth means email is verified
+            "createdAt": datetime.now(timezone.utc),
+            "googleAuth": True
+        }
+        await db.users.insert_one(new_user)
+    
+    # Store session in database
+    session_expiry = datetime.now(timezone.utc) + timedelta(days=7)
+    session_doc = {
+        "user_id": user_id,
+        "session_token": session_token,
+        "expires_at": session_expiry,
+        "created_at": datetime.now(timezone.utc)
+    }
+    
+    # Remove any existing sessions for this user
+    await db.user_sessions.delete_many({"user_id": user_id})
+    await db.user_sessions.insert_one(session_doc)
+    
+    # Set httpOnly cookie
+    response = JSONResponse({
+        "success": True,
+        "user": {
+            "id": user_id,
+            "email": user_email,
+            "fullName": user_name,
+            "picture": user_picture
+        }
+    })
+    response.set_cookie(
+        key="session_token",
+        value=session_token,
+        httponly=True,
+        secure=True,
+        samesite="none",
+        path="/",
+        max_age=7*24*60*60  # 7 days
+    )
+    
+    return response
+
+@router.get("/me")
+async def get_current_user(request: Request):
+    """Get current user from session token"""
+    db = request.app.state.db
+    
+    # Try to get session_token from cookie first, then Authorization header
+    session_token = request.cookies.get("session_token")
+    if not session_token:
+        auth_header = request.headers.get("Authorization")
+        if auth_header and auth_header.startswith("Bearer "):
+            session_token = auth_header.split(" ")[1]
+    
+    if not session_token:
+        raise HTTPException(status_code=401, detail="Not authenticated")
+    
+    # Find session in database
+    session = await db.user_sessions.find_one({"session_token": session_token})
+    if not session:
+        raise HTTPException(status_code=401, detail="Invalid session")
+    
+    # Check if session expired
+    if session["expires_at"] < datetime.now(timezone.utc):
+        await db.user_sessions.delete_one({"session_token": session_token})
+        raise HTTPException(status_code=401, detail="Session expired")
+    
+    # Get user data
+    user = await db.users.find_one({"_id": session["user_id"]})
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    # Return user data (excluding sensitive fields)
+    return {
+        "id": user["_id"],
+        "email": user.get("email"),
+        "fullName": user.get("fullName"),
+        "username": user.get("username"),
+        "picture": user.get("picture"),
+        "role": user.get("role", "user"),
+        "phone": user.get("phone"),
+        "address": user.get("address"),
+        "yearOfBirth": user.get("yearOfBirth"),
+        "parentName": user.get("parentName"),
+        "parentEmail": user.get("parentEmail"),
+        "parentPhone": user.get("parentPhone")
+    }
+
+@router.post("/logout")
+async def logout(request: Request):
+    """Logout user - delete session and clear cookie"""
+    db = request.app.state.db
+    
+    # Get session_token from cookie or header
+    session_token = request.cookies.get("session_token")
+    if not session_token:
+        auth_header = request.headers.get("Authorization")
+        if auth_header and auth_header.startswith("Bearer "):
+            session_token = auth_header.split(" ")[1]
+    
+    if session_token:
+        # Delete session from database
+        await db.user_sessions.delete_one({"session_token": session_token})
+    
+    # Clear cookie
+    response = JSONResponse({"success": True, "message": "Logged out successfully"})
+    response.delete_cookie(key="session_token", path="/")
+    
+    return response
+
     return {"success": True, "message": "Password reset successfully"}
