@@ -361,26 +361,46 @@ const Dashboard = () => {
                     <p className="text-gray-600 dark:text-gray-300">No trainings scheduled.</p>
                   ) : (
                     events.map((event) => (
-                    <div key={event.id} className="p-4 border-2 border-gray-200 dark:border-gray-700 rounded-lg">
+                    <div key={event.id} className={`p-4 border-2 rounded-lg ${
+                      confirmedEvents.includes(event.id) 
+                        ? 'border-green-200 bg-green-50 dark:bg-green-900/20' 
+                        : 'border-gray-200 dark:border-gray-700'
+                    }`}>
                       <div className="flex items-start justify-between">
                         <div className="flex-1">
                           <h3 className="font-semibold text-lg text-gray-900 dark:text-white">
                             {event.title[language]}
                           </h3>
                           <p className="text-sm text-gray-600 dark:text-gray-300 mt-1">
-                            {event.date} at {event.time}
+                            📅 {event.date} at {event.time}
                           </p>
                           <p className="text-sm text-gray-600 dark:text-gray-300">
-                            {event.location}
+                            📍 {event.location}
                           </p>
+                          {confirmedEvents.includes(event.id) && (
+                            <p className="text-sm text-green-600 dark:text-green-400 mt-2 font-semibold">
+                              ✓ You confirmed participation
+                            </p>
+                          )}
                         </div>
-                        <Button
-                          onClick={() => handleConfirmEvent(event.id)}
-                          variant={confirmedEvents.includes(event.id) ? 'default' : 'outline'}
-                          className={confirmedEvents.includes(event.id) ? 'bg-green-600 hover:bg-green-700' : ''}
-                        >
-                          {confirmedEvents.includes(event.id) ? '✓ Confirmed' : t('dashboard.confirmParticipation')}
-                        </Button>
+                        <div className="flex gap-2">
+                          {!confirmedEvents.includes(event.id) ? (
+                            <Button
+                              onClick={() => handleConfirmEvent(event.id)}
+                              className="bg-green-600 hover:bg-green-700 text-white"
+                            >
+                              ✓ Confirm
+                            </Button>
+                          ) : (
+                            <Button
+                              onClick={() => handleCancelEvent(event.id)}
+                              variant="destructive"
+                              className="bg-red-600 hover:bg-red-700"
+                            >
+                              ✗ Cancel
+                            </Button>
+                          )}
+                        </div>
                       </div>
                     </div>
                   )))}
