@@ -67,31 +67,6 @@ async def mark_invoice_paid(
     
     return {"success": True, "message": "Invoice marked as paid"}
 
-@router.post("/{invoice_id}/upload")
-async def upload_invoice_file(
-    invoice_id: str,
-    file: UploadFile = File(...),
-    admin: dict = Depends(get_admin_user),
-    request: Request = None
-):
-    """Upload invoice file (Admin only)"""
-    db = request.app.state.db
-    upload_dir = request.app.state.upload_dir
-    
-    # Save file
-    file_path = upload_dir / "invoices" / f"{invoice_id}_{file.filename}"
-    with file_path.open("wb") as buffer:
-        shutil.copyfileobj(file.file, buffer)
-    
-    # Update invoice with file URL
-    file_url = f"/api/files/invoices/{file_path.name}"
-    await db.invoices.update_one(
-        {"_id": invoice_id},
-        {"$set": {"fileUrl": file_url}}
-    )
-    
-    return {"success": True, "fileUrl": file_url}
-
 @router.delete("/{invoice_id}")
 async def delete_invoice(
     invoice_id: str,
@@ -105,6 +80,7 @@ async def delete_invoice(
     if result.deleted_count == 0:
         raise HTTPException(status_code=404, detail="Invoice not found")
     
+    return {"success": True, "message": "Invoice deleted"}
 
 
 @router.post("/{invoice_id}/upload")
