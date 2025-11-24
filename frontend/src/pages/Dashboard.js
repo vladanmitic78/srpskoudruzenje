@@ -41,8 +41,46 @@ const Dashboard = () => {
     fetchData();
   }, []);
 
+  const calculateAge = (yearOfBirth) => {
+    if (!yearOfBirth) return null;
+    const currentYear = new Date().getFullYear();
+    return currentYear - parseInt(yearOfBirth);
+  };
+
+  const handleYearOfBirthChange = (year) => {
+    setUserData({...userData, yearOfBirth: year});
+    const age = calculateAge(year);
+    if (age !== null && age < 18) {
+      setShowParentFields(true);
+    } else {
+      setShowParentFields(false);
+    }
+  };
+
+  useEffect(() => {
+    // Check age on component mount
+    if (userData.yearOfBirth) {
+      const age = calculateAge(userData.yearOfBirth);
+      if (age !== null && age < 18) {
+        setShowParentFields(true);
+      }
+    }
+  }, [userData.yearOfBirth]);
+
   const handleSaveProfile = async () => {
     try {
+      // Validation
+      if (!userData.yearOfBirth) {
+        toast.error('Year of birth is required');
+        return;
+      }
+      
+      const age = calculateAge(userData.yearOfBirth);
+      if (age < 18 && (!userData.parentName || !userData.parentEmail)) {
+        toast.error('Parent information is required for users under 18');
+        return;
+      }
+
       await userAPI.updateProfile(userData);
       toast.success('Profile updated successfully!');
     } catch (error) {
