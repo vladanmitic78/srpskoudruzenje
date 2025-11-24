@@ -19,6 +19,7 @@ const Dashboard = () => {
   const [events, setEvents] = useState([]);
   const [confirmedEvents, setConfirmedEvents] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [showParentFields, setShowParentFields] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
