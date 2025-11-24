@@ -392,4 +392,104 @@ def get_admin_new_user_notification_template(user_name: str, user_email: str, re
     Registreringsdatum: {registration_date}
     """
     
+
+
+def get_admin_event_participation_notification(user_name: str, user_email: str, event_title: str, event_date: str, event_time: str, action: str, reason: str = None):
+    """Generate admin notification for user event participation (confirm/cancel)
+    
+    Args:
+        action: 'confirmed' or 'cancelled'
+        reason: Only for cancelled actions
+    """
+    action_sr = "potvrdio učešće" if action == "confirmed" else "otkazao učešće"
+    action_sv = "bekräftat deltagande" if action == "confirmed" else "avbokad deltagande"
+    
+    reason_html = ""
+    reason_text = ""
+    if reason:
+        reason_html = f"""
+        <div style="background-color: #fff3cd; padding: 15px; border-left: 4px solid #ffc107; margin: 15px 0;">
+            <p style="margin: 0;"><strong>Razlog otkazivanja / Anledning till avbokning:</strong></p>
+            <p style="margin: 8px 0 0 0;">{reason}</p>
+        </div>
+        """
+        reason_text = f"\n\nRazlog / Anledning:\n{reason}\n"
+    
+    html = f"""
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <meta charset="UTF-8">
+        <style>
+            body {{ font-family: Arial, sans-serif; line-height: 1.6; color: #333; }}
+            .container {{ max-width: 600px; margin: 0 auto; padding: 20px; background-color: #f9f9f9; }}
+            .header {{ background-color: {'#28a745' if action == 'confirmed' else '#dc3545'}; color: white; padding: 20px; text-align: center; }}
+            .content {{ background-color: white; padding: 30px; border-radius: 5px; margin-top: 20px; }}
+            .info-box {{ background-color: #f5f5f5; padding: 15px; border-left: 4px solid #C1272D; margin: 20px 0; }}
+            .info-box p {{ margin: 8px 0; }}
+            .footer {{ text-align: center; margin-top: 30px; font-size: 12px; color: #666; }}
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <div class="header">
+                <h1>{'✓' if action == 'confirmed' else '✗'} Učešće na Događaju / Evenemang Deltagande</h1>
+            </div>
+            <div class="content">
+                <h2>Srpski / Serbian</h2>
+                <p>Korisnik je <strong>{action_sr}</strong> na događaju.</p>
+                
+                <div class="info-box">
+                    <p><strong>Korisnik:</strong> {user_name}</p>
+                    <p><strong>Email:</strong> {user_email}</p>
+                    <p><strong>Događaj:</strong> {event_title}</p>
+                    <p><strong>Datum:</strong> {event_date} u {event_time}</p>
+                </div>
+                {reason_html}
+
+                <hr style="margin: 30px 0; border: none; border-top: 1px solid #ddd;">
+
+                <h2>Svenska / Swedish</h2>
+                <p>Användaren har <strong>{action_sv}</strong> för evenemanget.</p>
+                
+                <div class="info-box">
+                    <p><strong>Användare:</strong> {user_name}</p>
+                    <p><strong>E-post:</strong> {user_email}</p>
+                    <p><strong>Evenemang:</strong> {event_title}</p>
+                    <p><strong>Datum:</strong> {event_date} kl {event_time}</p>
+                </div>
+            </div>
+            <div class="footer">
+                <p>Detta är ett automatiskt meddelande från Srpsko Kulturno Društvo Täby</p>
+            </div>
+        </div>
+    </body>
+    </html>
+    """
+    
+    text = f"""
+    {'✓' if action == 'confirmed' else '✗'} Učešće na Događaju / Evenemang Deltagande
+    
+    SRPSKI:
+    Korisnik je {action_sr} na događaju.
+    
+    Korisnik: {user_name}
+    Email: {user_email}
+    Događaj: {event_title}
+    Datum: {event_date} u {event_time}
+    {reason_text}
+    
+    ---
+    
+    SVENSKA:
+    Användaren har {action_sv} för evenemanget.
+    
+    Användare: {user_name}
+    E-post: {user_email}
+    Evenemang: {event_title}
+    Datum: {event_date} kl {event_time}
+    """
+    
+    return html, text
+
     return html, text
