@@ -14,6 +14,8 @@ const AdminDashboard = () => {
   const [users, setUsers] = useState([]);
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [selectedUser, setSelectedUser] = useState(null);
+  const [userDetailsOpen, setUserDetailsOpen] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
