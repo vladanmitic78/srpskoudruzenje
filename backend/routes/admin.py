@@ -81,10 +81,10 @@ async def suspend_user(
 @router.delete("/users/{user_id}")
 async def delete_user(
     user_id: str,
-    superadmin: dict = Depends(get_superadmin_user),
+    admin: dict = Depends(get_admin_user),
     request: Request = None
 ):
-    """Delete user account (Super Admin only)"""
+    """Delete user account (Admin only)"""
     db = request.app.state.db
     
     # Don't allow deleting superadmin
@@ -92,9 +92,70 @@ async def delete_user(
     if user and user.get("role") == "superadmin":
         raise HTTPException(status_code=403, detail="Cannot delete super admin")
     
+    # Delete user
     result = await db.users.delete_one({"_id": user_id})
     
     if result.deleted_count == 0:
         raise HTTPException(status_code=404, detail="User not found")
     
-    return {"success": True, "message": "User deleted successfully"}
+    # Also delete related data
+    await db.invoices.delete_many({"userId": user_id})
+    await db.cancellation_requests.delete_many({"userId": user_id})
+    
+    return {"success": True, "message": "User and related data deleted successfully"}
+
+@router.get("/export/members/pdf")
+async def export_members_pdf(admin: dict = Depends(get_admin_user), request: Request = None):
+    """Export members to PDF"""
+    db = request.app.state.db
+    
+    users = await db.users.find({"role": "user"}).to_list(length=10000)
+    pdf_buffer = generate_members_pdf(users)
+    
+    return StreamingResponse(
+        pdf_buffer,
+        media_type="application/pdf",
+        headers={"Content-Disposition": f"attachment; filename=members_{datetime.utcnow().strftime('%Y%m%d')}.pdf"}
+    )
+
+@router.get("/export/members/xml")
+async def export_members_xml(admin: dict = Depends(get_admin_user), request: Request = None):
+    """Export members to XML"""
+    db = request.app.state.db
+    
+    users = await db.users.find({"role": "user"}).to_list(length=10000)
+    xml_buffer = generate_members_xml(users)
+    
+    return StreamingResponse(
+        xml_buffer,
+        media_type="application/xml",
+        headers={"Content-Disposition": f"attachment; filename=members_{datetime.utcnow().strftime('%Y%m%d')}.xml"}
+    )
+
+@router.get("/users/{user_id}/details")
+async def get_user_details(
+    user_id: str,
+    admin: dict = Depends(get_admin_user),
+    request: Request = None
+):
+    """Get full user details including parent info"""
+    db = request.app.state.db
+    
+    user = await db.users.find_one({"_id": user_id})
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    # Remove sensitive data
+    user.pop("hashed_password", None)
+    user.pop("verificationToken", None)
+    user.pop("resetToken", None)
+    user["id"] = str(user.pop("_id"))
+    
+    # Get user's invoices
+    invoices = await db.invoices.find({"userId": user_id}).to_list(length=100)
+    
+    return {
+        "user": user,
+        "invoices": invoices,
+        "invoiceCount": len(invoices)
+    }
