@@ -1,0 +1,373 @@
+#!/usr/bin/env python3
+"""
+Backend API Testing for Serbian Cultural Association Events Management
+Tests all CRUD operations for events with authentication and email notifications
+"""
+
+import asyncio
+import aiohttp
+import json
+import os
+from datetime import datetime, timedelta
+import sys
+
+# Get backend URL from environment
+BACKEND_URL = "https://taby-serb-community.preview.emergentagent.com/api"
+
+class EventsAPITester:
+    def __init__(self):
+        self.session = None
+        self.admin_token = None
+        self.user_token = None
+        self.test_event_id = None
+        self.results = {
+            "passed": 0,
+            "failed": 0,
+            "errors": []
+        }
+
+    async def setup_session(self):
+        """Initialize HTTP session"""
+        self.session = aiohttp.ClientSession()
+
+    async def cleanup_session(self):
+        """Close HTTP session"""
+        if self.session:
+            await self.session.close()
+
+    def log_result(self, test_name, success, message=""):
+        """Log test result"""
+        status = "✅ PASS" if success else "❌ FAIL"
+        print(f"{status}: {test_name}")
+        if message:
+            print(f"   {message}")
+        
+        if success:
+            self.results["passed"] += 1
+        else:
+            self.results["failed"] += 1
+            self.results["errors"].append(f"{test_name}: {message}")
+
+    async def authenticate_admin(self):
+        """Authenticate as admin user"""
+        try:
+            # Try to login with the superadmin credentials from server.py
+            login_data = {
+                "username": "vladanmitic@gmail.com",
+                "password": "Admin123!"
+            }
+            
+            async with self.session.post(f"{BACKEND_URL}/auth/login", json=login_data) as response:
+                if response.status == 200:
+                    data = await response.json()
+                    if data.get("success"):
+                        self.admin_token = data["token"]
+                        self.log_result("Admin Authentication", True, f"Logged in as {data['user']['fullName']}")
+                        return True
+                    else:
+                        self.log_result("Admin Authentication", False, "Login failed - invalid response")
+                        return False
+                else:
+                    text = await response.text()
+                    self.log_result("Admin Authentication", False, f"HTTP {response.status}: {text}")
+                    return False
+        except Exception as e:
+            self.log_result("Admin Authentication", False, f"Exception: {str(e)}")
+            return False
+
+    async def test_get_all_events(self):
+        """Test GET /api/events/ - Get all events"""
+        try:
+            async with self.session.get(f"{BACKEND_URL}/events/") as response:
+                if response.status == 200:
+                    data = await response.json()
+                    if "events" in data and isinstance(data["events"], list):
+                        self.log_result("GET All Events", True, f"Retrieved {len(data['events'])} events")
+                        return True
+                    else:
+                        self.log_result("GET All Events", False, "Invalid response format")
+                        return False
+                else:
+                    text = await response.text()
+                    self.log_result("GET All Events", False, f"HTTP {response.status}: {text}")
+                    return False
+        except Exception as e:
+            self.log_result("GET All Events", False, f"Exception: {str(e)}")
+            return False
+
+    async def test_create_event(self):
+        """Test POST /api/events/ - Create new event"""
+        if not self.admin_token:
+            self.log_result("Create Event", False, "No admin token available")
+            return False
+
+        try:
+            # Test event data with multi-language support
+            event_data = {
+                "date": "2025-02-15",
+                "time": "18:00",
+                "title": {
+                    "sr-latin": "Trening",
+                    "sr-cyrillic": "Тренинг",
+                    "en": "Training Session",
+                    "sv": "Träning"
+                },
+                "location": "Täby Sportshall",
+                "description": {
+                    "sr-latin": "Redovan trening",
+                    "sr-cyrillic": "Редован тренинг",
+                    "en": "Regular training session",
+                    "sv": "Vanlig träning"
+                },
+                "status": "active"
+            }
+
+            headers = {"Authorization": f"Bearer {self.admin_token}"}
+            async with self.session.post(f"{BACKEND_URL}/events/", json=event_data, headers=headers) as response:
+                if response.status == 200:
+                    data = await response.json()
+                    if "id" in data:
+                        self.test_event_id = data["id"]
+                        self.log_result("Create Event", True, f"Created event with ID: {data['id']}")
+                        return True
+                    else:
+                        self.log_result("Create Event", False, "No event ID in response")
+                        return False
+                else:
+                    text = await response.text()
+                    self.log_result("Create Event", False, f"HTTP {response.status}: {text}")
+                    return False
+        except Exception as e:
+            self.log_result("Create Event", False, f"Exception: {str(e)}")
+            return False
+
+    async def test_create_event_unauthorized(self):
+        """Test POST /api/events/ without authentication - should fail"""
+        try:
+            event_data = {
+                "date": "2025-02-16",
+                "time": "19:00",
+                "title": {"en": "Test Event"},
+                "location": "Test Location",
+                "description": {"en": "Test Description"},
+                "status": "active"
+            }
+
+            async with self.session.post(f"{BACKEND_URL}/events/", json=event_data) as response:
+                if response.status == 401 or response.status == 403:
+                    self.log_result("Create Event (Unauthorized)", True, "Correctly rejected unauthorized request")
+                    return True
+                else:
+                    self.log_result("Create Event (Unauthorized)", False, f"Expected 401/403, got {response.status}")
+                    return False
+        except Exception as e:
+            self.log_result("Create Event (Unauthorized)", False, f"Exception: {str(e)}")
+            return False
+
+    async def test_update_event(self):
+        """Test PUT /api/events/{event_id} - Update event"""
+        if not self.admin_token or not self.test_event_id:
+            self.log_result("Update Event", False, "No admin token or test event ID available")
+            return False
+
+        try:
+            update_data = {
+                "location": "Updated Location - Täby Centrum",
+                "description": {
+                    "sr-latin": "Ažurirani opis treninga",
+                    "sr-cyrillic": "Ажурирани опис тренинга",
+                    "en": "Updated training description",
+                    "sv": "Uppdaterad träningsbeskrivning"
+                }
+            }
+
+            headers = {"Authorization": f"Bearer {self.admin_token}"}
+            async with self.session.put(f"{BACKEND_URL}/events/{self.test_event_id}", json=update_data, headers=headers) as response:
+                if response.status == 200:
+                    data = await response.json()
+                    if data.get("success"):
+                        self.log_result("Update Event", True, "Event updated successfully")
+                        return True
+                    else:
+                        self.log_result("Update Event", False, "Update failed - invalid response")
+                        return False
+                else:
+                    text = await response.text()
+                    self.log_result("Update Event", False, f"HTTP {response.status}: {text}")
+                    return False
+        except Exception as e:
+            self.log_result("Update Event", False, f"Exception: {str(e)}")
+            return False
+
+    async def test_cancel_event(self):
+        """Test PUT /api/events/{event_id} - Cancel event with email notifications"""
+        if not self.admin_token or not self.test_event_id:
+            self.log_result("Cancel Event", False, "No admin token or test event ID available")
+            return False
+
+        try:
+            cancel_data = {
+                "status": "cancelled",
+                "cancellationReason": "Bad weather conditions - testing email notifications"
+            }
+
+            headers = {"Authorization": f"Bearer {self.admin_token}"}
+            async with self.session.put(f"{BACKEND_URL}/events/{self.test_event_id}", json=cancel_data, headers=headers) as response:
+                if response.status == 200:
+                    data = await response.json()
+                    if data.get("success"):
+                        self.log_result("Cancel Event", True, "Event cancelled successfully (email notifications should be sent)")
+                        return True
+                    else:
+                        self.log_result("Cancel Event", False, "Cancellation failed - invalid response")
+                        return False
+                else:
+                    text = await response.text()
+                    self.log_result("Cancel Event", False, f"HTTP {response.status}: {text}")
+                    return False
+        except Exception as e:
+            self.log_result("Cancel Event", False, f"Exception: {str(e)}")
+            return False
+
+    async def test_get_participants(self):
+        """Test GET /api/events/{event_id}/participants - Get participant list"""
+        if not self.admin_token or not self.test_event_id:
+            self.log_result("Get Participants", False, "No admin token or test event ID available")
+            return False
+
+        try:
+            headers = {"Authorization": f"Bearer {self.admin_token}"}
+            async with self.session.get(f"{BACKEND_URL}/events/{self.test_event_id}/participants", headers=headers) as response:
+                if response.status == 200:
+                    data = await response.json()
+                    if "participants" in data and isinstance(data["participants"], list):
+                        self.log_result("Get Participants", True, f"Retrieved {len(data['participants'])} participants")
+                        return True
+                    else:
+                        self.log_result("Get Participants", False, "Invalid response format")
+                        return False
+                else:
+                    text = await response.text()
+                    self.log_result("Get Participants", False, f"HTTP {response.status}: {text}")
+                    return False
+        except Exception as e:
+            self.log_result("Get Participants", False, f"Exception: {str(e)}")
+            return False
+
+    async def test_delete_event(self):
+        """Test DELETE /api/events/{event_id} - Delete event"""
+        if not self.admin_token or not self.test_event_id:
+            self.log_result("Delete Event", False, "No admin token or test event ID available")
+            return False
+
+        try:
+            headers = {"Authorization": f"Bearer {self.admin_token}"}
+            async with self.session.delete(f"{BACKEND_URL}/events/{self.test_event_id}", headers=headers) as response:
+                if response.status == 200:
+                    data = await response.json()
+                    if data.get("success"):
+                        self.log_result("Delete Event", True, "Event deleted successfully")
+                        return True
+                    else:
+                        self.log_result("Delete Event", False, "Deletion failed - invalid response")
+                        return False
+                else:
+                    text = await response.text()
+                    self.log_result("Delete Event", False, f"HTTP {response.status}: {text}")
+                    return False
+        except Exception as e:
+            self.log_result("Delete Event", False, f"Exception: {str(e)}")
+            return False
+
+    async def test_delete_nonexistent_event(self):
+        """Test DELETE /api/events/{event_id} - Delete non-existent event"""
+        if not self.admin_token:
+            self.log_result("Delete Non-existent Event", False, "No admin token available")
+            return False
+
+        try:
+            fake_event_id = "nonexistent_event_123"
+            headers = {"Authorization": f"Bearer {self.admin_token}"}
+            async with self.session.delete(f"{BACKEND_URL}/events/{fake_event_id}", headers=headers) as response:
+                if response.status == 404:
+                    self.log_result("Delete Non-existent Event", True, "Correctly returned 404 for non-existent event")
+                    return True
+                else:
+                    text = await response.text()
+                    self.log_result("Delete Non-existent Event", False, f"Expected 404, got {response.status}: {text}")
+                    return False
+        except Exception as e:
+            self.log_result("Delete Non-existent Event", False, f"Exception: {str(e)}")
+            return False
+
+    async def test_backend_health(self):
+        """Test backend health endpoint"""
+        try:
+            async with self.session.get(f"{BACKEND_URL}/") as response:
+                if response.status == 200:
+                    data = await response.json()
+                    if data.get("status") == "ok":
+                        self.log_result("Backend Health", True, f"Backend running: {data.get('message', 'OK')}")
+                        return True
+                    else:
+                        self.log_result("Backend Health", False, "Backend not healthy")
+                        return False
+                else:
+                    text = await response.text()
+                    self.log_result("Backend Health", False, f"HTTP {response.status}: {text}")
+                    return False
+        except Exception as e:
+            self.log_result("Backend Health", False, f"Exception: {str(e)}")
+            return False
+
+    async def run_all_tests(self):
+        """Run all tests in sequence"""
+        print("🚀 Starting Events API Testing...")
+        print(f"Backend URL: {BACKEND_URL}")
+        print("=" * 60)
+
+        await self.setup_session()
+
+        try:
+            # Test sequence
+            await self.test_backend_health()
+            await self.authenticate_admin()
+            await self.test_get_all_events()
+            await self.test_create_event_unauthorized()
+            await self.test_create_event()
+            await self.test_update_event()
+            await self.test_get_participants()
+            await self.test_cancel_event()
+            await self.test_delete_event()
+            await self.test_delete_nonexistent_event()
+
+        finally:
+            await self.cleanup_session()
+
+        # Print summary
+        print("=" * 60)
+        print("📊 TEST SUMMARY")
+        print(f"✅ Passed: {self.results['passed']}")
+        print(f"❌ Failed: {self.results['failed']}")
+        
+        if self.results['errors']:
+            print("\n🔍 FAILED TESTS:")
+            for error in self.results['errors']:
+                print(f"   • {error}")
+
+        return self.results['failed'] == 0
+
+async def main():
+    """Main test runner"""
+    tester = EventsAPITester()
+    success = await tester.run_all_tests()
+    
+    if success:
+        print("\n🎉 All tests passed!")
+        sys.exit(0)
+    else:
+        print("\n💥 Some tests failed!")
+        sys.exit(1)
+
+if __name__ == "__main__":
+    asyncio.run(main())
