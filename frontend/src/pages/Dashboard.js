@@ -30,20 +30,10 @@ const Dashboard = () => {
         const sessionId = hash.split('session_id=')[1].split('&')[0];
         
         try {
-          // Call backend to process session_id
-          const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/auth/session`, {
-            method: 'POST',
-            headers: {
-              'X-Session-ID': sessionId,
-              'Content-Type': 'application/json'
-            },
-            credentials: 'include'  // Important for cookies
-          });
+          const result = await loginWithGoogle(sessionId);
           
-          if (response.ok) {
-            const data = await response.json();
-            // Update user data in context
-            setUserData(data.user);
+          if (result.success) {
+            setUserData(result.user);
             toast.success('Successfully signed in with Google!');
             
             // Clean URL
@@ -76,7 +66,7 @@ const Dashboard = () => {
     
     // Process Google auth first, then fetch data
     processGoogleAuth().then(() => fetchData());
-  }, []);
+  }, [loginWithGoogle]);
 
   const calculateAge = (yearOfBirth) => {
     if (!yearOfBirth) return null;
