@@ -4,12 +4,14 @@ from datetime import timezone
 import httpx
 from datetime import datetime, timedelta
 import os
+import logging
 
 from models import UserCreate, LoginRequest, RegisterResponse, UserResponse
 from auth_utils import hash_password, verify_password, create_access_token, generate_verification_token
 from email_service import send_email, get_verification_email_template, get_admin_new_user_notification_template
 from dependencies import get_db
 
+logger = logging.getLogger(__name__)
 router = APIRouter()
 
 @router.post("/register", response_model=RegisterResponse)
