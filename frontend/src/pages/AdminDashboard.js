@@ -138,8 +138,50 @@ const AdminDashboard = () => {
           {/* Members Tab */}
           <TabsContent value="members">
             <Card className="border-2 border-[#C1272D]/20">
-              <CardHeader>
+              <CardHeader className="flex flex-row items-center justify-between">
                 <CardTitle>Members Management</CardTitle>
+                <div className="flex gap-2">
+                  <button
+                    onClick={async () => {
+                      try {
+                        const blob = await adminAPI.exportMembersPDF();
+                        const url = window.URL.createObjectURL(blob);
+                        const a = document.createElement('a');
+                        a.href = url;
+                        a.download = `members_${new Date().toISOString().split('T')[0]}.pdf`;
+                        document.body.appendChild(a);
+                        a.click();
+                        window.URL.revokeObjectURL(url);
+                        toast.success('PDF exported successfully');
+                      } catch (error) {
+                        toast.error('Failed to export PDF');
+                      }
+                    }}
+                    className="px-4 py-2 bg-[#C1272D] text-white rounded hover:bg-[#8B1F1F] text-sm"
+                  >
+                    Export PDF
+                  </button>
+                  <button
+                    onClick={async () => {
+                      try {
+                        const blob = await adminAPI.exportMembersXML();
+                        const url = window.URL.createObjectURL(blob);
+                        const a = document.createElement('a');
+                        a.href = url;
+                        a.download = `members_${new Date().toISOString().split('T')[0]}.xml`;
+                        document.body.appendChild(a);
+                        a.click();
+                        window.URL.revokeObjectURL(url);
+                        toast.success('XML exported successfully');
+                      } catch (error) {
+                        toast.error('Failed to export XML');
+                      }
+                    }}
+                    className="px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700 text-sm"
+                  >
+                    Export XML
+                  </button>
+                </div>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
