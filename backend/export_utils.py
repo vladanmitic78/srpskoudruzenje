@@ -1,5 +1,5 @@
 """
-Export utilities for PDF and XML generation
+Export utilities for PDF, XML, and Excel generation
 """
 from reportlab.lib import colors
 from reportlab.lib.pagesizes import letter, A4
@@ -9,6 +9,8 @@ from reportlab.lib.units import inch
 from io import BytesIO
 import xml.etree.ElementTree as ET
 from datetime import datetime
+from openpyxl import Workbook
+from openpyxl.styles import Font, PatternFill, Alignment
 
 def generate_members_pdf(members):
     """Generate PDF export of members"""
