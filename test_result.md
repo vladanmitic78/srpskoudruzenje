@@ -194,27 +194,33 @@ backend:
 
   - task: "Password Reset API - Forgot Password"
     implemented: true
-    working: "NA"
+    working: true
     file: "/app/backend/routes/auth.py"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: "NA"
         agent: "main"
         comment: "Backend endpoint already exists. POST /api/auth/forgot-password accepts email as query param. Generates reset token, stores in DB with 1-hour expiry. Sends email with reset link via existing email service."
+      - working: true
+        agent: "testing"
+        comment: "✅ TESTED: POST /api/auth/forgot-password works perfectly. Accepts email as query param. Generates reset token and stores in database with correct 1-hour expiry. Email sent successfully (confirmed via logs: 'Email sent successfully to vladanmitic@gmail.com'). Returns success even for non-existent emails (security best practice). All validation working correctly."
 
   - task: "Password Reset API - Reset Password"
     implemented: true
-    working: "NA"
+    working: true
     file: "/app/backend/routes/auth.py"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: "NA"
         agent: "main"
         comment: "Backend endpoint already exists. POST /api/auth/reset-password accepts token and new_password as query params. Validates token and expiry. Updates hashed_password and clears reset token. Returns 400 if token invalid/expired."
+      - working: true
+        agent: "testing"
+        comment: "✅ TESTED: POST /api/auth/reset-password works excellently. Validates reset token and expiry correctly. Updates hashed_password successfully. Clears resetToken and resetTokenExpiry fields from database after successful reset. Returns 400 for invalid/expired tokens. Complete password reset flow tested: old password rejected, new password works for login. All security measures working properly."
 
 frontend:
   - task: "Events Management UI - Add Event"
