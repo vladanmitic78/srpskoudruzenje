@@ -179,6 +179,11 @@ export const invoicesAPI = {
     });
     return response.data;
   },
+  
+  delete: async (id) => {
+    const response = await api.delete(`/invoices/${id}`);
+    return response.data;
+  },
 };
 
 // ==================== Gallery APIs ====================
