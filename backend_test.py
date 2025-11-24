@@ -557,14 +557,14 @@ class EventsAPITester:
 
     async def run_all_tests(self):
         """Run all tests in sequence"""
-        print("🚀 Starting Events API Testing...")
+        print("🚀 Starting Backend API Testing (Events + Password Reset)...")
         print(f"Backend URL: {BACKEND_URL}")
         print("=" * 60)
 
         await self.setup_session()
 
         try:
-            # Test sequence
+            # Test sequence - Events API
             await self.test_backend_health()
             await self.authenticate_admin()
             await self.test_get_all_events()
@@ -578,6 +578,14 @@ class EventsAPITester:
             await self.test_cancel_event()
             await self.test_delete_event()
             await self.test_delete_nonexistent_event()
+            
+            # Password Reset API Tests
+            print("\n🔐 Testing Password Reset Functionality...")
+            await self.test_forgot_password_valid_email()
+            await self.test_forgot_password_invalid_email()
+            await self.test_reset_password_invalid_token()
+            await self.test_password_reset_flow_simulation()
+            await self.test_password_reset_email_format()
 
         finally:
             await self.cleanup_session()
