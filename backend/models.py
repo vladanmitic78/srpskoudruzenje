@@ -178,7 +178,7 @@ class InvoiceMarkPaid(BaseModel):
 # Gallery Models
 class GalleryBase(BaseModel):
     date: str
-    title: Dict[str, str]
+    title: Optional[Dict[str, str]] = None
     description: Dict[str, str]
     place: Optional[str] = None
     images: List[str] = []
