@@ -767,11 +767,7 @@ const AdminDashboard = () => {
                             onClick={async () => {
                               if (window.confirm('Delete this news item?')) {
                                 try {
-                                  const token = localStorage.getItem('token');
-                                  await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/news/${item.id}`, {
-                                    method: 'DELETE',
-                                    headers: { 'Authorization': `Bearer ${token}` }
-                                  });
+                                  await newsAPI.delete(item.id);
                                   setNews(news.filter(n => n.id !== item.id));
                                   toast.success('News deleted');
                                 } catch (error) {
