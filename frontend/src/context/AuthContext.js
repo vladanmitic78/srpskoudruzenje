@@ -63,43 +63,7 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  const loginWithGoogle = async (sessionId) => {
-    try {
-      const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/auth/session`, {
-        method: 'POST',
-        headers: {
-          'X-Session-ID': sessionId,
-          'Content-Type': 'application/json'
-        },
-        credentials: 'include'
-      });
-      
-      if (response.ok) {
-        const data = await response.json();
-        setUser(data.user);
-        return { success: true, user: data.user };
-      }
-      
-      return { success: false, error: 'Failed to authenticate with Google' };
-    } catch (error) {
-      return { 
-        success: false, 
-        error: 'Failed to authenticate with Google' 
-      };
-    }
-  };
-
-  const logout = async () => {
-    try {
-      // Call backend logout to clear session
-      await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/auth/logout`, {
-        method: 'POST',
-        credentials: 'include'
-      });
-    } catch (error) {
-      console.error('Logout error:', error);
-    }
-    
+  const logout = () => {
     setUser(null);
     localStorage.removeItem('user');
     localStorage.removeItem('token');
