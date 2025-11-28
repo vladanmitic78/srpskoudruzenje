@@ -1432,14 +1432,47 @@ const AdminDashboard = () => {
               ))}
 
               <div>
-                <label className="block text-sm font-medium mb-2">Image URL</label>
-                <input
-                  type="text"
-                  value={newsForm.image}
-                  onChange={(e) => setNewsForm({...newsForm, image: e.target.value})}
-                  placeholder="https://..."
-                  className="w-full p-2 border rounded"
-                />
+                <label className="block text-sm font-medium mb-2">Image</label>
+                <div className="space-y-2">
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={async (e) => {
+                      const file = e.target.files?.[0];
+                      if (file) {
+                        try {
+                          const formData = new FormData();
+                          formData.append('file', file);
+                          const token = localStorage.getItem('token');
+                          const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/news/upload-image`, {
+                            method: 'POST',
+                            headers: { 'Authorization': `Bearer ${token}` },
+                            body: formData
+                          });
+                          const data = await response.json();
+                          if (data.success) {
+                            setNewsForm({...newsForm, image: `${process.env.REACT_APP_BACKEND_URL}${data.imageUrl}`});
+                            toast.success('Image uploaded');
+                          }
+                        } catch (error) {
+                          toast.error('Failed to upload image');
+                        }
+                      }
+                    }}
+                    className="w-full p-2 border rounded"
+                  />
+                  <div className="text-xs text-gray-500">Or enter image URL:</div>
+                  <input
+                    type="text"
+                    value={newsForm.image}
+                    onChange={(e) => setNewsForm({...newsForm, image: e.target.value})}
+                    placeholder="https://..."
+                    className="w-full p-2 border rounded"
+                  />
+                  {newsForm.image && (
+                    <img src={newsForm.image} alt="Preview" className="mt-2 max-h-32 rounded border" />
+                  )}
+                </div>
               </div>
 
               <div>
