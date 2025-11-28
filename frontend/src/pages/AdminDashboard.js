@@ -62,7 +62,7 @@ const AdminDashboard = () => {
           adminAPI.getUsers(),
           eventsAPI.getAll(),
           invoicesAPI.getAll(),
-          fetch(`${process.env.REACT_APP_BACKEND_URL}/api/news`).then(r => r.json())
+          newsAPI.getAll(100, 0)
         ]);
         setStatistics(statsData);
         setUsers(usersData.users || []);
