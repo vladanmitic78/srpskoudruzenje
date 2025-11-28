@@ -94,14 +94,15 @@ const AdminDashboard = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [statsData, usersData, eventsData, invoicesData, newsData, storiesData, galleryData] = await Promise.all([
+        const [statsData, usersData, eventsData, invoicesData, newsData, storiesData, galleryData, settingsData] = await Promise.all([
           adminAPI.getStatistics(),
           adminAPI.getUsers(),
           eventsAPI.getAll(),
           invoicesAPI.getAll(),
           newsAPI.getAll(100, 0),
           storiesAPI.getAll(),
-          galleryAPI.getAll()
+          galleryAPI.getAll(),
+          settingsAPI.get()
         ]);
         setStatistics(statsData);
         setUsers(usersData.users || []);
@@ -110,6 +111,7 @@ const AdminDashboard = () => {
         setNews(newsData.news || []);
         setStories(storiesData.stories || []);
         setAlbums(galleryData.items || []);
+        setSettings(settingsData || settings);
       } catch (error) {
         console.error('Error fetching admin data:', error);
         toast.error('Failed to load admin data');
