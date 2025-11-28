@@ -147,13 +147,27 @@ const Dashboard = () => {
     }
   };
 
-  const handleConfirmEvent = async (eventId) => {
+  const handleConfirmEvent = async (eventId, eventTitle) => {
+    // Show confirmation dialog
+    const confirmed = window.confirm(
+      `Are you sure you want to confirm your participation in "${eventTitle}"?\n\nClick OK to confirm or Cancel to go back.`
+    );
+    
+    if (!confirmed) {
+      return; // User clicked Cancel
+    }
+    
     try {
       await eventsAPI.confirmParticipation(eventId);
       setConfirmedEvents([...confirmedEvents, eventId]);
-      toast.success('Event participation confirmed! Admin has been notified.');
+      toast.success('Training participation confirmed! Admin has been notified.');
+      
+      // Refresh events to get updated participant list
+      const eventsData = await eventsAPI.getAll();
+      setEvents(eventsData.events || []);
     } catch (error) {
       toast.error('Failed to confirm participation');
+      console.error(error);
     }
   };
 
