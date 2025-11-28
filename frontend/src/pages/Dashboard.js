@@ -441,14 +441,14 @@ const Dashboard = () => {
                         <div className="flex gap-2">
                           {!confirmedEvents.includes(event.id) ? (
                             <Button
-                              onClick={() => handleConfirmEvent(event.id)}
+                              onClick={() => handleConfirmEvent(event.id, event.title[language] || event.title['en'])}
                               className="bg-green-600 hover:bg-green-700 text-white"
                             >
                               ✓ Confirm
                             </Button>
                           ) : (
                             <Button
-                              onClick={() => handleCancelEvent(event.id)}
+                              onClick={() => handleCancelEvent(event.id, event.title[language] || event.title['en'])}
                               variant="destructive"
                               className="bg-red-600 hover:bg-red-700"
                             >
