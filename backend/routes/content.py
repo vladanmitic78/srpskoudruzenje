@@ -71,7 +71,41 @@ async def update_page_content(
     
     return {"success": True, "message": "Content updated successfully"}
 
+@router.delete("/pages/{content_id}")
+async def delete_page_content(
+    content_id: str,
+    admin: dict = Depends(get_admin_user),
+    request: Request = None
+):
+    """Delete content block (Admin only)"""
+    db = request.app.state.db
+    
+    result = await db.page_content.delete_one({"_id": content_id})
+    
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Content block not found")
+    
+    return {"success": True, "message": "Content deleted successfully"}
+
+@router.get("/pages")
+async def list_all_pages(admin: dict = Depends(get_admin_user), request: Request = None):
+    """List all editable pages with their content blocks"""
+    db = request.app.state.db
+    
+    pages = ["home", "gallery", "about", "serbian-story"]
+    result = {}
+    
+    for page_id in pages:
+        content_blocks = await db.page_content.find({"pageId": page_id}).to_list(length=100)
+        result[page_id] = [{**block, "id": str(block["_id"])} for block in content_blocks]
+    
+    return result
+
 # Gallery Management
+from fastapi import UploadFile, File
+from pathlib import Path
+import shutil
+
 @router.post("/gallery/upload")
 async def upload_gallery_file(
     file: UploadFile = File(...),
