@@ -145,7 +145,7 @@ async def cancel_participation(
         "cancelledAt": datetime.utcnow().isoformat()
     }
     
-    result = await db.events.update_one(
+    await db.events.update_one(
         {"_id": event_id},
         {
             "$pull": {"participants": current_user["_id"]},
