@@ -165,10 +165,6 @@ const Dashboard = () => {
 
         <Tabs defaultValue="personal" className="space-y-6">
           <TabsList className="grid w-full grid-cols-4 max-w-2xl">
-            <TabsTrigger value="personal">
-              <User className="h-4 w-4 mr-2" />
-              {t('dashboard.personalData')}
-            </TabsTrigger>
             <TabsTrigger value="invoices">
               <FileText className="h-4 w-4 mr-2" />
               {t('dashboard.invoices')}
@@ -180,6 +176,10 @@ const Dashboard = () => {
             <TabsTrigger value="membership">
               <AlertCircle className="h-4 w-4 mr-2" />
               {t('dashboard.membership')}
+            </TabsTrigger>
+            <TabsTrigger value="personal">
+              <User className="h-4 w-4 mr-2" />
+              {t('dashboard.personalData')}
             </TabsTrigger>
           </TabsList>
 
