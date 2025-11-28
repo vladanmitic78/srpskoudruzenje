@@ -1809,6 +1809,198 @@ const AdminDashboard = () => {
             </div>
           </DialogContent>
         </Dialog>
+
+        {/* Album Modal */}
+        <Dialog open={albumModalOpen} onOpenChange={setAlbumModalOpen}>
+          <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+            <DialogHeader>
+              <DialogTitle>{editingAlbum ? 'Edit Album' : 'Create Album'}</DialogTitle>
+            </DialogHeader>
+            <div className="space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium mb-2">Date</label>
+                  <input
+                    type="date"
+                    value={albumForm.date}
+                    onChange={(e) => setAlbumForm({...albumForm, date: e.target.value})}
+                    className="w-full p-2 border rounded"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-2">Place</label>
+                  <input
+                    type="text"
+                    value={albumForm.place}
+                    onChange={(e) => setAlbumForm({...albumForm, place: e.target.value})}
+                    placeholder="Location..."
+                    className="w-full p-2 border rounded"
+                  />
+                </div>
+              </div>
+
+              {['sr-latin', 'sr-cyrillic', 'en', 'sv'].map(lang => (
+                <div key={lang}>
+                  <label className="block text-sm font-medium mb-2">
+                    Title ({lang})
+                  </label>
+                  <input
+                    type="text"
+                    value={albumForm.title[lang]}
+                    onChange={(e) => setAlbumForm({
+                      ...albumForm,
+                      title: {...albumForm.title, [lang]: e.target.value}
+                    })}
+                    className="w-full p-2 border rounded"
+                  />
+                </div>
+              ))}
+
+              {['sr-latin', 'sr-cyrillic', 'en', 'sv'].map(lang => (
+                <div key={lang}>
+                  <label className="block text-sm font-medium mb-2">
+                    Description ({lang})
+                  </label>
+                  <textarea
+                    value={albumForm.description[lang]}
+                    onChange={(e) => setAlbumForm({
+                      ...albumForm,
+                      description: {...albumForm.description, [lang]: e.target.value}
+                    })}
+                    rows={2}
+                    className="w-full p-2 border rounded"
+                  />
+                </div>
+              ))}
+
+              {editingAlbum && (
+                <div>
+                  <label className="block text-sm font-medium mb-2">Album Photos ({albumForm.images.length})</label>
+                  <div className="space-y-2">
+                    <input
+                      type="file"
+                      accept="image/*"
+                      multiple
+                      onChange={async (e) => {
+                        const files = Array.from(e.target.files || []);
+                        if (files.length > 0) {
+                          setUploadingToAlbum(editingAlbum.id);
+                          try {
+                            const token = localStorage.getItem('token');
+                            for (const file of files) {
+                              const formData = new FormData();
+                              formData.append('file', file);
+                              const response = await fetch(
+                                `${process.env.REACT_APP_BACKEND_URL}/api/gallery/${editingAlbum.id}/upload-image`,
+                                {
+                                  method: 'POST',
+                                  headers: { 'Authorization': `Bearer ${token}` },
+                                  body: formData
+                                }
+                              );
+                              const data = await response.json();
+                              if (data.success) {
+                                setAlbumForm(prev => ({
+                                  ...prev,
+                                  images: [...prev.images, `${process.env.REACT_APP_BACKEND_URL}${data.imageUrl}`]
+                                }));
+                              }
+                            }
+                            toast.success(`${files.length} image(s) uploaded`);
+                          } catch (error) {
+                            toast.error('Failed to upload images');
+                          } finally {
+                            setUploadingToAlbum(null);
+                          }
+                        }
+                      }}
+                      className="w-full p-2 border rounded"
+                      disabled={uploadingToAlbum === editingAlbum.id}
+                    />
+                    {uploadingToAlbum === editingAlbum?.id && (
+                      <p className="text-sm text-blue-600">Uploading...</p>
+                    )}
+                    {albumForm.images.length > 0 && (
+                      <div className="grid grid-cols-4 gap-2 mt-3">
+                        {albumForm.images.map((img, idx) => (
+                          <div key={idx} className="relative group">
+                            <img 
+                              src={img} 
+                              alt={`Photo ${idx + 1}`}
+                              className="w-full h-24 object-cover rounded"
+                            />
+                            <button
+                              onClick={async () => {
+                                if (window.confirm('Delete this photo?')) {
+                                  try {
+                                    const token = localStorage.getItem('token');
+                                    await fetch(
+                                      `${process.env.REACT_APP_BACKEND_URL}/api/gallery/${editingAlbum.id}/image?image_url=${encodeURIComponent(img)}`,
+                                      {
+                                        method: 'DELETE',
+                                        headers: { 'Authorization': `Bearer ${token}` }
+                                      }
+                                    );
+                                    setAlbumForm(prev => ({
+                                      ...prev,
+                                      images: prev.images.filter(i => i !== img)
+                                    }));
+                                    toast.success('Photo deleted');
+                                  } catch (error) {
+                                    toast.error('Failed to delete photo');
+                                  }
+                                }
+                              }}
+                              className="absolute top-1 right-1 bg-red-500 text-white p-1 rounded opacity-0 group-hover:opacity-100 transition-opacity text-xs"
+                            >
+                              ✕
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              <div className="flex gap-3 pt-4">
+                <button
+                  onClick={async () => {
+                    try {
+                      if (editingAlbum) {
+                        await galleryAPI.update(editingAlbum.id, albumForm);
+                        toast.success('Album updated');
+                      } else {
+                        await galleryAPI.create(albumForm);
+                        toast.success('Album created');
+                      }
+                      setAlbumModalOpen(false);
+                      // Refresh albums
+                      const galleryData = await galleryAPI.getAll();
+                      setAlbums(galleryData.items || []);
+                    } catch (error) {
+                      toast.error('Failed to save album');
+                    }
+                  }}
+                  className="flex-1 px-4 py-2 bg-[#C1272D] text-white rounded hover:bg-[#8B1F1F]"
+                >
+                  {editingAlbum ? 'Update Album' : 'Create Album'}
+                </button>
+                <button
+                  onClick={() => setAlbumModalOpen(false)}
+                  className="flex-1 px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700"
+                >
+                  Cancel
+                </button>
+              </div>
+              {!editingAlbum && (
+                <p className="text-sm text-gray-500 text-center">
+                  Note: Create the album first, then edit it to upload photos
+                </p>
+              )}
+            </div>
+          </DialogContent>
+        </Dialog>
       </div>
     </div>
   );
