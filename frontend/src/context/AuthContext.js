@@ -16,29 +16,12 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const checkAuth = async () => {
-      // First check localStorage for regular login
+    const checkAuth = () => {
       const storedUser = localStorage.getItem('user');
       const token = localStorage.getItem('token');
       
       if (storedUser && token) {
         setUser(JSON.parse(storedUser));
-        setLoading(false);
-        return;
-      }
-      
-      // If no localStorage, check for session cookie (Google OAuth)
-      try {
-        const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/auth/me`, {
-          credentials: 'include'  // Include cookies
-        });
-        
-        if (response.ok) {
-          const userData = await response.json();
-          setUser(userData);
-        }
-      } catch (error) {
-        console.log('No active session');
       }
       
       setLoading(false);
