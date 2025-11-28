@@ -41,7 +41,26 @@ async def update_user_profile(
             {"$set": update_data}
         )
     
-    return {"success": True, "message": "Profile updated successfully"}
+    # Get updated user data
+    updated_user = await db.users.find_one({"_id": current_user["_id"]})
+    
+    return {
+        "success": True, 
+        "message": "Profile updated successfully",
+        "user": {
+            "id": updated_user["_id"],
+            "email": updated_user.get("email"),
+            "fullName": updated_user.get("fullName"),
+            "username": updated_user.get("username"),
+            "role": updated_user.get("role", "user"),
+            "phone": updated_user.get("phone"),
+            "address": updated_user.get("address"),
+            "yearOfBirth": updated_user.get("yearOfBirth"),
+            "parentName": updated_user.get("parentName"),
+            "parentEmail": updated_user.get("parentEmail"),
+            "parentPhone": updated_user.get("parentPhone")
+        }
+    }
 
 @router.post("/cancel-membership")
 async def cancel_membership(
