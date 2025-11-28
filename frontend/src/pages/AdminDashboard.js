@@ -57,16 +57,18 @@ const AdminDashboard = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [statsData, usersData, eventsData, invoicesData] = await Promise.all([
+        const [statsData, usersData, eventsData, invoicesData, newsData] = await Promise.all([
           adminAPI.getStatistics(),
           adminAPI.getUsers(),
           eventsAPI.getAll(),
-          invoicesAPI.getAll()
+          invoicesAPI.getAll(),
+          fetch(`${process.env.REACT_APP_BACKEND_URL}/api/news`).then(r => r.json())
         ]);
         setStatistics(statsData);
         setUsers(usersData.users || []);
         setEvents(eventsData.events || []);
         setInvoices(invoicesData.invoices || []);
+        setNews(newsData.news || []);
       } catch (error) {
         console.error('Error fetching admin data:', error);
         toast.error('Failed to load admin data');
