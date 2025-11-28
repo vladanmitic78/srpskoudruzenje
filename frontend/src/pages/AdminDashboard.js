@@ -50,9 +50,17 @@ const AdminDashboard = () => {
   });
   const [aboutModalOpen, setAboutModalOpen] = useState(false);
   const [aboutContent, setAboutContent] = useState({ 'sr-latin': '', 'sr-cyrillic': '', 'en': '', 'sv': '' });
+  const [stories, setStories] = useState([]);
   const [storyModalOpen, setStoryModalOpen] = useState(false);
-  const [storyContent, setStoryContent] = useState({ 'sr-latin': '', 'sr-cyrillic': '', 'en': '', 'sv': '' });
-  const [storySourceLink, setStorySourceLink] = useState('');
+  const [editingStory, setEditingStory] = useState(null);
+  const [storyForm, setStoryForm] = useState({
+    date: '',
+    title: { 'sr-latin': '', 'sr-cyrillic': '', 'en': '', 'sv': '' },
+    text: { 'sr-latin': '', 'sr-cyrillic': '', 'en': '', 'sv': '' },
+    image: '',
+    video: '',
+    url: ''
+  });
 
   useEffect(() => {
     const fetchData = async () => {
