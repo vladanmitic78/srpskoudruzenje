@@ -60,9 +60,11 @@ const Dashboard = () => {
         setEvents(allEvents);
         
         // Check which events the current user has confirmed
-        if (user && user.id) {
+        // Use user from closure or check again
+        const currentUser = user;
+        if (currentUser && currentUser.id) {
           const confirmedIds = allEvents
-            .filter(event => event.participants && event.participants.includes(user.id))
+            .filter(event => event.participants && event.participants.includes(currentUser.id))
             .map(event => event.id);
           setConfirmedEvents(confirmedIds);
           console.log('User confirmed events:', confirmedIds);
@@ -77,7 +79,7 @@ const Dashboard = () => {
     
     // Process Google auth first, then fetch data
     processGoogleAuth().then(() => fetchData());
-  }, [loginWithGoogle]);
+  }, [loginWithGoogle, user]);
 
   const calculateAge = (yearOfBirth) => {
     if (!yearOfBirth) return null;
