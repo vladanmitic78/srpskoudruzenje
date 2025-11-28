@@ -420,6 +420,76 @@ const Dashboard = () => {
 
           {/* Trainings Tab */}
           <TabsContent value="trainings">
+            {/* Statistics Cards */}
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+              <Card className="border-2 border-blue-200 bg-blue-50 dark:bg-blue-900/20">
+                <CardContent className="pt-6">
+                  <div className="text-center">
+                    <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Total Trainings</p>
+                    <p className="text-3xl font-bold text-blue-600 dark:text-blue-400 mt-2">
+                      {trainingStats.totalTrainings}
+                    </p>
+                    <p className="text-xs text-gray-500 mt-1">Available to join</p>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card className="border-2 border-green-200 bg-green-50 dark:bg-green-900/20">
+                <CardContent className="pt-6">
+                  <div className="text-center">
+                    <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Attended</p>
+                    <p className="text-3xl font-bold text-green-600 dark:text-green-400 mt-2">
+                      {trainingStats.attended}
+                    </p>
+                    <p className="text-xs text-gray-500 mt-1">Confirmed participation</p>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card className="border-2 border-red-200 bg-red-50 dark:bg-red-900/20">
+                <CardContent className="pt-6">
+                  <div className="text-center">
+                    <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Cancelled</p>
+                    <p className="text-3xl font-bold text-red-600 dark:text-red-400 mt-2">
+                      {trainingStats.cancelled}
+                    </p>
+                    <p className="text-xs text-gray-500 mt-1">Previously cancelled</p>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card className="border-2 border-purple-200 bg-purple-50 dark:bg-purple-900/20">
+                <CardContent className="pt-6">
+                  <div className="text-center">
+                    <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Training Groups</p>
+                    <p className="text-3xl font-bold text-purple-600 dark:text-purple-400 mt-2">
+                      {trainingStats.trainingGroups}
+                    </p>
+                    <p className="text-xs text-gray-500 mt-1">Different locations</p>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Attendance Rate Progress Bar */}
+            <Card className="border-2 border-[#C1272D]/20 mb-6">
+              <CardContent className="pt-6">
+                <div className="flex items-center justify-between mb-2">
+                  <p className="text-sm font-medium text-gray-700 dark:text-gray-300">Attendance Rate</p>
+                  <p className="text-lg font-bold text-[#C1272D]">{trainingStats.attendanceRate}%</p>
+                </div>
+                <div className="w-full bg-gray-200 rounded-full h-4 dark:bg-gray-700">
+                  <div 
+                    className="bg-gradient-to-r from-[#C1272D] to-[#8B1F1F] h-4 rounded-full transition-all duration-500"
+                    style={{ width: `${trainingStats.attendanceRate}%` }}
+                  ></div>
+                </div>
+                <p className="text-xs text-gray-500 mt-2 text-center">
+                  You've attended {trainingStats.attended} out of {trainingStats.totalTrainings} trainings
+                </p>
+              </CardContent>
+            </Card>
+
             <Card className="border-2 border-[#C1272D]/20">
               <CardHeader>
                 <CardTitle>{t('dashboard.trainings')}</CardTitle>
