@@ -824,8 +824,7 @@ const AdminDashboard = () => {
                   <button
                     onClick={async () => {
                       try {
-                        const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/content/serbian-story`);
-                        const data = await response.json();
+                        const data = await contentAPI.getSerbianStory();
                         setStoryContent(data.content || { 'sr-latin': '', 'sr-cyrillic': '', 'en': '', 'sv': '' });
                         setStorySourceLink(data.sourceLink || '');
                         setStoryModalOpen(true);
