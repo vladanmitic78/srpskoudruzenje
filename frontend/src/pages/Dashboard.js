@@ -485,7 +485,7 @@ const Dashboard = () => {
                   ></div>
                 </div>
                 <p className="text-xs text-gray-500 mt-2 text-center">
-                  You've attended {trainingStats.attended} out of {trainingStats.totalTrainings} trainings
+                  You&apos;ve attended {trainingStats.attended} out of {trainingStats.totalTrainings} trainings
                 </p>
               </CardContent>
             </Card>
