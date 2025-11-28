@@ -13,7 +13,7 @@ import { userAPI, invoicesAPI, eventsAPI } from '../services/api';
 
 const Dashboard = () => {
   const { t, language } = useLanguage();
-  const { user, loginWithGoogle } = useAuth();
+  const { user, loginWithGoogle, setUser } = useAuth();
   const [userData, setUserData] = useState({});
   const [invoices, setInvoices] = useState([]);
   const [events, setEvents] = useState([]);
