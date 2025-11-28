@@ -1019,9 +1019,148 @@ const AdminDashboard = () => {
                 <CardTitle>Association Settings</CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-gray-600 dark:text-gray-400">
-                  General settings like contact info, social media, and bank details can be edited here.
-                </p>
+                <form onSubmit={async (e) => {
+                  e.preventDefault();
+                  try {
+                    await settingsAPI.update(settings);
+                    toast.success('Settings updated successfully');
+                  } catch (error) {
+                    toast.error('Failed to update settings');
+                  }
+                }} className="space-y-6">
+                  
+                  {/* Contact Information */}
+                  <div>
+                    <h3 className="text-lg font-semibold mb-4 text-gray-900 dark:text-white">Contact Information</h3>
+                    <div className="space-y-4">
+                      <div>
+                        <label className="block text-sm font-medium mb-2">Address</label>
+                        <input
+                          type="text"
+                          value={settings.address}
+                          onChange={(e) => setSettings({...settings, address: e.target.value})}
+                          className="w-full p-3 border rounded-md"
+                          required
+                        />
+                      </div>
+                      <div className="grid grid-cols-2 gap-4">
+                        <div>
+                          <label className="block text-sm font-medium mb-2">Contact Email</label>
+                          <input
+                            type="email"
+                            value={settings.contactEmail}
+                            onChange={(e) => setSettings({...settings, contactEmail: e.target.value})}
+                            className="w-full p-3 border rounded-md"
+                            required
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-sm font-medium mb-2">Contact Phone</label>
+                          <input
+                            type="tel"
+                            value={settings.contactPhone}
+                            onChange={(e) => setSettings({...settings, contactPhone: e.target.value})}
+                            className="w-full p-3 border rounded-md"
+                            required
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Social Media Links */}
+                  <div>
+                    <h3 className="text-lg font-semibold mb-4 text-gray-900 dark:text-white">Social Media Links</h3>
+                    <div className="space-y-4">
+                      <div>
+                        <label className="block text-sm font-medium mb-2">Facebook URL</label>
+                        <input
+                          type="url"
+                          value={settings.socialMedia.facebook}
+                          onChange={(e) => setSettings({
+                            ...settings,
+                            socialMedia: {...settings.socialMedia, facebook: e.target.value}
+                          })}
+                          placeholder="https://facebook.com/..."
+                          className="w-full p-3 border rounded-md"
+                          required
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium mb-2">Instagram URL</label>
+                        <input
+                          type="url"
+                          value={settings.socialMedia.instagram}
+                          onChange={(e) => setSettings({
+                            ...settings,
+                            socialMedia: {...settings.socialMedia, instagram: e.target.value}
+                          })}
+                          placeholder="https://instagram.com/..."
+                          className="w-full p-3 border rounded-md"
+                          required
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium mb-2">YouTube URL</label>
+                        <input
+                          type="url"
+                          value={settings.socialMedia.youtube}
+                          onChange={(e) => setSettings({
+                            ...settings,
+                            socialMedia: {...settings.socialMedia, youtube: e.target.value}
+                          })}
+                          placeholder="https://youtube.com/..."
+                          className="w-full p-3 border rounded-md"
+                          required
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Organization Details */}
+                  <div>
+                    <h3 className="text-lg font-semibold mb-4 text-gray-900 dark:text-white">Organization Details</h3>
+                    <div className="space-y-4">
+                      <div>
+                        <label className="block text-sm font-medium mb-2">Organization Number (Org. nr)</label>
+                        <input
+                          type="text"
+                          value={settings.registrationNumber}
+                          onChange={(e) => setSettings({...settings, registrationNumber: e.target.value})}
+                          className="w-full p-3 border rounded-md"
+                          required
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium mb-2">VAT Number</label>
+                        <input
+                          type="text"
+                          value={settings.vatNumber}
+                          onChange={(e) => setSettings({...settings, vatNumber: e.target.value})}
+                          className="w-full p-3 border rounded-md"
+                          required
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium mb-2">Bank Account</label>
+                        <input
+                          type="text"
+                          value={settings.bankAccount}
+                          onChange={(e) => setSettings({...settings, bankAccount: e.target.value})}
+                          className="w-full p-3 border rounded-md"
+                          required
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  <button
+                    type="submit"
+                    className="w-full px-6 py-3 bg-[#C1272D] text-white rounded-md hover:bg-[#8B1F1F] font-semibold"
+                  >
+                    Save Settings
+                  </button>
+                </form>
               </CardContent>
             </Card>
           </TabsContent>
