@@ -191,15 +191,22 @@ const Dashboard = () => {
         return;
       }
 
+      // Save to backend
       await userAPI.updateProfile(userData);
+      
+      // Update user in AuthContext so profile completeness check works
+      const updatedUser = { ...user, ...userData };
+      setUser(updatedUser);
+      
       toast.success('Profile updated successfully!');
       
-      // Close modal if it was open
+      // Close modal if it was open (after successful save)
       if (showProfileModal) {
         setShowProfileModal(false);
       }
     } catch (error) {
       toast.error('Failed to update profile');
+      console.error('Profile save error:', error);
     }
   };
 
