@@ -84,16 +84,18 @@ const Dashboard = () => {
     }
   };
 
+  // Initialize userData and check age on mount or when user changes
   useEffect(() => {
-    // Update userData when user context changes
     if (user) {
       setUserData(user);
       
       // Check age and show parent fields if needed
       if (user.yearOfBirth) {
         const age = calculateAge(user.yearOfBirth);
+        console.log('User age on load:', age, 'Year of birth:', user.yearOfBirth);
         if (age !== null && age < 18) {
           setShowParentFields(true);
+          console.log('Showing parent fields for user under 18');
         } else {
           setShowParentFields(false);
         }
