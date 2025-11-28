@@ -1539,30 +1539,81 @@ const AdminDashboard = () => {
         <Dialog open={storyModalOpen} onOpenChange={setStoryModalOpen}>
           <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
             <DialogHeader>
-              <DialogTitle>Edit Serbian Story Page</DialogTitle>
+              <DialogTitle>{editingStory ? 'Edit Story' : 'Create Story'}</DialogTitle>
             </DialogHeader>
             <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium mb-2">Date</label>
+                <input
+                  type="date"
+                  value={storyForm.date}
+                  onChange={(e) => setStoryForm({...storyForm, date: e.target.value})}
+                  className="w-full p-2 border rounded"
+                />
+              </div>
+
               {['sr-latin', 'sr-cyrillic', 'en', 'sv'].map(lang => (
                 <div key={lang}>
                   <label className="block text-sm font-medium mb-2">
-                    Story Content ({lang})
+                    Title ({lang})
+                  </label>
+                  <input
+                    type="text"
+                    value={storyForm.title[lang]}
+                    onChange={(e) => setStoryForm({
+                      ...storyForm,
+                      title: {...storyForm.title, [lang]: e.target.value}
+                    })}
+                    className="w-full p-2 border rounded"
+                  />
+                </div>
+              ))}
+
+              {['sr-latin', 'sr-cyrillic', 'en', 'sv'].map(lang => (
+                <div key={lang}>
+                  <label className="block text-sm font-medium mb-2">
+                    Text ({lang})
                   </label>
                   <textarea
-                    value={storyContent[lang]}
-                    onChange={(e) => setStoryContent({...storyContent, [lang]: e.target.value})}
-                    rows={8}
+                    value={storyForm.text[lang]}
+                    onChange={(e) => setStoryForm({
+                      ...storyForm,
+                      text: {...storyForm.text, [lang]: e.target.value}
+                    })}
+                    rows={4}
                     className="w-full p-2 border rounded"
-                    placeholder={`Enter story content in ${lang}...`}
                   />
                 </div>
               ))}
 
               <div>
+                <label className="block text-sm font-medium mb-2">Image URL</label>
+                <input
+                  type="text"
+                  value={storyForm.image}
+                  onChange={(e) => setStoryForm({...storyForm, image: e.target.value})}
+                  placeholder="https://..."
+                  className="w-full p-2 border rounded"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium mb-2">Video URL (optional)</label>
+                <input
+                  type="text"
+                  value={storyForm.video}
+                  onChange={(e) => setStoryForm({...storyForm, video: e.target.value})}
+                  placeholder="https://..."
+                  className="w-full p-2 border rounded"
+                />
+              </div>
+
+              <div>
                 <label className="block text-sm font-medium mb-2">Source Link (optional)</label>
                 <input
                   type="text"
-                  value={storySourceLink}
-                  onChange={(e) => setStorySourceLink(e.target.value)}
+                  value={storyForm.url}
+                  onChange={(e) => setStoryForm({...storyForm, url: e.target.value})}
                   placeholder="https://..."
                   className="w-full p-2 border rounded"
                 />
@@ -1572,16 +1623,24 @@ const AdminDashboard = () => {
                 <button
                   onClick={async () => {
                     try {
-                      await contentAPI.updateSerbianStory({ content: storyContent, sourceLink: storySourceLink });
-                      toast.success('Serbian story updated');
+                      if (editingStory) {
+                        await storiesAPI.update(editingStory.id, storyForm);
+                        toast.success('Story updated');
+                      } else {
+                        await storiesAPI.create(storyForm);
+                        toast.success('Story created');
+                      }
                       setStoryModalOpen(false);
+                      // Refresh stories list
+                      const storiesData = await storiesAPI.getAll();
+                      setStories(storiesData.stories || []);
                     } catch (error) {
-                      toast.error('Failed to update story');
+                      toast.error('Failed to save story');
                     }
                   }}
                   className="flex-1 px-4 py-2 bg-[#C1272D] text-white rounded hover:bg-[#8B1F1F]"
                 >
-                  Save Changes
+                  {editingStory ? 'Update' : 'Create'}
                 </button>
                 <button
                   onClick={() => setStoryModalOpen(false)}
