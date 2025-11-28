@@ -45,9 +45,16 @@ async def update_gallery_item(
 ):
     """Update gallery album (Admin only)"""
     db = request.app.state.db
+    
+    # Prepare update data, excluding images and videos to preserve uploaded content
+    update_data = gallery_update.dict(exclude_unset=True)
+    # Never update images/videos via this endpoint - use upload/delete endpoints instead
+    update_data.pop('images', None)
+    update_data.pop('videos', None)
+    
     result = await db.gallery.update_one(
         {"_id": gallery_id},
-        {"$set": gallery_update.dict()}
+        {"$set": update_data}
     )
     
     if result.matched_count == 0:
