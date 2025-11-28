@@ -820,28 +820,74 @@ const AdminDashboard = () => {
                 </CardContent>
               </Card>
 
-              {/* Serbian Story */}
+              {/* Serbian Story Management */}
               <Card className="border-2 border-[#C1272D]/20">
-                <CardHeader>
-                  <CardTitle>Serbian Story Page</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-sm text-gray-600 mb-4">Edit Serbian culture story with text, image, and source link.</p>
+                <CardHeader className="flex flex-row items-center justify-between">
+                  <CardTitle>Serbian Story Management</CardTitle>
                   <button
-                    onClick={async () => {
-                      try {
-                        const data = await contentAPI.getSerbianStory();
-                        setStoryContent(data.content || { 'sr-latin': '', 'sr-cyrillic': '', 'en': '', 'sv': '' });
-                        setStorySourceLink(data.sourceLink || '');
-                        setStoryModalOpen(true);
-                      } catch (error) {
-                        toast.error('Failed to load story content');
-                      }
+                    onClick={() => {
+                      setEditingStory(null);
+                      setStoryForm({
+                        date: new Date().toISOString().split('T')[0],
+                        title: { 'sr-latin': '', 'sr-cyrillic': '', 'en': '', 'sv': '' },
+                        text: { 'sr-latin': '', 'sr-cyrillic': '', 'en': '', 'sv': '' },
+                        image: '',
+                        video: '',
+                        url: ''
+                      });
+                      setStoryModalOpen(true);
                     }}
                     className="px-4 py-2 bg-[#C1272D] text-white rounded hover:bg-[#8B1F1F]"
                   >
-                    ✏️ Edit Serbian Story
+                    ➕ Add Story
                   </button>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-3">
+                    {stories.map((item) => (
+                      <div key={item.id} className="p-4 border rounded flex items-center justify-between">
+                        <div>
+                          <h4 className="font-semibold">{item.title.en || item.title['sr-latin']}</h4>
+                          <p className="text-sm text-gray-500">{item.date}</p>
+                        </div>
+                        <div className="flex gap-2">
+                          <button
+                            onClick={() => {
+                              setEditingStory(item);
+                              setStoryForm({
+                                date: item.date,
+                                title: item.title,
+                                text: item.text,
+                                image: item.image || '',
+                                video: item.video || '',
+                                url: item.url || ''
+                              });
+                              setStoryModalOpen(true);
+                            }}
+                            className="px-3 py-1 text-sm bg-blue-500 text-white rounded hover:bg-blue-600"
+                          >
+                            Edit
+                          </button>
+                          <button
+                            onClick={async () => {
+                              if (window.confirm('Delete this story?')) {
+                                try {
+                                  await storiesAPI.delete(item.id);
+                                  setStories(stories.filter(s => s.id !== item.id));
+                                  toast.success('Story deleted');
+                                } catch (error) {
+                                  toast.error('Failed to delete story');
+                                }
+                              }
+                            }}
+                            className="px-3 py-1 text-sm bg-red-500 text-white rounded hover:bg-red-600"
+                          >
+                            Delete
+                          </button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
                 </CardContent>
               </Card>
 
