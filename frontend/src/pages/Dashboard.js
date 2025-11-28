@@ -142,14 +142,26 @@ const Dashboard = () => {
         ? (hasBasicInfo && user.parentName && user.parentEmail)
         : hasBasicInfo;
       
+      console.log('Profile completeness check:', {
+        fullName: user.fullName,
+        yearOfBirth: user.yearOfBirth,
+        age,
+        requiresParentInfo,
+        hasParentName: user.parentName,
+        hasParentEmail: user.parentEmail,
+        isComplete
+      });
+      
       if (!isComplete) {
         setShowProfileModal(true);
-        console.log('Profile incomplete - showing mandatory modal');
+        console.log('✋ Profile incomplete - showing mandatory modal');
+      } else {
+        setShowProfileModal(false);
+        console.log('✅ Profile complete - modal will not show');
       }
       
       // Check age and show parent fields if needed
       if (user.yearOfBirth) {
-        console.log('User age on load:', age, 'Year of birth:', user.yearOfBirth);
         if (age !== null && age < 18) {
           setShowParentFields(true);
           console.log('Showing parent fields for user under 18');
