@@ -94,7 +94,7 @@ async def confirm_participation(
     if not event:
         raise HTTPException(status_code=404, detail="Event not found")
     
-    result = await db.events.update_one(
+    await db.events.update_one(
         {"_id": event_id},
         {"$addToSet": {"participants": current_user["_id"]}}
     )
