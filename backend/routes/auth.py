@@ -1,5 +1,4 @@
-from fastapi import APIRouter, HTTPException, status, Depends, Request
-from fastapi.responses import JSONResponse
+from fastapi import APIRouter, HTTPException, status, Request
 from datetime import datetime, timedelta
 import os
 import logging
