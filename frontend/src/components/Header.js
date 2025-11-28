@@ -220,7 +220,7 @@ const Header = () => {
               {isAuthenticated ? (
                 <>
                   <Link
-                    to="/dashboard"
+                    to={user?.role === 'admin' || user?.role === 'superadmin' ? '/admin' : '/dashboard'}
                     onClick={() => setMobileMenuOpen(false)}
                     className="px-4 py-2 rounded-md text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-[#C1272D]/10"
                   >
