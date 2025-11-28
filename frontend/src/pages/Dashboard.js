@@ -131,46 +131,51 @@ const Dashboard = () => {
 
   // Initialize userData and check age on mount or when user changes
   useEffect(() => {
-    if (user) {
+    if (user && !loading) {
       setUserData(user);
       
-      // Check if profile is complete - if not, show mandatory modal
-      const hasBasicInfo = user.fullName && user.yearOfBirth;
-      const age = calculateAge(user.yearOfBirth);
-      const requiresParentInfo = age !== null && age < 18;
-      const isComplete = requiresParentInfo 
-        ? (hasBasicInfo && user.parentName && user.parentEmail)
-        : hasBasicInfo;
-      
-      console.log('Profile completeness check:', {
-        fullName: user.fullName,
-        yearOfBirth: user.yearOfBirth,
-        age,
-        requiresParentInfo,
-        hasParentName: user.parentName,
-        hasParentEmail: user.parentEmail,
-        isComplete
-      });
-      
-      if (!isComplete) {
-        setShowProfileModal(true);
-        console.log('✋ Profile incomplete - showing mandatory modal');
-      } else {
-        setShowProfileModal(false);
-        console.log('✅ Profile complete - modal will not show');
-      }
-      
-      // Check age and show parent fields if needed
-      if (user.yearOfBirth) {
-        if (age !== null && age < 18) {
-          setShowParentFields(true);
-          console.log('Showing parent fields for user under 18');
+      // Small delay to ensure all data is loaded
+      const checkTimeout = setTimeout(() => {
+        // Check if profile is complete - if not, show mandatory modal
+        const hasBasicInfo = user.fullName && user.yearOfBirth;
+        const age = calculateAge(user.yearOfBirth);
+        const requiresParentInfo = age !== null && age < 18;
+        const isComplete = requiresParentInfo 
+          ? (hasBasicInfo && user.parentName && user.parentEmail)
+          : hasBasicInfo;
+        
+        console.log('Profile completeness check:', {
+          fullName: user.fullName,
+          yearOfBirth: user.yearOfBirth,
+          age,
+          requiresParentInfo,
+          hasParentName: user.parentName,
+          hasParentEmail: user.parentEmail,
+          isComplete
+        });
+        
+        if (!isComplete) {
+          setShowProfileModal(true);
+          console.log('✋ Profile incomplete - showing mandatory modal');
         } else {
-          setShowParentFields(false);
+          setShowProfileModal(false);
+          console.log('✅ Profile complete - modal will not show');
         }
-      }
+        
+        // Check age and show parent fields if needed
+        if (user.yearOfBirth) {
+          if (age !== null && age < 18) {
+            setShowParentFields(true);
+            console.log('Showing parent fields for user under 18');
+          } else {
+            setShowParentFields(false);
+          }
+        }
+      }, 300); // 300ms delay to ensure data is loaded
+
+      return () => clearTimeout(checkTimeout);
     }
-  }, [user]);
+  }, [user, loading]);
 
   useEffect(() => {
     // Check age when yearOfBirth changes
