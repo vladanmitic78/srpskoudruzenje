@@ -163,7 +163,7 @@ const Dashboard = () => {
           {t('dashboard.title')}
         </h1>
 
-        <Tabs defaultValue="personal" className="space-y-6">
+        <Tabs defaultValue="invoices" className="space-y-6">
           <TabsList className="grid w-full grid-cols-4 max-w-2xl">
             <TabsTrigger value="invoices">
               <FileText className="h-4 w-4 mr-2" />
