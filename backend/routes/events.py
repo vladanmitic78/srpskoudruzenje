@@ -184,6 +184,44 @@ async def get_participants(
 ):
     """Get list of confirmed participants (Admin only)"""
     db = request.app.state.db
+
+
+@router.get("/stats/my")
+async def get_my_event_stats(
+    current_user: dict = Depends(get_current_user),
+    request: Request = None
+):
+    """Get user's training statistics"""
+    db = request.app.state.db
+    user_id = current_user["_id"]
+    
+    # Get all events
+    all_events = await db.events.find({"status": "active"}).to_list(length=None)
+    
+    # Total trainings available
+    total_trainings = len(all_events)
+    
+    # Trainings attended (confirmed)
+    attended = sum(1 for event in all_events if event.get("participants") and user_id in event["participants"])
+    
+    # Trainings cancelled (historical)
+    cancelled = sum(
+        1 for event in all_events 
+        if event.get("cancellations") and any(c.get("userId") == user_id for c in event["cancellations"])
+    )
+    
+    # Training groups (extract unique categories/types if available, otherwise use event types)
+    # For now, we'll use unique locations as proxy for groups
+    training_groups = len(set(event.get("location", "Unknown") for event in all_events))
+    
+    return {
+        "totalTrainings": total_trainings,
+        "attended": attended,
+        "cancelled": cancelled,
+        "trainingGroups": training_groups,
+        "attendanceRate": round((attended / total_trainings * 100) if total_trainings > 0 else 0, 1)
+    }
+
     event = await db.events.find_one({"_id": event_id})
     
     if not event:
