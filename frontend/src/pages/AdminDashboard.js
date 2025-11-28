@@ -630,7 +630,7 @@ const AdminDashboard = () => {
                 <div className="space-y-4">
                   {events.length === 0 ? (
                     <p className="text-gray-600 dark:text-gray-400 text-center py-8">
-                      No events scheduled. Click "Add Event" to create one.
+                      No events scheduled. Click &quot;Add Event&quot; to create one.
                     </p>
                   ) : (
                     events.map((event) => (
