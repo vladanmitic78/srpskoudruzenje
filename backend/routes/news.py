@@ -64,3 +64,47 @@ async def delete_news(news_id: str, admin: dict = Depends(get_admin_user), reque
         raise HTTPException(status_code=404, detail="News not found")
     
     return {"success": True, "message": "News deleted successfully"}
+
+@router.post("/upload-image")
+async def upload_news_image(
+    file: UploadFile = File(...),
+    admin: dict = Depends(get_admin_user),
+    request: Request = None
+):
+    """Upload image for news article (Admin only)"""
+    # Validate file type
+    allowed_extensions = ['.jpg', '.jpeg', '.png', '.gif', '.webp']
+    file_ext = Path(file.filename).suffix.lower()
+    if file_ext not in allowed_extensions:
+        raise HTTPException(
+            status_code=400, 
+            detail=f"File type {file_ext} not allowed. Allowed: {', '.join(allowed_extensions)}"
+        )
+    
+    # Create uploads directory
+    upload_dir = Path("/app/uploads/news")
+    upload_dir.mkdir(parents=True, exist_ok=True)
+    
+    # Generate unique filename
+    timestamp = datetime.utcnow().strftime("%Y%m%d_%H%M%S")
+    safe_filename = f"news_{timestamp}{file_ext}"
+    file_path = upload_dir / safe_filename
+    
+    # Save file
+    with open(file_path, "wb") as buffer:
+        shutil.copyfileobj(file.file, buffer)
+    
+    # Return URL
+    file_url = f"/api/news/images/{safe_filename}"
+    
+    return {"success": True, "imageUrl": file_url}
+
+@router.get("/images/{filename}")
+async def get_news_image(filename: str):
+    """Serve news image"""
+    file_path = Path("/app/uploads/news") / filename
+    
+    if not file_path.exists():
+        raise HTTPException(status_code=404, detail="Image not found")
+    
+    return FileResponse(path=str(file_path))
