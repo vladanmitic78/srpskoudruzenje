@@ -37,6 +37,23 @@ const AdminDashboard = () => {
     cancellationReason: ''
   });
 
+  // CMS State
+  const [news, setNews] = useState([]);
+  const [newsModalOpen, setNewsModalOpen] = useState(false);
+  const [editingNews, setEditingNews] = useState(null);
+  const [newsForm, setNewsForm] = useState({
+    date: '',
+    title: { 'sr-latin': '', 'sr-cyrillic': '', 'en': '', 'sv': '' },
+    text: { 'sr-latin': '', 'sr-cyrillic': '', 'en': '', 'sv': '' },
+    image: '',
+    video: ''
+  });
+  const [aboutModalOpen, setAboutModalOpen] = useState(false);
+  const [aboutContent, setAboutContent] = useState({ 'sr-latin': '', 'sr-cyrillic': '', 'en': '', 'sv': '' });
+  const [storyModalOpen, setStoryModalOpen] = useState(false);
+  const [storyContent, setStoryContent] = useState({ 'sr-latin': '', 'sr-cyrillic': '', 'en': '', 'sv': '' });
+  const [storySourceLink, setStorySourceLink] = useState('');
+
   useEffect(() => {
     const fetchData = async () => {
       try {
