@@ -242,25 +242,6 @@ async def get_my_event_stats(
         "attendanceRate": round((attended / total_trainings * 100) if total_trainings > 0 else 0, 1)
     }
 
-    event = await db.events.find_one({"_id": event_id})
-    
-    if not event:
-        raise HTTPException(status_code=404, detail="Event not found")
-    
-    participant_ids = event.get("participants", [])
-    participants = await db.users.find({
-        "_id": {"$in": participant_ids}
-    }).to_list(length=100)
-    
-    return {
-        "participants": [{
-            "id": p["_id"],
-            "fullName": p["fullName"],
-            "email": p["email"],
-            "phone": p.get("phone")
-        } for p in participants]
-    }
-
 @router.delete("/{event_id}")
 async def delete_event(event_id: str, admin: dict = Depends(get_admin_user), request: Request = None):
     """Delete event (Admin only)"""
