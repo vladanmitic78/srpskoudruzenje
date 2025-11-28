@@ -61,6 +61,20 @@ const AdminDashboard = () => {
     video: '',
     url: ''
   });
+  
+  // Gallery State
+  const [albums, setAlbums] = useState([]);
+  const [albumModalOpen, setAlbumModalOpen] = useState(false);
+  const [editingAlbum, setEditingAlbum] = useState(null);
+  const [albumForm, setAlbumForm] = useState({
+    date: '',
+    title: { 'sr-latin': '', 'sr-cyrillic': '', 'en': '', 'sv': '' },
+    description: { 'sr-latin': '', 'sr-cyrillic': '', 'en': '', 'sv': '' },
+    place: '',
+    images: [],
+    videos: []
+  });
+  const [uploadingToAlbum, setUploadingToAlbum] = useState(null);
 
   useEffect(() => {
     const fetchData = async () => {
