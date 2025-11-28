@@ -149,6 +149,11 @@ export const eventsAPI = {
     const response = await api.get(`/events/${id}/participants`);
     return response.data;
   },
+  
+  getMyStats: async () => {
+    const response = await api.get('/events/stats/my');
+    return response.data;
+  },
 };
 
 // ==================== Invoices APIs ====================
