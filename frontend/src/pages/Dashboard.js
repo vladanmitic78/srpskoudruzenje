@@ -55,7 +55,18 @@ const Dashboard = () => {
           eventsAPI.getAll()
         ]);
         setInvoices(invoicesData.invoices || []);
-        setEvents(eventsData.events || []);
+        
+        const allEvents = eventsData.events || [];
+        setEvents(allEvents);
+        
+        // Check which events the current user has confirmed
+        if (user && user.id) {
+          const confirmedIds = allEvents
+            .filter(event => event.participants && event.participants.includes(user.id))
+            .map(event => event.id);
+          setConfirmedEvents(confirmedIds);
+          console.log('User confirmed events:', confirmedIds);
+        }
       } catch (error) {
         console.error('Error fetching dashboard data:', error);
         toast.error('Failed to load dashboard data');
