@@ -1327,6 +1327,260 @@ const AdminDashboard = () => {
             </div>
           </DialogContent>
         </Dialog>
+
+        {/* News Edit/Create Modal */}
+        <Dialog open={newsModalOpen} onOpenChange={setNewsModalOpen}>
+          <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
+            <DialogHeader>
+              <DialogTitle>{editingNews ? 'Edit News' : 'Create News'}</DialogTitle>
+            </DialogHeader>
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium mb-2">Date</label>
+                <input
+                  type="date"
+                  value={newsForm.date}
+                  onChange={(e) => setNewsForm({...newsForm, date: e.target.value})}
+                  className="w-full p-2 border rounded"
+                />
+              </div>
+
+              {['sr-latin', 'sr-cyrillic', 'en', 'sv'].map(lang => (
+                <div key={lang}>
+                  <label className="block text-sm font-medium mb-2">
+                    Title ({lang})
+                  </label>
+                  <input
+                    type="text"
+                    value={newsForm.title[lang]}
+                    onChange={(e) => setNewsForm({
+                      ...newsForm,
+                      title: {...newsForm.title, [lang]: e.target.value}
+                    })}
+                    className="w-full p-2 border rounded"
+                  />
+                </div>
+              ))}
+
+              {['sr-latin', 'sr-cyrillic', 'en', 'sv'].map(lang => (
+                <div key={lang}>
+                  <label className="block text-sm font-medium mb-2">
+                    Text ({lang})
+                  </label>
+                  <textarea
+                    value={newsForm.text[lang]}
+                    onChange={(e) => setNewsForm({
+                      ...newsForm,
+                      text: {...newsForm.text, [lang]: e.target.value}
+                    })}
+                    rows={4}
+                    className="w-full p-2 border rounded"
+                  />
+                </div>
+              ))}
+
+              <div>
+                <label className="block text-sm font-medium mb-2">Image URL</label>
+                <input
+                  type="text"
+                  value={newsForm.image}
+                  onChange={(e) => setNewsForm({...newsForm, image: e.target.value})}
+                  placeholder="https://..."
+                  className="w-full p-2 border rounded"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium mb-2">Video URL (optional)</label>
+                <input
+                  type="text"
+                  value={newsForm.video}
+                  onChange={(e) => setNewsForm({...newsForm, video: e.target.value})}
+                  placeholder="https://..."
+                  className="w-full p-2 border rounded"
+                />
+              </div>
+
+              <div className="flex gap-3 pt-4">
+                <button
+                  onClick={async () => {
+                    try {
+                      const token = localStorage.getItem('token');
+                      const url = editingNews 
+                        ? `${process.env.REACT_APP_BACKEND_URL}/api/news/${editingNews.id}`
+                        : `${process.env.REACT_APP_BACKEND_URL}/api/news`;
+                      const method = editingNews ? 'PUT' : 'POST';
+
+                      const response = await fetch(url, {
+                        method,
+                        headers: {
+                          'Content-Type': 'application/json',
+                          'Authorization': `Bearer ${token}`
+                        },
+                        body: JSON.stringify(newsForm)
+                      });
+
+                      if (response.ok) {
+                        toast.success(editingNews ? 'News updated' : 'News created');
+                        setNewsModalOpen(false);
+                        // Refresh news list
+                        const newsResponse = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/news`);
+                        const newsData = await newsResponse.json();
+                        setNews(newsData.news || []);
+                      } else {
+                        toast.error('Failed to save news');
+                      }
+                    } catch (error) {
+                      toast.error('Failed to save news');
+                    }
+                  }}
+                  className="flex-1 px-4 py-2 bg-[#C1272D] text-white rounded hover:bg-[#8B1F1F]"
+                >
+                  {editingNews ? 'Update' : 'Create'}
+                </button>
+                <button
+                  onClick={() => setNewsModalOpen(false)}
+                  className="flex-1 px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700"
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          </DialogContent>
+        </Dialog>
+
+        {/* About Content Modal */}
+        <Dialog open={aboutModalOpen} onOpenChange={setAboutModalOpen}>
+          <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
+            <DialogHeader>
+              <DialogTitle>Edit About Page Content</DialogTitle>
+            </DialogHeader>
+            <div className="space-y-4">
+              {['sr-latin', 'sr-cyrillic', 'en', 'sv'].map(lang => (
+                <div key={lang}>
+                  <label className="block text-sm font-medium mb-2">
+                    Content ({lang})
+                  </label>
+                  <textarea
+                    value={aboutContent[lang]}
+                    onChange={(e) => setAboutContent({...aboutContent, [lang]: e.target.value})}
+                    rows={8}
+                    className="w-full p-2 border rounded"
+                    placeholder={`Enter about content in ${lang}...`}
+                  />
+                </div>
+              ))}
+
+              <div className="flex gap-3 pt-4">
+                <button
+                  onClick={async () => {
+                    try {
+                      const token = localStorage.getItem('token');
+                      const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/content/about`, {
+                        method: 'PUT',
+                        headers: {
+                          'Content-Type': 'application/json',
+                          'Authorization': `Bearer ${token}`
+                        },
+                        body: JSON.stringify({ content: aboutContent })
+                      });
+
+                      if (response.ok) {
+                        toast.success('About content updated');
+                        setAboutModalOpen(false);
+                      } else {
+                        toast.error('Failed to update about content');
+                      }
+                    } catch (error) {
+                      toast.error('Failed to update about content');
+                    }
+                  }}
+                  className="flex-1 px-4 py-2 bg-[#C1272D] text-white rounded hover:bg-[#8B1F1F]"
+                >
+                  Save Changes
+                </button>
+                <button
+                  onClick={() => setAboutModalOpen(false)}
+                  className="flex-1 px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700"
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          </DialogContent>
+        </Dialog>
+
+        {/* Serbian Story Modal */}
+        <Dialog open={storyModalOpen} onOpenChange={setStoryModalOpen}>
+          <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
+            <DialogHeader>
+              <DialogTitle>Edit Serbian Story Page</DialogTitle>
+            </DialogHeader>
+            <div className="space-y-4">
+              {['sr-latin', 'sr-cyrillic', 'en', 'sv'].map(lang => (
+                <div key={lang}>
+                  <label className="block text-sm font-medium mb-2">
+                    Story Content ({lang})
+                  </label>
+                  <textarea
+                    value={storyContent[lang]}
+                    onChange={(e) => setStoryContent({...storyContent, [lang]: e.target.value})}
+                    rows={8}
+                    className="w-full p-2 border rounded"
+                    placeholder={`Enter story content in ${lang}...`}
+                  />
+                </div>
+              ))}
+
+              <div>
+                <label className="block text-sm font-medium mb-2">Source Link (optional)</label>
+                <input
+                  type="text"
+                  value={storySourceLink}
+                  onChange={(e) => setStorySourceLink(e.target.value)}
+                  placeholder="https://..."
+                  className="w-full p-2 border rounded"
+                />
+              </div>
+
+              <div className="flex gap-3 pt-4">
+                <button
+                  onClick={async () => {
+                    try {
+                      const token = localStorage.getItem('token');
+                      const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/content/serbian-story`, {
+                        method: 'PUT',
+                        headers: {
+                          'Content-Type': 'application/json',
+                          'Authorization': `Bearer ${token}`
+                        },
+                        body: JSON.stringify({ content: storyContent, sourceLink: storySourceLink })
+                      });
+
+                      if (response.ok) {
+                        toast.success('Serbian story updated');
+                        setStoryModalOpen(false);
+                      } else {
+                        toast.error('Failed to update story');
+                      }
+                    } catch (error) {
+                      toast.error('Failed to update story');
+                    }
+                  }}
+                  className="flex-1 px-4 py-2 bg-[#C1272D] text-white rounded hover:bg-[#8B1F1F]"
+                >
+                  Save Changes
+                </button>
+                <button
+                  onClick={() => setStoryModalOpen(false)}
+                  className="flex-1 px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700"
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          </DialogContent>
+        </Dialog>
       </div>
     </div>
   );
