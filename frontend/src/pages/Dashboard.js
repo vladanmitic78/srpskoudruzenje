@@ -20,6 +20,13 @@ const Dashboard = () => {
   const [confirmedEvents, setConfirmedEvents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showParentFields, setShowParentFields] = useState(false);
+  const [trainingStats, setTrainingStats] = useState({
+    totalTrainings: 0,
+    attended: 0,
+    cancelled: 0,
+    trainingGroups: 0,
+    attendanceRate: 0
+  });
 
   useEffect(() => {
     const processGoogleAuth = async () => {
