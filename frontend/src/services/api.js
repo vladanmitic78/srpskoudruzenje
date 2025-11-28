@@ -331,6 +331,28 @@ export const contentAPI = {
     const response = await api.delete(`/content/pages/${contentId}`);
     return response.data;
   },
+
+  // About Page
+  getAbout: async () => {
+    const response = await api.get('/content/about');
+    return response.data;
+  },
+
+  updateAbout: async (contentData) => {
+    const response = await api.put('/content/about', contentData);
+    return response.data;
+  },
+
+  // Serbian Story
+  getSerbianStory: async () => {
+    const response = await api.get('/content/serbian-story');
+    return response.data;
+  },
+
+  updateSerbianStory: async (contentData) => {
+    const response = await api.put('/content/serbian-story', contentData);
+    return response.data;
+  },
 };
 
 // ==================== Contact APIs ====================
