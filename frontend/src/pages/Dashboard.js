@@ -30,32 +30,6 @@ const Dashboard = () => {
   });
 
   useEffect(() => {
-    const processGoogleAuth = async () => {
-      // Check if there's a session_id in URL fragment (from Google OAuth)
-      const hash = window.location.hash;
-      if (hash && hash.includes('session_id=')) {
-        setLoading(true);
-        const sessionId = hash.split('session_id=')[1].split('&')[0];
-        
-        try {
-          const result = await loginWithGoogle(sessionId);
-          
-          if (result.success) {
-            setUserData(result.user);
-            toast.success('Successfully signed in with Google!');
-            
-            // Clean URL
-            window.history.replaceState({}, document.title, window.location.pathname);
-          } else {
-            toast.error('Failed to authenticate with Google');
-          }
-        } catch (error) {
-          console.error('Google auth error:', error);
-          toast.error('Failed to authenticate with Google');
-        }
-      }
-    };
-
     const fetchData = async () => {
       try {
         const [invoicesData, eventsData, statsData] = await Promise.all([
