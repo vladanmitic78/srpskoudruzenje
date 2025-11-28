@@ -205,6 +205,11 @@ export const galleryAPI = {
     return response.data;
   },
   
+  update: async (id, galleryData) => {
+    const response = await api.put(`/gallery/${id}`, galleryData);
+    return response.data;
+  },
+  
   uploadImage: async (id, file) => {
     const formData = new FormData();
     formData.append('file', file);
