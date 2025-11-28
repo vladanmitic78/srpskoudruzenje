@@ -57,14 +57,21 @@ const Dashboard = () => {
 
     const fetchData = async () => {
       try {
-        const [invoicesData, eventsData] = await Promise.all([
+        const [invoicesData, eventsData, statsData] = await Promise.all([
           invoicesAPI.getMy(),
-          eventsAPI.getAll()
+          eventsAPI.getAll(),
+          eventsAPI.getMyStats().catch(err => {
+            console.error('Stats error:', err);
+            return { totalTrainings: 0, attended: 0, cancelled: 0, trainingGroups: 0, attendanceRate: 0 };
+          })
         ]);
         setInvoices(invoicesData.invoices || []);
         
         const allEvents = eventsData.events || [];
         setEvents(allEvents);
+        
+        // Set training statistics
+        setTrainingStats(statsData);
         
         // Check which events the current user has confirmed
         // Use user from closure or check again
