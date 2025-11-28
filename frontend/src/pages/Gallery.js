@@ -32,25 +32,25 @@ const Gallery = () => {
     setLightboxOpen(true);
   };
 
-  const closeLightbox = () => {
+  const closeLightbox = useCallback(() => {
     setLightboxOpen(false);
     setSelectedAlbum(null);
     setCurrentImageIndex(0);
-  };
+  }, []);
 
-  const nextImage = () => {
+  const nextImage = useCallback(() => {
     if (selectedAlbum && selectedAlbum.images) {
       setCurrentImageIndex((prev) => (prev + 1) % selectedAlbum.images.length);
     }
-  };
+  }, [selectedAlbum]);
 
-  const prevImage = () => {
+  const prevImage = useCallback(() => {
     if (selectedAlbum && selectedAlbum.images) {
       setCurrentImageIndex((prev) => 
         prev === 0 ? selectedAlbum.images.length - 1 : prev - 1
       );
     }
-  };
+  }, [selectedAlbum]);
 
   useEffect(() => {
     const handleKeyPress = (e) => {
