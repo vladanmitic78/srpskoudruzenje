@@ -1,5 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, Request, UploadFile, File
+from fastapi.responses import FileResponse
 from datetime import datetime
+from pathlib import Path
 import shutil
 
 from models import GalleryCreate, GalleryResponse
