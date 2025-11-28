@@ -75,6 +75,21 @@ const AdminDashboard = () => {
     videos: []
   });
   const [uploadingToAlbum, setUploadingToAlbum] = useState(null);
+  
+  // Settings State
+  const [settings, setSettings] = useState({
+    address: '',
+    bankAccount: '',
+    vatNumber: '',
+    registrationNumber: '',
+    contactEmail: '',
+    contactPhone: '',
+    socialMedia: {
+      facebook: '',
+      instagram: '',
+      youtube: ''
+    }
+  });
 
   useEffect(() => {
     const fetchData = async () => {
