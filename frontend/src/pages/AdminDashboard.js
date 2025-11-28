@@ -697,29 +697,56 @@ const AdminDashboard = () => {
 
           {/* Content Management Tab */}
           <TabsContent value="content">
-            <Card className="border-2 border-[#C1272D]/20">
-              <CardHeader>
-                <CardTitle>Content Management - Multi-Language Pages</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-gray-600 dark:text-gray-400 mb-4">
-                  Edit pages with support for Serbian Latin, Serbian Cyrillic, English, and Swedish.
-                </p>
-                <div className="space-y-4">
-                  {['home', 'gallery', 'about', 'serbian-story'].map(pageId => (
-                    <div key={pageId} className="p-4 border-2 border-gray-200 dark:border-gray-700 rounded-lg">
-                      <h3 className="font-semibold text-lg capitalize mb-2">{pageId.replace('-', ' ')}</h3>
-                      <button
-                        onClick={() => window.location.href = `/admin/content/${pageId}`}
-                        className="px-4 py-2 bg-[#C1272D] text-white rounded hover:bg-[#8B1F1F]"
-                      >
-                        Edit Page Content
-                      </button>
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
+            <div className="space-y-6">
+              {/* Gallery Management */}
+              <Card className="border-2 border-[#C1272D]/20">
+                <CardHeader>
+                  <CardTitle>Gallery Management</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-sm text-gray-600 mb-4">Upload images and videos for the gallery page.</p>
+                  <button
+                    onClick={() => {/* Gallery upload modal logic */}}
+                    className="px-4 py-2 bg-[#C1272D] text-white rounded hover:bg-[#8B1F1F]"
+                  >
+                    📤 Upload Images/Videos
+                  </button>
+                  <p className="text-xs text-gray-500 mt-2">Supported: JPG, PNG, GIF, MP4, WEBM, MOV</p>
+                </CardContent>
+              </Card>
+
+              {/* About Page */}
+              <Card className="border-2 border-[#C1272D]/20">
+                <CardHeader>
+                  <CardTitle>About Page Content</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-sm text-gray-600 mb-4">Edit the about page content in all languages.</p>
+                  <button
+                    onClick={() => {/* About edit modal logic */}}
+                    className="px-4 py-2 bg-[#C1272D] text-white rounded hover:bg-[#8B1F1F]"
+                  >
+                    ✏️ Edit About Content
+                  </button>
+                </CardContent>
+              </Card>
+
+              {/* Serbian Story */}
+              <Card className="border-2 border-[#C1272D]/20">
+                <CardHeader>
+                  <CardTitle>Serbian Story Page</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-sm text-gray-600 mb-4">Edit Serbian culture story with text, image, and source link.</p>
+                  <button
+                    onClick={() => {/* Serbian story edit modal logic */}}
+                    className="px-4 py-2 bg-[#C1272D] text-white rounded hover:bg-[#8B1F1F]"
+                  >
+                    ✏️ Edit Serbian Story
+                  </button>
+                </CardContent>
+              </Card>
+            </div>
           </TabsContent>
 
           {/* Settings Tab */}
