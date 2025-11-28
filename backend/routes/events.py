@@ -1,11 +1,13 @@
 from fastapi import APIRouter, Depends, HTTPException, Request
 from datetime import datetime
 from typing import List
+import logging
 
 from models import EventCreate, EventUpdate, EventResponse
 from dependencies import get_admin_user, get_current_user
 from email_service import send_email, get_cancellation_email_template
 
+logger = logging.getLogger(__name__)
 router = APIRouter()
 
 @router.get("/")
