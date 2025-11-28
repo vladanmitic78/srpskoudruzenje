@@ -171,8 +171,10 @@ const Dashboard = () => {
     }
   };
 
-  const handleCancelEvent = async (eventId) => {
-    const reason = prompt('Please provide a reason for cancelling (mandatory):');
+  const handleCancelEvent = async (eventId, eventTitle) => {
+    const reason = prompt(
+      `Please provide a reason for cancelling your participation in "${eventTitle}":\n\n(This is mandatory and will be sent to the admin)`
+    );
     
     if (!reason || reason.trim() === '') {
       toast.error('Cancellation reason is required');
@@ -182,9 +184,14 @@ const Dashboard = () => {
     try {
       await eventsAPI.cancelParticipation(eventId, reason);
       setConfirmedEvents(confirmedEvents.filter(id => id !== eventId));
-      toast.info('Event participation cancelled. Admin has been notified.');
+      toast.info('Training participation cancelled. Admin has been notified.');
+      
+      // Refresh events to get updated participant list
+      const eventsData = await eventsAPI.getAll();
+      setEvents(eventsData.events || []);
     } catch (error) {
       toast.error('Failed to cancel participation');
+      console.error(error);
     }
   };
 
