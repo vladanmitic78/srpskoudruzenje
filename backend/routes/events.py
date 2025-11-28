@@ -186,6 +186,24 @@ async def get_participants(
 ):
     """Get list of confirmed participants (Admin only)"""
     db = request.app.state.db
+    
+    event = await db.events.find_one({"_id": event_id})
+    if not event:
+        raise HTTPException(status_code=404, detail="Event not found")
+    
+    participant_ids = event.get("participants", [])
+    participants = await db.users.find({"_id": {"$in": participant_ids}}).to_list(length=None)
+    
+    return {
+        "participants": [
+            {
+                "id": p["_id"],
+                "fullName": p.get("fullName"),
+                "email": p.get("email")
+            }
+            for p in participants
+        ]
+    }
 
 
 @router.get("/stats/my")
