@@ -1534,22 +1534,9 @@ const AdminDashboard = () => {
                 <button
                   onClick={async () => {
                     try {
-                      const token = localStorage.getItem('token');
-                      const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/content/serbian-story`, {
-                        method: 'PUT',
-                        headers: {
-                          'Content-Type': 'application/json',
-                          'Authorization': `Bearer ${token}`
-                        },
-                        body: JSON.stringify({ content: storyContent, sourceLink: storySourceLink })
-                      });
-
-                      if (response.ok) {
-                        toast.success('Serbian story updated');
-                        setStoryModalOpen(false);
-                      } else {
-                        toast.error('Failed to update story');
-                      }
+                      await contentAPI.updateSerbianStory({ content: storyContent, sourceLink: storySourceLink });
+                      toast.success('Serbian story updated');
+                      setStoryModalOpen(false);
                     } catch (error) {
                       toast.error('Failed to update story');
                     }
