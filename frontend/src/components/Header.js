@@ -163,7 +163,9 @@ const Header = () => {
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
                   <DropdownMenuItem asChild>
-                    <Link to="/dashboard">{t('nav.dashboard')}</Link>
+                    <Link to={user?.role === 'admin' || user?.role === 'superadmin' ? '/admin' : '/dashboard'}>
+                      {t('nav.dashboard')}
+                    </Link>
                   </DropdownMenuItem>
                   <DropdownMenuItem onClick={logout}>
                     {t('nav.logout')}
