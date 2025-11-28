@@ -66,9 +66,8 @@ const Dashboard = () => {
       }
     };
     
-    // Process Google auth first, then fetch data
-    processGoogleAuth().then(() => fetchData());
-  }, [loginWithGoogle, user]);
+    fetchData();
+  }, [user]);
 
   const calculateAge = (yearOfBirth) => {
     if (!yearOfBirth) return null;
