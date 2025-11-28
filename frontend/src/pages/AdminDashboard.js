@@ -1475,22 +1475,9 @@ const AdminDashboard = () => {
                 <button
                   onClick={async () => {
                     try {
-                      const token = localStorage.getItem('token');
-                      const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/content/about`, {
-                        method: 'PUT',
-                        headers: {
-                          'Content-Type': 'application/json',
-                          'Authorization': `Bearer ${token}`
-                        },
-                        body: JSON.stringify({ content: aboutContent })
-                      });
-
-                      if (response.ok) {
-                        toast.success('About content updated');
-                        setAboutModalOpen(false);
-                      } else {
-                        toast.error('Failed to update about content');
-                      }
+                      await contentAPI.updateAbout({ content: aboutContent });
+                      toast.success('About content updated');
+                      setAboutModalOpen(false);
                     } catch (error) {
                       toast.error('Failed to update about content');
                     }
