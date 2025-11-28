@@ -228,6 +228,7 @@ class SocialMedia(BaseModel):
     facebook: str
     instagram: str
     youtube: str
+    snapchat: str
 
 class SettingsBase(BaseModel):
     address: str
