@@ -63,7 +63,7 @@ const Gallery = () => {
 
     window.addEventListener('keydown', handleKeyPress);
     return () => window.removeEventListener('keydown', handleKeyPress);
-  }, [lightboxOpen, selectedAlbum]);
+  }, [lightboxOpen, selectedAlbum, nextImage, prevImage]);
 
   return (
     <div className="min-h-screen py-16">
