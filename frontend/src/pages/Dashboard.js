@@ -169,6 +169,11 @@ const Dashboard = () => {
   const handleSaveProfile = async () => {
     try {
       // Validation
+      if (!userData.fullName) {
+        toast.error('Full name is required');
+        return;
+      }
+      
       if (!userData.yearOfBirth) {
         toast.error('Year of birth is required');
         return;
@@ -182,6 +187,11 @@ const Dashboard = () => {
 
       await userAPI.updateProfile(userData);
       toast.success('Profile updated successfully!');
+      
+      // Close modal if it was open
+      if (showProfileModal) {
+        setShowProfileModal(false);
+      }
     } catch (error) {
       toast.error('Failed to update profile');
     }
