@@ -134,6 +134,12 @@ const Dashboard = () => {
     if (user) {
       setUserData(user);
       
+      // Check if profile is complete - if not, show mandatory modal
+      if (!isProfileComplete(user)) {
+        setShowProfileModal(true);
+        console.log('Profile incomplete - showing mandatory modal');
+      }
+      
       // Check age and show parent fields if needed
       if (user.yearOfBirth) {
         const age = calculateAge(user.yearOfBirth);
