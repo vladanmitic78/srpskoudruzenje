@@ -20,6 +20,7 @@ const Dashboard = () => {
   const [confirmedEvents, setConfirmedEvents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showParentFields, setShowParentFields] = useState(false);
+  const [showProfileModal, setShowProfileModal] = useState(false);
   const [trainingStats, setTrainingStats] = useState({
     totalTrainings: 0,
     attended: 0,
