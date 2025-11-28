@@ -1,11 +1,35 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useLanguage } from '../context/LanguageContext';
 import { Card, CardContent } from '../components/ui/card';
-import { mockAboutContent } from '../utils/mock';
+import { contentAPI } from '../services/api';
 import { Users, Heart, Music, BookOpen } from 'lucide-react';
 
 const About = () => {
   const { language } = useLanguage();
+  const [aboutContent, setAboutContent] = useState('');
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchAboutContent = async () => {
+      try {
+        const data = await contentAPI.getAbout();
+        setAboutContent(data.content || {});
+      } catch (error) {
+        console.error('Error fetching about content:', error);
+        // Fallback to default text if API fails
+        setAboutContent({
+          'sr-latin': 'Sadržaj uskoro...',
+          'sr-cyrillic': 'Садржај ускоро...',
+          'en': 'Content coming soon...',
+          'sv': 'Innehåll kommer snart...'
+        });
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchAboutContent();
+  }, []);
 
   const features = [
     {
