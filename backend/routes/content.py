@@ -62,11 +62,14 @@ async def update_page_content(
                 "content": content_update.content,
                 "updatedAt": datetime.utcnow(),
                 "updatedBy": admin["_id"]
-
-
-from fastapi import UploadFile, File
-from pathlib import Path
-import shutil
+            }
+        }
+    )
+    
+    if result.matched_count == 0:
+        raise HTTPException(status_code=404, detail="Content block not found")
+    
+    return {"success": True, "message": "Content updated successfully"}
 
 # Gallery Management
 @router.post("/gallery/upload")
