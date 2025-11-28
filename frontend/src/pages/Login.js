@@ -41,12 +41,6 @@ const Login = () => {
     }
   };
 
-  const handleGoogleLogin = () => {
-    // Redirect to Emergent Auth with dashboard as redirect URL
-    const redirectUrl = `${window.location.origin}/dashboard`;
-    window.location.href = `https://auth.emergentagent.com/?redirect=${encodeURIComponent(redirectUrl)}`;
-  };
-
   return (
     <div className="min-h-screen flex items-center justify-center py-16 px-4 bg-gray-50 dark:bg-gray-900">
       <Card className="w-full max-w-md border-2 border-[#C1272D]/20">
