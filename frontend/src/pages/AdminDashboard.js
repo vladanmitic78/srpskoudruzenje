@@ -1900,10 +1900,16 @@ const AdminDashboard = () => {
                               );
                               const data = await response.json();
                               if (data.success) {
-                                setAlbumForm(prev => ({
-                                  ...prev,
-                                  images: [...prev.images, `${process.env.REACT_APP_BACKEND_URL}${data.imageUrl}`]
-                                }));
+                                // Don't manually update - the backend already saved it
+                                // Just refresh the current album data to show the new image
+                                const galleryData = await galleryAPI.getAll();
+                                const updatedAlbum = galleryData.items.find(a => a.id === editingAlbum.id);
+                                if (updatedAlbum) {
+                                  setAlbumForm(prev => ({
+                                    ...prev,
+                                    images: updatedAlbum.images || []
+                                  }));
+                                }
                               }
                             }
                             toast.success(`${files.length} image(s) uploaded`);
