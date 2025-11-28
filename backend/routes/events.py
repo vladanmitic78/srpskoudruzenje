@@ -136,9 +136,19 @@ async def cancel_participation(
     if not event:
         raise HTTPException(status_code=404, detail="Event not found")
     
+    # Track cancellation in cancellations array
+    cancellation_record = {
+        "userId": current_user["_id"],
+        "reason": reason,
+        "cancelledAt": datetime.utcnow().isoformat()
+    }
+    
     result = await db.events.update_one(
         {"_id": event_id},
-        {"$pull": {"participants": current_user["_id"]}}
+        {
+            "$pull": {"participants": current_user["_id"]},
+            "$push": {"cancellations": cancellation_record}
+        }
     )
     
     # Send admin notification email
