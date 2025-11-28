@@ -1117,6 +1117,20 @@ const AdminDashboard = () => {
                           required
                         />
                       </div>
+                      <div>
+                        <label className="block text-sm font-medium mb-2">Snapchat URL</label>
+                        <input
+                          type="url"
+                          value={settings.socialMedia.snapchat}
+                          onChange={(e) => setSettings({
+                            ...settings,
+                            socialMedia: {...settings.socialMedia, snapchat: e.target.value}
+                          })}
+                          placeholder="https://snapchat.com/add/..."
+                          className="w-full p-3 border rounded-md"
+                          required
+                        />
+                      </div>
                     </div>
                   </div>
 
