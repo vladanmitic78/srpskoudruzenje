@@ -111,7 +111,9 @@ const AdminDashboard = () => {
         setNews(newsData.news || []);
         setStories(storiesData.stories || []);
         setAlbums(galleryData.items || []);
-        setSettings(settingsData || settings);
+        if (settingsData) {
+          setSettings(settingsData);
+        }
       } catch (error) {
         console.error('Error fetching admin data:', error);
         toast.error('Failed to load admin data');
