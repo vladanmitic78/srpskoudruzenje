@@ -623,6 +623,147 @@ const Dashboard = () => {
             </Card>
           </TabsContent>
         </Tabs>
+
+        {/* Mandatory Profile Completion Modal */}
+        {showProfileModal && (
+          <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-4">
+            <div className="bg-white dark:bg-gray-800 rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl">
+              <div className="bg-[#C1272D] text-white p-6 rounded-t-lg">
+                <h2 className="text-2xl font-bold flex items-center">
+                  <AlertCircle className="h-6 w-6 mr-3" />
+                  Complete Your Profile
+                </h2>
+                <p className="mt-2 text-sm opacity-90">
+                  Please complete your profile information to access the dashboard
+                </p>
+              </div>
+              
+              <div className="p-6 space-y-4">
+                <div className="bg-yellow-50 dark:bg-yellow-900/20 border-l-4 border-yellow-400 p-4 mb-6">
+                  <p className="text-sm text-yellow-800 dark:text-yellow-200">
+                    <strong>⚠️ Required:</strong> You must complete all required fields below before accessing the dashboard.
+                  </p>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label>Full Name *</Label>
+                    <Input 
+                      required
+                      value={userData.fullName || ''}
+                      onChange={(e) => setUserData({...userData, fullName: e.target.value})}
+                      placeholder="Enter your full name"
+                      className="border-2"
+                    />
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <Label>Year of Birth *</Label>
+                    <Input 
+                      required
+                      type="number"
+                      placeholder="1990"
+                      min="1900"
+                      max={new Date().getFullYear()}
+                      value={userData.yearOfBirth || ''}
+                      onChange={(e) => handleYearOfBirthChange(e.target.value)}
+                      className="border-2"
+                    />
+                    {userData.yearOfBirth && (
+                      <p className="text-sm text-gray-600 dark:text-gray-400">
+                        Age: {calculateAge(userData.yearOfBirth)} years
+                      </p>
+                    )}
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label>Email</Label>
+                    <Input 
+                      type="email"
+                      value={userData.email || ''}
+                      onChange={(e) => setUserData({...userData, email: e.target.value})}
+                      placeholder="your.email@example.com"
+                    />
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <Label>Phone</Label>
+                    <Input 
+                      type="tel"
+                      value={userData.phone || ''}
+                      onChange={(e) => setUserData({...userData, phone: e.target.value})}
+                      placeholder="+46 XX XXX XX XX"
+                    />
+                  </div>
+
+                  <div className="space-y-2 md:col-span-2">
+                    <Label>Street Address</Label>
+                    <Input 
+                      value={userData.address || ''}
+                      onChange={(e) => setUserData({...userData, address: e.target.value})}
+                      placeholder="Street, City, Postal Code"
+                    />
+                  </div>
+                </div>
+
+                {/* Parent/Guardian Information - Only shown for users under 18 */}
+                {showParentFields && (
+                  <div className="border-t-2 border-[#C1272D]/20 pt-6 mt-6">
+                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center">
+                      <AlertCircle className="h-5 w-5 mr-2 text-[#C1272D]" />
+                      Parent/Guardian Information (Required for users under 18)
+                    </h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <Label>Parent/Guardian Name *</Label>
+                        <Input 
+                          required={showParentFields}
+                          value={userData.parentName || ''}
+                          onChange={(e) => setUserData({...userData, parentName: e.target.value})}
+                          placeholder="Full name"
+                          className="border-2"
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label>Parent/Guardian Email *</Label>
+                        <Input 
+                          required={showParentFields}
+                          type="email"
+                          value={userData.parentEmail || ''}
+                          onChange={(e) => setUserData({...userData, parentEmail: e.target.value})}
+                          placeholder="parent@example.com"
+                          className="border-2"
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label>Parent/Guardian Phone</Label>
+                        <Input 
+                          type="tel"
+                          value={userData.parentPhone || ''}
+                          onChange={(e) => setUserData({...userData, parentPhone: e.target.value})}
+                          placeholder="+46 XX XXX XX XX"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                <div className="flex gap-4 pt-6 border-t">
+                  <Button 
+                    onClick={handleSaveProfile}
+                    className="flex-1 bg-[#C1272D] hover:bg-[#8B1F1F] text-white py-6 text-lg font-semibold"
+                  >
+                    Save Profile & Continue
+                  </Button>
+                </div>
+                
+                <p className="text-xs text-center text-gray-500 mt-4">
+                  * Required fields must be completed
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
