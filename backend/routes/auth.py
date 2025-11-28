@@ -117,7 +117,10 @@ async def login(login_data: LoginRequest, request: Request):
         address=user.get("address"),
         role=user["role"],
         emailVerified=user.get("emailVerified", False),
-        createdAt=user["createdAt"]
+        createdAt=user["createdAt"],
+        parentName=user.get("parentName"),
+        parentEmail=user.get("parentEmail"),
+        parentPhone=user.get("parentPhone")
     )
     
     return {
