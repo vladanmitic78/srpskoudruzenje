@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../components/ui/tabs';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '../components/ui/dialog';
 import { Users, FileText, Calendar, Settings, BarChart } from 'lucide-react';
-import { adminAPI, eventsAPI, invoicesAPI } from '../services/api';
+import { adminAPI, eventsAPI, invoicesAPI, newsAPI } from '../services/api';
 import { toast } from 'sonner';
 
 const AdminDashboard = () => {
