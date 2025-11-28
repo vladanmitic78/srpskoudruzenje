@@ -102,6 +102,23 @@ const Dashboard = () => {
     return currentYear - parseInt(yearOfBirth);
   };
 
+  const isProfileComplete = (userProfile) => {
+    if (!userProfile) return false;
+    
+    // Required fields for all users
+    const hasBasicInfo = userProfile.fullName && userProfile.yearOfBirth;
+    
+    // Check if parent info is required (user under 18)
+    const age = calculateAge(userProfile.yearOfBirth);
+    const requiresParentInfo = age !== null && age < 18;
+    
+    if (requiresParentInfo) {
+      return hasBasicInfo && userProfile.parentName && userProfile.parentEmail;
+    }
+    
+    return hasBasicInfo;
+  };
+
   const handleYearOfBirthChange = (year) => {
     setUserData({...userData, yearOfBirth: year});
     const age = calculateAge(year);
