@@ -87,7 +87,8 @@ const AdminDashboard = () => {
     socialMedia: {
       facebook: '',
       instagram: '',
-      youtube: ''
+      youtube: '',
+      snapchat: ''
     }
   });
 
