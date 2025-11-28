@@ -1401,31 +1401,17 @@ const AdminDashboard = () => {
                 <button
                   onClick={async () => {
                     try {
-                      const token = localStorage.getItem('token');
-                      const url = editingNews 
-                        ? `${process.env.REACT_APP_BACKEND_URL}/api/news/${editingNews.id}`
-                        : `${process.env.REACT_APP_BACKEND_URL}/api/news`;
-                      const method = editingNews ? 'PUT' : 'POST';
-
-                      const response = await fetch(url, {
-                        method,
-                        headers: {
-                          'Content-Type': 'application/json',
-                          'Authorization': `Bearer ${token}`
-                        },
-                        body: JSON.stringify(newsForm)
-                      });
-
-                      if (response.ok) {
-                        toast.success(editingNews ? 'News updated' : 'News created');
-                        setNewsModalOpen(false);
-                        // Refresh news list
-                        const newsResponse = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/news`);
-                        const newsData = await newsResponse.json();
-                        setNews(newsData.news || []);
+                      if (editingNews) {
+                        await newsAPI.update(editingNews.id, newsForm);
+                        toast.success('News updated');
                       } else {
-                        toast.error('Failed to save news');
+                        await newsAPI.create(newsForm);
+                        toast.success('News created');
                       }
+                      setNewsModalOpen(false);
+                      // Refresh news list
+                      const newsData = await newsAPI.getAll(100, 0);
+                      setNews(newsData.news || []);
                     } catch (error) {
                       toast.error('Failed to save news');
                     }
