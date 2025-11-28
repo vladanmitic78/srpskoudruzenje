@@ -907,14 +907,89 @@ const AdminDashboard = () => {
                 </CardContent>
               </Card>
 
-              {/* Gallery Management - Note for Future */}
+              {/* Gallery Management */}
               <Card className="border-2 border-[#C1272D]/20">
-                <CardHeader>
-                  <CardTitle>Gallery Management</CardTitle>
+                <CardHeader className="flex flex-row items-center justify-between">
+                  <CardTitle>Gallery Management (Albums)</CardTitle>
+                  <button
+                    onClick={() => {
+                      setEditingAlbum(null);
+                      setAlbumForm({
+                        date: new Date().toISOString().split('T')[0],
+                        title: { 'sr-latin': '', 'sr-cyrillic': '', 'en': '', 'sv': '' },
+                        description: { 'sr-latin': '', 'sr-cyrillic': '', 'en': '', 'sv': '' },
+                        place: '',
+                        images: [],
+                        videos: []
+                      });
+                      setAlbumModalOpen(true);
+                    }}
+                    className="px-4 py-2 bg-[#C1272D] text-white rounded hover:bg-[#8B1F1F]"
+                  >
+                    ➕ Create Album
+                  </button>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-sm text-gray-600 mb-4">Gallery page uses data seeded in database. To update gallery images, modify the seed data or implement image upload feature.</p>
-                  <p className="text-xs text-gray-500 mt-2">Current gallery items are managed through the database gallery collection.</p>
+                  <div className="space-y-3">
+                    {albums.map((album) => (
+                      <div key={album.id} className="p-4 border rounded">
+                        <div className="flex items-start justify-between mb-2">
+                          <div className="flex-1">
+                            <h4 className="font-semibold">{album.title?.en || album.description?.en || album.description?.['sr-latin']}</h4>
+                            <p className="text-sm text-gray-500">{album.date} • {album.place || 'No location'}</p>
+                            <p className="text-sm text-gray-600 mt-1">{album.images?.length || 0} photos</p>
+                          </div>
+                          <div className="flex gap-2">
+                            <button
+                              onClick={() => {
+                                setEditingAlbum(album);
+                                setAlbumForm({
+                                  date: album.date,
+                                  title: album.title || { 'sr-latin': '', 'sr-cyrillic': '', 'en': '', 'sv': '' },
+                                  description: album.description,
+                                  place: album.place || '',
+                                  images: album.images || [],
+                                  videos: album.videos || []
+                                });
+                                setAlbumModalOpen(true);
+                              }}
+                              className="px-3 py-1 text-sm bg-blue-500 text-white rounded hover:bg-blue-600"
+                            >
+                              Edit
+                            </button>
+                            <button
+                              onClick={async () => {
+                                if (window.confirm('Delete this album and all its photos?')) {
+                                  try {
+                                    await galleryAPI.delete(album.id);
+                                    setAlbums(albums.filter(a => a.id !== album.id));
+                                    toast.success('Album deleted');
+                                  } catch (error) {
+                                    toast.error('Failed to delete album');
+                                  }
+                                }
+                              }}
+                              className="px-3 py-1 text-sm bg-red-500 text-white rounded hover:bg-red-600"
+                            >
+                              Delete
+                            </button>
+                          </div>
+                        </div>
+                        {album.images && album.images.length > 0 && (
+                          <div className="grid grid-cols-4 gap-2 mt-3">
+                            {album.images.slice(0, 4).map((img, idx) => (
+                              <img 
+                                key={idx} 
+                                src={img} 
+                                alt={`Preview ${idx + 1}`}
+                                className="w-full h-20 object-cover rounded"
+                              />
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
                 </CardContent>
               </Card>
             </div>
