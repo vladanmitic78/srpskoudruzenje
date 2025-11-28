@@ -47,7 +47,7 @@ async def seed_database():
             "_id": "admin_test_1",
             "username": "admin@test.com",
             "email": "admin@test.com",
-            "fullName": "Ana Jovanović",
+            "fullName": "Admin",
             "hashed_password": hash_password("admin123"),
             "role": "admin",
             "emailVerified": True,
