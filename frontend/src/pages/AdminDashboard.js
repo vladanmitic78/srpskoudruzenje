@@ -715,20 +715,76 @@ const AdminDashboard = () => {
           {/* Content Management Tab */}
           <TabsContent value="content">
             <div className="space-y-6">
-              {/* Gallery Management */}
+              {/* News Management (Home Page) */}
               <Card className="border-2 border-[#C1272D]/20">
-                <CardHeader>
-                  <CardTitle>Gallery Management</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-sm text-gray-600 mb-4">Upload images and videos for the gallery page.</p>
+                <CardHeader className="flex flex-row items-center justify-between">
+                  <CardTitle>News Management (Home Page)</CardTitle>
                   <button
-                    onClick={() => {/* Gallery upload modal logic */}}
+                    onClick={() => {
+                      setEditingNews(null);
+                      setNewsForm({
+                        date: new Date().toISOString().split('T')[0],
+                        title: { 'sr-latin': '', 'sr-cyrillic': '', 'en': '', 'sv': '' },
+                        text: { 'sr-latin': '', 'sr-cyrillic': '', 'en': '', 'sv': '' },
+                        image: '',
+                        video: ''
+                      });
+                      setNewsModalOpen(true);
+                    }}
                     className="px-4 py-2 bg-[#C1272D] text-white rounded hover:bg-[#8B1F1F]"
                   >
-                    📤 Upload Images/Videos
+                    ➕ Add News
                   </button>
-                  <p className="text-xs text-gray-500 mt-2">Supported: JPG, PNG, GIF, MP4, WEBM, MOV</p>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-3">
+                    {news.map((item) => (
+                      <div key={item.id} className="p-4 border rounded flex items-center justify-between">
+                        <div>
+                          <h4 className="font-semibold">{item.title.en || item.title['sr-latin']}</h4>
+                          <p className="text-sm text-gray-500">{item.date}</p>
+                        </div>
+                        <div className="flex gap-2">
+                          <button
+                            onClick={() => {
+                              setEditingNews(item);
+                              setNewsForm({
+                                date: item.date,
+                                title: item.title,
+                                text: item.text,
+                                image: item.image || '',
+                                video: item.video || ''
+                              });
+                              setNewsModalOpen(true);
+                            }}
+                            className="px-3 py-1 text-sm bg-blue-500 text-white rounded hover:bg-blue-600"
+                          >
+                            Edit
+                          </button>
+                          <button
+                            onClick={async () => {
+                              if (window.confirm('Delete this news item?')) {
+                                try {
+                                  const token = localStorage.getItem('token');
+                                  await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/news/${item.id}`, {
+                                    method: 'DELETE',
+                                    headers: { 'Authorization': `Bearer ${token}` }
+                                  });
+                                  setNews(news.filter(n => n.id !== item.id));
+                                  toast.success('News deleted');
+                                } catch (error) {
+                                  toast.error('Failed to delete news');
+                                }
+                              }
+                            }}
+                            className="px-3 py-1 text-sm bg-red-500 text-white rounded hover:bg-red-600"
+                          >
+                            Delete
+                          </button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
                 </CardContent>
               </Card>
 
@@ -740,7 +796,16 @@ const AdminDashboard = () => {
                 <CardContent>
                   <p className="text-sm text-gray-600 mb-4">Edit the about page content in all languages.</p>
                   <button
-                    onClick={() => {/* About edit modal logic */}}
+                    onClick={async () => {
+                      try {
+                        const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/content/about`);
+                        const data = await response.json();
+                        setAboutContent(data.content || { 'sr-latin': '', 'sr-cyrillic': '', 'en': '', 'sv': '' });
+                        setAboutModalOpen(true);
+                      } catch (error) {
+                        toast.error('Failed to load about content');
+                      }
+                    }}
                     className="px-4 py-2 bg-[#C1272D] text-white rounded hover:bg-[#8B1F1F]"
                   >
                     ✏️ Edit About Content
@@ -756,11 +821,32 @@ const AdminDashboard = () => {
                 <CardContent>
                   <p className="text-sm text-gray-600 mb-4">Edit Serbian culture story with text, image, and source link.</p>
                   <button
-                    onClick={() => {/* Serbian story edit modal logic */}}
+                    onClick={async () => {
+                      try {
+                        const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/content/serbian-story`);
+                        const data = await response.json();
+                        setStoryContent(data.content || { 'sr-latin': '', 'sr-cyrillic': '', 'en': '', 'sv': '' });
+                        setStorySourceLink(data.sourceLink || '');
+                        setStoryModalOpen(true);
+                      } catch (error) {
+                        toast.error('Failed to load story content');
+                      }
+                    }}
                     className="px-4 py-2 bg-[#C1272D] text-white rounded hover:bg-[#8B1F1F]"
                   >
                     ✏️ Edit Serbian Story
                   </button>
+                </CardContent>
+              </Card>
+
+              {/* Gallery Management - Note for Future */}
+              <Card className="border-2 border-[#C1272D]/20">
+                <CardHeader>
+                  <CardTitle>Gallery Management</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-sm text-gray-600 mb-4">Gallery page uses data seeded in database. To update gallery images, modify the seed data or implement image upload feature.</p>
+                  <p className="text-xs text-gray-500 mt-2">Current gallery items are managed through the database gallery collection.</p>
                 </CardContent>
               </Card>
             </div>
