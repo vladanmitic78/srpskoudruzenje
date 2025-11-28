@@ -116,9 +116,15 @@ const About = () => {
                   className="h-32 w-32 object-contain rounded-full border-4 border-[#C1272D]"
                 />
               </div>
-              <p className="text-lg text-gray-700 dark:text-gray-300 leading-relaxed text-justify">
-                {mockAboutContent[language]}
-              </p>
+              {loading ? (
+                <p className="text-lg text-gray-700 dark:text-gray-300 leading-relaxed text-center">
+                  Loading...
+                </p>
+              ) : (
+                <p className="text-lg text-gray-700 dark:text-gray-300 leading-relaxed text-justify whitespace-pre-line">
+                  {aboutContent[language] || aboutContent['en'] || 'No content available'}
+                </p>
+              )}
             </CardContent>
           </Card>
         </div>
