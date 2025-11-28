@@ -800,8 +800,7 @@ const AdminDashboard = () => {
                   <button
                     onClick={async () => {
                       try {
-                        const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/content/about`);
-                        const data = await response.json();
+                        const data = await contentAPI.getAbout();
                         setAboutContent(data.content || { 'sr-latin': '', 'sr-cyrillic': '', 'en': '', 'sv': '' });
                         setAboutModalOpen(true);
                       } catch (error) {
