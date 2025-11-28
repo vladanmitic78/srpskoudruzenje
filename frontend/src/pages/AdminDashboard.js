@@ -1968,7 +1968,15 @@ const AdminDashboard = () => {
                   onClick={async () => {
                     try {
                       if (editingAlbum) {
-                        await galleryAPI.update(editingAlbum.id, albumForm);
+                        // Don't send images array since they're already saved via upload endpoint
+                        const updateData = {
+                          date: albumForm.date,
+                          title: albumForm.title,
+                          description: albumForm.description,
+                          place: albumForm.place,
+                          videos: albumForm.videos
+                        };
+                        await galleryAPI.update(editingAlbum.id, updateData);
                         toast.success('Album updated');
                       } else {
                         await galleryAPI.create(albumForm);
@@ -1979,6 +1987,7 @@ const AdminDashboard = () => {
                       const galleryData = await galleryAPI.getAll();
                       setAlbums(galleryData.items || []);
                     } catch (error) {
+                      console.error('Save error:', error);
                       toast.error('Failed to save album');
                     }
                   }}
