@@ -1220,7 +1220,122 @@ const AdminDashboard = () => {
 
           {/* Super Admin - User Management Tab */}
           {isSuperAdmin && (
-            <TabsContent value="user-management">
+            <TabsContent value="user-management" className="space-y-6">
+              {/* Permission Management Card */}
+              <Card className="border-2 border-[#C1272D]/20">
+                <CardHeader>
+                  <CardTitle>Role Permissions</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    {/* Admin Permissions */}
+                    <div className="space-y-3">
+                      <h4 className="font-semibold text-red-700 dark:text-red-400">Admin Permissions</h4>
+                      <div className="space-y-2 text-sm">
+                        <div className="flex items-center gap-2">
+                          <span className="text-green-600">✓</span> View Members
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <span className="text-green-600">✓</span> Manage Events
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <span className="text-green-600">✓</span> Manage Invoices
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <span className="text-green-600">✓</span> Manage Content
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <span className="text-green-600">✓</span> Manage Gallery
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <span className="text-green-600">✓</span> Manage Settings
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <span className="text-red-600">✗</span> Manage Users
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Moderator Permissions */}
+                    <div className="space-y-3">
+                      <h4 className="font-semibold text-blue-700 dark:text-blue-400">Moderator Permissions</h4>
+                      <div className="space-y-2 text-sm">
+                        <div className="flex items-center gap-2">
+                          <span className="text-red-600">✗</span> View Members
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <span className="text-green-600">✓</span> Manage Events
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <span className="text-red-600">✗</span> Manage Invoices
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <span className="text-green-600">✓</span> Manage Content
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <span className="text-green-600">✓</span> Manage Gallery
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <span className="text-red-600">✗</span> Manage Settings
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <span className="text-red-600">✗</span> Manage Users
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* User Permissions */}
+                    <div className="space-y-3">
+                      <h4 className="font-semibold text-gray-700 dark:text-gray-400">User Permissions</h4>
+                      <div className="space-y-2 text-sm">
+                        <div className="flex items-center gap-2">
+                          <span className="text-green-600">✓</span> View Profile
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <span className="text-green-600">✓</span> Edit Profile
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <span className="text-green-600">✓</span> View Events
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <span className="text-green-600">✓</span> Join Events
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <span className="text-green-600">✓</span> View Invoices
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <span className="text-red-600">✗</span> Access Dashboard
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Super Admin Note */}
+                    <div className="space-y-3">
+                      <h4 className="font-semibold text-purple-700 dark:text-purple-400">Super Admin</h4>
+                      <div className="space-y-2 text-sm">
+                        <div className="flex items-center gap-2">
+                          <span className="text-green-600">✓</span> All Permissions
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <span className="text-green-600">✓</span> Manage Users
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <span className="text-green-600">✓</span> Assign Roles
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <span className="text-green-600">✓</span> Delete Users
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <span className="text-green-600">✓</span> System Config
+                        </div>
+                        <p className="text-xs text-gray-500 mt-2 italic">Full system access</p>
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* User Management Card */}
               <Card className="border-2 border-[#C1272D]/20">
                 <CardHeader className="flex flex-row items-center justify-between">
                   <CardTitle>User & Role Management</CardTitle>
