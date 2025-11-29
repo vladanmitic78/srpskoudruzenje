@@ -1217,6 +1217,151 @@ const AdminDashboard = () => {
               </CardContent>
             </Card>
           </TabsContent>
+
+          {/* Super Admin - User Management Tab */}
+          {isSuperAdmin && (
+            <TabsContent value="user-management">
+              <Card className="border-2 border-[#C1272D]/20">
+                <CardHeader className="flex flex-row items-center justify-between">
+                  <CardTitle>User & Role Management</CardTitle>
+                  <button
+                    onClick={() => {
+                      setNewUser({
+                        username: '',
+                        email: '',
+                        password: '',
+                        fullName: '',
+                        role: 'user',
+                        phone: '',
+                        address: '',
+                        yearOfBirth: ''
+                      });
+                      setCreateUserModalOpen(true);
+                    }}
+                    className="px-4 py-2 bg-[#C1272D] text-white rounded hover:bg-[#8B1F1F]"
+                  >
+                    ➕ Create User
+                  </button>
+                </CardHeader>
+                <CardContent>
+                  <div className="overflow-x-auto">
+                    <table className="w-full border-collapse">
+                      <thead>
+                        <tr className="bg-gray-100 dark:bg-gray-800">
+                          <th className="p-3 text-left">Name / Email</th>
+                          <th className="p-3 text-left">Role</th>
+                          <th className="p-3 text-left">Status</th>
+                          <th className="p-3 text-left">Registered</th>
+                          <th className="p-3 text-left">Actions</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {users.map((user) => (
+                          <tr key={user.id} className="border-b border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800">
+                            <td className="p-3">
+                              <div>
+                                <p className="font-medium">{user.fullName || user.username}</p>
+                                <p className="text-xs text-gray-500">{user.email}</p>
+                              </div>
+                            </td>
+                            <td className="p-3">
+                              <span className={`px-3 py-1 rounded-full text-xs font-semibold ${
+                                user.role === 'superadmin' ? 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200' :
+                                user.role === 'admin' ? 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200' :
+                                user.role === 'moderator' ? 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200' :
+                                'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200'
+                              }`}>
+                                {user.role.toUpperCase()}
+                              </span>
+                            </td>
+                            <td className="p-3">
+                              <span className={`px-3 py-1 rounded-full text-xs font-semibold ${
+                                user.suspended 
+                                  ? 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200' 
+                                  : 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
+                              }`}>
+                                {user.suspended ? 'SUSPENDED' : 'ACTIVE'}
+                              </span>
+                            </td>
+                            <td className="p-3 text-sm">
+                              {user.createdAt ? new Date(user.createdAt).toLocaleDateString() : '-'}
+                            </td>
+                            <td className="p-3">
+                              <div className="flex gap-2">
+                                <button
+                                  onClick={() => {
+                                    setEditingUser(user);
+                                    setEditUserModalOpen(true);
+                                  }}
+                                  className="px-3 py-1 bg-blue-600 text-white text-xs rounded hover:bg-blue-700"
+                                >
+                                  Edit
+                                </button>
+                                {user.role !== 'superadmin' && (
+                                  <>
+                                    <button
+                                      onClick={async () => {
+                                        if (window.confirm(`${user.suspended ? 'Activate' : 'Suspend'} ${user.fullName}?`)) {
+                                          try {
+                                            const token = localStorage.getItem('token');
+                                            await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/admin/users/${user.id}/suspend`, {
+                                              method: 'POST',
+                                              headers: {
+                                                'Authorization': `Bearer ${token}`,
+                                                'Content-Type': 'application/json'
+                                              },
+                                              body: JSON.stringify({ suspended: !user.suspended })
+                                            });
+                                            const usersData = await adminAPI.getUsers();
+                                            setUsers(usersData.users || []);
+                                            toast.success(`User ${user.suspended ? 'activated' : 'suspended'}`);
+                                          } catch (error) {
+                                            toast.error('Failed to update user status');
+                                          }
+                                        }
+                                      }}
+                                      className={`px-3 py-1 text-white text-xs rounded ${
+                                        user.suspended 
+                                          ? 'bg-green-600 hover:bg-green-700' 
+                                          : 'bg-orange-600 hover:bg-orange-700'
+                                      }`}
+                                    >
+                                      {user.suspended ? 'Activate' : 'Suspend'}
+                                    </button>
+                                    <button
+                                      onClick={async () => {
+                                        if (window.confirm(`Permanently delete ${user.fullName}? This cannot be undone!`)) {
+                                          try {
+                                            const token = localStorage.getItem('token');
+                                            await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/admin/users/${user.id}`, {
+                                              method: 'DELETE',
+                                              headers: { 'Authorization': `Bearer ${token}` }
+                                            });
+                                            const usersData = await adminAPI.getUsers();
+                                            setUsers(usersData.users || []);
+                                            toast.success('User deleted');
+                                          } catch (error) {
+                                            toast.error('Failed to delete user');
+                                          }
+                                        }
+                                      }}
+                                      className="px-3 py-1 bg-red-600 text-white text-xs rounded hover:bg-red-700"
+                                    >
+                                      Delete
+                                    </button>
+                                  </>
+                                )}
+                              </div>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </CardContent>
+              </Card>
+            </TabsContent>
+          )}
         </Tabs>
 
         {/* Create Invoice Dialog */}
