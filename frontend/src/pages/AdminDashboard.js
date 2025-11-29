@@ -1967,6 +1967,450 @@ const AdminDashboard = () => {
               </div>
             </TabsContent>
           )}
+
+          {/* Super Admin - Branding Tab */}
+          {isSuperAdmin && (
+            <TabsContent value="branding" className="space-y-6">
+              {/* Logo Upload Section */}
+              <Card className="border-2 border-[#C1272D]/20">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Upload className="h-5 w-5" />
+                    Logo Upload
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="flex flex-col md:flex-row gap-6 items-start">
+                    {/* Logo Preview */}
+                    <div className="flex-shrink-0">
+                      <div className="w-48 h-48 border-2 border-dashed border-gray-300 rounded-lg flex items-center justify-center bg-gray-50">
+                        {logoPreview ? (
+                          <img src={logoPreview} alt="Logo Preview" className="max-w-full max-h-full object-contain p-4" />
+                        ) : (
+                          <div className="text-center text-gray-400">
+                            <Upload className="h-12 w-12 mx-auto mb-2" />
+                            <p className="text-sm">No logo uploaded</p>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                    
+                    {/* Upload Controls */}
+                    <div className="flex-1 space-y-3">
+                      <div>
+                        <label className="block text-sm font-medium mb-2">Upload New Logo</label>
+                        <input
+                          type="file"
+                          accept="image/png,image/jpeg,image/jpg,image/svg+xml"
+                          onChange={async (e) => {
+                            const file = e.target.files[0];
+                            if (!file) return;
+                            
+                            setUploadingLogo(true);
+                            try {
+                              const formData = new FormData();
+                              formData.append('file', file);
+                              
+                              const token = localStorage.getItem('token');
+                              const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/admin/branding/logo`, {
+                                method: 'POST',
+                                headers: { 'Authorization': `Bearer ${token}` },
+                                body: formData
+                              });
+                              
+                              const data = await response.json();
+                              if (data.success) {
+                                setLogoPreview(`${process.env.REACT_APP_BACKEND_URL}${data.logo}`);
+                                setBrandingSettings({...brandingSettings, logo: data.logo});
+                                toast.success('Logo uploaded successfully!');
+                              } else {
+                                toast.error('Failed to upload logo');
+                              }
+                            } catch (error) {
+                              toast.error('Error uploading logo');
+                            } finally {
+                              setUploadingLogo(false);
+                            }
+                          }}
+                          className="w-full p-2 border rounded"
+                          disabled={uploadingLogo}
+                        />
+                        <p className="text-xs text-gray-500 mt-1">
+                          Supported formats: PNG, JPG, SVG. Max size: 2MB. Logo appears in header, footer, and login page.
+                        </p>
+                      </div>
+                      {uploadingLogo && (
+                        <p className="text-sm text-blue-600">Uploading logo...</p>
+                      )}
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Color Customization Section */}
+              <Card className="border-2 border-[#C1272D]/20">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Palette className="h-5 w-5" />
+                    Color Customization
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="grid grid-cols-2 gap-6">
+                    <div>
+                      <label className="block text-sm font-medium mb-2">Primary Brand Color</label>
+                      <div className="flex gap-2 items-center">
+                        <input
+                          type="color"
+                          value={brandingSettings.colors.primary}
+                          onChange={(e) => setBrandingSettings({
+                            ...brandingSettings,
+                            colors: {...brandingSettings.colors, primary: e.target.value}
+                          })}
+                          className="w-16 h-10 rounded cursor-pointer"
+                        />
+                        <input
+                          type="text"
+                          value={brandingSettings.colors.primary}
+                          onChange={(e) => setBrandingSettings({
+                            ...brandingSettings,
+                            colors: {...brandingSettings.colors, primary: e.target.value}
+                          })}
+                          className="flex-1 p-2 border rounded font-mono text-sm"
+                          placeholder="#C1272D"
+                        />
+                      </div>
+                      <p className="text-xs text-gray-500 mt-1">Main brand color used across the site</p>
+                    </div>
+                    
+                    <div>
+                      <label className="block text-sm font-medium mb-2">Secondary Color</label>
+                      <div className="flex gap-2 items-center">
+                        <input
+                          type="color"
+                          value={brandingSettings.colors.secondary}
+                          onChange={(e) => setBrandingSettings({
+                            ...brandingSettings,
+                            colors: {...brandingSettings.colors, secondary: e.target.value}
+                          })}
+                          className="w-16 h-10 rounded cursor-pointer"
+                        />
+                        <input
+                          type="text"
+                          value={brandingSettings.colors.secondary}
+                          onChange={(e) => setBrandingSettings({
+                            ...brandingSettings,
+                            colors: {...brandingSettings.colors, secondary: e.target.value}
+                          })}
+                          className="flex-1 p-2 border rounded font-mono text-sm"
+                          placeholder="#8B1F1F"
+                        />
+                      </div>
+                      <p className="text-xs text-gray-500 mt-1">Used for accents and highlights</p>
+                    </div>
+                    
+                    <div>
+                      <label className="block text-sm font-medium mb-2">Button Primary Color</label>
+                      <div className="flex gap-2 items-center">
+                        <input
+                          type="color"
+                          value={brandingSettings.colors.buttonPrimary}
+                          onChange={(e) => setBrandingSettings({
+                            ...brandingSettings,
+                            colors: {...brandingSettings.colors, buttonPrimary: e.target.value}
+                          })}
+                          className="w-16 h-10 rounded cursor-pointer"
+                        />
+                        <input
+                          type="text"
+                          value={brandingSettings.colors.buttonPrimary}
+                          onChange={(e) => setBrandingSettings({
+                            ...brandingSettings,
+                            colors: {...brandingSettings.colors, buttonPrimary: e.target.value}
+                          })}
+                          className="flex-1 p-2 border rounded font-mono text-sm"
+                          placeholder="#C1272D"
+                        />
+                      </div>
+                    </div>
+                    
+                    <div>
+                      <label className="block text-sm font-medium mb-2">Button Hover Color</label>
+                      <div className="flex gap-2 items-center">
+                        <input
+                          type="color"
+                          value={brandingSettings.colors.buttonHover}
+                          onChange={(e) => setBrandingSettings({
+                            ...brandingSettings,
+                            colors: {...brandingSettings.colors, buttonHover: e.target.value}
+                          })}
+                          className="w-16 h-10 rounded cursor-pointer"
+                        />
+                        <input
+                          type="text"
+                          value={brandingSettings.colors.buttonHover}
+                          onChange={(e) => setBrandingSettings({
+                            ...brandingSettings,
+                            colors: {...brandingSettings.colors, buttonHover: e.target.value}
+                          })}
+                          className="flex-1 p-2 border rounded font-mono text-sm"
+                          placeholder="#8B1F1F"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                  
+                  {/* Color Preview */}
+                  <div className="mt-6 p-4 border rounded-lg bg-gray-50">
+                    <p className="text-sm font-medium mb-3">Preview:</p>
+                    <div className="flex gap-3">
+                      <button 
+                        className="px-4 py-2 rounded text-white font-semibold"
+                        style={{ backgroundColor: brandingSettings.colors.buttonPrimary }}
+                      >
+                        Primary Button
+                      </button>
+                      <div 
+                        className="px-4 py-2 rounded border-2 font-semibold"
+                        style={{ borderColor: brandingSettings.colors.primary, color: brandingSettings.colors.primary }}
+                      >
+                        Outline Style
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Language Settings Section */}
+              <Card className="border-2 border-[#C1272D]/20">
+                <CardHeader>
+                  <CardTitle>Language Settings</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium mb-2">Default Language</label>
+                    <select
+                      value={brandingSettings.language.default}
+                      onChange={(e) => setBrandingSettings({
+                        ...brandingSettings,
+                        language: {...brandingSettings.language, default: e.target.value}
+                      })}
+                      className="w-full p-2 border rounded"
+                    >
+                      <option value="sr">🇷🇸 Serbian (Srpski)</option>
+                      <option value="en">🇬🇧 English</option>
+                      <option value="sv">🇸🇪 Swedish (Svenska)</option>
+                    </select>
+                    <p className="text-xs text-gray-500 mt-1">This language will be used site-wide by default</p>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Email Templates Section */}
+              <Card className="border-2 border-[#C1272D]/20">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Mail className="h-5 w-5" />
+                    Email Templates
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                  {/* Welcome Email */}
+                  <div className="border-b pb-4">
+                    <h4 className="font-semibold mb-3">Welcome Email</h4>
+                    <div className="space-y-3">
+                      <div>
+                        <label className="block text-sm font-medium mb-1">Subject</label>
+                        <input
+                          type="text"
+                          value={brandingSettings.emailTemplates.welcome.subject}
+                          onChange={(e) => setBrandingSettings({
+                            ...brandingSettings,
+                            emailTemplates: {
+                              ...brandingSettings.emailTemplates,
+                              welcome: {...brandingSettings.emailTemplates.welcome, subject: e.target.value}
+                            }
+                          })}
+                          className="w-full p-2 border rounded"
+                          placeholder="Welcome to SKUD Täby!"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium mb-1">Body</label>
+                        <textarea
+                          value={brandingSettings.emailTemplates.welcome.body}
+                          onChange={(e) => setBrandingSettings({
+                            ...brandingSettings,
+                            emailTemplates: {
+                              ...brandingSettings.emailTemplates,
+                              welcome: {...brandingSettings.emailTemplates.welcome, body: e.target.value}
+                            }
+                          })}
+                          rows="4"
+                          className="w-full p-2 border rounded font-mono text-sm"
+                          placeholder="Dear {userName}, ..."
+                        />
+                        <p className="text-xs text-gray-500 mt-1">
+                          Available variables: {'{userName}'}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Invoice Email */}
+                  <div className="border-b pb-4">
+                    <h4 className="font-semibold mb-3">Invoice Notification</h4>
+                    <div className="space-y-3">
+                      <div>
+                        <label className="block text-sm font-medium mb-1">Subject</label>
+                        <input
+                          type="text"
+                          value={brandingSettings.emailTemplates.invoice.subject}
+                          onChange={(e) => setBrandingSettings({
+                            ...brandingSettings,
+                            emailTemplates: {
+                              ...brandingSettings.emailTemplates,
+                              invoice: {...brandingSettings.emailTemplates.invoice, subject: e.target.value}
+                            }
+                          })}
+                          className="w-full p-2 border rounded"
+                          placeholder="New Invoice from SKUD Täby"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium mb-1">Body</label>
+                        <textarea
+                          value={brandingSettings.emailTemplates.invoice.body}
+                          onChange={(e) => setBrandingSettings({
+                            ...brandingSettings,
+                            emailTemplates: {
+                              ...brandingSettings.emailTemplates,
+                              invoice: {...brandingSettings.emailTemplates.invoice, body: e.target.value}
+                            }
+                          })}
+                          rows="4"
+                          className="w-full p-2 border rounded font-mono text-sm"
+                          placeholder="Dear {userName}, ..."
+                        />
+                        <p className="text-xs text-gray-500 mt-1">
+                          Available variables: {'{userName}, {amount}, {dueDate}'}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Password Reset Email */}
+                  <div className="border-b pb-4">
+                    <h4 className="font-semibold mb-3">Password Reset</h4>
+                    <div className="space-y-3">
+                      <div>
+                        <label className="block text-sm font-medium mb-1">Subject</label>
+                        <input
+                          type="text"
+                          value={brandingSettings.emailTemplates.passwordReset.subject}
+                          onChange={(e) => setBrandingSettings({
+                            ...brandingSettings,
+                            emailTemplates: {
+                              ...brandingSettings.emailTemplates,
+                              passwordReset: {...brandingSettings.emailTemplates.passwordReset, subject: e.target.value}
+                            }
+                          })}
+                          className="w-full p-2 border rounded"
+                          placeholder="Password Reset Request"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium mb-1">Body</label>
+                        <textarea
+                          value={brandingSettings.emailTemplates.passwordReset.body}
+                          onChange={(e) => setBrandingSettings({
+                            ...brandingSettings,
+                            emailTemplates: {
+                              ...brandingSettings.emailTemplates,
+                              passwordReset: {...brandingSettings.emailTemplates.passwordReset, body: e.target.value}
+                            }
+                          })}
+                          rows="4"
+                          className="w-full p-2 border rounded font-mono text-sm"
+                          placeholder="Dear {userName}, ..."
+                        />
+                        <p className="text-xs text-gray-500 mt-1">
+                          Available variables: {'{userName}, {resetLink}'}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Event Registration Email */}
+                  <div>
+                    <h4 className="font-semibold mb-3">Event Registration Confirmation</h4>
+                    <div className="space-y-3">
+                      <div>
+                        <label className="block text-sm font-medium mb-1">Subject</label>
+                        <input
+                          type="text"
+                          value={brandingSettings.emailTemplates.eventRegistration.subject}
+                          onChange={(e) => setBrandingSettings({
+                            ...brandingSettings,
+                            emailTemplates: {
+                              ...brandingSettings.emailTemplates,
+                              eventRegistration: {...brandingSettings.emailTemplates.eventRegistration, subject: e.target.value}
+                            }
+                          })}
+                          className="w-full p-2 border rounded"
+                          placeholder="Event Registration Confirmation"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium mb-1">Body</label>
+                        <textarea
+                          value={brandingSettings.emailTemplates.eventRegistration.body}
+                          onChange={(e) => setBrandingSettings({
+                            ...brandingSettings,
+                            emailTemplates: {
+                              ...brandingSettings.emailTemplates,
+                              eventRegistration: {...brandingSettings.emailTemplates.eventRegistration, body: e.target.value}
+                            }
+                          })}
+                          rows="4"
+                          className="w-full p-2 border rounded font-mono text-sm"
+                          placeholder="Dear {userName}, ..."
+                        />
+                        <p className="text-xs text-gray-500 mt-1">
+                          Available variables: {'{userName}, {eventName}, {eventDate}, {eventLocation}'}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Save Button */}
+              <div className="flex justify-end">
+                <button
+                  onClick={async () => {
+                    try {
+                      const token = localStorage.getItem('token');
+                      await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/admin/branding`, {
+                        method: 'PUT',
+                        headers: {
+                          'Content-Type': 'application/json',
+                          'Authorization': `Bearer ${token}`
+                        },
+                        body: JSON.stringify(brandingSettings)
+                      });
+                      toast.success('Branding settings saved successfully');
+                    } catch (error) {
+                      toast.error('Failed to save branding settings');
+                    }
+                  }}
+                  className="px-8 py-3 bg-[#C1272D] text-white rounded-lg hover:bg-[#8B1F1F] font-semibold"
+                >
+                  Save All Branding Settings
+                </button>
+              </div>
+            </TabsContent>
+          )}
         </Tabs>
 
         {/* Create Invoice Dialog */}
