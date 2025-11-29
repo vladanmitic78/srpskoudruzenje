@@ -275,3 +275,107 @@ async def update_platform_settings(
     )
     
     return {"success": True, "message": "Platform settings updated successfully"}
+
+# Branding Settings Routes
+@router.get("/branding")
+async def get_branding_settings(
+    superadmin: dict = Depends(get_superadmin_user),
+    request: Request = None
+):
+    """Get branding settings (Super Admin only)"""
+    db = request.app.state.db
+    
+    settings = await db.branding_settings.find_one({"_id": "branding"})
+    
+    if not settings:
+        # Return default branding settings if none exist
+        return {
+            "logo": "",
+            "colors": {
+                "primary": "#C1272D",
+                "secondary": "#8B1F1F",
+                "buttonPrimary": "#C1272D",
+                "buttonHover": "#8B1F1F"
+            },
+            "language": {
+                "default": "sr",
+                "supported": ["sr", "en", "sv"]
+            },
+            "emailTemplates": {
+                "welcome": {
+                    "subject": "Welcome to SKUD Täby!",
+                    "body": "Dear {userName},\n\nWelcome to Serbian Cultural Association (SKUD Täby)! We're excited to have you as a member.\n\nBest regards,\nSKUD Täby Team"
+                },
+                "invoice": {
+                    "subject": "New Invoice from SKUD Täby",
+                    "body": "Dear {userName},\n\nA new invoice has been generated for you.\n\nAmount: {amount} SEK\nDue Date: {dueDate}\n\nPlease log in to your account to view details.\n\nBest regards,\nSKUD Täby Team"
+                },
+                "passwordReset": {
+                    "subject": "Password Reset Request - SKUD Täby",
+                    "body": "Dear {userName},\n\nYou requested a password reset. Click the link below to reset your password:\n\n{resetLink}\n\nIf you didn't request this, please ignore this email.\n\nBest regards,\nSKUD Täby Team"
+                },
+                "eventRegistration": {
+                    "subject": "Event Registration Confirmation - SKUD Täby",
+                    "body": "Dear {userName},\n\nYou have successfully registered for: {eventName}\n\nDate: {eventDate}\nLocation: {eventLocation}\n\nWe look forward to seeing you!\n\nBest regards,\nSKUD Täby Team"
+                }
+            }
+        }
+    
+    settings.pop("_id", None)
+    return settings
+
+@router.put("/branding")
+async def update_branding_settings(
+    settings_data: dict,
+    superadmin: dict = Depends(get_superadmin_user),
+    request: Request = None
+):
+    """Update branding settings (Super Admin only)"""
+    db = request.app.state.db
+    
+    # Update or create branding settings
+    await db.branding_settings.update_one(
+        {"_id": "branding"},
+        {"$set": settings_data},
+        upsert=True
+    )
+    
+    return {"success": True, "message": "Branding settings updated successfully"}
+
+@router.post("/branding/logo")
+async def upload_logo(
+    file: UploadFile,
+    superadmin: dict = Depends(get_superadmin_user),
+    request: Request = None
+):
+    """Upload logo image (Super Admin only)"""
+    from pathlib import Path
+    import shutil
+    
+    # Validate file type
+    allowed_types = ["image/png", "image/jpeg", "image/jpg", "image/svg+xml"]
+    if file.content_type not in allowed_types:
+        raise HTTPException(status_code=400, detail="Invalid file type. Only PNG, JPG, and SVG are allowed.")
+    
+    # Create branding upload directory
+    upload_dir = Path("/app/backend/uploads/branding")
+    upload_dir.mkdir(parents=True, exist_ok=True)
+    
+    # Save file with a fixed name (logo with extension)
+    file_extension = file.filename.split(".")[-1]
+    file_path = upload_dir / f"logo.{file_extension}"
+    
+    with open(file_path, "wb") as buffer:
+        shutil.copyfileobj(file.file, buffer)
+    
+    # Update branding settings with logo path
+    db = request.app.state.db
+    logo_url = f"/uploads/branding/logo.{file_extension}"
+    
+    await db.branding_settings.update_one(
+        {"_id": "branding"},
+        {"$set": {"logo": logo_url}},
+        upsert=True
+    )
+    
+    return {"success": True, "logo": logo_url}
