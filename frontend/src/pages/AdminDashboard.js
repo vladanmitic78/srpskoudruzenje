@@ -567,8 +567,10 @@ const AdminDashboard = () => {
               </CardContent>
             </Card>
           </TabsContent>
+          )}
 
-          {/* Invoices Tab */}
+          {/* Invoices Tab - Only Admin and Super Admin */}
+          {(isAdmin && !isModerator) && (
           <TabsContent value="invoices">
             <Card className="border-2 border-[#C1272D]/20">
               <CardHeader className="flex flex-row items-center justify-between">
