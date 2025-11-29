@@ -140,7 +140,7 @@ const AdminDashboard = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [statsData, usersData, eventsData, invoicesData, newsData, storiesData, galleryData, settingsData] = await Promise.all([
+        const apiCalls = [
           adminAPI.getStatistics(),
           adminAPI.getUsers(),
           eventsAPI.getAll(),
@@ -149,7 +149,20 @@ const AdminDashboard = () => {
           storiesAPI.getAll(),
           galleryAPI.getAll(),
           settingsAPI.get()
-        ]);
+        ];
+        
+        // Super Admin only: fetch platform settings
+        if (user?.role === 'superadmin') {
+          const token = localStorage.getItem('token');
+          apiCalls.push(
+            fetch(`${process.env.REACT_APP_BACKEND_URL}/api/admin/platform-settings`, {
+              headers: { 'Authorization': `Bearer ${token}` }
+            }).then(r => r.json())
+          );
+        }
+        
+        const results = await Promise.all(apiCalls);
+        const [statsData, usersData, eventsData, invoicesData, newsData, storiesData, galleryData, settingsData, platformSettingsData] = results;
         setStatistics(statsData);
         setUsers(usersData.users || []);
         setEvents(eventsData.events || []);
