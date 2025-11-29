@@ -84,12 +84,14 @@ const Home = () => {
                 <Link to="/contact">{t('home.contact')}</Link>
               </Button>
               <Button 
-                asChild
                 size="lg"
                 variant="outline"
                 className="border-2 border-[#C1272D] text-[#C1272D] hover:bg-[#C1272D] hover:text-white px-8 py-6 text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-300"
+                onClick={() => {
+                  document.getElementById('news')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }}
               >
-                <Link to="#news">{t('home.mainEvents')}</Link>
+                {t('home.mainEvents')}
               </Button>
             </div>
           </div>
