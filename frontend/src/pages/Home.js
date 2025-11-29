@@ -72,7 +72,7 @@ const Home = () => {
               {t('home.welcome')}
             </h1>
             <p className="text-xl md:text-2xl text-gray-700 dark:text-gray-300">
-              Srpsko Kulturno Udruženje Täby
+              {t('home.organizationName')}
             </p>
             
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-6">
