@@ -101,6 +101,7 @@ const translations = {
     },
     home: {
       welcome: 'Добродошли',
+      organizationName: 'Српско Културно Удружење Täby',
       contact: 'Контакт',
       mainEvents: 'Главни догађаји',
       news: 'Актуелности',
