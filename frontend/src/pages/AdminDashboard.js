@@ -1539,6 +1539,378 @@ const AdminDashboard = () => {
               </Card>
             </TabsContent>
           )}
+
+          {/* Super Admin - Platform Settings Tab */}
+          {isSuperAdmin && (
+            <TabsContent value="platform-settings" className="space-y-6">
+              {/* System Configuration */}
+              <Card className="border-2 border-[#C1272D]/20">
+                <CardHeader>
+                  <CardTitle>System Configuration</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium mb-2">Site Name</label>
+                      <input
+                        type="text"
+                        value={platformSettings.siteName}
+                        onChange={(e) => setPlatformSettings({
+                          ...platformSettings,
+                          siteName: e.target.value
+                        })}
+                        className="w-full p-2 border rounded"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium mb-2">Timezone</label>
+                      <select
+                        value={platformSettings.timezone}
+                        onChange={(e) => setPlatformSettings({
+                          ...platformSettings,
+                          timezone: e.target.value
+                        })}
+                        className="w-full p-2 border rounded"
+                      >
+                        <option value="Europe/Stockholm">Europe/Stockholm</option>
+                        <option value="Europe/London">Europe/London</option>
+                        <option value="America/New_York">America/New York</option>
+                        <option value="UTC">UTC</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-3 p-4 bg-yellow-50 dark:bg-yellow-900/20 rounded">
+                    <input
+                      type="checkbox"
+                      checked={platformSettings.maintenanceMode}
+                      onChange={(e) => setPlatformSettings({
+                        ...platformSettings,
+                        maintenanceMode: e.target.checked
+                      })}
+                      className="h-5 w-5"
+                    />
+                    <div>
+                      <p className="font-semibold">Maintenance Mode</p>
+                      <p className="text-sm text-gray-600">Enable to show maintenance page to regular users</p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Security Policies */}
+              <Card className="border-2 border-[#C1272D]/20">
+                <CardHeader>
+                  <CardTitle>Security Policies</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium mb-2">Minimum Password Length</label>
+                      <input
+                        type="number"
+                        value={platformSettings.security.minPasswordLength}
+                        onChange={(e) => setPlatformSettings({
+                          ...platformSettings,
+                          security: {
+                            ...platformSettings.security,
+                            minPasswordLength: parseInt(e.target.value)
+                          }
+                        })}
+                        min="6"
+                        max="20"
+                        className="w-full p-2 border rounded"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium mb-2">Max Login Attempts</label>
+                      <input
+                        type="number"
+                        value={platformSettings.security.maxLoginAttempts}
+                        onChange={(e) => setPlatformSettings({
+                          ...platformSettings,
+                          security: {
+                            ...platformSettings.security,
+                            maxLoginAttempts: parseInt(e.target.value)
+                          }
+                        })}
+                        min="3"
+                        max="10"
+                        className="w-full p-2 border rounded"
+                      />
+                    </div>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium mb-2">Session Timeout (seconds)</label>
+                    <input
+                      type="number"
+                      value={platformSettings.security.sessionTimeout}
+                      onChange={(e) => setPlatformSettings({
+                        ...platformSettings,
+                        security: {
+                          ...platformSettings.security,
+                          sessionTimeout: parseInt(e.target.value)
+                        }
+                      })}
+                      min="600"
+                      max="86400"
+                      className="w-full p-2 border rounded"
+                    />
+                    <p className="text-xs text-gray-500 mt-1">Default: 7200 (2 hours)</p>
+                  </div>
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-2">
+                      <input
+                        type="checkbox"
+                        checked={platformSettings.security.requireUppercase}
+                        onChange={(e) => setPlatformSettings({
+                          ...platformSettings,
+                          security: {
+                            ...platformSettings.security,
+                            requireUppercase: e.target.checked
+                          }
+                        })}
+                        className="h-4 w-4"
+                      />
+                      <label className="text-sm">Require uppercase letter in password</label>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <input
+                        type="checkbox"
+                        checked={platformSettings.security.requireNumbers}
+                        onChange={(e) => setPlatformSettings({
+                          ...platformSettings,
+                          security: {
+                            ...platformSettings.security,
+                            requireNumbers: e.target.checked
+                          }
+                        })}
+                        className="h-4 w-4"
+                      />
+                      <label className="text-sm">Require numbers in password</label>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Email Configuration */}
+              <Card className="border-2 border-[#C1272D]/20">
+                <CardHeader>
+                  <CardTitle>Email Configuration (SMTP)</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium mb-2">SMTP Host</label>
+                      <input
+                        type="text"
+                        value={platformSettings.email.smtpHost}
+                        onChange={(e) => setPlatformSettings({
+                          ...platformSettings,
+                          email: {
+                            ...platformSettings.email,
+                            smtpHost: e.target.value
+                          }
+                        })}
+                        placeholder="smtp.gmail.com"
+                        className="w-full p-2 border rounded"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium mb-2">SMTP Port</label>
+                      <input
+                        type="number"
+                        value={platformSettings.email.smtpPort}
+                        onChange={(e) => setPlatformSettings({
+                          ...platformSettings,
+                          email: {
+                            ...platformSettings.email,
+                            smtpPort: parseInt(e.target.value)
+                          }
+                        })}
+                        placeholder="587"
+                        className="w-full p-2 border rounded"
+                      />
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium mb-2">SMTP Username</label>
+                      <input
+                        type="text"
+                        value={platformSettings.email.smtpUser}
+                        onChange={(e) => setPlatformSettings({
+                          ...platformSettings,
+                          email: {
+                            ...platformSettings.email,
+                            smtpUser: e.target.value
+                          }
+                        })}
+                        placeholder="your-email@gmail.com"
+                        className="w-full p-2 border rounded"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium mb-2">SMTP Password</label>
+                      <input
+                        type="password"
+                        value={platformSettings.email.smtpPassword}
+                        onChange={(e) => setPlatformSettings({
+                          ...platformSettings,
+                          email: {
+                            ...platformSettings.email,
+                            smtpPassword: e.target.value
+                          }
+                        })}
+                        placeholder="••••••••"
+                        className="w-full p-2 border rounded"
+                      />
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium mb-2">From Email</label>
+                      <input
+                        type="email"
+                        value={platformSettings.email.fromEmail}
+                        onChange={(e) => setPlatformSettings({
+                          ...platformSettings,
+                          email: {
+                            ...platformSettings.email,
+                            fromEmail: e.target.value
+                          }
+                        })}
+                        placeholder="noreply@srpskoudruzenjetaby.se"
+                        className="w-full p-2 border rounded"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium mb-2">From Name</label>
+                      <input
+                        type="text"
+                        value={platformSettings.email.fromName}
+                        onChange={(e) => setPlatformSettings({
+                          ...platformSettings,
+                          email: {
+                            ...platformSettings.email,
+                            fromName: e.target.value
+                          }
+                        })}
+                        placeholder="Serbian Cultural Association"
+                        className="w-full p-2 border rounded"
+                      />
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Notification Settings */}
+              <Card className="border-2 border-[#C1272D]/20">
+                <CardHeader>
+                  <CardTitle>Notification Settings</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="space-y-3">
+                    <div className="flex items-center gap-3 p-3 bg-gray-50 dark:bg-gray-800 rounded">
+                      <input
+                        type="checkbox"
+                        checked={platformSettings.notifications.emailEnabled}
+                        onChange={(e) => setPlatformSettings({
+                          ...platformSettings,
+                          notifications: {
+                            ...platformSettings.notifications,
+                            emailEnabled: e.target.checked
+                          }
+                        })}
+                        className="h-5 w-5"
+                      />
+                      <div>
+                        <p className="font-semibold">Email Notifications</p>
+                        <p className="text-sm text-gray-600">Enable all email notifications</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-3 p-3 bg-gray-50 dark:bg-gray-800 rounded">
+                      <input
+                        type="checkbox"
+                        checked={platformSettings.notifications.smsEnabled}
+                        onChange={(e) => setPlatformSettings({
+                          ...platformSettings,
+                          notifications: {
+                            ...platformSettings.notifications,
+                            smsEnabled: e.target.checked
+                          }
+                        })}
+                        className="h-5 w-5"
+                      />
+                      <div>
+                        <p className="font-semibold">SMS Notifications</p>
+                        <p className="text-sm text-gray-600">Enable SMS notifications (requires Twilio setup)</p>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="border-t pt-4">
+                    <h4 className="font-semibold mb-3">Specific Notifications</h4>
+                    <div className="space-y-2">
+                      <div className="flex items-center gap-2">
+                        <input
+                          type="checkbox"
+                          checked={platformSettings.notifications.notifyAdminOnNewUser}
+                          onChange={(e) => setPlatformSettings({
+                            ...platformSettings,
+                            notifications: {
+                              ...platformSettings.notifications,
+                              notifyAdminOnNewUser: e.target.checked
+                            }
+                          })}
+                          className="h-4 w-4"
+                        />
+                        <label className="text-sm">Notify admin on new user registration</label>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <input
+                          type="checkbox"
+                          checked={platformSettings.notifications.notifyUserOnInvoice}
+                          onChange={(e) => setPlatformSettings({
+                            ...platformSettings,
+                            notifications: {
+                              ...platformSettings.notifications,
+                              notifyUserOnInvoice: e.target.checked
+                            }
+                          })}
+                          className="h-4 w-4"
+                        />
+                        <label className="text-sm">Notify user on new invoice</label>
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Save Button */}
+              <div className="flex justify-end">
+                <button
+                  onClick={async () => {
+                    try {
+                      const token = localStorage.getItem('token');
+                      await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/admin/platform-settings`, {
+                        method: 'PUT',
+                        headers: {
+                          'Content-Type': 'application/json',
+                          'Authorization': `Bearer ${token}`
+                        },
+                        body: JSON.stringify(platformSettings)
+                      });
+                      toast.success('Platform settings saved successfully');
+                    } catch (error) {
+                      toast.error('Failed to save platform settings');
+                    }
+                  }}
+                  className="px-8 py-3 bg-[#C1272D] text-white rounded-lg hover:bg-[#8B1F1F] font-semibold"
+                >
+                  Save All Platform Settings
+                </button>
+              </div>
+            </TabsContent>
+          )}
         </Tabs>
 
         {/* Create Invoice Dialog */}
