@@ -109,6 +109,40 @@ const AdminDashboard = () => {
     yearOfBirth: ''
   });
 
+  // Super Admin - Role Permissions State
+  const [rolePermissions, setRolePermissions] = useState({
+    admin: {
+      viewMembers: true,
+      manageEvents: true,
+      manageInvoices: true,
+      manageContent: true,
+      manageGallery: true,
+      manageSettings: true,
+      manageUsers: false,
+      accessDashboard: true
+    },
+    moderator: {
+      viewMembers: false,
+      manageEvents: true,
+      manageInvoices: false,
+      manageContent: true,
+      manageGallery: true,
+      manageSettings: false,
+      manageUsers: false,
+      accessDashboard: true
+    },
+    user: {
+      viewMembers: false,
+      manageEvents: false,
+      manageInvoices: false,
+      manageContent: false,
+      manageGallery: false,
+      manageSettings: false,
+      manageUsers: false,
+      accessDashboard: false
+    }
+  });
+
   // Super Admin - Platform Settings State
   const [platformSettings, setPlatformSettings] = useState({
     siteName: 'Serbian Cultural Association',
