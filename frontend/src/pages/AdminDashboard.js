@@ -1489,8 +1489,6 @@ const AdminDashboard = () => {
                       Save Permissions
                     </button>
                   </div>
-                    </div>
-                  </div>
                 </CardContent>
               </Card>
 
