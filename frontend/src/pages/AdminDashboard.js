@@ -9,7 +9,7 @@ import { adminAPI, eventsAPI, invoicesAPI, newsAPI, contentAPI, storiesAPI, gall
 import { toast } from 'sonner';
 
 const AdminDashboard = () => {
-  const { isAdmin, isSuperAdmin } = useAuth();
+  const { isAdmin, isSuperAdmin, isModerator, user } = useAuth();
   const [statistics, setStatistics] = useState(null);
   const [users, setUsers] = useState([]);
   const [events, setEvents] = useState([]);
