@@ -137,6 +137,30 @@ const AdminDashboard = () => {
     }
   });
 
+  // Super Admin - Branding Settings State
+  const [brandingSettings, setBrandingSettings] = useState({
+    logo: '',
+    colors: {
+      primary: '#C1272D',
+      secondary: '#8B1F1F',
+      buttonPrimary: '#C1272D',
+      buttonHover: '#8B1F1F'
+    },
+    language: {
+      default: 'sr',
+      supported: ['sr', 'en', 'sv']
+    },
+    emailTemplates: {
+      welcome: { subject: '', body: '' },
+      invoice: { subject: '', body: '' },
+      passwordReset: { subject: '', body: '' },
+      eventRegistration: { subject: '', body: '' }
+    }
+  });
+
+  const [logoPreview, setLogoPreview] = useState('');
+  const [uploadingLogo, setUploadingLogo] = useState(false);
+
   useEffect(() => {
     const fetchData = async () => {
       try {
