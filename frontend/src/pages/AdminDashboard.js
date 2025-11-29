@@ -1272,6 +1272,112 @@ const AdminDashboard = () => {
           </DialogContent>
         </Dialog>
 
+        {/* Edit Invoice Dialog */}
+        <Dialog open={editInvoiceOpen} onOpenChange={setEditInvoiceOpen}>
+          <DialogContent className="max-w-md">
+            <DialogHeader>
+              <DialogTitle>Edit Invoice</DialogTitle>
+            </DialogHeader>
+            {editingInvoice && (
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium mb-2">Member</label>
+                  <input
+                    type="text"
+                    value={getUserName(editingInvoice.userId)}
+                    disabled
+                    className="w-full p-2 border rounded bg-gray-100 dark:bg-gray-700 dark:border-gray-600"
+                  />
+                  <p className="text-xs text-gray-500 mt-1">Member cannot be changed</p>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium mb-2">Description</label>
+                  <input
+                    type="text"
+                    value={editingInvoice.description}
+                    onChange={(e) => setEditingInvoice({...editingInvoice, description: e.target.value})}
+                    placeholder="e.g., Membership Fee - January 2025"
+                    className="w-full p-2 border rounded dark:bg-gray-800 dark:border-gray-600"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium mb-2">Amount (SEK)</label>
+                  <input
+                    type="number"
+                    value={editingInvoice.amount}
+                    onChange={(e) => setEditingInvoice({...editingInvoice, amount: e.target.value})}
+                    placeholder="500"
+                    className="w-full p-2 border rounded dark:bg-gray-800 dark:border-gray-600"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium mb-2">Due Date</label>
+                  <input
+                    type="date"
+                    value={editingInvoice.dueDate}
+                    onChange={(e) => setEditingInvoice({...editingInvoice, dueDate: e.target.value})}
+                    className="w-full p-2 border rounded dark:bg-gray-800 dark:border-gray-600"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium mb-2">Status</label>
+                  <div className="p-2 border rounded bg-gray-100 dark:bg-gray-700 dark:border-gray-600">
+                    <span className={`px-3 py-1 rounded-full text-xs font-semibold ${
+                      editingInvoice.status === 'paid' 
+                        ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' 
+                        : 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200'
+                    }`}>
+                      {editingInvoice.status.toUpperCase()}
+                    </span>
+                  </div>
+                  <p className="text-xs text-gray-500 mt-1">Status cannot be changed here. Use "Mark Paid" button.</p>
+                </div>
+
+                <div className="flex gap-2 pt-4">
+                  <button
+                    onClick={async () => {
+                      try {
+                        await invoicesAPI.update(editingInvoice.id, {
+                          description: editingInvoice.description,
+                          amount: parseFloat(editingInvoice.amount),
+                          dueDate: editingInvoice.dueDate
+                        });
+                        
+                        // Refresh invoices
+                        const data = await invoicesAPI.getAll();
+                        setInvoices(data.invoices || []);
+                        
+                        toast.success('Invoice updated successfully');
+                        setEditInvoiceOpen(false);
+                        setEditingInvoice(null);
+                      } catch (error) {
+                        toast.error('Failed to update invoice');
+                      }
+                    }}
+                    disabled={!editingInvoice.amount || !editingInvoice.dueDate || !editingInvoice.description}
+                    className="flex-1 px-4 py-2 bg-[#C1272D] text-white rounded hover:bg-[#8B1F1F] disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    Update Invoice
+                  </button>
+                  <button
+                    onClick={() => {
+                      setEditInvoiceOpen(false);
+                      setEditingInvoice(null);
+                    }}
+                    className="flex-1 px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            )}
+          </DialogContent>
+        </Dialog>
+
         {/* User Details Dialog */}
         <Dialog open={userDetailsOpen} onOpenChange={setUserDetailsOpen}>
           <DialogContent className="max-w-3xl max-h-[80vh] overflow-y-auto">
