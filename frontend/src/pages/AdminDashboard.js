@@ -397,7 +397,7 @@ const AdminDashboard = () => {
         {/* Admin Tabs */}
         <Tabs defaultValue={isModerator ? "events" : "members"} className="space-y-6">
           <TabsList className={`grid w-full ${
-            isSuperAdmin ? 'grid-cols-6 max-w-4xl' : 
+            isSuperAdmin ? 'grid-cols-7 max-w-5xl' : 
             isModerator ? 'grid-cols-2 max-w-xl' : 
             'grid-cols-5 max-w-3xl'
           }`}>
