@@ -18,6 +18,8 @@ const AdminDashboard = () => {
   const [userDetailsOpen, setUserDetailsOpen] = useState(false);
   const [invoices, setInvoices] = useState([]);
   const [createInvoiceOpen, setCreateInvoiceOpen] = useState(false);
+  const [editInvoiceOpen, setEditInvoiceOpen] = useState(false);
+  const [editingInvoice, setEditingInvoice] = useState(null);
   const [newInvoice, setNewInvoice] = useState({
     userId: '',
     amount: '',
