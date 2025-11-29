@@ -523,6 +523,13 @@ const AdminDashboard = () => {
                 Platform
               </TabsTrigger>
             )}
+            {/* Branding tab - Only Super Admin */}
+            {isSuperAdmin && (
+              <TabsTrigger value="branding">
+                <Palette className="h-4 w-4 mr-2" />
+                Branding
+              </TabsTrigger>
+            )}
           </TabsList>
 
           {/* Members Tab - Only Admin and Super Admin */}
