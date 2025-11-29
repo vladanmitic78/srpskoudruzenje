@@ -203,6 +203,12 @@ const AdminDashboard = () => {
         if (platformSettingsData && user?.role === 'superadmin') {
           setPlatformSettings(platformSettingsData);
         }
+        if (brandingSettingsData && user?.role === 'superadmin') {
+          setBrandingSettings(brandingSettingsData);
+          if (brandingSettingsData.logo) {
+            setLogoPreview(`${process.env.REACT_APP_BACKEND_URL}${brandingSettingsData.logo}`);
+          }
+        }
       } catch (error) {
         console.error('Error fetching admin data:', error);
         toast.error('Failed to load admin data');
