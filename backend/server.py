@@ -40,6 +40,10 @@ UPLOAD_DIR = Path("/app/backend/uploads")
 UPLOAD_DIR.mkdir(exist_ok=True)
 (UPLOAD_DIR / "invoices").mkdir(exist_ok=True)
 (UPLOAD_DIR / "gallery").mkdir(exist_ok=True)
+(UPLOAD_DIR / "branding").mkdir(exist_ok=True)
+
+# Mount static files for uploads
+app.mount("/uploads", StaticFiles(directory=str(UPLOAD_DIR)), name="uploads")
 
 # Store db in app state for access in routes
 app.state.db = db
