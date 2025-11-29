@@ -13,6 +13,7 @@ const translations = {
     },
     home: {
       welcome: 'Dobrodošli',
+      organizationName: 'Srpsko Kulturno Udruženje Täby',
       contact: 'Kontakt',
       mainEvents: 'Glavni događaji',
       news: 'Aktuelnosti',
