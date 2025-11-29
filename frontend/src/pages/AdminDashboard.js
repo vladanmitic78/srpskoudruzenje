@@ -173,6 +173,9 @@ const AdminDashboard = () => {
         if (settingsData) {
           setSettings(settingsData);
         }
+        if (platformSettingsData && user?.role === 'superadmin') {
+          setPlatformSettings(platformSettingsData);
+        }
       } catch (error) {
         console.error('Error fetching admin data:', error);
         toast.error('Failed to load admin data');
