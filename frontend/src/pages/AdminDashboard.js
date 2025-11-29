@@ -1076,8 +1076,9 @@ const AdminDashboard = () => {
             </div>
           </TabsContent>
 
-          {/* Settings Tab */}
-          <TabsContent value="settings">
+          {/* Settings Tab - Only Admin and Super Admin */}
+          {(isAdmin && !isModerator) && (
+            <TabsContent value="settings">
             <Card className="border-2 border-[#C1272D]/20">
               <CardHeader>
                 <CardTitle>Association Settings</CardTitle>
