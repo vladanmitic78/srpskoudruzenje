@@ -4,7 +4,7 @@ import { Navigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../components/ui/tabs';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '../components/ui/dialog';
-import { Users, FileText, Calendar, Settings, BarChart } from 'lucide-react';
+import { Users, FileText, Calendar, Settings, BarChart, Palette, Upload, Mail } from 'lucide-react';
 import { adminAPI, eventsAPI, invoicesAPI, newsAPI, contentAPI, storiesAPI, galleryAPI, settingsAPI } from '../services/api';
 import { toast } from 'sonner';
 
