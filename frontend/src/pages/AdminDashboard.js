@@ -412,6 +412,12 @@ const AdminDashboard = () => {
               <Settings className="h-4 w-4 mr-2" />
               Settings
             </TabsTrigger>
+            {isSuperAdmin && (
+              <TabsTrigger value="user-management">
+                <Users className="h-4 w-4 mr-2" />
+                Users & Roles
+              </TabsTrigger>
+            )}
           </TabsList>
 
           {/* Members Tab */}
