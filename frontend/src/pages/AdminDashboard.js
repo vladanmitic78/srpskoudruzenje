@@ -1390,11 +1390,11 @@ const AdminDashboard = () => {
                     <table className="w-full border-collapse min-w-[600px]">
                       <thead>
                         <tr className="border-b-2 border-gray-200">
-                          <th className="text-left py-3 px-4 font-semibold">Permission</th>
-                          <th className="text-center py-3 px-4 font-semibold text-red-700">Admin</th>
-                          <th className="text-center py-3 px-4 font-semibold text-blue-700">Moderator</th>
-                          <th className="text-center py-3 px-4 font-semibold text-gray-700">User</th>
-                          <th className="text-center py-3 px-4 font-semibold text-purple-700">Super Admin</th>
+                          <th className="text-left py-2 px-2 sm:py-3 sm:px-4 font-semibold text-xs sm:text-sm">Permission</th>
+                          <th className="text-center py-2 px-2 sm:py-3 sm:px-4 font-semibold text-red-700 text-xs sm:text-sm">Admin</th>
+                          <th className="text-center py-2 px-2 sm:py-3 sm:px-4 font-semibold text-blue-700 text-xs sm:text-sm">Moderator</th>
+                          <th className="text-center py-2 px-2 sm:py-3 sm:px-4 font-semibold text-gray-700 text-xs sm:text-sm">User</th>
+                          <th className="text-center py-2 px-2 sm:py-3 sm:px-4 font-semibold text-purple-700 text-xs sm:text-sm">Super Admin</th>
                         </tr>
                       </thead>
                       <tbody>
