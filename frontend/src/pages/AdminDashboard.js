@@ -391,7 +391,7 @@ const AdminDashboard = () => {
 
         {/* Admin Tabs */}
         <Tabs defaultValue="members" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-5 max-w-3xl">
+          <TabsList className={`grid w-full ${isSuperAdmin ? 'grid-cols-6 max-w-4xl' : 'grid-cols-5 max-w-3xl'}`}>
             <TabsTrigger value="members">
               <Users className="h-4 w-4 mr-2" />
               Members
