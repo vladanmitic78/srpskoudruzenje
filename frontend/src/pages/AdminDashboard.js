@@ -16,6 +16,7 @@ const AdminDashboard = () => {
   const [loading, setLoading] = useState(true);
   const [selectedUser, setSelectedUser] = useState(null);
   const [userDetailsOpen, setUserDetailsOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState(isModerator ? "events" : "members");
   const [invoices, setInvoices] = useState([]);
   const [createInvoiceOpen, setCreateInvoiceOpen] = useState(false);
   const [editInvoiceOpen, setEditInvoiceOpen] = useState(false);
