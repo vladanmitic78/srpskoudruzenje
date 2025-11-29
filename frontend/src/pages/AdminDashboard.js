@@ -396,27 +396,43 @@ const AdminDashboard = () => {
 
         {/* Admin Tabs */}
         <Tabs defaultValue="members" className="space-y-6">
-          <TabsList className={`grid w-full ${isSuperAdmin ? 'grid-cols-6 max-w-4xl' : 'grid-cols-5 max-w-3xl'}`}>
-            <TabsTrigger value="members">
-              <Users className="h-4 w-4 mr-2" />
-              Members
-            </TabsTrigger>
-            <TabsTrigger value="invoices">
-              <FileText className="h-4 w-4 mr-2" />
-              Invoices
-            </TabsTrigger>
+          <TabsList className={`grid w-full ${
+            isSuperAdmin ? 'grid-cols-6 max-w-4xl' : 
+            isModerator ? 'grid-cols-2 max-w-xl' : 
+            'grid-cols-5 max-w-3xl'
+          }`}>
+            {/* Members tab - Only Admin and Super Admin */}
+            {(isAdmin && !isModerator) && (
+              <TabsTrigger value="members">
+                <Users className="h-4 w-4 mr-2" />
+                Members
+              </TabsTrigger>
+            )}
+            {/* Invoices tab - Only Admin and Super Admin */}
+            {(isAdmin && !isModerator) && (
+              <TabsTrigger value="invoices">
+                <FileText className="h-4 w-4 mr-2" />
+                Invoices
+              </TabsTrigger>
+            )}
+            {/* Events tab - All roles */}
             <TabsTrigger value="events">
               <Calendar className="h-4 w-4 mr-2" />
               Events
             </TabsTrigger>
+            {/* Content tab - All roles */}
             <TabsTrigger value="content">
               <Settings className="h-4 w-4 mr-2" />
               Content
             </TabsTrigger>
-            <TabsTrigger value="settings">
-              <Settings className="h-4 w-4 mr-2" />
-              Settings
-            </TabsTrigger>
+            {/* Settings tab - Only Admin and Super Admin */}
+            {(isAdmin && !isModerator) && (
+              <TabsTrigger value="settings">
+                <Settings className="h-4 w-4 mr-2" />
+                Settings
+              </TabsTrigger>
+            )}
+            {/* Users & Roles tab - Only Super Admin */}
             {isSuperAdmin && (
               <TabsTrigger value="user-management">
                 <Users className="h-4 w-4 mr-2" />
