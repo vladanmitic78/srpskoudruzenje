@@ -109,6 +109,34 @@ const AdminDashboard = () => {
     yearOfBirth: ''
   });
 
+  // Super Admin - Platform Settings State
+  const [platformSettings, setPlatformSettings] = useState({
+    siteName: 'Serbian Cultural Association',
+    maintenanceMode: false,
+    timezone: 'Europe/Stockholm',
+    security: {
+      minPasswordLength: 6,
+      requireUppercase: false,
+      requireNumbers: false,
+      sessionTimeout: 7200,
+      maxLoginAttempts: 5
+    },
+    email: {
+      smtpHost: '',
+      smtpPort: 587,
+      smtpUser: '',
+      smtpPassword: '',
+      fromEmail: '',
+      fromName: ''
+    },
+    notifications: {
+      emailEnabled: true,
+      smsEnabled: false,
+      notifyAdminOnNewUser: true,
+      notifyUserOnInvoice: true
+    }
+  });
+
   useEffect(() => {
     const fetchData = async () => {
       try {
