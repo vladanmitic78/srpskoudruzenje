@@ -513,8 +513,28 @@ const AdminDashboard = () => {
         </div>
 
         {/* Admin Tabs */}
-        <Tabs defaultValue={isModerator ? "events" : "members"} className="space-y-6">
-          <TabsList className={`grid w-full ${
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
+          {/* Mobile Dropdown - Show on mobile and tablet */}
+          <div className="block lg:hidden mb-4">
+            <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">Select Section</label>
+            <select
+              value={activeTab}
+              onChange={(e) => setActiveTab(e.target.value)}
+              className="w-full p-3 border-2 border-[#C1272D]/20 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 font-medium"
+            >
+              {(isAdmin && !isModerator) && <option value="members">👥 Members</option>}
+              {(isAdmin && !isModerator) && <option value="invoices">📄 Invoices</option>}
+              <option value="events">📅 Events</option>
+              <option value="content">📝 Content</option>
+              {(isAdmin && !isModerator) && <option value="settings">⚙️ Settings</option>}
+              {isSuperAdmin && <option value="user-management">👤 Users & Roles</option>}
+              {isSuperAdmin && <option value="platform-settings">🔧 Platform</option>}
+              {isSuperAdmin && <option value="branding">🎨 Branding</option>}
+            </select>
+          </div>
+
+          {/* Desktop Tabs - Show on large screens */}
+          <TabsList className={`hidden lg:grid w-full ${
             isSuperAdmin ? 'grid-cols-7 max-w-5xl' : 
             isModerator ? 'grid-cols-2 max-w-xl' : 
             'grid-cols-5 max-w-3xl'
