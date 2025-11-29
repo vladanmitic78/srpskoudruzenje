@@ -173,3 +173,88 @@ async def get_user_details(
         "invoices": invoices,
         "invoiceCount": len(invoices)
     }
+
+# Super Admin Only Routes
+@router.put("/users/{user_id}")
+async def update_user(
+    user_id: str,
+    user_data: dict,
+    superadmin: dict = Depends(get_superadmin_user),
+    request: Request = None
+):
+    """Update user details (Super Admin only)"""
+    db = request.app.state.db
+    
+    update_fields = {}
+    if "fullName" in user_data:
+        update_fields["fullName"] = user_data["fullName"]
+    if "email" in user_data:
+        update_fields["email"] = user_data["email"]
+    if "role" in user_data:
+        update_fields["role"] = user_data["role"]
+    if "phone" in user_data:
+        update_fields["phone"] = user_data["phone"]
+    if "yearOfBirth" in user_data:
+        update_fields["yearOfBirth"] = user_data["yearOfBirth"]
+    if "address" in user_data:
+        update_fields["address"] = user_data["address"]
+    
+    # Handle password reset
+    if "password" in user_data and user_data["password"]:
+        from passlib.context import CryptContext
+        pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+        update_fields["hashed_password"] = pwd_context.hash(user_data["password"])
+    
+    result = await db.users.update_one(
+        {"_id": user_id},
+        {"$set": update_fields}
+    )
+    
+    if result.matched_count == 0:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    return {"success": True, "message": "User updated successfully"}
+
+@router.post("/users/{user_id}/suspend")
+async def suspend_user(
+    user_id: str,
+    suspend_data: dict,
+    superadmin: dict = Depends(get_superadmin_user),
+    request: Request = None
+):
+    """Suspend or activate user (Super Admin only)"""
+    db = request.app.state.db
+    
+    suspended = suspend_data.get("suspended", False)
+    
+    result = await db.users.update_one(
+        {"_id": user_id},
+        {"$set": {"suspended": suspended}}
+    )
+    
+    if result.matched_count == 0:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    return {"success": True, "message": f"User {'suspended' if suspended else 'activated'} successfully"}
+
+@router.delete("/users/{user_id}")
+async def delete_user(
+    user_id: str,
+    superadmin: dict = Depends(get_superadmin_user),
+    request: Request = None
+):
+    """Delete user permanently (Super Admin only)"""
+    db = request.app.state.db
+    
+    # Check if user is superadmin
+    user = await db.users.find_one({"_id": user_id})
+    if user and user.get("role") == "superadmin":
+        raise HTTPException(status_code=403, detail="Cannot delete super admin")
+    
+    result = await db.users.delete_one({"_id": user_id})
+    
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    return {"success": True, "message": "User deleted successfully"}
+    }
