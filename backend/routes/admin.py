@@ -214,3 +214,64 @@ async def update_user(
         raise HTTPException(status_code=404, detail="User not found")
     
     return {"success": True, "message": "User updated successfully"}
+
+# Platform Settings Routes
+@router.get("/platform-settings")
+async def get_platform_settings(
+    superadmin: dict = Depends(get_superadmin_user),
+    request: Request = None
+):
+    """Get platform-wide settings (Super Admin only)"""
+    db = request.app.state.db
+    
+    settings = await db.platform_settings.find_one({"_id": "system"})
+    
+    if not settings:
+        # Return default settings if none exist
+        return {
+            "siteName": "Serbian Cultural Association",
+            "maintenanceMode": False,
+            "timezone": "Europe/Stockholm",
+            "security": {
+                "minPasswordLength": 6,
+                "requireUppercase": False,
+                "requireNumbers": False,
+                "sessionTimeout": 7200,
+                "maxLoginAttempts": 5
+            },
+            "email": {
+                "smtpHost": "",
+                "smtpPort": 587,
+                "smtpUser": "",
+                "smtpPassword": "",
+                "fromEmail": "",
+                "fromName": ""
+            },
+            "notifications": {
+                "emailEnabled": True,
+                "smsEnabled": False,
+                "notifyAdminOnNewUser": True,
+                "notifyUserOnInvoice": True
+            }
+        }
+    
+    settings.pop("_id", None)
+    return settings
+
+@router.put("/platform-settings")
+async def update_platform_settings(
+    settings_data: dict,
+    superadmin: dict = Depends(get_superadmin_user),
+    request: Request = None
+):
+    """Update platform-wide settings (Super Admin only)"""
+    db = request.app.state.db
+    
+    # Update or create settings
+    await db.platform_settings.update_one(
+        {"_id": "system"},
+        {"$set": settings_data},
+        upsert=True
+    )
+    
+    return {"success": True, "message": "Platform settings updated successfully"}
