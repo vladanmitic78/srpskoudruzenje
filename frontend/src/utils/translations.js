@@ -189,6 +189,7 @@ const translations = {
     },
     home: {
       welcome: 'Welcome',
+      organizationName: 'Serbian Cultural Association Täby',
       contact: 'Contact',
       mainEvents: 'Main Events',
       news: 'News',
