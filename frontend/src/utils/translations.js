@@ -277,6 +277,7 @@ const translations = {
     },
     home: {
       welcome: 'Välkommen',
+      organizationName: 'Serbiska Kulturföreningen Täby',
       contact: 'Kontakt',
       mainEvents: 'Huvudevenemang',
       news: 'Nyheter',
