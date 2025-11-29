@@ -1339,115 +1339,116 @@ const AdminDashboard = () => {
           {/* Super Admin - User Management Tab */}
           {isSuperAdmin && (
             <TabsContent value="user-management" className="space-y-6">
-              {/* Permission Management Card */}
+              {/* Permission Management Card - Editable */}
               <Card className="border-2 border-[#C1272D]/20">
                 <CardHeader>
-                  <CardTitle>Role Permissions</CardTitle>
+                  <CardTitle>Role Permissions (Editable)</CardTitle>
+                  <p className="text-sm text-gray-600">Check or uncheck permissions for each role</p>
                 </CardHeader>
                 <CardContent>
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                    {/* Admin Permissions */}
-                    <div className="space-y-3">
-                      <h4 className="font-semibold text-red-700 dark:text-red-400">Admin Permissions</h4>
-                      <div className="space-y-2 text-sm">
-                        <div className="flex items-center gap-2">
-                          <span className="text-green-600">✓</span> View Members
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <span className="text-green-600">✓</span> Manage Events
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <span className="text-green-600">✓</span> Manage Invoices
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <span className="text-green-600">✓</span> Manage Content
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <span className="text-green-600">✓</span> Manage Gallery
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <span className="text-green-600">✓</span> Manage Settings
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <span className="text-red-600">✗</span> Manage Users
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Moderator Permissions */}
-                    <div className="space-y-3">
-                      <h4 className="font-semibold text-blue-700 dark:text-blue-400">Moderator Permissions</h4>
-                      <div className="space-y-2 text-sm">
-                        <div className="flex items-center gap-2">
-                          <span className="text-red-600">✗</span> View Members
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <span className="text-green-600">✓</span> Manage Events
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <span className="text-red-600">✗</span> Manage Invoices
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <span className="text-green-600">✓</span> Manage Content
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <span className="text-green-600">✓</span> Manage Gallery
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <span className="text-red-600">✗</span> Manage Settings
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <span className="text-red-600">✗</span> Manage Users
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* User Permissions */}
-                    <div className="space-y-3">
-                      <h4 className="font-semibold text-gray-700 dark:text-gray-400">User Permissions</h4>
-                      <div className="space-y-2 text-sm">
-                        <div className="flex items-center gap-2">
-                          <span className="text-green-600">✓</span> View Profile
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <span className="text-green-600">✓</span> Edit Profile
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <span className="text-green-600">✓</span> View Events
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <span className="text-green-600">✓</span> Join Events
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <span className="text-green-600">✓</span> View Invoices
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <span className="text-red-600">✗</span> Access Dashboard
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Super Admin Note */}
-                    <div className="space-y-3">
-                      <h4 className="font-semibold text-purple-700 dark:text-purple-400">Super Admin</h4>
-                      <div className="space-y-2 text-sm">
-                        <div className="flex items-center gap-2">
-                          <span className="text-green-600">✓</span> All Permissions
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <span className="text-green-600">✓</span> Manage Users
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <span className="text-green-600">✓</span> Assign Roles
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <span className="text-green-600">✓</span> Delete Users
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <span className="text-green-600">✓</span> System Config
-                        </div>
-                        <p className="text-xs text-gray-500 mt-2 italic">Full system access</p>
-                      </div>
+                  <div className="overflow-x-auto">
+                    <table className="w-full border-collapse">
+                      <thead>
+                        <tr className="border-b-2 border-gray-200">
+                          <th className="text-left py-3 px-4 font-semibold">Permission</th>
+                          <th className="text-center py-3 px-4 font-semibold text-red-700">Admin</th>
+                          <th className="text-center py-3 px-4 font-semibold text-blue-700">Moderator</th>
+                          <th className="text-center py-3 px-4 font-semibold text-gray-700">User</th>
+                          <th className="text-center py-3 px-4 font-semibold text-purple-700">Super Admin</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {[
+                          { key: 'viewMembers', label: 'View Members' },
+                          { key: 'manageEvents', label: 'Manage Events' },
+                          { key: 'manageInvoices', label: 'Manage Invoices' },
+                          { key: 'manageContent', label: 'Manage Content (News/Stories)' },
+                          { key: 'manageGallery', label: 'Manage Gallery' },
+                          { key: 'manageSettings', label: 'Manage Settings' },
+                          { key: 'manageUsers', label: 'Manage Users & Roles' },
+                          { key: 'accessDashboard', label: 'Access Admin Dashboard' }
+                        ].map((permission) => (
+                          <tr key={permission.key} className="border-b border-gray-100 hover:bg-gray-50">
+                            <td className="py-3 px-4 text-sm">{permission.label}</td>
+                            
+                            {/* Admin */}
+                            <td className="py-3 px-4 text-center">
+                              <input
+                                type="checkbox"
+                                checked={rolePermissions.admin?.[permission.key] || false}
+                                onChange={(e) => setRolePermissions({
+                                  ...rolePermissions,
+                                  admin: { ...rolePermissions.admin, [permission.key]: e.target.checked }
+                                })}
+                                className="w-5 h-5 cursor-pointer"
+                              />
+                            </td>
+                            
+                            {/* Moderator */}
+                            <td className="py-3 px-4 text-center">
+                              <input
+                                type="checkbox"
+                                checked={rolePermissions.moderator?.[permission.key] || false}
+                                onChange={(e) => setRolePermissions({
+                                  ...rolePermissions,
+                                  moderator: { ...rolePermissions.moderator, [permission.key]: e.target.checked }
+                                })}
+                                className="w-5 h-5 cursor-pointer"
+                              />
+                            </td>
+                            
+                            {/* User */}
+                            <td className="py-3 px-4 text-center">
+                              <input
+                                type="checkbox"
+                                checked={rolePermissions.user?.[permission.key] || false}
+                                onChange={(e) => setRolePermissions({
+                                  ...rolePermissions,
+                                  user: { ...rolePermissions.user, [permission.key]: e.target.checked }
+                                })}
+                                className="w-5 h-5 cursor-pointer"
+                              />
+                            </td>
+                            
+                            {/* Super Admin - Always checked, disabled */}
+                            <td className="py-3 px-4 text-center">
+                              <input
+                                type="checkbox"
+                                checked={true}
+                                disabled
+                                className="w-5 h-5 opacity-50"
+                              />
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                  
+                  {/* Save Permissions Button */}
+                  <div className="mt-6 flex justify-end">
+                    <button
+                      onClick={async () => {
+                        try {
+                          const token = localStorage.getItem('token');
+                          await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/admin/permissions`, {
+                            method: 'PUT',
+                            headers: {
+                              'Content-Type': 'application/json',
+                              'Authorization': `Bearer ${token}`
+                            },
+                            body: JSON.stringify(rolePermissions)
+                          });
+                          toast.success('Permissions saved successfully');
+                        } catch (error) {
+                          toast.error('Failed to save permissions');
+                        }
+                      }}
+                      className="px-6 py-2 bg-[#C1272D] text-white rounded-lg hover:bg-[#8B1F1F] font-semibold"
+                    >
+                      Save Permissions
+                    </button>
+                  </div>
                     </div>
                   </div>
                 </CardContent>
