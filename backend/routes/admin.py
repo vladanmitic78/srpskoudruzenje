@@ -379,3 +379,70 @@ async def upload_logo(
     )
     
     return {"success": True, "logo": logo_url}
+
+# Role Permissions Routes
+@router.get("/permissions")
+async def get_permissions(
+    superadmin: dict = Depends(get_superadmin_user),
+    request: Request = None
+):
+    """Get role permissions (Super Admin only)"""
+    db = request.app.state.db
+    
+    permissions = await db.role_permissions.find_one({"_id": "permissions"})
+    
+    if not permissions:
+        # Return default permissions if none exist
+        return {
+            "admin": {
+                "viewMembers": True,
+                "manageEvents": True,
+                "manageInvoices": True,
+                "manageContent": True,
+                "manageGallery": True,
+                "manageSettings": True,
+                "manageUsers": False,
+                "accessDashboard": True
+            },
+            "moderator": {
+                "viewMembers": False,
+                "manageEvents": True,
+                "manageInvoices": False,
+                "manageContent": True,
+                "manageGallery": True,
+                "manageSettings": False,
+                "manageUsers": False,
+                "accessDashboard": True
+            },
+            "user": {
+                "viewMembers": False,
+                "manageEvents": False,
+                "manageInvoices": False,
+                "manageContent": False,
+                "manageGallery": False,
+                "manageSettings": False,
+                "manageUsers": False,
+                "accessDashboard": False
+            }
+        }
+    
+    permissions.pop("_id", None)
+    return permissions
+
+@router.put("/permissions")
+async def update_permissions(
+    permissions_data: dict,
+    superadmin: dict = Depends(get_superadmin_user),
+    request: Request = None
+):
+    """Update role permissions (Super Admin only)"""
+    db = request.app.state.db
+    
+    # Update or create permissions
+    await db.role_permissions.update_one(
+        {"_id": "permissions"},
+        {"$set": permissions_data},
+        upsert=True
+    )
+    
+    return {"success": True, "message": "Permissions updated successfully"}
