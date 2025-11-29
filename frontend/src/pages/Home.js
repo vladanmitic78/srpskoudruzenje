@@ -89,7 +89,7 @@ const Home = () => {
                 variant="outline"
                 className="border-2 border-[#C1272D] text-[#C1272D] hover:bg-[#C1272D] hover:text-white px-8 py-6 text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-300"
               >
-                <Link to="#events">{t('home.mainEvents')}</Link>
+                <Link to="#news">{t('home.mainEvents')}</Link>
               </Button>
             </div>
           </div>
