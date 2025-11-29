@@ -1386,8 +1386,8 @@ const AdminDashboard = () => {
                   <p className="text-sm text-gray-600">Check or uncheck permissions for each role</p>
                 </CardHeader>
                 <CardContent>
-                  <div className="overflow-x-auto">
-                    <table className="w-full border-collapse">
+                  <div className="overflow-x-auto -mx-4 px-4">
+                    <table className="w-full border-collapse min-w-[600px]">
                       <thead>
                         <tr className="border-b-2 border-gray-200">
                           <th className="text-left py-3 px-4 font-semibold">Permission</th>
