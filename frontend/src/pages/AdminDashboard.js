@@ -246,6 +246,9 @@ const AdminDashboard = () => {
             setLogoPreview(`${process.env.REACT_APP_BACKEND_URL}${brandingSettingsData.logo}`);
           }
         }
+        if (permissionsData && user?.role === 'superadmin') {
+          setRolePermissions(permissionsData);
+        }
       } catch (error) {
         console.error('Error fetching admin data:', error);
         toast.error('Failed to load admin data');
