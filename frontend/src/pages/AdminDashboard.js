@@ -317,8 +317,13 @@ const AdminDashboard = () => {
     }
   };
 
-  if (!isAdmin) {
-    return <Navigate to="/dashboard" />;
+  // Allow Admin, Super Admin, and Moderator access
+  if (!isAdmin && !isModerator) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <p className="text-red-600 font-semibold">Access Denied. Admin privileges required.</p>
+      </div>
+    );
   }
 
   return (
