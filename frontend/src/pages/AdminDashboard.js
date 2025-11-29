@@ -1243,6 +1243,7 @@ const AdminDashboard = () => {
               </CardContent>
             </Card>
           </TabsContent>
+          )}
 
           {/* Super Admin - User Management Tab */}
           {isSuperAdmin && (
