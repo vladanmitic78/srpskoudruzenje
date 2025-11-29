@@ -94,6 +94,21 @@ const AdminDashboard = () => {
     }
   });
 
+  // Super Admin - User Management State
+  const [editUserModalOpen, setEditUserModalOpen] = useState(false);
+  const [editingUser, setEditingUser] = useState(null);
+  const [createUserModalOpen, setCreateUserModalOpen] = useState(false);
+  const [newUser, setNewUser] = useState({
+    username: '',
+    email: '',
+    password: '',
+    fullName: '',
+    role: 'user',
+    phone: '',
+    address: '',
+    yearOfBirth: ''
+  });
+
   useEffect(() => {
     const fetchData = async () => {
       try {
