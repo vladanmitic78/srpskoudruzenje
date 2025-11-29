@@ -613,6 +613,19 @@ const AdminDashboard = () => {
                               </td>
                               <td className="p-3">
                                 <div className="flex gap-2">
+                                  <button
+                                    onClick={() => {
+                                      if (invoice.status === 'paid') {
+                                        toast.error('This invoice is paid, you cannot change paid invoice');
+                                      } else {
+                                        setEditingInvoice(invoice);
+                                        setEditInvoiceOpen(true);
+                                      }
+                                    }}
+                                    className="px-3 py-1 bg-blue-600 text-white text-xs rounded hover:bg-blue-700"
+                                  >
+                                    Edit
+                                  </button>
                                   {invoice.status === 'unpaid' && (
                                     <button
                                       onClick={() => handleMarkPaid(invoice.id)}
