@@ -2476,6 +2476,276 @@ const AdminDashboard = () => {
             </div>
           </DialogContent>
         </Dialog>
+
+        {/* Create User Modal */}
+        {isSuperAdmin && (
+          <Dialog open={createUserModalOpen} onOpenChange={setCreateUserModalOpen}>
+            <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+              <DialogHeader>
+                <DialogTitle>Create New User</DialogTitle>
+              </DialogHeader>
+              <form onSubmit={async (e) => {
+                e.preventDefault();
+                try {
+                  const token = localStorage.getItem('token');
+                  await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/auth/register`, {
+                    method: 'POST',
+                    headers: {
+                      'Content-Type': 'application/json',
+                      'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify(newUser)
+                  });
+                  const usersData = await adminAPI.getUsers();
+                  setUsers(usersData.users || []);
+                  toast.success('User created successfully');
+                  setCreateUserModalOpen(false);
+                } catch (error) {
+                  toast.error('Failed to create user');
+                }
+              }} className="space-y-4">
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium mb-2">Full Name *</label>
+                    <input
+                      type="text"
+                      value={newUser.fullName}
+                      onChange={(e) => setNewUser({...newUser, fullName: e.target.value})}
+                      className="w-full p-2 border rounded"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium mb-2">Username *</label>
+                    <input
+                      type="text"
+                      value={newUser.username}
+                      onChange={(e) => setNewUser({...newUser, username: e.target.value})}
+                      className="w-full p-2 border rounded"
+                      required
+                    />
+                  </div>
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium mb-2">Email *</label>
+                    <input
+                      type="email"
+                      value={newUser.email}
+                      onChange={(e) => setNewUser({...newUser, email: e.target.value})}
+                      className="w-full p-2 border rounded"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium mb-2">Password *</label>
+                    <input
+                      type="password"
+                      value={newUser.password}
+                      onChange={(e) => setNewUser({...newUser, password: e.target.value})}
+                      className="w-full p-2 border rounded"
+                      required
+                      minLength="6"
+                    />
+                  </div>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-2">Role *</label>
+                  <select
+                    value={newUser.role}
+                    onChange={(e) => setNewUser({...newUser, role: e.target.value})}
+                    className="w-full p-2 border rounded"
+                  >
+                    <option value="user">User</option>
+                    <option value="moderator">Moderator</option>
+                    <option value="admin">Admin</option>
+                  </select>
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium mb-2">Phone</label>
+                    <input
+                      type="tel"
+                      value={newUser.phone}
+                      onChange={(e) => setNewUser({...newUser, phone: e.target.value})}
+                      className="w-full p-2 border rounded"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium mb-2">Year of Birth</label>
+                    <input
+                      type="number"
+                      value={newUser.yearOfBirth}
+                      onChange={(e) => setNewUser({...newUser, yearOfBirth: e.target.value})}
+                      className="w-full p-2 border rounded"
+                      min="1900"
+                      max={new Date().getFullYear()}
+                    />
+                  </div>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-2">Address</label>
+                  <input
+                    type="text"
+                    value={newUser.address}
+                    onChange={(e) => setNewUser({...newUser, address: e.target.value})}
+                    className="w-full p-2 border rounded"
+                  />
+                </div>
+                <div className="flex gap-2 pt-4">
+                  <button
+                    type="submit"
+                    className="flex-1 px-4 py-2 bg-[#C1272D] text-white rounded hover:bg-[#8B1F1F]"
+                  >
+                    Create User
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setCreateUserModalOpen(false)}
+                    className="flex-1 px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </form>
+            </DialogContent>
+          </Dialog>
+        )}
+
+        {/* Edit User Modal */}
+        {isSuperAdmin && editingUser && (
+          <Dialog open={editUserModalOpen} onOpenChange={setEditUserModalOpen}>
+            <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+              <DialogHeader>
+                <DialogTitle>Edit User: {editingUser.fullName}</DialogTitle>
+              </DialogHeader>
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium mb-2">Full Name</label>
+                  <input
+                    type="text"
+                    value={editingUser.fullName || ''}
+                    onChange={(e) => setEditingUser({...editingUser, fullName: e.target.value})}
+                    className="w-full p-2 border rounded"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-2">Email</label>
+                  <input
+                    type="email"
+                    value={editingUser.email || ''}
+                    onChange={(e) => setEditingUser({...editingUser, email: e.target.value})}
+                    className="w-full p-2 border rounded"
+                  />
+                </div>
+                {editingUser.role !== 'superadmin' && (
+                  <div>
+                    <label className="block text-sm font-medium mb-2">Role</label>
+                    <select
+                      value={editingUser.role}
+                      onChange={(e) => setEditingUser({...editingUser, role: e.target.value})}
+                      className="w-full p-2 border rounded"
+                    >
+                      <option value="user">User</option>
+                      <option value="moderator">Moderator</option>
+                      <option value="admin">Admin</option>
+                    </select>
+                  </div>
+                )}
+                <div>
+                  <label className="block text-sm font-medium mb-2">Reset Password (optional)</label>
+                  <input
+                    type="password"
+                    placeholder="Leave blank to keep current password"
+                    value={editingUser.newPassword || ''}
+                    onChange={(e) => setEditingUser({...editingUser, newPassword: e.target.value})}
+                    className="w-full p-2 border rounded"
+                    minLength="6"
+                  />
+                  <p className="text-xs text-gray-500 mt-1">Enter a new password only if you want to reset it</p>
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium mb-2">Phone</label>
+                    <input
+                      type="tel"
+                      value={editingUser.phone || ''}
+                      onChange={(e) => setEditingUser({...editingUser, phone: e.target.value})}
+                      className="w-full p-2 border rounded"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium mb-2">Year of Birth</label>
+                    <input
+                      type="number"
+                      value={editingUser.yearOfBirth || ''}
+                      onChange={(e) => setEditingUser({...editingUser, yearOfBirth: e.target.value})}
+                      className="w-full p-2 border rounded"
+                      min="1900"
+                      max={new Date().getFullYear()}
+                    />
+                  </div>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-2">Address</label>
+                  <input
+                    type="text"
+                    value={editingUser.address || ''}
+                    onChange={(e) => setEditingUser({...editingUser, address: e.target.value})}
+                    className="w-full p-2 border rounded"
+                  />
+                </div>
+                <div className="flex gap-2 pt-4">
+                  <button
+                    onClick={async () => {
+                      try {
+                        const token = localStorage.getItem('token');
+                        const updateData = {
+                          fullName: editingUser.fullName,
+                          email: editingUser.email,
+                          role: editingUser.role,
+                          phone: editingUser.phone,
+                          yearOfBirth: editingUser.yearOfBirth,
+                          address: editingUser.address
+                        };
+                        if (editingUser.newPassword) {
+                          updateData.password = editingUser.newPassword;
+                        }
+                        await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/admin/users/${editingUser.id}`, {
+                          method: 'PUT',
+                          headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${token}`
+                          },
+                          body: JSON.stringify(updateData)
+                        });
+                        const usersData = await adminAPI.getUsers();
+                        setUsers(usersData.users || []);
+                        toast.success('User updated successfully');
+                        setEditUserModalOpen(false);
+                        setEditingUser(null);
+                      } catch (error) {
+                        toast.error('Failed to update user');
+                      }
+                    }}
+                    className="flex-1 px-4 py-2 bg-[#C1272D] text-white rounded hover:bg-[#8B1F1F]"
+                  >
+                    Save Changes
+                  </button>
+                  <button
+                    onClick={() => {
+                      setEditUserModalOpen(false);
+                      setEditingUser(null);
+                    }}
+                    className="flex-1 px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            </DialogContent>
+          </Dialog>
+        )}
       </div>
     </div>
   );
