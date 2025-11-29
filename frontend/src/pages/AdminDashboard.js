@@ -439,6 +439,13 @@ const AdminDashboard = () => {
                 Users & Roles
               </TabsTrigger>
             )}
+            {/* Platform Settings tab - Only Super Admin */}
+            {isSuperAdmin && (
+              <TabsTrigger value="platform-settings">
+                <Settings className="h-4 w-4 mr-2" />
+                Platform
+              </TabsTrigger>
+            )}
           </TabsList>
 
           {/* Members Tab - Only Admin and Super Admin */}
