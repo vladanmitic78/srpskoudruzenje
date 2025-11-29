@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, Request, Response
+from fastapi import APIRouter, Depends, HTTPException, Request, Response, UploadFile, File
 from fastapi.responses import StreamingResponse
 from datetime import datetime
 from export_utils import generate_members_pdf, generate_members_xml, generate_members_excel
