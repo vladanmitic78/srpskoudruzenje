@@ -708,6 +708,7 @@ const AdminDashboard = () => {
               </CardContent>
             </Card>
           </TabsContent>
+          )}
 
           {/* Events Tab */}
           <TabsContent value="events">
