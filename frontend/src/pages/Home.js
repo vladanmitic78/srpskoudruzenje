@@ -97,7 +97,7 @@ const Home = () => {
       </section>
 
       {/* News Section */}
-      <section className="py-16 bg-white dark:bg-gray-900">
+      <section id="news" className="py-16 bg-white dark:bg-gray-900">
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-between mb-12">
             <h2 className="text-3xl md:text-4xl font-bold text-[#8B1F1F] dark:text-[#C1272D]">
