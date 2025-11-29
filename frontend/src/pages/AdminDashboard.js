@@ -175,18 +175,21 @@ const AdminDashboard = () => {
           settingsAPI.get()
         ];
         
-        // Super Admin only: fetch platform settings
+        // Super Admin only: fetch platform settings and branding
         if (user?.role === 'superadmin') {
           const token = localStorage.getItem('token');
           apiCalls.push(
             fetch(`${process.env.REACT_APP_BACKEND_URL}/api/admin/platform-settings`, {
+              headers: { 'Authorization': `Bearer ${token}` }
+            }).then(r => r.json()),
+            fetch(`${process.env.REACT_APP_BACKEND_URL}/api/admin/branding`, {
               headers: { 'Authorization': `Bearer ${token}` }
             }).then(r => r.json())
           );
         }
         
         const results = await Promise.all(apiCalls);
-        const [statsData, usersData, eventsData, invoicesData, newsData, storiesData, galleryData, settingsData, platformSettingsData] = results;
+        const [statsData, usersData, eventsData, invoicesData, newsData, storiesData, galleryData, settingsData, platformSettingsData, brandingSettingsData] = results;
         setStatistics(statsData);
         setUsers(usersData.users || []);
         setEvents(eventsData.events || []);
