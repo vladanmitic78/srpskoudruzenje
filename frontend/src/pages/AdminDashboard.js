@@ -1334,7 +1334,7 @@ const AdminDashboard = () => {
                       {editingInvoice.status.toUpperCase()}
                     </span>
                   </div>
-                  <p className="text-xs text-gray-500 mt-1">Status cannot be changed here. Use "Mark Paid" button.</p>
+                  <p className="text-xs text-gray-500 mt-1">Status cannot be changed here. Use &quot;Mark Paid&quot; button.</p>
                 </div>
 
                 <div className="flex gap-2 pt-4">
