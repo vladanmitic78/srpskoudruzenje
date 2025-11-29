@@ -1409,10 +1409,10 @@ const AdminDashboard = () => {
                           { key: 'accessDashboard', label: 'Access Admin Dashboard' }
                         ].map((permission) => (
                           <tr key={permission.key} className="border-b border-gray-100 hover:bg-gray-50">
-                            <td className="py-3 px-4 text-sm">{permission.label}</td>
+                            <td className="py-2 px-2 sm:py-3 sm:px-4 text-xs sm:text-sm">{permission.label}</td>
                             
                             {/* Admin */}
-                            <td className="py-3 px-4 text-center">
+                            <td className="py-2 px-2 sm:py-3 sm:px-4 text-center">
                               <input
                                 type="checkbox"
                                 checked={rolePermissions.admin?.[permission.key] || false}
@@ -1420,12 +1420,12 @@ const AdminDashboard = () => {
                                   ...rolePermissions,
                                   admin: { ...rolePermissions.admin, [permission.key]: e.target.checked }
                                 })}
-                                className="w-5 h-5 cursor-pointer"
+                                className="w-4 h-4 sm:w-5 sm:h-5 cursor-pointer"
                               />
                             </td>
                             
                             {/* Moderator */}
-                            <td className="py-3 px-4 text-center">
+                            <td className="py-2 px-2 sm:py-3 sm:px-4 text-center">
                               <input
                                 type="checkbox"
                                 checked={rolePermissions.moderator?.[permission.key] || false}
@@ -1433,12 +1433,12 @@ const AdminDashboard = () => {
                                   ...rolePermissions,
                                   moderator: { ...rolePermissions.moderator, [permission.key]: e.target.checked }
                                 })}
-                                className="w-5 h-5 cursor-pointer"
+                                className="w-4 h-4 sm:w-5 sm:h-5 cursor-pointer"
                               />
                             </td>
                             
                             {/* User */}
-                            <td className="py-3 px-4 text-center">
+                            <td className="py-2 px-2 sm:py-3 sm:px-4 text-center">
                               <input
                                 type="checkbox"
                                 checked={rolePermissions.user?.[permission.key] || false}
@@ -1446,17 +1446,17 @@ const AdminDashboard = () => {
                                   ...rolePermissions,
                                   user: { ...rolePermissions.user, [permission.key]: e.target.checked }
                                 })}
-                                className="w-5 h-5 cursor-pointer"
+                                className="w-4 h-4 sm:w-5 sm:h-5 cursor-pointer"
                               />
                             </td>
                             
                             {/* Super Admin - Always checked, disabled */}
-                            <td className="py-3 px-4 text-center">
+                            <td className="py-2 px-2 sm:py-3 sm:px-4 text-center">
                               <input
                                 type="checkbox"
                                 checked={true}
                                 disabled
-                                className="w-5 h-5 opacity-50"
+                                className="w-4 h-4 sm:w-5 sm:h-5 opacity-50"
                               />
                             </td>
                           </tr>
