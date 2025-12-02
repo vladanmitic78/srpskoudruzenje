@@ -275,23 +275,8 @@ const ModeratorDashboard = () => {
     );
   }
 
-  // Check if moderator has any permissions
-  const hasAnyPermission = permissions.manageEvents || permissions.manageContent || permissions.manageGallery;
-
-  if (!hasAnyPermission) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <Card className="p-6">
-          <CardHeader>
-            <CardTitle>{t('dashboard.noAccess') || 'No Access'}</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p>{t('dashboard.noPermissionsMessage') || 'You do not have any permissions assigned. Please contact a Super Administrator.'}</p>
-          </CardContent>
-        </Card>
-      </div>
-    );
-  }
+  // Moderators always have access to their personal user tabs
+  // Management tabs are conditionally shown based on permissions
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 p-4 md:p-8">
