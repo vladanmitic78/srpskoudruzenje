@@ -713,6 +713,46 @@ const AdminDashboard = () => {
     }
   }, [isAdmin]);
 
+  // Fetch user permissions
+  useEffect(() => {
+    const fetchPermissions = async () => {
+      try {
+        const permsData = await adminAPI.getMyPermissions();
+        setPermissions(permsData.permissions);
+      } catch (error) {
+        console.error('Error fetching permissions:', error);
+        // Set default permissions based on role
+        if (isSuperAdmin) {
+          setPermissions({
+            viewMembers: true,
+            manageEvents: true,
+            manageInvoices: true,
+            manageContent: true,
+            manageGallery: true,
+            manageSettings: true,
+            manageUsers: true,
+            accessDashboard: true
+          });
+        } else if (isModerator) {
+          setPermissions({
+            viewMembers: false,
+            manageEvents: true,
+            manageInvoices: false,
+            manageContent: true,
+            manageGallery: true,
+            manageSettings: false,
+            manageUsers: false,
+            accessDashboard: true
+          });
+        }
+      }
+    };
+
+    if (isAdmin || isModerator) {
+      fetchPermissions();
+    }
+  }, [isAdmin, isModerator, isSuperAdmin]);
+
   const handleCreateInvoice = async () => {
     try {
       await invoicesAPI.create(newInvoice);
