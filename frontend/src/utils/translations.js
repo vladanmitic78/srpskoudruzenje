@@ -297,9 +297,28 @@ const translations = {
         exportExcel: 'Извези Excel',
         exportXML: 'Извези XML',
         viewDetails: 'Погледај детаље',
-        delete: 'Обриши'
+        delete: 'Обриши',
+        download: 'Преузми',
+        remove: 'Уклони',
+        upload: 'Отпреми',
+        edit: 'Измени',
+        markPaid: 'Означи плаћено'
       },
-      membersManagement: 'Управљање члановима'
+      membersManagement: 'Управљање члановима',
+      invoicesManagement: 'Управљање фактурама',
+      createInvoice: 'Креирај фактуру',
+      loadingInvoices: 'Учитавање фактура...',
+      noInvoicesFound: 'Нема пронађених фактура.',
+      tableHeaders: {
+        member: 'Члан',
+        description: 'Опис',
+        amount: 'Износ',
+        dueDate: 'Рок плаћања',
+        paymentDate: 'Датум плаћања',
+        status: 'Статус',
+        file: 'Датотека',
+        actions: 'Акције'
+      }
     }
   },
   'en': {
