@@ -447,17 +447,15 @@ metadata:
 
 test_plan:
   current_focus:
-    - "Moderator Dashboard - UI & Navigation"
-    - "Moderator Dashboard - Events Management"
-    - "Moderator Dashboard - Content Management"
-    - "Moderator Dashboard - Gallery Management"
-  stuck_tasks:
-    - "Moderator Dashboard - UI & Navigation"
-    - "Moderator Dashboard - Events Management"
-    - "Moderator Dashboard - Content Management"
-    - "Moderator Dashboard - Gallery Management"
+    - "Events Management UI - Add Event"
+    - "Events Management UI - Edit Event"
+    - "Events Management UI - Cancel Event"
+    - "Events Management UI - Delete Event"
+    - "Forgot Password Page"
+    - "Reset Password Page"
+  stuck_tasks: []
   test_all: false
-  test_priority: "stuck_first"
+  test_priority: "high_first"
 
 agent_communication:
   - agent: "main"
