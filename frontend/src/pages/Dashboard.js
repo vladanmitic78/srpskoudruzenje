@@ -281,7 +281,7 @@ const Dashboard = () => {
             </TabsTrigger>
             <TabsTrigger value="personal">
               <User className="h-4 w-4 mr-2" />
-              {t('dashboard.personalData')}
+              {t('dashboard.personalDataTab')}
             </TabsTrigger>
           </TabsList>
 
