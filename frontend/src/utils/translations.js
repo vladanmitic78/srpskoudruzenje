@@ -88,7 +88,19 @@ const translations = {
       confirmParticipation: 'Potvrdi učešće',
       paid: 'Plaćeno',
       unpaid: 'Neplaćeno',
-      overdue: 'Prekoračeno'
+      overdue: 'Prekoračeno',
+      trainings: {
+        totalTrainings: 'Ukupno treninga',
+        attended: 'Prisustvovao',
+        cancelled: 'Otkazano',
+        trainingGroups: 'Trening grupe',
+        availableToJoin: 'Dostupno za prijavu',
+        confirmedParticipation: 'Potvrđeno učešće',
+        previouslyCancelled: 'Prethodno otkazano',
+        differentLocations: 'Različite lokacije',
+        attendanceRate: 'Stopa prisustva',
+        attendanceMessage: 'Prisustvovali ste {{attended}} od {{total}} treninga'
+      }
     }
   },
   'sr-cyrillic': {
