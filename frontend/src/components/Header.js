@@ -10,7 +10,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from './ui/dropdown-menu';
-import { Menu, X, Globe, Sun, Moon, Facebook, Instagram, Youtube } from 'lucide-react';
+import { Menu, X, Globe, Sun, Moon, Facebook, Instagram, Youtube, Ghost } from 'lucide-react';
 import { settingsAPI } from '../services/api';
 
 const Header = () => {
