@@ -58,7 +58,10 @@ const translations = {
       resetting: 'Resetujem...',
       passwordMinLength: 'Minimum 6 karaktera',
       enterNewPassword: 'Unesite novu lozinku',
-      confirmNewPassword: 'Potvrdite novu lozinku'
+      confirmNewPassword: 'Potvrdite novu lozinku',
+      loginSuccess: 'Uspešna prijava!',
+      loginFailed: 'Prijava neuspešna',
+      invalidCredentials: 'Netačno korisničko ime ili lozinka'
     },
     contact: {
       title: 'Kontaktirajte nas',
