@@ -1074,7 +1074,7 @@ const AdminDashboard = () => {
               {/* Serbian Story Management */}
               <Card className="border-2 border-[#C1272D]/20">
                 <CardHeader className="flex flex-row items-center justify-between">
-                  <CardTitle>Serbian Story Management</CardTitle>
+                  <CardTitle>{t('admin.content.storyTitle')}</CardTitle>
                   <button
                     onClick={() => {
                       setEditingStory(null);
@@ -1090,7 +1090,7 @@ const AdminDashboard = () => {
                     }}
                     className="px-4 py-2 bg-[#C1272D] text-white rounded hover:bg-[#8B1F1F]"
                   >
-                    ➕ Add Story
+                    {t('admin.content.addStory')}
                   </button>
                 </CardHeader>
                 <CardContent>
