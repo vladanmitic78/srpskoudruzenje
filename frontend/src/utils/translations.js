@@ -190,6 +190,7 @@ const translations = {
       trainingsTab: 'Тренинзи',
       membership: 'Чланство',
       cancelMembership: 'Откажи чланство',
+      submitCancellationRequest: 'Пошаљи захтев за отказивање',
       confirmParticipation: 'Потврди учешће',
       paid: 'Плаћено',
       unpaid: 'Неплаћено',
