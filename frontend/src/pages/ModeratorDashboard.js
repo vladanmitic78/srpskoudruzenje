@@ -459,7 +459,7 @@ const ModeratorDashboard = () => {
           <TabsContent value="invoices">
             <Card>
               <CardHeader>
-                <CardTitle>{t('dashboard.invoicesTab')}</CardTitle>
+                <CardTitle>{t('dashboard.invoices')}</CardTitle>
               </CardHeader>
               <CardContent>
                 {userInvoices.length === 0 ? (
