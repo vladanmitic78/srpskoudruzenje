@@ -563,17 +563,21 @@ const ModeratorDashboard = () => {
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
-                  <div className="flex items-center justify-between p-4 border rounded-lg bg-green-50 dark:bg-green-900/20">
+                  <div className="flex items-center justify-between p-4 border-2 rounded-lg bg-green-50 dark:bg-green-900/20 border-green-200">
                     <div>
-                      <p className="font-semibold">{t('dashboard.membership.status')}</p>
-                      <p className="text-sm text-gray-500">{t('dashboard.membership.activeMember')}</p>
+                      <p className="font-semibold text-lg">Membership Status</p>
+                      <p className="text-sm text-gray-600 dark:text-gray-300">Active Member</p>
                     </div>
-                    <Badge variant="success">{t('dashboard.membership.active')}</Badge>
+                    <Badge className="bg-green-600 text-white">Active</Badge>
                   </div>
-                  <div className="p-4 border rounded-lg">
-                    <p className="text-sm text-gray-600 dark:text-gray-400">
-                      {t('dashboard.membership.benefits')}
-                    </p>
+                  <div className="p-4 border-2 rounded-lg">
+                    <h3 className="font-semibold mb-2">Membership Benefits:</h3>
+                    <ul className="list-disc list-inside space-y-1 text-sm text-gray-600 dark:text-gray-400">
+                      <li>Access to all cultural events</li>
+                      <li>Discounted training sessions</li>
+                      <li>Community support and networking</li>
+                      <li>Monthly newsletter</li>
+                    </ul>
                   </div>
                 </div>
               </CardContent>
