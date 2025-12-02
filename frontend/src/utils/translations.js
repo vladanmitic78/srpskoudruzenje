@@ -376,6 +376,19 @@ const translations = {
         differentLocations: 'Различите локације',
         attendanceRate: 'Стопа присуства',
         attendanceMessage: 'Присуствовали сте {{attended}} од {{total}} тренинга'
+      },
+      passwordChange: {
+        title: 'Промена лозинке',
+        currentPassword: 'Тренутна лозинка',
+        newPassword: 'Нова лозинка',
+        confirmPassword: 'Потврди нову лозинку',
+        showPasswords: 'Прикажи лозинке',
+        changeButton: 'Промени лозинку',
+        minLength: 'Минимално 8 карактера',
+        passwordMismatch: 'Лозинке се не поклапају',
+        passwordTooShort: 'Нова лозинка мора имати најмање 8 карактера',
+        success: 'Лозинка успешно промењена',
+        error: 'Грешка при промени лозинке'
       }
     },
     admin: {
