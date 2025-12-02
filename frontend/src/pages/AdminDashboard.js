@@ -11,6 +11,7 @@ import { toast } from 'sonner';
 
 const AdminDashboard = () => {
   const { isAdmin, isSuperAdmin, isModerator, user } = useAuth();
+  const { t } = useLanguage();
   const [statistics, setStatistics] = useState(null);
   const [users, setUsers] = useState([]);
   const [events, setEvents] = useState([]);
