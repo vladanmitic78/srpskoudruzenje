@@ -24,8 +24,8 @@ import AdminDashboard from './pages/AdminDashboard';
 import ModeratorDashboard from './pages/ModeratorDashboard';
 
 // Protected Route Component
-const ProtectedRoute = ({ children, requireAdmin = false }) => {
-  const { isAuthenticated, isAdmin, loading } = useAuth();
+const ProtectedRoute = ({ children, requireAdmin = false, requireModerator = false }) => {
+  const { isAuthenticated, isAdmin, isModerator, loading } = useAuth();
 
   if (loading) {
     return (
@@ -40,6 +40,10 @@ const ProtectedRoute = ({ children, requireAdmin = false }) => {
   }
 
   if (requireAdmin && !isAdmin) {
+    return <Navigate to="/dashboard" />;
+  }
+
+  if (requireModerator && !isModerator && !isAdmin) {
     return <Navigate to="/dashboard" />;
   }
 
