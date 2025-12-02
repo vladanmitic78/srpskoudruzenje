@@ -83,7 +83,11 @@ app.add_middleware(
 
 @app.on_event("shutdown")
 async def shutdown_db_client():
+    # Stop the scheduler
+    stop_scheduler()
+    # Close database connection
     client.close()
+    logger.info("Application shutdown complete")
 
 @app.on_event("startup")
 async def startup_event():
@@ -123,3 +127,7 @@ async def startup_event():
             "updatedAt": datetime.utcnow()
         })
         logger.info("Default settings created")
+    
+    # Start the background scheduler for automated tasks
+    start_scheduler(db)
+    logger.info("Background scheduler initialized")
