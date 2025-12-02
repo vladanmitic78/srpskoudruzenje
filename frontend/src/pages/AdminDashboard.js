@@ -1054,7 +1054,7 @@ const AdminDashboard = () => {
             {/* Content tab */}
             {permissions?.manageContent && (
               <TabsTrigger value="content">
-                <Settings className="h-4 w-4 mr-2" />
+                <BookOpen className="h-4 w-4 mr-2" />
                 {t('admin.tabs.content')}
               </TabsTrigger>
             )}
@@ -1068,14 +1068,14 @@ const AdminDashboard = () => {
             {/* Users & Roles tab - Only Super Admin */}
             {isSuperAdmin && (
               <TabsTrigger value="user-management">
-                <Users className="h-4 w-4 mr-2" />
+                <UserCog className="h-4 w-4 mr-2" />
                 Users & Roles
               </TabsTrigger>
             )}
             {/* Platform Settings tab - Only Super Admin */}
             {isSuperAdmin && (
               <TabsTrigger value="platform-settings">
-                <Settings className="h-4 w-4 mr-2" />
+                <Server className="h-4 w-4 mr-2" />
                 Platform
               </TabsTrigger>
             )}
@@ -1089,7 +1089,7 @@ const AdminDashboard = () => {
             {/* Admin Management tab - Only Super Admin */}
             {isSuperAdmin && (
               <TabsTrigger value="admin-management">
-                <Users className="h-4 w-4 mr-2" />
+                <Mail className="h-4 w-4 mr-2" />
                 {t('admin.tabs.adminManagement')}
               </TabsTrigger>
             )}
