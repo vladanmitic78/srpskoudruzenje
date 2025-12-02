@@ -1190,23 +1190,23 @@ const AdminDashboard = () => {
                               }}
                               className="px-3 py-1 text-sm bg-blue-500 text-white rounded hover:bg-blue-600"
                             >
-                              Edit
+                              {t('admin.actions.edit')}
                             </button>
                             <button
                               onClick={async () => {
-                                if (window.confirm('Delete this album and all its photos?')) {
+                                if (window.confirm(t('admin.content.deleteAlbumConfirm'))) {
                                   try {
                                     await galleryAPI.delete(album.id);
                                     setAlbums(albums.filter(a => a.id !== album.id));
-                                    toast.success('Album deleted');
+                                    toast.success(t('admin.content.albumDeleteSuccess'));
                                   } catch (error) {
-                                    toast.error('Failed to delete album');
+                                    toast.error(t('admin.content.albumDeleteFailed'));
                                   }
                                 }
                               }}
                               className="px-3 py-1 text-sm bg-red-500 text-white rounded hover:bg-red-600"
                             >
-                              Delete
+                              {t('admin.actions.delete')}
                             </button>
                           </div>
                         </div>
