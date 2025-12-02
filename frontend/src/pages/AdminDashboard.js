@@ -868,7 +868,7 @@ const AdminDashboard = () => {
           <TabsContent value="events">
             <Card className="border-2 border-[#C1272D]/20">
               <CardHeader className="flex flex-row items-center justify-between">
-                <CardTitle>Events & Training Management</CardTitle>
+                <CardTitle>{t('admin.events.title')}</CardTitle>
                 <button
                   onClick={() => {
                     setEventForm({
@@ -884,14 +884,14 @@ const AdminDashboard = () => {
                   }}
                   className="px-4 py-2 bg-[#C1272D] text-white rounded hover:bg-[#8B1F1F] transition-colors"
                 >
-                  + Add Event
+                  {t('admin.events.addEvent')}
                 </button>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
                   {events.length === 0 ? (
                     <p className="text-gray-600 dark:text-gray-400 text-center py-8">
-                      No events scheduled. Click &quot;Add Event&quot; to create one.
+                      {t('admin.events.noEvents')}
                     </p>
                   ) : (
                     events.map((event) => (
