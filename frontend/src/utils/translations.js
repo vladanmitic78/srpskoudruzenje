@@ -318,7 +318,17 @@ const translations = {
     },
     dashboard: {
       title: 'Dashboard',
-      personalData: 'Personal Data',
+      personalDataTab: 'Personal Data',
+      personalData: {
+        fullName: 'Full Name',
+        yearOfBirth: 'Year of Birth',
+        age: 'Age',
+        years: 'years',
+        email: 'Email',
+        phone: 'Phone',
+        streetAddress: 'Street Address',
+        saveChanges: 'Save Changes'
+      },
       invoices: 'Invoices',
       trainingsTab: 'Trainings',
       membership: 'Membership',
