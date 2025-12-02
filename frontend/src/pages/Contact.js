@@ -140,8 +140,8 @@ const Contact = () => {
                     <MapPin className="h-6 w-6 text-[#C1272D]" />
                   </div>
                   <div>
-                    <h3 className="font-semibold text-gray-900 dark:text-white mb-1">Address</h3>
-                    <p className="text-gray-600 dark:text-gray-300">{settings?.address || 'Loading...'}</p>
+                    <h3 className="font-semibold text-gray-900 dark:text-white mb-1">{t('contact.addressLabel')}</h3>
+                    <p className="text-gray-600 dark:text-gray-300">{settings?.address || t('contact.loading')}</p>
                   </div>
                 </div>
 
@@ -150,12 +150,12 @@ const Contact = () => {
                     <Mail className="h-6 w-6 text-[#C1272D]" />
                   </div>
                   <div>
-                    <h3 className="font-semibold text-gray-900 dark:text-white mb-1">Email</h3>
+                    <h3 className="font-semibold text-gray-900 dark:text-white mb-1">{t('contact.emailLabel')}</h3>
                     <a 
                       href={`mailto:${settings?.contactEmail || ''}`}
                       className="text-[#C1272D] hover:underline"
                     >
-                      {settings?.contactEmail || 'Loading...'}
+                      {settings?.contactEmail || t('contact.loading')}
                     </a>
                   </div>
                 </div>
@@ -165,12 +165,12 @@ const Contact = () => {
                     <Phone className="h-6 w-6 text-[#C1272D]" />
                   </div>
                   <div>
-                    <h3 className="font-semibold text-gray-900 dark:text-white mb-1">Phone</h3>
+                    <h3 className="font-semibold text-gray-900 dark:text-white mb-1">{t('contact.phoneLabel')}</h3>
                     <a 
                       href={`tel:${settings?.contactPhone || ''}`}
                       className="text-[#C1272D] hover:underline"
                     >
-                      {settings?.contactPhone || 'Loading...'}
+                      {settings?.contactPhone || t('contact.loading')}
                     </a>
                   </div>
                 </div>
