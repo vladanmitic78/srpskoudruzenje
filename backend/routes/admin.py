@@ -446,3 +446,29 @@ async def update_permissions(
     )
     
     return {"success": True, "message": "Permissions updated successfully"}
+
+
+@router.post("/test-event-reminders")
+async def test_event_reminders(
+    admin: dict = Depends(get_superadmin_user),
+    request: Request = None
+):
+    """
+    Test endpoint to manually trigger event reminder emails
+    (Super Admin only - for testing purposes)
+    """
+    from scheduler import send_event_reminders
+    
+    db = request.app.state.db
+    
+    try:
+        # Run the reminder job
+        await send_event_reminders(db)
+        return {
+            "success": True,
+            "message": "Event reminder job executed. Check server logs for details."
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error executing reminder job: {str(e)}")
+
+    return {"success": True, "message": "Permissions updated successfully"}
