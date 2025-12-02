@@ -908,12 +908,12 @@ const AdminDashboard = () => {
                               </p>
                               {event.status === 'cancelled' && (
                                 <span className="px-2 py-1 text-xs font-semibold bg-red-600 text-white rounded">
-                                  CANCELLED
+                                  {t('admin.events.cancelled')}
                                 </span>
                               )}
                             </div>
                             <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">
-                              📅 {event.date} at {event.time}
+                              📅 {event.date} {t('admin.events.at')} {event.time}
                             </p>
                             <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">
                               📍 {event.location}
@@ -923,12 +923,12 @@ const AdminDashboard = () => {
                             </p>
                             {event.status === 'cancelled' && event.cancellationReason && (
                               <p className="text-sm text-red-600 dark:text-red-400 mt-2">
-                                <strong>Reason:</strong> {event.cancellationReason}
+                                <strong>{t('admin.events.reason')}:</strong> {event.cancellationReason}
                               </p>
                             )}
                             {event.participants && (
                               <p className="text-sm text-gray-500 dark:text-gray-400 mt-2">
-                                👥 {event.participants.length} participant(s) confirmed
+                                👥 {event.participants.length} {t('admin.events.participantsConfirmed')}
                               </p>
                             )}
                           </div>
