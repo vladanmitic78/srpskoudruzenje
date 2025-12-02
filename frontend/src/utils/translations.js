@@ -1045,7 +1045,8 @@ const translations = {
         invoices: 'Fakturor',
         events: 'Evenemang',
         content: 'Innehåll',
-        settings: 'Inställningar'
+        settings: 'Inställningar',
+        adminManagement: 'Adminhantering'
       },
       actions: {
         exportPDF: 'Exportera PDF',
