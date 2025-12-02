@@ -1097,6 +1097,7 @@ const AdminDashboard = () => {
 
           {/* Members Tab - Only Admin and Super Admin */}
           {(isAdmin && !isModerator) && (
+            {permissions?.viewMembers && (
             <TabsContent value="members">
             <Card className="border-2 border-[#C1272D]/20">
               <CardHeader className="flex flex-row items-center justify-between">
