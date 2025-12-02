@@ -1145,7 +1145,7 @@ const AdminDashboard = () => {
               {/* Gallery Management */}
               <Card className="border-2 border-[#C1272D]/20">
                 <CardHeader className="flex flex-row items-center justify-between">
-                  <CardTitle>Gallery Management (Albums)</CardTitle>
+                  <CardTitle>{t('admin.content.galleryTitle')}</CardTitle>
                   <button
                     onClick={() => {
                       setEditingAlbum(null);
@@ -1161,7 +1161,7 @@ const AdminDashboard = () => {
                     }}
                     className="px-4 py-2 bg-[#C1272D] text-white rounded hover:bg-[#8B1F1F]"
                   >
-                    ➕ Create Album
+                    {t('admin.content.createAlbum')}
                   </button>
                 </CardHeader>
                 <CardContent>
