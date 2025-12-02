@@ -902,6 +902,48 @@ const translations = {
           descriptionSrCyrillic: 'Beskrivning (Serbiska Kyrilliska)',
           descriptionSv: 'Beskrivning (Svenska)'
         }
+      },
+      content: {
+        newsTitle: 'Nyhetshantering (Startsida)',
+        addNews: '➕ Lägg till nyhet',
+        deleteNewsConfirm: 'Radera denna nyhet?',
+        newsDeleteSuccess: 'Nyhet raderad',
+        newsDeleteFailed: 'Misslyckades radera nyhet',
+        aboutTitle: 'Om oss-sidans innehåll',
+        aboutDescription: 'Redigera Om oss-sidans innehåll på alla språk.',
+        editAbout: '✏️ Redigera Om oss-innehåll',
+        aboutLoadFailed: 'Misslyckades ladda Om oss-innehåll',
+        storyTitle: 'Serbisk berättelsehantering',
+        addStory: '➕ Lägg till berättelse',
+        deleteStoryConfirm: 'Radera denna berättelse?',
+        storyDeleteSuccess: 'Berättelse raderad',
+        storyDeleteFailed: 'Misslyckades radera berättelse',
+        galleryTitle: 'Gallerihantering (Album)',
+        createAlbum: '➕ Skapa album',
+        noLocation: 'Ingen plats',
+        photos: 'foton',
+        deleteAlbumConfirm: 'Radera detta album och alla dess foton?',
+        albumDeleteSuccess: 'Album raderat',
+        albumDeleteFailed: 'Misslyckades radera album'
+      },
+      settings: {
+        title: 'Föreningsinställningar',
+        updateSuccess: 'Inställningar uppdaterade',
+        updateFailed: 'Misslyckades uppdatera inställningar',
+        contactInfo: 'Kontaktinformation',
+        address: 'Adress',
+        contactEmail: 'Kontakt-e-post',
+        contactPhone: 'Kontakttelefon',
+        socialMedia: 'Sociala medier länkar',
+        facebookUrl: 'Facebook URL',
+        instagramUrl: 'Instagram URL',
+        youtubeUrl: 'YouTube URL',
+        snapchatUrl: 'Snapchat URL',
+        orgDetails: 'Organisationsdetaljer',
+        orgNumber: 'Organisationsnummer (Org. nr)',
+        vatNumber: 'Momsnummer',
+        bankAccount: 'Bankkonto',
+        saveButton: 'Spara inställningar'
       }
     }
   }
