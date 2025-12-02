@@ -52,7 +52,7 @@ const Header = () => {
   const isActive = (path) => location.pathname === path;
 
   return (
-    <header className="sticky top-0 z-50 bg-[#FFF5F5] dark:bg-gray-900 border-b border-[#C1272D]/20 shadow-sm transition-colors duration-300">
+    <header className="sticky top-0 z-50 bg-[#FFF5F5] dark:bg-gray-900 border-b border-[var(--color-primary)]/20 shadow-sm transition-colors duration-300">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-20">
           {/* Logo */}
@@ -60,9 +60,9 @@ const Header = () => {
             <img 
               src="/logo.jpg" 
               alt="SKUD Täby Logo" 
-              className="h-16 w-16 object-contain rounded-full border-2 border-[#C1272D] group-hover:scale-105 transition-transform duration-300"
+              className="h-16 w-16 object-contain rounded-full border-2 border-[var(--color-primary)] group-hover:scale-105 transition-transform duration-300"
             />
-            <span className="font-bold text-lg text-[#8B1F1F] dark:text-[#C1272D] hidden md:block">
+            <span className="font-bold text-lg text-[var(--color-secondary)] dark:text-[var(--color-primary)] hidden md:block">
               SKUD TÄBY
             </span>
           </Link>
@@ -75,8 +75,8 @@ const Header = () => {
                 to={link.path}
                 className={`px-4 py-2 rounded-md text-sm font-medium transition-all duration-200 ${
                   isActive(link.path)
-                    ? 'bg-[#C1272D] text-white'
-                    : 'text-gray-700 dark:text-gray-200 hover:bg-[#C1272D]/10 dark:hover:bg-[#C1272D]/20'
+                    ? 'bg-[var(--color-primary)] text-white'
+                    : 'text-gray-700 dark:text-gray-200 hover:bg-[var(--color-primary)]/10 dark:hover:bg-[var(--color-primary)]/20'
                 }`}
               >
                 {link.label}
@@ -89,8 +89,8 @@ const Header = () => {
             {/* Language Selector */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon" className="hover:bg-[#C1272D]/10">
-                  <Globe className="h-5 w-5 text-[#8B1F1F] dark:text-[#C1272D]" />
+                <Button variant="ghost" size="icon" className="hover:bg-[var(--color-primary)]/10">
+                  <Globe className="h-5 w-5 text-[var(--color-secondary)] dark:text-[var(--color-primary)]" />
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
@@ -98,7 +98,7 @@ const Header = () => {
                   <DropdownMenuItem
                     key={lang.code}
                     onClick={() => setLanguage(lang.code)}
-                    className={language === lang.code ? 'bg-[#C1272D]/10' : ''}
+                    className={language === lang.code ? 'bg-[var(--color-primary)]/10' : ''}
                   >
                     {lang.label}
                   </DropdownMenuItem>
@@ -109,8 +109,8 @@ const Header = () => {
             {/* Social Media */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon" className="hover:bg-[#C1272D]/10 hidden md:flex">
-                  <Facebook className="h-5 w-5 text-[#8B1F1F] dark:text-[#C1272D]" />
+                <Button variant="ghost" size="icon" className="hover:bg-[var(--color-primary)]/10 hidden md:flex">
+                  <Facebook className="h-5 w-5 text-[var(--color-secondary)] dark:text-[var(--color-primary)]" />
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
@@ -144,12 +144,12 @@ const Header = () => {
               variant="ghost" 
               size="icon" 
               onClick={toggleTheme}
-              className="hover:bg-[#C1272D]/10"
+              className="hover:bg-[var(--color-primary)]/10"
             >
               {theme === 'light' ? (
-                <Moon className="h-5 w-5 text-[#8B1F1F] dark:text-[#C1272D]" />
+                <Moon className="h-5 w-5 text-[var(--color-secondary)] dark:text-[var(--color-primary)]" />
               ) : (
-                <Sun className="h-5 w-5 text-[#8B1F1F] dark:text-[#C1272D]" />
+                <Sun className="h-5 w-5 text-[var(--color-secondary)] dark:text-[var(--color-primary)]" />
               )}
             </Button>
 
@@ -157,7 +157,7 @@ const Header = () => {
             {isAuthenticated ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button className="hidden md:flex bg-[#C1272D] hover:bg-[#8B1F1F] text-white">
+                  <Button className="hidden md:flex bg-[var(--color-primary)] hover:bg-[var(--color-secondary)] text-white">
                     {user?.fullName || user?.username}
                   </Button>
                 </DropdownMenuTrigger>
@@ -174,10 +174,10 @@ const Header = () => {
               </DropdownMenu>
             ) : (
               <div className="hidden md:flex items-center space-x-2">
-                <Button asChild variant="ghost" className="hover:bg-[#C1272D]/10">
+                <Button asChild variant="ghost" className="hover:bg-[var(--color-primary)]/10">
                   <Link to="/login">{t('nav.login')}</Link>
                 </Button>
-                <Button asChild className="bg-[#C1272D] hover:bg-[#8B1F1F] text-white">
+                <Button asChild className="bg-[var(--color-primary)] hover:bg-[var(--color-secondary)] text-white">
                   <Link to="/register">{t('nav.register')}</Link>
                 </Button>
               </div>
@@ -191,9 +191,9 @@ const Header = () => {
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             >
               {mobileMenuOpen ? (
-                <X className="h-6 w-6 text-[#8B1F1F]" />
+                <X className="h-6 w-6 text-[var(--color-secondary)]" />
               ) : (
-                <Menu className="h-6 w-6 text-[#8B1F1F]" />
+                <Menu className="h-6 w-6 text-[var(--color-secondary)]" />
               )}
             </Button>
           </div>
@@ -201,7 +201,7 @@ const Header = () => {
 
         {/* Mobile Menu */}
         {mobileMenuOpen && (
-          <div className="lg:hidden py-4 border-t border-[#C1272D]/20 animate-in slide-in-from-top">
+          <div className="lg:hidden py-4 border-t border-[var(--color-primary)]/20 animate-in slide-in-from-top">
             <nav className="flex flex-col space-y-2">
               {navLinks.map((link) => (
                 <Link
@@ -210,8 +210,8 @@ const Header = () => {
                   onClick={() => setMobileMenuOpen(false)}
                   className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
                     isActive(link.path)
-                      ? 'bg-[#C1272D] text-white'
-                      : 'text-gray-700 dark:text-gray-200 hover:bg-[#C1272D]/10'
+                      ? 'bg-[var(--color-primary)] text-white'
+                      : 'text-gray-700 dark:text-gray-200 hover:bg-[var(--color-primary)]/10'
                   }`}
                 >
                   {link.label}
@@ -222,7 +222,7 @@ const Header = () => {
                   <Link
                     to={user?.role === 'admin' || user?.role === 'superadmin' ? '/admin' : '/dashboard'}
                     onClick={() => setMobileMenuOpen(false)}
-                    className="px-4 py-2 rounded-md text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-[#C1272D]/10"
+                    className="px-4 py-2 rounded-md text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-[var(--color-primary)]/10"
                   >
                     {t('nav.dashboard')}
                   </Link>
@@ -231,7 +231,7 @@ const Header = () => {
                       logout();
                       setMobileMenuOpen(false);
                     }}
-                    className="px-4 py-2 rounded-md text-sm font-medium text-left text-gray-700 dark:text-gray-200 hover:bg-[#C1272D]/10"
+                    className="px-4 py-2 rounded-md text-sm font-medium text-left text-gray-700 dark:text-gray-200 hover:bg-[var(--color-primary)]/10"
                   >
                     {t('nav.logout')}
                   </button>
@@ -241,14 +241,14 @@ const Header = () => {
                   <Link
                     to="/login"
                     onClick={() => setMobileMenuOpen(false)}
-                    className="px-4 py-2 rounded-md text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-[#C1272D]/10"
+                    className="px-4 py-2 rounded-md text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-[var(--color-primary)]/10"
                   >
                     {t('nav.login')}
                   </Link>
                   <Link
                     to="/register"
                     onClick={() => setMobileMenuOpen(false)}
-                    className="px-4 py-2 rounded-md text-sm font-medium bg-[#C1272D] text-white hover:bg-[#8B1F1F]"
+                    className="px-4 py-2 rounded-md text-sm font-medium bg-[var(--color-primary)] text-white hover:bg-[var(--color-secondary)]"
                   >
                     {t('nav.register')}
                   </Link>
