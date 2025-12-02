@@ -1117,23 +1117,23 @@ const AdminDashboard = () => {
                             }}
                             className="px-3 py-1 text-sm bg-blue-500 text-white rounded hover:bg-blue-600"
                           >
-                            Edit
+                            {t('admin.actions.edit')}
                           </button>
                           <button
                             onClick={async () => {
-                              if (window.confirm('Delete this story?')) {
+                              if (window.confirm(t('admin.content.deleteStoryConfirm'))) {
                                 try {
                                   await storiesAPI.delete(item.id);
                                   setStories(stories.filter(s => s.id !== item.id));
-                                  toast.success('Story deleted');
+                                  toast.success(t('admin.content.storyDeleteSuccess'));
                                 } catch (error) {
-                                  toast.error('Failed to delete story');
+                                  toast.error(t('admin.content.storyDeleteFailed'));
                                 }
                               }
                             }}
                             className="px-3 py-1 text-sm bg-red-500 text-white rounded hover:bg-red-600"
                           >
-                            Delete
+                            {t('admin.actions.delete')}
                           </button>
                         </div>
                       </div>
