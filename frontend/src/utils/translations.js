@@ -251,6 +251,10 @@ const translations = {
       topic: 'Topic',
       message: 'Message',
       send: 'Send',
+      addressLabel: 'Address',
+      emailLabel: 'Email',
+      phoneLabel: 'Phone',
+      loading: 'Loading...',
       topics: {
         member: 'Become a member',
         finance: 'Finance',
