@@ -728,33 +728,33 @@ const AdminDashboard = () => {
           <TabsContent value="invoices">
             <Card className="border-2 border-[#C1272D]/20">
               <CardHeader className="flex flex-row items-center justify-between">
-                <CardTitle>Invoices Management</CardTitle>
+                <CardTitle>{t('admin.invoicesManagement')}</CardTitle>
                 <button
                   onClick={() => setCreateInvoiceOpen(true)}
                   className="px-4 py-2 bg-[#C1272D] text-white rounded hover:bg-[#8B1F1F]"
                 >
-                  Create Invoice
+                  {t('admin.createInvoice')}
                 </button>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
                   {loading ? (
-                    <p className="text-gray-600 dark:text-gray-400">Loading invoices...</p>
+                    <p className="text-gray-600 dark:text-gray-400">{t('admin.loadingInvoices')}</p>
                   ) : invoices.length === 0 ? (
-                    <p className="text-gray-600 dark:text-gray-400">No invoices found.</p>
+                    <p className="text-gray-600 dark:text-gray-400">{t('admin.noInvoicesFound')}</p>
                   ) : (
                     <div className="overflow-x-auto">
                       <table className="w-full border-collapse">
                         <thead>
                           <tr className="bg-gray-100 dark:bg-gray-800">
-                            <th className="p-3 text-left">Member</th>
-                            <th className="p-3 text-left">Description</th>
-                            <th className="p-3 text-left">Amount</th>
-                            <th className="p-3 text-left">Due Date</th>
-                            <th className="p-3 text-left">Payment Date</th>
-                            <th className="p-3 text-left">Status</th>
-                            <th className="p-3 text-left">File</th>
-                            <th className="p-3 text-left">Actions</th>
+                            <th className="p-3 text-left">{t('admin.tableHeaders.member')}</th>
+                            <th className="p-3 text-left">{t('admin.tableHeaders.description')}</th>
+                            <th className="p-3 text-left">{t('admin.tableHeaders.amount')}</th>
+                            <th className="p-3 text-left">{t('admin.tableHeaders.dueDate')}</th>
+                            <th className="p-3 text-left">{t('admin.tableHeaders.paymentDate')}</th>
+                            <th className="p-3 text-left">{t('admin.tableHeaders.status')}</th>
+                            <th className="p-3 text-left">{t('admin.tableHeaders.file')}</th>
+                            <th className="p-3 text-left">{t('admin.tableHeaders.actions')}</th>
                           </tr>
                         </thead>
                         <tbody>
