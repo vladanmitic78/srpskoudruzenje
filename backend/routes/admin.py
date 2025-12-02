@@ -391,6 +391,71 @@ async def upload_logo(
     return {"success": True, "logo": logo_url}
 
 # Role Permissions Routes
+
+
+@router.get("/my-permissions")
+async def get_my_permissions(
+    admin: dict = Depends(get_admin_user),
+    request: Request = None
+):
+    """Get current user's role permissions (Any admin/moderator)"""
+    db = request.app.state.db
+    
+    user_role = admin.get("role", "user")
+    
+    # Super admin has all permissions
+    if user_role == "superadmin":
+        return {
+            "role": "superadmin",
+            "permissions": {
+                "viewMembers": True,
+                "manageEvents": True,
+                "manageInvoices": True,
+                "manageContent": True,
+                "manageGallery": True,
+                "manageSettings": True,
+                "manageUsers": True,
+                "accessDashboard": True
+            }
+        }
+    
+    # Fetch permissions from database
+    permissions_doc = await db.role_permissions.find_one({"_id": "permissions"})
+    
+    if not permissions_doc or user_role not in permissions_doc:
+        # Return default permissions
+        default_perms = {
+            "admin": {
+                "viewMembers": True,
+                "manageEvents": True,
+                "manageInvoices": True,
+                "manageContent": True,
+                "manageGallery": True,
+                "manageSettings": True,
+                "manageUsers": False,
+                "accessDashboard": True
+            },
+            "moderator": {
+                "viewMembers": False,
+                "manageEvents": True,
+                "manageInvoices": False,
+                "manageContent": True,
+                "manageGallery": True,
+                "manageSettings": False,
+                "manageUsers": False,
+                "accessDashboard": True
+            }
+        }
+        return {
+            "role": user_role,
+            "permissions": default_perms.get(user_role, {})
+        }
+    
+    return {
+        "role": user_role,
+        "permissions": permissions_doc.get(user_role, {})
+    }
+
 @router.get("/permissions")
 async def get_permissions(
     superadmin: dict = Depends(get_superadmin_user),
