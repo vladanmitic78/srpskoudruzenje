@@ -619,9 +619,28 @@ const translations = {
         exportExcel: 'Exportera Excel',
         exportXML: 'Exportera XML',
         viewDetails: 'Visa detaljer',
-        delete: 'Radera'
+        delete: 'Radera',
+        download: 'Ladda ner',
+        remove: 'Ta bort',
+        upload: 'Ladda upp',
+        edit: 'Redigera',
+        markPaid: 'Markera som betald'
       },
-      membersManagement: 'Medlemshantering'
+      membersManagement: 'Medlemshantering',
+      invoicesManagement: 'Fakturahantering',
+      createInvoice: 'Skapa faktura',
+      loadingInvoices: 'Laddar fakturor...',
+      noInvoicesFound: 'Inga fakturor hittades.',
+      tableHeaders: {
+        member: 'Medlem',
+        description: 'Beskrivning',
+        amount: 'Belopp',
+        dueDate: 'Förfallodatum',
+        paymentDate: 'Betalningsdatum',
+        status: 'Status',
+        file: 'Fil',
+        actions: 'Åtgärder'
+      }
     }
   }
 };
