@@ -2955,7 +2955,7 @@ const AdminDashboard = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium mb-2">Title (Serbian Latin)</label>
+                <label className="block text-sm font-medium mb-2">{t('admin.events.form.titleSrLatin')}</label>
                 <input
                   type="text"
                   value={eventForm.title['sr-latin']}
@@ -2965,7 +2965,7 @@ const AdminDashboard = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium mb-2">Title (Serbian Cyrillic)</label>
+                <label className="block text-sm font-medium mb-2">{t('admin.events.form.titleSrCyrillic')}</label>
                 <input
                   type="text"
                   value={eventForm.title['sr-cyrillic']}
@@ -2975,7 +2975,7 @@ const AdminDashboard = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium mb-2">Title (Swedish)</label>
+                <label className="block text-sm font-medium mb-2">{t('admin.events.form.titleSv')}</label>
                 <input
                   type="text"
                   value={eventForm.title.sv}
@@ -2985,7 +2985,7 @@ const AdminDashboard = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium mb-2">Description (English) *</label>
+                <label className="block text-sm font-medium mb-2">{t('admin.events.form.descriptionEn')} *</label>
                 <textarea
                   value={eventForm.description.en}
                   onChange={(e) => setEventForm({...eventForm, description: {...eventForm.description, en: e.target.value}})}
@@ -2995,7 +2995,7 @@ const AdminDashboard = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium mb-2">Description (Serbian Latin)</label>
+                <label className="block text-sm font-medium mb-2">{t('admin.events.form.descriptionSrLatin')}</label>
                 <textarea
                   value={eventForm.description['sr-latin']}
                   onChange={(e) => setEventForm({...eventForm, description: {...eventForm.description, 'sr-latin': e.target.value}})}
@@ -3005,7 +3005,7 @@ const AdminDashboard = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium mb-2">Description (Serbian Cyrillic)</label>
+                <label className="block text-sm font-medium mb-2">{t('admin.events.form.descriptionSrCyrillic')}</label>
                 <textarea
                   value={eventForm.description['sr-cyrillic']}
                   onChange={(e) => setEventForm({...eventForm, description: {...eventForm.description, 'sr-cyrillic': e.target.value}})}
@@ -3015,7 +3015,7 @@ const AdminDashboard = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium mb-2">Description (Swedish)</label>
+                <label className="block text-sm font-medium mb-2">{t('admin.events.form.descriptionSv')}</label>
                 <textarea
                   value={eventForm.description.sv}
                   onChange={(e) => setEventForm({...eventForm, description: {...eventForm.description, sv: e.target.value}})}
@@ -3029,13 +3029,13 @@ const AdminDashboard = () => {
                   onClick={handleUpdateEvent}
                   className="flex-1 px-4 py-2 bg-[#C1272D] text-white rounded hover:bg-[#8B1F1F]"
                 >
-                  Update Event
+                  {t('admin.events.updateButton')}
                 </button>
                 <button
                   onClick={() => setEditEventOpen(false)}
                   className="flex-1 px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700"
                 >
-                  Cancel
+                  {t('admin.actions.cancel')}
                 </button>
               </div>
             </div>
