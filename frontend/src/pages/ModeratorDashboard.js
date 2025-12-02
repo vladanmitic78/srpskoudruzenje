@@ -521,7 +521,7 @@ const ModeratorDashboard = () => {
           <TabsContent value="membership">
             <Card>
               <CardHeader>
-                <CardTitle>{t('dashboard.membershipTab')}</CardTitle>
+                <CardTitle>{t('dashboard.membership')}</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
