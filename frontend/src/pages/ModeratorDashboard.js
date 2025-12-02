@@ -372,7 +372,7 @@ const ModeratorDashboard = () => {
 
           {/* Events Tab Content */}
           {permissions.manageEvents && (
-            <TabsContent value="events">
+            <TabsContent value="manage-events">
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between">
                   <CardTitle>{t('admin.events.title')}</CardTitle>
