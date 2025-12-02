@@ -394,7 +394,7 @@ const translations = {
       title: 'Instrumentpanel',
       personalData: 'Personuppgifter',
       invoices: 'Fakturor',
-      trainings: 'Träningar',
+      trainingsTab: 'Träningar',
       membership: 'Medlemskap',
       cancelMembership: 'Avsluta medlemskap',
       confirmParticipation: 'Bekräfta deltagande',
