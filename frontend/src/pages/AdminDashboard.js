@@ -1050,10 +1050,10 @@ const AdminDashboard = () => {
               {/* About Page */}
               <Card className="border-2 border-[#C1272D]/20">
                 <CardHeader>
-                  <CardTitle>About Page Content</CardTitle>
+                  <CardTitle>{t('admin.content.aboutTitle')}</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-sm text-gray-600 mb-4">Edit the about page content in all languages.</p>
+                  <p className="text-sm text-gray-600 mb-4">{t('admin.content.aboutDescription')}</p>
                   <button
                     onClick={async () => {
                       try {
@@ -1061,12 +1061,12 @@ const AdminDashboard = () => {
                         setAboutContent(data.content || { 'sr-latin': '', 'sr-cyrillic': '', 'en': '', 'sv': '' });
                         setAboutModalOpen(true);
                       } catch (error) {
-                        toast.error('Failed to load about content');
+                        toast.error(t('admin.content.aboutLoadFailed'));
                       }
                     }}
                     className="px-4 py-2 bg-[#C1272D] text-white rounded hover:bg-[#8B1F1F]"
                   >
-                    ✏️ Edit About Content
+                    {t('admin.content.editAbout')}
                   </button>
                 </CardContent>
               </Card>
