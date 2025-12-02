@@ -85,6 +85,7 @@ const translations = {
       trainingsTab: 'Treninzi',
       membership: 'Članstvo',
       cancelMembership: 'Otkaži članstvo',
+      submitCancellationRequest: 'Pošalji zahtev za otkazivanje',
       confirmParticipation: 'Potvrdi učešće',
       paid: 'Plaćeno',
       unpaid: 'Neplaćeno',
