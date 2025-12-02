@@ -1282,7 +1282,6 @@ const translations = {
       comingSoon: 'Hanteringsfunktionalitet kommer att laddas här.',
       redirectMessage: 'Detta avsnitt visar samma hanteringsgränssnitt som admin-kontrollpanelen.'
     }
-  },
   }
 };
 
