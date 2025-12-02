@@ -724,6 +724,11 @@ const translations = {
     },
     dashboard: {
       title: 'Dashboard',
+      loading: 'Loading...',
+      permissionsError: 'Failed to load permissions',
+      noPermissions: 'No permissions assigned. Contact administrator.',
+      noAccess: 'No Access',
+      noPermissionsMessage: 'You do not have any permissions assigned. Please contact a Super Administrator.',
       personalDataTab: 'Personal Data',
       personalData: {
         fullName: 'Full Name',
