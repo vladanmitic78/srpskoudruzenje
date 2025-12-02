@@ -898,6 +898,19 @@ const translations = {
         differentLocations: 'Olika platser',
         attendanceRate: 'Närvarofrekvens',
         attendanceMessage: 'Du har varit på {{attended}} av {{total}} träningar'
+      },
+      passwordChange: {
+        title: 'Ändra lösenord',
+        currentPassword: 'Nuvarande lösenord',
+        newPassword: 'Nytt lösenord',
+        confirmPassword: 'Bekräfta nytt lösenord',
+        showPasswords: 'Visa lösenord',
+        changeButton: 'Ändra lösenord',
+        minLength: 'Minst 8 tecken',
+        passwordMismatch: 'Lösenorden matchar inte',
+        passwordTooShort: 'Nytt lösenord måste vara minst 8 tecken',
+        success: 'Lösenordet har ändrats',
+        error: 'Fel vid ändring av lösenord'
       }
     },
     admin: {
