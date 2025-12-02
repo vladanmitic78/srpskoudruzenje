@@ -744,7 +744,8 @@ const translations = {
         invoices: 'Invoices',
         events: 'Events',
         content: 'Content',
-        settings: 'Settings'
+        settings: 'Settings',
+        adminManagement: 'Admin Management'
       },
       actions: {
         exportPDF: 'Export PDF',
