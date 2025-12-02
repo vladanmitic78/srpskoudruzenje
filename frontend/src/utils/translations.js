@@ -506,7 +506,18 @@ const translations = {
         orgNumber: 'Матични број (Org. nr)',
         vatNumber: 'ПИБ број',
         bankAccount: 'Банковни рачун',
-        saveButton: 'Сачувај подешавања'
+        saveButton: 'Сачувај подешавања',
+        passwordChangeTitle: 'Промена лозинке',
+        currentPassword: 'Тренутна лозинка',
+        newPassword: 'Нова лозинка',
+        confirmPassword: 'Потврди нову лозинку',
+        showPasswords: 'Прикажи лозинке',
+        changePasswordButton: 'Промени лозинку',
+        passwordMinLength: 'Минимално 8 карактера',
+        passwordMismatch: 'Лозинке се не поклапају',
+        passwordTooShort: 'Нова лозинка мора имати најмање 8 карактера',
+        passwordSuccess: 'Лозинка успешно промењена',
+        passwordError: 'Грешка при промени лозинке'
       }
     }
   },
