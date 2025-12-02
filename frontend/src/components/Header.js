@@ -134,6 +134,14 @@ const Header = () => {
                         <span>YouTube</span>
                       </a>
                     </DropdownMenuItem>
+                    {settings.socialMedia.snapchat && (
+                      <DropdownMenuItem asChild>
+                        <a href={settings.socialMedia.snapchat} target="_blank" rel="noopener noreferrer" className="flex items-center space-x-2">
+                          <Ghost className="h-4 w-4" />
+                          <span>Snapchat</span>
+                        </a>
+                      </DropdownMenuItem>
+                    )}
                   </>
                 )}
               </DropdownMenuContent>
