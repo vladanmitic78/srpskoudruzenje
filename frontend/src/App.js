@@ -102,13 +102,15 @@ const AppContent = () => {
 function App() {
   return (
     <ThemeProvider>
-      <LanguageProvider>
-        <AuthProvider>
-          <BrowserRouter>
-            <AppContent />
-          </BrowserRouter>
-        </AuthProvider>
-      </LanguageProvider>
+      <BrandingProvider>
+        <LanguageProvider>
+          <AuthProvider>
+            <BrowserRouter>
+              <AppContent />
+            </BrowserRouter>
+          </AuthProvider>
+        </LanguageProvider>
+      </BrandingProvider>
     </ThemeProvider>
   );
 }
