@@ -1306,7 +1306,7 @@ const AdminDashboard = () => {
                         />
                       </div>
                       <div>
-                        <label className="block text-sm font-medium mb-2">Instagram URL</label>
+                        <label className="block text-sm font-medium mb-2">{t('admin.settings.instagramUrl')}</label>
                         <input
                           type="url"
                           value={settings.socialMedia.instagram}
@@ -1320,7 +1320,7 @@ const AdminDashboard = () => {
                         />
                       </div>
                       <div>
-                        <label className="block text-sm font-medium mb-2">YouTube URL</label>
+                        <label className="block text-sm font-medium mb-2">{t('admin.settings.youtubeUrl')}</label>
                         <input
                           type="url"
                           value={settings.socialMedia.youtube}
@@ -1334,7 +1334,7 @@ const AdminDashboard = () => {
                         />
                       </div>
                       <div>
-                        <label className="block text-sm font-medium mb-2">Snapchat URL</label>
+                        <label className="block text-sm font-medium mb-2">{t('admin.settings.snapchatUrl')}</label>
                         <input
                           type="url"
                           value={settings.socialMedia.snapchat}
@@ -1352,10 +1352,10 @@ const AdminDashboard = () => {
 
                   {/* Organization Details */}
                   <div>
-                    <h3 className="text-lg font-semibold mb-4 text-gray-900 dark:text-white">Organization Details</h3>
+                    <h3 className="text-lg font-semibold mb-4 text-gray-900 dark:text-white">{t('admin.settings.orgDetails')}</h3>
                     <div className="space-y-4">
                       <div>
-                        <label className="block text-sm font-medium mb-2">Organization Number (Org. nr)</label>
+                        <label className="block text-sm font-medium mb-2">{t('admin.settings.orgNumber')}</label>
                         <input
                           type="text"
                           value={settings.registrationNumber}
