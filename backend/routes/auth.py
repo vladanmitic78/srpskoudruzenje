@@ -92,7 +92,13 @@ async def register(user_data: UserCreate, request: Request):
 async def login(login_data: LoginRequest, request: Request):
     """Login user and return JWT token"""
     db = request.app.state.db
-    user = await db.users.find_one({"username": login_data.username})
+    # Check both username and email fields
+    user = await db.users.find_one({
+        "$or": [
+            {"username": login_data.username},
+            {"email": login_data.username}
+        ]
+    })
     
     if not user or not verify_password(login_data.password, user["hashed_password"]):
         raise HTTPException(
