@@ -298,7 +298,23 @@ const translations = {
         deleteSuccess: 'Admin nalog uspešno obrisan',
         deleteError: 'Greška pri brisanju admin naloga'
       }
+    },
+    moderator: {
+      dashboard: {
+        title: 'Moderatorska kontrolna tabla',
+        welcome: 'Dobrodošli'
+      },
+      tabs: {
+        gallery: 'Galerija'
+      },
+      info: {
+        title: 'ℹ️ Moderatorski pristup',
+        message: 'Vaš pristup je ograničen na osnovu dozvola koje je postavio Super Administrator. Ako vam je potreban dodatni pristup, molimo kontaktirajte ih.'
+      },
+      comingSoon: 'Funkcionalnost upravljanja će biti učitana ovde.',
+      redirectMessage: 'Ovaj odeljak će prikazati istu funkcionalnost kao admin kontrolna tabla.'
     }
+  },
   },
   'sr-cyrillic': {
     nav: {
@@ -599,7 +615,23 @@ const translations = {
         deleteSuccess: 'Админ налог успешно обрисан',
         deleteError: 'Грешка при брисању админ налога'
       }
+    },
+    moderator: {
+      dashboard: {
+        title: 'Модераторска контролна табла',
+        welcome: 'Добродошли'
+      },
+      tabs: {
+        gallery: 'Галерија'
+      },
+      info: {
+        title: 'ℹ️ Модераторски приступ',
+        message: 'Ваш приступ је ограничен на основу дозвола које је поставио Супер Администратор. Ако вам је потребан додатни приступ, молимо контактирајте их.'
+      },
+      comingSoon: 'Функционалност управљања ће бити учитана овде.',
+      redirectMessage: 'Овај одељак ће приказати исту функционалност као админ контролна табла.'
     }
+  },
   },
   'en': {
     nav: {
@@ -900,7 +932,23 @@ const translations = {
         deleteSuccess: 'Admin account deleted successfully',
         deleteError: 'Error deleting admin account'
       }
+    },
+    moderator: {
+      dashboard: {
+        title: 'Moderator Dashboard',
+        welcome: 'Welcome'
+      },
+      tabs: {
+        gallery: 'Gallery'
+      },
+      info: {
+        title: 'ℹ️ Moderator Access',
+        message: 'Your access is limited based on permissions set by the Super Administrator. If you need additional access, please contact them.'
+      },
+      comingSoon: 'Management functionality will be loaded here.',
+      redirectMessage: 'This section will show the same management interface as the admin dashboard.'
     }
+  },
   },
   'sv': {
     nav: {
@@ -1201,7 +1249,23 @@ const translations = {
         deleteSuccess: 'Adminkonto raderat',
         deleteError: 'Fel vid radering av adminkonto'
       }
+    },
+    moderator: {
+      dashboard: {
+        title: 'Moderator kontrollpanel',
+        welcome: 'Välkommen'
+      },
+      tabs: {
+        gallery: 'Galleri'
+      },
+      info: {
+        title: 'ℹ️ Moderator åtkomst',
+        message: 'Din åtkomst är begränsad baserat på behörigheter som Super Administratören har angett. Om du behöver ytterligare åtkomst, vänligen kontakta dem.'
+      },
+      comingSoon: 'Hanteringsfunktionalitet kommer att laddas här.',
+      redirectMessage: 'Detta avsnitt visar samma hanteringsgränssnitt som admin-kontrollpanelen.'
     }
+  },
   }
 };
 
