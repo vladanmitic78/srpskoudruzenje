@@ -1264,7 +1264,7 @@ const AdminDashboard = () => {
                       </div>
                       <div className="grid grid-cols-2 gap-4">
                         <div>
-                          <label className="block text-sm font-medium mb-2">Contact Email</label>
+                          <label className="block text-sm font-medium mb-2">{t('admin.settings.contactEmail')}</label>
                           <input
                             type="email"
                             value={settings.contactEmail}
@@ -1274,7 +1274,7 @@ const AdminDashboard = () => {
                           />
                         </div>
                         <div>
-                          <label className="block text-sm font-medium mb-2">Contact Phone</label>
+                          <label className="block text-sm font-medium mb-2">{t('admin.settings.contactPhone')}</label>
                           <input
                             type="tel"
                             value={settings.contactPhone}
@@ -1289,10 +1289,10 @@ const AdminDashboard = () => {
 
                   {/* Social Media Links */}
                   <div>
-                    <h3 className="text-lg font-semibold mb-4 text-gray-900 dark:text-white">Social Media Links</h3>
+                    <h3 className="text-lg font-semibold mb-4 text-gray-900 dark:text-white">{t('admin.settings.socialMedia')}</h3>
                     <div className="space-y-4">
                       <div>
-                        <label className="block text-sm font-medium mb-2">Facebook URL</label>
+                        <label className="block text-sm font-medium mb-2">{t('admin.settings.facebookUrl')}</label>
                         <input
                           type="url"
                           value={settings.socialMedia.facebook}
