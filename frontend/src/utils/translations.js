@@ -665,6 +665,48 @@ const translations = {
           descriptionSrCyrillic: 'Description (Serbian Cyrillic)',
           descriptionSv: 'Description (Swedish)'
         }
+      },
+      content: {
+        newsTitle: 'News Management (Home Page)',
+        addNews: '➕ Add News',
+        deleteNewsConfirm: 'Delete this news item?',
+        newsDeleteSuccess: 'News deleted',
+        newsDeleteFailed: 'Failed to delete news',
+        aboutTitle: 'About Page Content',
+        aboutDescription: 'Edit the about page content in all languages.',
+        editAbout: '✏️ Edit About Content',
+        aboutLoadFailed: 'Failed to load about content',
+        storyTitle: 'Serbian Story Management',
+        addStory: '➕ Add Story',
+        deleteStoryConfirm: 'Delete this story?',
+        storyDeleteSuccess: 'Story deleted',
+        storyDeleteFailed: 'Failed to delete story',
+        galleryTitle: 'Gallery Management (Albums)',
+        createAlbum: '➕ Create Album',
+        noLocation: 'No location',
+        photos: 'photos',
+        deleteAlbumConfirm: 'Delete this album and all its photos?',
+        albumDeleteSuccess: 'Album deleted',
+        albumDeleteFailed: 'Failed to delete album'
+      },
+      settings: {
+        title: 'Association Settings',
+        updateSuccess: 'Settings updated successfully',
+        updateFailed: 'Failed to update settings',
+        contactInfo: 'Contact Information',
+        address: 'Address',
+        contactEmail: 'Contact Email',
+        contactPhone: 'Contact Phone',
+        socialMedia: 'Social Media Links',
+        facebookUrl: 'Facebook URL',
+        instagramUrl: 'Instagram URL',
+        youtubeUrl: 'YouTube URL',
+        snapchatUrl: 'Snapchat URL',
+        orgDetails: 'Organization Details',
+        orgNumber: 'Organization Number (Org. nr)',
+        vatNumber: 'VAT Number',
+        bankAccount: 'Bank Account',
+        saveButton: 'Save Settings'
       }
     }
   },
