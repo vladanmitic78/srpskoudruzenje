@@ -322,6 +322,10 @@ const translations = {
         status: 'Статус',
         file: 'Датотека',
         actions: 'Акције'
+      },
+      status: {
+        paid: 'Плаћено',
+        unpaid: 'Неплаћено'
       }
     }
   },
