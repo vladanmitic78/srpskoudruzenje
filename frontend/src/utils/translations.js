@@ -80,7 +80,7 @@ const translations = {
     },
     dashboard: {
       title: 'Kontrolna tabla',
-      personalData: 'Lični podaci',
+      personalDataTab: 'Lični podaci',
       personalData: {
         fullName: 'Ime i prezime',
         yearOfBirth: 'Godina rođenja',
