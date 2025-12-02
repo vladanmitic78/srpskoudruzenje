@@ -295,6 +295,7 @@ const translations = {
       trainingsTab: 'Trainings',
       membership: 'Membership',
       cancelMembership: 'Cancel Membership',
+      submitCancellationRequest: 'Submit Cancellation Request',
       confirmParticipation: 'Confirm Participation',
       paid: 'Paid',
       unpaid: 'Unpaid',
