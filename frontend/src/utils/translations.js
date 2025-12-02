@@ -652,6 +652,10 @@ const translations = {
         status: 'Status',
         file: 'Fil',
         actions: 'Åtgärder'
+      },
+      status: {
+        paid: 'Betald',
+        unpaid: 'Obetald'
       }
     }
   }
