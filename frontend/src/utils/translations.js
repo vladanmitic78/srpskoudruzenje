@@ -81,6 +81,16 @@ const translations = {
     dashboard: {
       title: 'Kontrolna tabla',
       personalData: 'Lični podaci',
+      personalData: {
+        fullName: 'Ime i prezime',
+        yearOfBirth: 'Godina rođenja',
+        age: 'Starost',
+        years: 'godine',
+        email: 'Email',
+        phone: 'Telefon',
+        streetAddress: 'Adresa',
+        saveChanges: 'Sačuvaj izmene'
+      },
       invoices: 'Fakture',
       trainingsTab: 'Treninzi',
       membership: 'Članstvo',
