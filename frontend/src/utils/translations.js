@@ -159,6 +159,10 @@ const translations = {
       topic: 'Тема',
       message: 'Порука',
       send: 'Пошаљи',
+      addressLabel: 'Адреса',
+      emailLabel: 'Емаил',
+      phoneLabel: 'Телефон',
+      loading: 'Учитавање...',
       topics: {
         member: 'Постани члан',
         finance: 'Финансије',
