@@ -599,10 +599,10 @@ const Dashboard = () => {
               <CardContent className="space-y-6">
                 <div className="p-4 bg-blue-50 dark:bg-blue-900/20 border-2 border-blue-200 dark:border-blue-800 rounded-lg">
                   <p className="text-sm text-gray-700 dark:text-gray-300">
-                    You are an active member of Srpsko Kulturno Udruženje Täby.
+                    {t('dashboard.activeMemberMessage')}
                   </p>
                   <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">
-                    Member since: {user?.createdAt ? new Date(user.createdAt).toLocaleDateString() : 'N/A'}
+                    {t('dashboard.memberSince')}: {user?.createdAt ? new Date(user.createdAt).toLocaleDateString() : 'N/A'}
                   </p>
                 </div>
 
@@ -611,11 +611,11 @@ const Dashboard = () => {
                     {t('dashboard.cancelMembership')}
                   </h3>
                   <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
-                    If you wish to cancel your membership, please provide a reason:
+                    {t('dashboard.cancelMembershipReason')}
                   </p>
                   <textarea 
                     className="w-full p-3 border-2 border-gray-300 dark:border-gray-600 rounded-lg min-h-[100px] bg-white dark:bg-gray-800"
-                    placeholder="Please tell us why you want to cancel..."
+                    placeholder={t('dashboard.cancelMembershipPlaceholder')}
                   />
                   <Button 
                     variant="destructive" 
