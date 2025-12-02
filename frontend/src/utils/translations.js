@@ -136,9 +136,28 @@ const translations = {
         exportExcel: 'Izvezi Excel',
         exportXML: 'Izvezi XML',
         viewDetails: 'Pogledaj detalje',
-        delete: 'Obriši'
+        delete: 'Obriši',
+        download: 'Preuzmi',
+        remove: 'Ukloni',
+        upload: 'Otpremi',
+        edit: 'Izmeni',
+        markPaid: 'Označi plaćeno'
       },
-      membersManagement: 'Upravljanje članovima'
+      membersManagement: 'Upravljanje članovima',
+      invoicesManagement: 'Upravljanje fakturama',
+      createInvoice: 'Kreiraj fakturu',
+      loadingInvoices: 'Učitavanje faktura...',
+      noInvoicesFound: 'Nema pronađenih faktura.',
+      tableHeaders: {
+        member: 'Član',
+        description: 'Opis',
+        amount: 'Iznos',
+        dueDate: 'Rok plaćanja',
+        paymentDate: 'Datum plaćanja',
+        status: 'Status',
+        file: 'Datoteka',
+        actions: 'Akcije'
+      }
     }
   },
   'sr-cyrillic': {
