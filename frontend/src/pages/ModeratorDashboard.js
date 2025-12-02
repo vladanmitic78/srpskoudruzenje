@@ -313,36 +313,59 @@ const ModeratorDashboard = () => {
               onChange={(e) => setActiveTab(e.target.value)}
               className="w-full p-2 border rounded-md bg-white dark:bg-gray-800"
             >
+              <option value="personal">👤 {t('dashboard.personalDataTab')}</option>
+              <option value="invoices">💳 {t('dashboard.invoicesTab')}</option>
+              <option value="trainings">📅 {t('dashboard.trainingsTab')}</option>
+              <option value="membership">🎫 {t('dashboard.membershipTab')}</option>
               {permissions.manageEvents && (
-                <option value="events">📅 {t('admin.tabs.events')}</option>
+                <option value="manage-events">📅 {t('admin.tabs.events')} (Manage)</option>
               )}
               {permissions.manageContent && (
-                <option value="content">📝 {t('admin.tabs.content')}</option>
+                <option value="manage-content">📝 {t('admin.tabs.content')} (Manage)</option>
               )}
               {permissions.manageGallery && (
-                <option value="gallery">🖼️ {t('moderator.tabs.gallery') || 'Gallery'}</option>
+                <option value="manage-gallery">🖼️ {t('moderator.tabs.gallery')} (Manage)</option>
               )}
             </select>
           </div>
 
           {/* Desktop Tabs */}
           <TabsList className="hidden lg:flex">
+            {/* User Tabs */}
+            <TabsTrigger value="personal">
+              <User className="h-4 w-4 mr-2" />
+              {t('dashboard.personalDataTab')}
+            </TabsTrigger>
+            <TabsTrigger value="invoices">
+              <CreditCard className="h-4 w-4 mr-2" />
+              {t('dashboard.invoicesTab')}
+            </TabsTrigger>
+            <TabsTrigger value="trainings">
+              <Calendar className="h-4 w-4 mr-2" />
+              {t('dashboard.trainingsTab')}
+            </TabsTrigger>
+            <TabsTrigger value="membership">
+              <Shield className="h-4 w-4 mr-2" />
+              {t('dashboard.membershipTab')}
+            </TabsTrigger>
+            
+            {/* Management Tabs (based on permissions) */}
             {permissions.manageEvents && (
-              <TabsTrigger value="events">
+              <TabsTrigger value="manage-events">
                 <Calendar className="h-4 w-4 mr-2" />
                 {t('admin.tabs.events')}
               </TabsTrigger>
             )}
             {permissions.manageContent && (
-              <TabsTrigger value="content">
+              <TabsTrigger value="manage-content">
                 <FileText className="h-4 w-4 mr-2" />
                 {t('admin.tabs.content')}
               </TabsTrigger>
             )}
             {permissions.manageGallery && (
-              <TabsTrigger value="gallery">
+              <TabsTrigger value="manage-gallery">
                 <Image className="h-4 w-4 mr-2" />
-                {t('moderator.tabs.gallery') || 'Gallery'}
+                {t('moderator.tabs.gallery')}
               </TabsTrigger>
             )}
           </TabsList>
