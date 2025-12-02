@@ -101,7 +101,7 @@ const AdminPasswordChangeForm = ({ t }) => {
           {t('admin.settings.showPasswords')}
         </label>
       </div>
-      <Button type="submit" className="bg-[#C1272D] hover:bg-[#8B1F1F]">
+      <Button type="submit" className="bg-[var(--color-button-primary)] hover:bg-[var(--color-button-hover)]">
         {t('admin.settings.changePasswordButton')}
       </Button>
     </form>
@@ -231,7 +231,7 @@ const AdminManagementPanel = ({ t }) => {
       <div className="flex justify-between items-center">
         <Button
           onClick={() => setCreateModalOpen(true)}
-          className="bg-[#C1272D] hover:bg-[#8B1F1F]"
+          className="bg-[var(--color-button-primary)] hover:bg-[var(--color-button-hover)]"
         >
           + {t('admin.adminManagement.createButton')}
         </Button>
@@ -373,7 +373,7 @@ const AdminManagementPanel = ({ t }) => {
               {t('admin.adminManagement.createInfo')}
             </p>
             <div className="flex gap-2">
-              <Button type="submit" className="flex-1 bg-[#C1272D] hover:bg-[#8B1F1F]">
+              <Button type="submit" className="flex-1 bg-[var(--color-button-primary)] hover:bg-[var(--color-button-hover)]">
                 {t('admin.adminManagement.createSubmit')}
               </Button>
               <Button
@@ -437,7 +437,7 @@ const AdminManagementPanel = ({ t }) => {
                 </select>
               </div>
               <div className="flex gap-2">
-                <Button type="submit" className="flex-1 bg-[#C1272D] hover:bg-[#8B1F1F]">
+                <Button type="submit" className="flex-1 bg-[var(--color-button-primary)] hover:bg-[var(--color-button-hover)]">
                   {t('admin.adminManagement.updateSubmit')}
                 </Button>
                 <Button
@@ -940,14 +940,14 @@ const AdminDashboard = () => {
     <div className="min-h-screen py-16 bg-gray-50 dark:bg-gray-900">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between mb-8">
-          <h1 className="text-4xl font-bold text-[#8B1F1F] dark:text-[#C1272D]">
+          <h1 className="text-4xl font-bold text-[var(--color-secondary)] dark:text-[var(--color-primary)]">
             {isSuperAdmin ? 'Super Admin Dashboard' : 'Admin Dashboard'}
           </h1>
         </div>
 
         {/* Statistics Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          <Card className="border-2 border-[#C1272D]/20">
+          <Card className="border-2 border-[var(--color-primary)]/20">
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
@@ -956,12 +956,12 @@ const AdminDashboard = () => {
                     {loading ? '...' : statistics?.totalMembers || 0}
                   </p>
                 </div>
-                <Users className="h-12 w-12 text-[#C1272D]" />
+                <Users className="h-12 w-12 text-[var(--color-primary)]" />
               </div>
             </CardContent>
           </Card>
 
-          <Card className="border-2 border-[#C1272D]/20">
+          <Card className="border-2 border-[var(--color-primary)]/20">
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
@@ -975,7 +975,7 @@ const AdminDashboard = () => {
             </CardContent>
           </Card>
 
-          <Card className="border-2 border-[#C1272D]/20">
+          <Card className="border-2 border-[var(--color-primary)]/20">
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
@@ -989,16 +989,16 @@ const AdminDashboard = () => {
             </CardContent>
           </Card>
 
-          <Card className="border-2 border-[#C1272D]/20">
+          <Card className="border-2 border-[var(--color-primary)]/20">
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm text-gray-600 dark:text-gray-400">{t('admin.stats.totalRevenue')}</p>
-                  <p className="text-3xl font-bold text-[#C1272D]">
+                  <p className="text-3xl font-bold text-[var(--color-primary)]">
                     {loading ? '...' : `${statistics?.totalRevenue || 0} SEK`}
                   </p>
                 </div>
-                <BarChart className="h-12 w-12 text-[#C1272D]" />
+                <BarChart className="h-12 w-12 text-[var(--color-primary)]" />
               </div>
             </CardContent>
           </Card>
@@ -1012,7 +1012,7 @@ const AdminDashboard = () => {
             <select
               value={activeTab}
               onChange={(e) => setActiveTab(e.target.value)}
-              className="w-full p-3 border-2 border-[#C1272D]/20 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 font-medium"
+              className="w-full p-3 border-2 border-[var(--color-primary)]/20 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 font-medium"
             >
               {permissions?.viewMembers && <option value="members">👥 {t('admin.tabs.members')}</option>}
               {permissions?.manageInvoices && <option value="invoices">📄 {t('admin.tabs.invoices')}</option>}
@@ -1100,7 +1100,7 @@ const AdminDashboard = () => {
           {/* Members Tab */}
           {permissions?.viewMembers && (
             <TabsContent value="members">
-            <Card className="border-2 border-[#C1272D]/20">
+            <Card className="border-2 border-[var(--color-primary)]/20">
               <CardHeader className="flex flex-row items-center justify-between">
                 <CardTitle>{t('admin.membersManagement')}</CardTitle>
                 <div className="flex gap-2">
@@ -1120,7 +1120,7 @@ const AdminDashboard = () => {
                         toast.error('Failed to export PDF');
                       }
                     }}
-                    className="px-4 py-2 bg-[#C1272D] text-white rounded hover:bg-[#8B1F1F] text-sm"
+                    className="px-4 py-2 bg-[var(--color-button-primary)] text-white rounded hover:bg-[var(--color-button-hover)] text-sm"
                   >
                     {t('admin.actions.exportPDF')}
                   </button>
@@ -1228,12 +1228,12 @@ const AdminDashboard = () => {
           {/* Invoices Tab */}
           {permissions?.manageInvoices && (
           <TabsContent value="invoices">
-            <Card className="border-2 border-[#C1272D]/20">
+            <Card className="border-2 border-[var(--color-primary)]/20">
               <CardHeader className="flex flex-row items-center justify-between">
                 <CardTitle>{t('admin.invoicesManagement')}</CardTitle>
                 <button
                   onClick={() => setCreateInvoiceOpen(true)}
-                  className="px-4 py-2 bg-[#C1272D] text-white rounded hover:bg-[#8B1F1F]"
+                  className="px-4 py-2 bg-[var(--color-button-primary)] text-white rounded hover:bg-[var(--color-button-hover)]"
                 >
                   {t('admin.createInvoice')}
                 </button>
@@ -1368,7 +1368,7 @@ const AdminDashboard = () => {
 
           {/* Events Tab */}
           <TabsContent value="events">
-            <Card className="border-2 border-[#C1272D]/20">
+            <Card className="border-2 border-[var(--color-primary)]/20">
               <CardHeader className="flex flex-row items-center justify-between">
                 <CardTitle>{t('admin.events.title')}</CardTitle>
                 <button
@@ -1384,7 +1384,7 @@ const AdminDashboard = () => {
                     });
                     setCreateEventOpen(true);
                   }}
-                  className="px-4 py-2 bg-[#C1272D] text-white rounded hover:bg-[#8B1F1F] transition-colors"
+                  className="px-4 py-2 bg-[var(--color-button-primary)] text-white rounded hover:bg-[var(--color-button-hover)] transition-colors"
                 >
                   {t('admin.events.addEvent')}
                 </button>
@@ -1481,7 +1481,7 @@ const AdminDashboard = () => {
           <TabsContent value="content">
             <div className="space-y-6">
               {/* News Management (Home Page) */}
-              <Card className="border-2 border-[#C1272D]/20">
+              <Card className="border-2 border-[var(--color-primary)]/20">
                 <CardHeader className="flex flex-row items-center justify-between">
                   <CardTitle>{t('admin.content.newsTitle')}</CardTitle>
                   <button
@@ -1496,7 +1496,7 @@ const AdminDashboard = () => {
                       });
                       setNewsModalOpen(true);
                     }}
-                    className="px-4 py-2 bg-[#C1272D] text-white rounded hover:bg-[#8B1F1F]"
+                    className="px-4 py-2 bg-[var(--color-button-primary)] text-white rounded hover:bg-[var(--color-button-hover)]"
                   >
                     {t('admin.content.addNews')}
                   </button>
@@ -1550,7 +1550,7 @@ const AdminDashboard = () => {
               </Card>
 
               {/* About Page */}
-              <Card className="border-2 border-[#C1272D]/20">
+              <Card className="border-2 border-[var(--color-primary)]/20">
                 <CardHeader>
                   <CardTitle>{t('admin.content.aboutTitle')}</CardTitle>
                 </CardHeader>
@@ -1566,7 +1566,7 @@ const AdminDashboard = () => {
                         toast.error(t('admin.content.aboutLoadFailed'));
                       }
                     }}
-                    className="px-4 py-2 bg-[#C1272D] text-white rounded hover:bg-[#8B1F1F]"
+                    className="px-4 py-2 bg-[var(--color-button-primary)] text-white rounded hover:bg-[var(--color-button-hover)]"
                   >
                     {t('admin.content.editAbout')}
                   </button>
@@ -1574,7 +1574,7 @@ const AdminDashboard = () => {
               </Card>
 
               {/* Serbian Story Management */}
-              <Card className="border-2 border-[#C1272D]/20">
+              <Card className="border-2 border-[var(--color-primary)]/20">
                 <CardHeader className="flex flex-row items-center justify-between">
                   <CardTitle>{t('admin.content.storyTitle')}</CardTitle>
                   <button
@@ -1590,7 +1590,7 @@ const AdminDashboard = () => {
                       });
                       setStoryModalOpen(true);
                     }}
-                    className="px-4 py-2 bg-[#C1272D] text-white rounded hover:bg-[#8B1F1F]"
+                    className="px-4 py-2 bg-[var(--color-button-primary)] text-white rounded hover:bg-[var(--color-button-hover)]"
                   >
                     {t('admin.content.addStory')}
                   </button>
@@ -1645,7 +1645,7 @@ const AdminDashboard = () => {
               </Card>
 
               {/* Gallery Management */}
-              <Card className="border-2 border-[#C1272D]/20">
+              <Card className="border-2 border-[var(--color-primary)]/20">
                 <CardHeader className="flex flex-row items-center justify-between">
                   <CardTitle>{t('admin.content.galleryTitle')}</CardTitle>
                   <button
@@ -1661,7 +1661,7 @@ const AdminDashboard = () => {
                       });
                       setAlbumModalOpen(true);
                     }}
-                    className="px-4 py-2 bg-[#C1272D] text-white rounded hover:bg-[#8B1F1F]"
+                    className="px-4 py-2 bg-[var(--color-button-primary)] text-white rounded hover:bg-[var(--color-button-hover)]"
                   >
                     {t('admin.content.createAlbum')}
                   </button>
@@ -1735,7 +1735,7 @@ const AdminDashboard = () => {
           {/* Settings Tab - Only Admin and Super Admin */}
           {(isAdmin && !isModerator) && (
             <TabsContent value="settings">
-            <Card className="border-2 border-[#C1272D]/20">
+            <Card className="border-2 border-[var(--color-primary)]/20">
               <CardHeader>
                 <CardTitle>{t('admin.settings.title')}</CardTitle>
               </CardHeader>
@@ -1891,7 +1891,7 @@ const AdminDashboard = () => {
 
                   <button
                     type="submit"
-                    className="w-full px-6 py-3 bg-[#C1272D] text-white rounded-md hover:bg-[#8B1F1F] font-semibold"
+                    className="w-full px-6 py-3 bg-[var(--color-button-primary)] text-white rounded-md hover:bg-[var(--color-button-hover)] font-semibold"
                   >
                     {t('admin.settings.saveButton')}
                   </button>
@@ -1900,7 +1900,7 @@ const AdminDashboard = () => {
             </Card>
 
             {/* Password Change Card */}
-            <Card className="border-2 border-[#C1272D]/20 mt-6">
+            <Card className="border-2 border-[var(--color-primary)]/20 mt-6">
               <CardHeader>
                 <CardTitle>{t('admin.settings.passwordChangeTitle')}</CardTitle>
               </CardHeader>
@@ -1915,7 +1915,7 @@ const AdminDashboard = () => {
           {isSuperAdmin && (
             <TabsContent value="user-management" className="space-y-6">
               {/* Permission Management Card - Editable */}
-              <Card className="border-2 border-[#C1272D]/20">
+              <Card className="border-2 border-[var(--color-primary)]/20">
                 <CardHeader>
                   <CardTitle>Role Permissions (Editable)</CardTitle>
                   <p className="text-sm text-gray-600">Check or uncheck permissions for each role</p>
@@ -2019,7 +2019,7 @@ const AdminDashboard = () => {
                           toast.error('Failed to save permissions');
                         }
                       }}
-                      className="px-6 py-2 bg-[#C1272D] text-white rounded-lg hover:bg-[#8B1F1F] font-semibold"
+                      className="px-6 py-2 bg-[var(--color-button-primary)] text-white rounded-lg hover:bg-[var(--color-button-hover)] font-semibold"
                     >
                       Save Permissions
                     </button>
@@ -2028,7 +2028,7 @@ const AdminDashboard = () => {
               </Card>
 
               {/* User Management Card */}
-              <Card className="border-2 border-[#C1272D]/20">
+              <Card className="border-2 border-[var(--color-primary)]/20">
                 <CardHeader className="flex flex-row items-center justify-between">
                   <CardTitle>User & Role Management</CardTitle>
                   <button
@@ -2045,7 +2045,7 @@ const AdminDashboard = () => {
                       });
                       setCreateUserModalOpen(true);
                     }}
-                    className="px-4 py-2 bg-[#C1272D] text-white rounded hover:bg-[#8B1F1F]"
+                    className="px-4 py-2 bg-[var(--color-button-primary)] text-white rounded hover:bg-[var(--color-button-hover)]"
                   >
                     ➕ Create User
                   </button>
@@ -2174,7 +2174,7 @@ const AdminDashboard = () => {
           {isSuperAdmin && (
             <TabsContent value="platform-settings" className="space-y-6">
               {/* System Configuration */}
-              <Card className="border-2 border-[#C1272D]/20">
+              <Card className="border-2 border-[var(--color-primary)]/20">
                 <CardHeader>
                   <CardTitle>System Configuration</CardTitle>
                 </CardHeader>
@@ -2228,7 +2228,7 @@ const AdminDashboard = () => {
               </Card>
 
               {/* Security Policies */}
-              <Card className="border-2 border-[#C1272D]/20">
+              <Card className="border-2 border-[var(--color-primary)]/20">
                 <CardHeader>
                   <CardTitle>Security Policies</CardTitle>
                 </CardHeader>
@@ -2323,7 +2323,7 @@ const AdminDashboard = () => {
               </Card>
 
               {/* Email Configuration */}
-              <Card className="border-2 border-[#C1272D]/20">
+              <Card className="border-2 border-[var(--color-primary)]/20">
                 <CardHeader>
                   <CardTitle>Email Configuration (SMTP)</CardTitle>
                 </CardHeader>
@@ -2434,7 +2434,7 @@ const AdminDashboard = () => {
               </Card>
 
               {/* Notification Settings */}
-              <Card className="border-2 border-[#C1272D]/20">
+              <Card className="border-2 border-[var(--color-primary)]/20">
                 <CardHeader>
                   <CardTitle>Notification Settings</CardTitle>
                 </CardHeader>
@@ -2534,7 +2534,7 @@ const AdminDashboard = () => {
                       toast.error('Failed to save platform settings');
                     }
                   }}
-                  className="px-8 py-3 bg-[#C1272D] text-white rounded-lg hover:bg-[#8B1F1F] font-semibold"
+                  className="px-8 py-3 bg-[var(--color-button-primary)] text-white rounded-lg hover:bg-[var(--color-button-hover)] font-semibold"
                 >
                   Save All Platform Settings
                 </button>
@@ -2546,7 +2546,7 @@ const AdminDashboard = () => {
           {isSuperAdmin && (
             <TabsContent value="branding" className="space-y-6">
               {/* Logo Upload Section */}
-              <Card className="border-2 border-[#C1272D]/20">
+              <Card className="border-2 border-[var(--color-primary)]/20">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <Upload className="h-5 w-5" />
@@ -2622,7 +2622,7 @@ const AdminDashboard = () => {
               </Card>
 
               {/* Color Customization Section */}
-              <Card className="border-2 border-[#C1272D]/20">
+              <Card className="border-2 border-[var(--color-primary)]/20">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <Palette className="h-5 w-5" />
@@ -2756,7 +2756,7 @@ const AdminDashboard = () => {
               </Card>
 
               {/* Language Settings Section */}
-              <Card className="border-2 border-[#C1272D]/20">
+              <Card className="border-2 border-[var(--color-primary)]/20">
                 <CardHeader>
                   <CardTitle>Language Settings</CardTitle>
                 </CardHeader>
@@ -2781,7 +2781,7 @@ const AdminDashboard = () => {
               </Card>
 
               {/* Email Templates Section */}
-              <Card className="border-2 border-[#C1272D]/20">
+              <Card className="border-2 border-[var(--color-primary)]/20">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <Mail className="h-5 w-5" />
@@ -2980,7 +2980,7 @@ const AdminDashboard = () => {
                       toast.error('Failed to save branding settings');
                     }
                   }}
-                  className="px-8 py-3 bg-[#C1272D] text-white rounded-lg hover:bg-[#8B1F1F] font-semibold"
+                  className="px-8 py-3 bg-[var(--color-button-primary)] text-white rounded-lg hover:bg-[var(--color-button-hover)] font-semibold"
                 >
                   Save All Branding Settings
                 </button>
@@ -2992,7 +2992,7 @@ const AdminDashboard = () => {
           {/* Admin Management Tab - Only Super Admin */}
           {isSuperAdmin && (
             <TabsContent value="admin-management" className="space-y-6">
-              <Card className="border-2 border-[#C1272D]/20">
+              <Card className="border-2 border-[var(--color-primary)]/20">
                 <CardHeader>
                   <CardTitle>{t('admin.adminManagement.title')}</CardTitle>
                   <p className="text-sm text-gray-600">{t('admin.adminManagement.description')}</p>
@@ -3065,7 +3065,7 @@ const AdminDashboard = () => {
                 <button
                   onClick={handleCreateInvoice}
                   disabled={!newInvoice.userId || !newInvoice.amount || !newInvoice.dueDate || !newInvoice.description}
-                  className="flex-1 px-4 py-2 bg-[#C1272D] text-white rounded hover:bg-[#8B1F1F] disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="flex-1 px-4 py-2 bg-[var(--color-button-primary)] text-white rounded hover:bg-[var(--color-button-hover)] disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   Create Invoice
                 </button>
@@ -3167,7 +3167,7 @@ const AdminDashboard = () => {
                       }
                     }}
                     disabled={!editingInvoice.amount || !editingInvoice.dueDate || !editingInvoice.description}
-                    className="flex-1 px-4 py-2 bg-[#C1272D] text-white rounded hover:bg-[#8B1F1F] disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="flex-1 px-4 py-2 bg-[var(--color-button-primary)] text-white rounded hover:bg-[var(--color-button-hover)] disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     Update Invoice
                   </button>
@@ -3196,7 +3196,7 @@ const AdminDashboard = () => {
               <div className="space-y-6">
                 {/* Personal Information */}
                 <div>
-                  <h3 className="text-lg font-semibold mb-3 text-[#C1272D]">Personal Information</h3>
+                  <h3 className="text-lg font-semibold mb-3 text-[var(--color-primary)]">Personal Information</h3>
                   <div className="grid grid-cols-2 gap-4">
                     <div>
                       <p className="text-sm text-gray-500">Full Name</p>
@@ -3234,7 +3234,7 @@ const AdminDashboard = () => {
                 {/* Parent Information (if applicable) */}
                 {(selectedUser.user?.parentName || selectedUser.user?.parentEmail) && (
                   <div>
-                    <h3 className="text-lg font-semibold mb-3 text-[#C1272D]">Parent/Guardian Information</h3>
+                    <h3 className="text-lg font-semibold mb-3 text-[var(--color-primary)]">Parent/Guardian Information</h3>
                     <div className="grid grid-cols-2 gap-4">
                       <div>
                         <p className="text-sm text-gray-500">Parent Name</p>
@@ -3254,7 +3254,7 @@ const AdminDashboard = () => {
 
                 {/* Invoices */}
                 <div>
-                  <h3 className="text-lg font-semibold mb-3 text-[#C1272D]">
+                  <h3 className="text-lg font-semibold mb-3 text-[var(--color-primary)]">
                     Invoices ({selectedUser.invoiceCount || 0})
                   </h3>
                   {selectedUser.invoices && selectedUser.invoices.length > 0 ? (
@@ -3421,7 +3421,7 @@ const AdminDashboard = () => {
               <div className="flex gap-2 pt-4">
                 <button
                   onClick={handleCreateEvent}
-                  className="flex-1 px-4 py-2 bg-[#C1272D] text-white rounded hover:bg-[#8B1F1F]"
+                  className="flex-1 px-4 py-2 bg-[var(--color-button-primary)] text-white rounded hover:bg-[var(--color-button-hover)]"
                 >
                   {t('admin.events.createButton')}
                 </button>
@@ -3558,7 +3558,7 @@ const AdminDashboard = () => {
               <div className="flex gap-2 pt-4">
                 <button
                   onClick={handleUpdateEvent}
-                  className="flex-1 px-4 py-2 bg-[#C1272D] text-white rounded hover:bg-[#8B1F1F]"
+                  className="flex-1 px-4 py-2 bg-[var(--color-button-primary)] text-white rounded hover:bg-[var(--color-button-hover)]"
                 >
                   {t('admin.events.updateButton')}
                 </button>
@@ -3698,7 +3698,7 @@ const AdminDashboard = () => {
                       toast.error('Failed to save news');
                     }
                   }}
-                  className="flex-1 px-4 py-2 bg-[#C1272D] text-white rounded hover:bg-[#8B1F1F]"
+                  className="flex-1 px-4 py-2 bg-[var(--color-button-primary)] text-white rounded hover:bg-[var(--color-button-hover)]"
                 >
                   {editingNews ? 'Update' : 'Create'}
                 </button>
@@ -3746,7 +3746,7 @@ const AdminDashboard = () => {
                       toast.error('Failed to update about content');
                     }
                   }}
-                  className="flex-1 px-4 py-2 bg-[#C1272D] text-white rounded hover:bg-[#8B1F1F]"
+                  className="flex-1 px-4 py-2 bg-[var(--color-button-primary)] text-white rounded hover:bg-[var(--color-button-hover)]"
                 >
                   Save Changes
                 </button>
@@ -3897,7 +3897,7 @@ const AdminDashboard = () => {
                       toast.error('Failed to save story');
                     }
                   }}
-                  className="flex-1 px-4 py-2 bg-[#C1272D] text-white rounded hover:bg-[#8B1F1F]"
+                  className="flex-1 px-4 py-2 bg-[var(--color-button-primary)] text-white rounded hover:bg-[var(--color-button-hover)]"
                 >
                   {editingStory ? 'Update' : 'Create'}
                 </button>
@@ -4099,7 +4099,7 @@ const AdminDashboard = () => {
                       toast.error('Failed to save album');
                     }
                   }}
-                  className="flex-1 px-4 py-2 bg-[#C1272D] text-white rounded hover:bg-[#8B1F1F]"
+                  className="flex-1 px-4 py-2 bg-[var(--color-button-primary)] text-white rounded hover:bg-[var(--color-button-hover)]"
                 >
                   {editingAlbum ? 'Update Album' : 'Create Album'}
                 </button>
@@ -4237,7 +4237,7 @@ const AdminDashboard = () => {
                 <div className="flex gap-2 pt-4">
                   <button
                     type="submit"
-                    className="flex-1 px-4 py-2 bg-[#C1272D] text-white rounded hover:bg-[#8B1F1F]"
+                    className="flex-1 px-4 py-2 bg-[var(--color-button-primary)] text-white rounded hover:bg-[var(--color-button-hover)]"
                   >
                     Create User
                   </button>
@@ -4370,7 +4370,7 @@ const AdminDashboard = () => {
                         toast.error('Failed to update user');
                       }
                     }}
-                    className="flex-1 px-4 py-2 bg-[#C1272D] text-white rounded hover:bg-[#8B1F1F]"
+                    className="flex-1 px-4 py-2 bg-[var(--color-button-primary)] text-white rounded hover:bg-[var(--color-button-hover)]"
                   >
                     Save Changes
                   </button>
