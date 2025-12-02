@@ -962,7 +962,6 @@ const translations = {
       redirectMessage: 'This section will show the same management interface as the admin dashboard.'
     }
   },
-  },
   'sv': {
     nav: {
       home: 'Hem',
