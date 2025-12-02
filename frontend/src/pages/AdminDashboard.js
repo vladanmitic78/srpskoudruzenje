@@ -459,7 +459,7 @@ const AdminDashboard = () => {
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">Total Members</p>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">{t('admin.stats.totalMembers')}</p>
                   <p className="text-3xl font-bold text-gray-900 dark:text-white">
                     {loading ? '...' : statistics?.totalMembers || 0}
                   </p>
@@ -473,7 +473,7 @@ const AdminDashboard = () => {
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">Paid Invoices</p>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">{t('admin.stats.paidInvoices')}</p>
                   <p className="text-3xl font-bold text-green-600">
                     {loading ? '...' : statistics?.paidInvoices || 0}
                   </p>
@@ -487,7 +487,7 @@ const AdminDashboard = () => {
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">Unpaid Invoices</p>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">{t('admin.stats.unpaidInvoices')}</p>
                   <p className="text-3xl font-bold text-red-600">
                     {loading ? '...' : statistics?.unpaidInvoices || 0}
                   </p>
@@ -501,7 +501,7 @@ const AdminDashboard = () => {
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">Total Revenue</p>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">{t('admin.stats.totalRevenue')}</p>
                   <p className="text-3xl font-bold text-[#C1272D]">
                     {loading ? '...' : `${statistics?.totalRevenue || 0} SEK`}
                   </p>
