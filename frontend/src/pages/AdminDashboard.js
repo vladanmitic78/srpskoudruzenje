@@ -1030,32 +1030,36 @@ const AdminDashboard = () => {
             isModerator ? 'grid-cols-2 max-w-xl' : 
             'grid-cols-5 max-w-3xl'
           }`}>
-            {/* Members tab - Only Admin and Super Admin */}
-            {(isAdmin && !isModerator) && (
+            {/* Members tab */}
+            {permissions?.viewMembers && (
               <TabsTrigger value="members">
                 <Users className="h-4 w-4 mr-2" />
                 {t('admin.tabs.members')}
               </TabsTrigger>
             )}
-            {/* Invoices tab - Only Admin and Super Admin */}
-            {(isAdmin && !isModerator) && (
+            {/* Invoices tab */}
+            {permissions?.manageInvoices && (
               <TabsTrigger value="invoices">
                 <FileText className="h-4 w-4 mr-2" />
                 {t('admin.tabs.invoices')}
               </TabsTrigger>
             )}
-            {/* Events tab - All roles */}
-            <TabsTrigger value="events">
-              <Calendar className="h-4 w-4 mr-2" />
-              {t('admin.tabs.events')}
-            </TabsTrigger>
-            {/* Content tab - All roles */}
-            <TabsTrigger value="content">
-              <Settings className="h-4 w-4 mr-2" />
-              {t('admin.tabs.content')}
-            </TabsTrigger>
-            {/* Settings tab - Only Admin and Super Admin */}
-            {(isAdmin && !isModerator) && (
+            {/* Events tab */}
+            {permissions?.manageEvents && (
+              <TabsTrigger value="events">
+                <Calendar className="h-4 w-4 mr-2" />
+                {t('admin.tabs.events')}
+              </TabsTrigger>
+            )}
+            {/* Content tab */}
+            {permissions?.manageContent && (
+              <TabsTrigger value="content">
+                <Settings className="h-4 w-4 mr-2" />
+                {t('admin.tabs.content')}
+              </TabsTrigger>
+            )}
+            {/* Settings tab */}
+            {permissions?.manageSettings && (
               <TabsTrigger value="settings">
                 <Settings className="h-4 w-4 mr-2" />
                 {t('admin.tabs.settings')}
