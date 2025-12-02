@@ -622,7 +622,7 @@ const Dashboard = () => {
                     className="mt-4"
                     onClick={() => toast.info('Membership cancellation will be implemented in Phase 2')}
                   >
-                    Submit Cancellation Request
+                    {t('dashboard.submitCancellationRequest')}
                   </Button>
                 </div>
               </CardContent>
