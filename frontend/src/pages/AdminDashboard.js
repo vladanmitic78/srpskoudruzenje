@@ -421,18 +421,18 @@ const AdminDashboard = () => {
   };
 
   const handleDeleteEvent = async (eventId) => {
-    if (!window.confirm('Are you sure you want to delete this event? This action cannot be undone.')) {
+    if (!window.confirm(t('admin.events.deleteConfirmation'))) {
       return;
     }
     
     try {
       await eventsAPI.delete(eventId);
-      toast.success('Event deleted successfully');
+      toast.success(t('admin.events.deleteSuccess'));
       // Refresh events
       const eventsData = await eventsAPI.getAll();
       setEvents(eventsData.events || []);
     } catch (error) {
-      toast.error('Failed to delete event');
+      toast.error(t('admin.events.deleteFailed'));
       console.error(error);
     }
   };
