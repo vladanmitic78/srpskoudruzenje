@@ -299,9 +299,9 @@ const ModeratorDashboard = () => {
               className="w-full p-2 border rounded-md bg-white dark:bg-gray-800"
             >
               <option value="personal">👤 {t('dashboard.personalDataTab')}</option>
-              <option value="invoices">💳 {t('dashboard.invoicesTab')}</option>
+              <option value="invoices">💳 {t('dashboard.invoices')}</option>
               <option value="trainings">📅 {t('dashboard.trainingsTab')}</option>
-              <option value="membership">🎫 {t('dashboard.membershipTab')}</option>
+              <option value="membership">🎫 {t('dashboard.membership')}</option>
               {permissions.manageEvents && (
                 <option value="manage-events">📅 {t('admin.tabs.events')} (Manage)</option>
               )}
