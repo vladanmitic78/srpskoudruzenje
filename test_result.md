@@ -435,14 +435,17 @@ metadata:
 
 test_plan:
   current_focus:
-    - "Events Management UI - Add Event"
-    - "Events Management UI - Edit Event"
-    - "Events Management UI - Cancel Event"
-    - "Events Management UI - Delete Event"
-    - "Events Management UI - Display & Status"
-  stuck_tasks: []
+    - "Moderator Dashboard - UI & Navigation"
+    - "Moderator Dashboard - Events Management"
+    - "Moderator Dashboard - Content Management"
+    - "Moderator Dashboard - Gallery Management"
+  stuck_tasks:
+    - "Moderator Dashboard - UI & Navigation"
+    - "Moderator Dashboard - Events Management"
+    - "Moderator Dashboard - Content Management"
+    - "Moderator Dashboard - Gallery Management"
   test_all: false
-  test_priority: "high_first"
+  test_priority: "stuck_first"
 
 agent_communication:
   - agent: "main"
