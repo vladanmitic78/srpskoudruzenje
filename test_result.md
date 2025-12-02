@@ -254,6 +254,9 @@ backend:
       - working: true
         agent: "testing"
         comment: "✅ TRANSLATION FIXES SUCCESSFUL: Page title now shows 'Moderatorska kontrolna tabla' (Serbian) instead of translation keys. Welcome message displays 'Dobrodošli, MITAWAY Back UP' correctly. Tabs are now fully functional - found 3 desktop tabs (Događaji, Sadržaj, Galerija) and mobile dropdown options. All tabs are clickable and render content properly. UI navigation working perfectly."
+      - working: true
+        agent: "testing"
+        comment: "✅ DUAL-FUNCTIONALITY CONFIRMED: Moderator dashboard successfully combines user AND management features. Found 7 total tabs: 4 user tabs (Personal Data/Lični podaci, Invoices, Trainings/Treninzi, Membership) + 3 management tabs (Events/Događaji, Content/Sadržaj, Gallery/Galerija). User tabs always visible, management tabs based on permissions. Login working with mitawaybackup@gmail.com/moderator123. All tabs functional and displaying correct content."
 
   - task: "Moderator Dashboard - Events Management"
     implemented: true
