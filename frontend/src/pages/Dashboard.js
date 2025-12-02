@@ -289,7 +289,7 @@ const Dashboard = () => {
           <TabsContent value="personal">
             <Card className="border-2 border-[#C1272D]/20">
               <CardHeader>
-                <CardTitle>{t('dashboard.personalData')}</CardTitle>
+                <CardTitle>{t('dashboard.personalDataTab')}</CardTitle>
               </CardHeader>
               <CardContent>
                 <form className="space-y-6" onSubmit={(e) => { e.preventDefault(); handleSaveProfile(); }}>
