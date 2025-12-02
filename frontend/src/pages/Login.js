@@ -26,7 +26,7 @@ const Login = () => {
       console.log('Login result:', result);
       
       if (result.success) {
-        toast.success('Login successful!');
+        toast.success(t('auth.loginSuccess'));
         if (result.user.role === 'moderator') {
           navigate('/moderator-dashboard');
         } else if (result.user.role === 'admin' || result.user.role === 'superadmin') {
@@ -35,11 +35,11 @@ const Login = () => {
           navigate('/dashboard');
         }
       } else {
-        toast.error(result.error || 'Login failed');
+        toast.error(t('auth.invalidCredentials'));
       }
     } catch (error) {
       console.error('Login error:', error);
-      toast.error('Login failed: ' + error.message);
+      toast.error(t('auth.invalidCredentials'));
     }
   };
 
