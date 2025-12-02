@@ -402,6 +402,11 @@ const translations = {
     },
     dashboard: {
       title: 'Контролна табла',
+      loading: 'Учитавање...',
+      permissionsError: 'Грешка при учитавању дозвола',
+      noPermissions: 'Нема додељених дозвола. Контактирајте администратора.',
+      noAccess: 'Нема приступа',
+      noPermissionsMessage: 'Немате додељене дозволе. Молимо контактирајте Супер Администратора.',
       personalDataTab: 'Лични подаци',
       personalData: {
         fullName: 'Име и презиме',
