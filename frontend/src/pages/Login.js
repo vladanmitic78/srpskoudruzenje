@@ -101,14 +101,6 @@ const Login = () => {
               {t('auth.registerTitle')}
             </Link>
           </p>
-
-          {/* Dev credentials hint */}
-          <div className="mt-6 p-4 bg-gray-100 dark:bg-gray-800 rounded-lg text-xs text-gray-600 dark:text-gray-400">
-            <p className="font-semibold mb-2">Test Accounts:</p>
-            <p>• User: user@test.com / user123</p>
-            <p>• Admin: admin@test.com / admin123</p>
-            <p>• Super Admin: vladanmitic@gmail.com / Admin123!</p>
-          </div>
         </CardContent>
       </Card>
     </div>
