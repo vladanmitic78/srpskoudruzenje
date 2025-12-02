@@ -532,7 +532,7 @@ const Dashboard = () => {
 
             <Card className="border-2 border-[#C1272D]/20">
               <CardHeader>
-                <CardTitle>{t('dashboard.trainings')}</CardTitle>
+                <CardTitle>{t('dashboard.trainingsTab')}</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
