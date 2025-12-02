@@ -620,7 +620,7 @@ const AdminDashboard = () => {
                     }}
                     className="px-4 py-2 bg-[#C1272D] text-white rounded hover:bg-[#8B1F1F] text-sm"
                   >
-                    Export PDF
+                    {t('admin.actions.exportPDF')}
                   </button>
                   <button
                     onClick={async () => {
