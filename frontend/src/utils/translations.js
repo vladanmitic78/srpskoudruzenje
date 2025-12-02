@@ -428,6 +428,48 @@ const translations = {
           descriptionSrCyrillic: 'Опис (Српски Ћирилица)',
           descriptionSv: 'Опис (Шведски)'
         }
+      },
+      content: {
+        newsTitle: 'Управљање вестима (Почетна страна)',
+        addNews: '➕ Додај вест',
+        deleteNewsConfirm: 'Обрисати ову вест?',
+        newsDeleteSuccess: 'Вест обрисана',
+        newsDeleteFailed: 'Брисање вести није успело',
+        aboutTitle: 'Садржај О нама странице',
+        aboutDescription: 'Уредите садржај О нама странице на свим језицима.',
+        editAbout: '✏️ Уреди садржај О нама',
+        aboutLoadFailed: 'Учитавање садржаја О нама није успело',
+        storyTitle: 'Управљање српском причом',
+        addStory: '➕ Додај причу',
+        deleteStoryConfirm: 'Обрисати ову причу?',
+        storyDeleteSuccess: 'Прича обрисана',
+        storyDeleteFailed: 'Брисање приче није успело',
+        galleryTitle: 'Управљање галеријом (Албуми)',
+        createAlbum: '➕ Креирај албум',
+        noLocation: 'Нема локације',
+        photos: 'фотографија',
+        deleteAlbumConfirm: 'Обрисати овај албум и све његове фотографије?',
+        albumDeleteSuccess: 'Албум обрисан',
+        albumDeleteFailed: 'Брисање албума није успело'
+      },
+      settings: {
+        title: 'Подешавања удружења',
+        updateSuccess: 'Подешавања успешно ажурирана',
+        updateFailed: 'Ажурирање подешавања није успело',
+        contactInfo: 'Контакт информације',
+        address: 'Адреса',
+        contactEmail: 'Контакт емаил',
+        contactPhone: 'Контакт телефон',
+        socialMedia: 'Линкови друштвених мрежа',
+        facebookUrl: 'Facebook URL',
+        instagramUrl: 'Instagram URL',
+        youtubeUrl: 'YouTube URL',
+        snapchatUrl: 'Snapchat URL',
+        orgDetails: 'Детаљи организације',
+        orgNumber: 'Матични број (Org. nr)',
+        vatNumber: 'ПИБ број',
+        bankAccount: 'Банковни рачун',
+        saveButton: 'Сачувај подешавања'
       }
     }
   },
