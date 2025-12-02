@@ -523,19 +523,28 @@ const ModeratorDashboard = () => {
               </CardHeader>
               <CardContent>
                 {userEvents.length === 0 ? (
-                  <p className="text-center text-gray-500 py-8">{t('dashboard.events.noEvents')}</p>
+                  <p className="text-center text-gray-500 py-8">No upcoming events.</p>
                 ) : (
                   <div className="space-y-4">
                     {userEvents.map((event) => (
-                      <div key={event.id} className="p-4 border rounded-lg">
-                        <h3 className="font-semibold text-lg">{event.title?.en || event.title?.['sr-latin']}</h3>
-                        <p className="text-sm text-gray-500">
-                          📅 {event.date} {event.time && `• ${event.time}`}
+                      <div key={event.id} className="p-4 border-2 border-gray-200 rounded-lg hover:border-[var(--color-primary)] transition-colors">
+                        <h3 className="font-semibold text-lg text-gray-900 dark:text-white">
+                          {event.title?.en || event.title?.['sr-latin']}
+                        </h3>
+                        <p className="text-sm text-gray-600 dark:text-gray-300 mt-1">
+                          📅 {event.date} {event.time && `at ${event.time}`}
                         </p>
-                        <p className="text-sm text-gray-500">📍 {event.location}</p>
+                        <p className="text-sm text-gray-600 dark:text-gray-300">
+                          📍 {event.location}
+                        </p>
+                        {event.description?.en && (
+                          <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">
+                            {event.description.en}
+                          </p>
+                        )}
                         {event.status === 'cancelled' && (
                           <Badge variant="destructive" className="mt-2">
-                            {t('admin.events.cancelled')}
+                            Cancelled
                           </Badge>
                         )}
                       </div>
