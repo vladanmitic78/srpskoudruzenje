@@ -400,6 +400,29 @@ const translations = {
         attendanceRate: 'Attendance Rate',
         attendanceMessage: "You've attended {{attended}} out of {{total}} trainings"
       }
+    },
+    admin: {
+      stats: {
+        totalMembers: 'Total Members',
+        paidInvoices: 'Paid Invoices',
+        unpaidInvoices: 'Unpaid Invoices',
+        totalRevenue: 'Total Revenue'
+      },
+      tabs: {
+        members: 'Members',
+        invoices: 'Invoices',
+        events: 'Events',
+        content: 'Content',
+        settings: 'Settings'
+      },
+      actions: {
+        exportPDF: 'Export PDF',
+        exportExcel: 'Export Excel',
+        exportXML: 'Export XML',
+        viewDetails: 'View Details',
+        delete: 'Delete'
+      },
+      membersManagement: 'Members Management'
     }
   },
   'sv': {
