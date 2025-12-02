@@ -11,16 +11,26 @@ router = APIRouter()
 async def get_all_users(admin: dict = Depends(get_admin_user), request: Request = None):
     """Get all users (Admin only)"""
     db = request.app.state.db
-    cursor = db.users.find().sort("createdAt", -1)
-    users_list = await cursor.to_list(length=1000)
     
-    # Remove sensitive data
-    for user in users_list:
-        user.pop("hashed_password", None)
-        user.pop("verificationToken", None)
-        user["id"] = str(user.pop("_id"))
-    
-    return {"users": users_list}
+    try:
+        cursor = db.users.find({})
+        users_list = await cursor.to_list(length=1000)
+        
+        # Remove sensitive data and convert _id to id
+        for user in users_list:
+            user.pop("hashed_password", None)
+            user.pop("verificationToken", None)
+            user.pop("resetToken", None)
+            user.pop("resetTokenExpiry", None)
+            # Keep the _id as id for frontend
+            user["id"] = str(user.get("_id", ""))
+            if "_id" in user:
+                del user["_id"]
+        
+        return {"users": users_list, "total": len(users_list)}
+    except Exception as e:
+        logger.error(f"Error fetching users: {str(e)}")
+        return {"users": [], "total": 0}
 
 @router.get("/statistics")
 async def get_statistics(admin: dict = Depends(get_admin_user), request: Request = None):
