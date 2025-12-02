@@ -437,7 +437,17 @@ const translations = {
     },
     dashboard: {
       title: 'Instrumentpanel',
-      personalData: 'Personuppgifter',
+      personalDataTab: 'Personuppgifter',
+      personalData: {
+        fullName: 'Fullständigt namn',
+        yearOfBirth: 'Födelseår',
+        age: 'Ålder',
+        years: 'år',
+        email: 'E-post',
+        phone: 'Telefon',
+        streetAddress: 'Gatuadress',
+        saveChanges: 'Spara ändringar'
+      },
       invoices: 'Fakturor',
       trainingsTab: 'Träningar',
       membership: 'Medlemskap',
