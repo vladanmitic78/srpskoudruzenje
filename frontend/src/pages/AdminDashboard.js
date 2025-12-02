@@ -1396,6 +1396,16 @@ const AdminDashboard = () => {
                 </form>
               </CardContent>
             </Card>
+
+            {/* Password Change Card */}
+            <Card className="border-2 border-[#C1272D]/20 mt-6">
+              <CardHeader>
+                <CardTitle>{t('admin.settings.passwordChangeTitle')}</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <AdminPasswordChangeForm t={t} />
+              </CardContent>
+            </Card>
           </TabsContent>
           )}
 
