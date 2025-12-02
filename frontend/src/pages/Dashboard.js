@@ -392,6 +392,18 @@ const Dashboard = () => {
             </Card>
           </TabsContent>
 
+
+            {/* Password Change Card */}
+            <Card className="border-2 border-[#C1272D]/20 mt-6">
+              <CardHeader>
+                <CardTitle>{t('dashboard.passwordChange.title')}</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <PasswordChangeForm />
+              </CardContent>
+            </Card>
+
+
           {/* Invoices Tab */}
           <TabsContent value="invoices">
             <Card className="border-2 border-[#C1272D]/20">
