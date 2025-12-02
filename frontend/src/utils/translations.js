@@ -1030,7 +1030,10 @@ const translations = {
       resetting: 'Återställer...',
       passwordMinLength: 'Minst 6 tecken',
       enterNewPassword: 'Ange nytt lösenord',
-      confirmNewPassword: 'Bekräfta nytt lösenord'
+      confirmNewPassword: 'Bekräfta nytt lösenord',
+      loginSuccess: 'Inloggningen lyckades!',
+      loginFailed: 'Inloggningen misslyckades',
+      invalidCredentials: 'Felaktigt användarnamn eller lösenord'
     },
     contact: {
       title: 'Kontakta oss',
