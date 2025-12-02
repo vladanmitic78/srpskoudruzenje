@@ -80,30 +80,35 @@ const ModeratorDashboard = () => {
     videos: []
   });
 
-  // Fetch moderator permissions
+  // Fetch moderator permissions and user data
   useEffect(() => {
-    const fetchPermissions = async () => {
+    const fetchData = async () => {
       try {
+        // Fetch permissions
         const permsData = await adminAPI.getMyPermissions();
         setPermissions(permsData.permissions);
         
-        // Set default active tab to first available permission
-        if (permsData.permissions.manageEvents) {
-          setActiveTab('events');
-        } else if (permsData.permissions.manageContent) {
-          setActiveTab('content');
-        } else if (permsData.permissions.manageGallery) {
-          setActiveTab('gallery');
-        }
+        // Fetch user's personal data
+        const userDataResponse = await userAPI.getProfile();
+        setUserData(userDataResponse);
+
+        // Fetch user's invoices
+        const invoicesResponse = await invoicesAPI.getUserInvoices();
+        setUserInvoices(invoicesResponse.items || []);
+
+        // Fetch user's registered events
+        const eventsResponse = await eventsAPI.getAll();
+        setUserEvents(eventsResponse.items || []);
+        
       } catch (error) {
-        console.error('Error fetching permissions:', error);
-        toast.error(t('dashboard.permissionsError') || 'Failed to load permissions');
+        console.error('Error fetching data:', error);
+        toast.error(t('dashboard.permissionsError') || 'Failed to load data');
       } finally {
         setLoading(false);
       }
     };
 
-    fetchPermissions();
+    fetchData();
   }, []);
 
   // Fetch data based on permissions
