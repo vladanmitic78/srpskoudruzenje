@@ -382,7 +382,10 @@ const translations = {
       resetting: 'Ресетујем...',
       passwordMinLength: 'Минимум 6 карактера',
       enterNewPassword: 'Унесите нову лозинку',
-      confirmNewPassword: 'Потврдите нову лозинку'
+      confirmNewPassword: 'Потврдите нову лозинку',
+      loginSuccess: 'Успешна пријава!',
+      loginFailed: 'Пријава неуспешна',
+      invalidCredentials: 'Нетачно корисничко име или лозинка'
     },
     contact: {
       title: 'Контактирајте нас',
