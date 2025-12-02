@@ -80,6 +80,11 @@ const translations = {
     },
     dashboard: {
       title: 'Kontrolna tabla',
+      loading: 'Učitavanje...',
+      permissionsError: 'Greška pri učitavanju dozvola',
+      noPermissions: 'Nema dodeljenih dozvola. Kontaktirajte administratora.',
+      noAccess: 'Nema pristupa',
+      noPermissionsMessage: 'Nemate dodeljene dozvole. Molimo kontaktirajte Super Administratora.',
       personalDataTab: 'Lični podaci',
       personalData: {
         fullName: 'Ime i prezime',
