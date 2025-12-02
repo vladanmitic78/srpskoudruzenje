@@ -1012,11 +1012,11 @@ const AdminDashboard = () => {
               onChange={(e) => setActiveTab(e.target.value)}
               className="w-full p-3 border-2 border-[#C1272D]/20 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 font-medium"
             >
-              {(isAdmin && !isModerator) && <option value="members">👥 {t('admin.tabs.members')}</option>}
-              {(isAdmin && !isModerator) && <option value="invoices">📄 {t('admin.tabs.invoices')}</option>}
-              <option value="events">📅 {t('admin.tabs.events')}</option>
-              <option value="content">📝 {t('admin.tabs.content')}</option>
-              {(isAdmin && !isModerator) && <option value="settings">⚙️ {t('admin.tabs.settings')}</option>}
+              {permissions?.viewMembers && <option value="members">👥 {t('admin.tabs.members')}</option>}
+              {permissions?.manageInvoices && <option value="invoices">📄 {t('admin.tabs.invoices')}</option>}
+              {permissions?.manageEvents && <option value="events">📅 {t('admin.tabs.events')}</option>}
+              {permissions?.manageContent && <option value="content">📝 {t('admin.tabs.content')}</option>}
+              {permissions?.manageSettings && <option value="settings">⚙️ {t('admin.tabs.settings')}</option>}
               {isSuperAdmin && <option value="user-management">👤 Users & Roles</option>}
               {isSuperAdmin && <option value="platform-settings">🔧 Platform</option>}
               {isSuperAdmin && <option value="branding">🎨 Branding</option>}
