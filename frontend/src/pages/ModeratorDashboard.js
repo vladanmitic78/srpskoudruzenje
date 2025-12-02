@@ -93,7 +93,7 @@ const ModeratorDashboard = () => {
         setUserData(userDataResponse);
 
         // Fetch user's invoices
-        const invoicesResponse = await invoicesAPI.getUserInvoices();
+        const invoicesResponse = await invoicesAPI.getMy();
         setUserInvoices(invoicesResponse.items || []);
 
         // Fetch user's registered events
