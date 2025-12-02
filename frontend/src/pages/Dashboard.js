@@ -11,6 +11,102 @@ import { toast } from 'sonner';
 import { User, FileText, Calendar, AlertCircle } from 'lucide-react';
 import { userAPI, invoicesAPI, eventsAPI } from '../services/api';
 
+// Password Change Component
+const PasswordChangeForm = () => {
+  const { t } = useLanguage();
+  const [passwordData, setPasswordData] = useState({
+    currentPassword: '',
+    newPassword: '',
+    confirmPassword: ''
+  });
+  const [showPasswords, setShowPasswords] = useState(false);
+
+  const handlePasswordChange = async (e) => {
+    e.preventDefault();
+
+    // Validate passwords match
+    if (passwordData.newPassword !== passwordData.confirmPassword) {
+      toast.error(t('dashboard.passwordChange.passwordMismatch'));
+      return;
+    }
+
+    // Validate password length
+    if (passwordData.newPassword.length < 8) {
+      toast.error(t('dashboard.passwordChange.passwordTooShort'));
+      return;
+    }
+
+    try {
+      const response = await userAPI.changePassword({
+        currentPassword: passwordData.currentPassword,
+        newPassword: passwordData.newPassword
+      });
+
+      if (response.success) {
+        toast.success(t('dashboard.passwordChange.success'));
+        // Reset form
+        setPasswordData({
+          currentPassword: '',
+          newPassword: '',
+          confirmPassword: ''
+        });
+      }
+    } catch (error) {
+      const errorMessage = error.response?.data?.detail || t('dashboard.passwordChange.error');
+      toast.error(errorMessage);
+    }
+  };
+
+  return (
+    <form onSubmit={handlePasswordChange} className="space-y-4 max-w-md">
+      <div className="space-y-2">
+        <Label>{t('dashboard.passwordChange.currentPassword')}</Label>
+        <Input
+          type={showPasswords ? "text" : "password"}
+          value={passwordData.currentPassword}
+          onChange={(e) => setPasswordData({...passwordData, currentPassword: e.target.value})}
+          required
+        />
+      </div>
+      <div className="space-y-2">
+        <Label>{t('dashboard.passwordChange.newPassword')}</Label>
+        <Input
+          type={showPasswords ? "text" : "password"}
+          value={passwordData.newPassword}
+          onChange={(e) => setPasswordData({...passwordData, newPassword: e.target.value})}
+          required
+          minLength={8}
+        />
+        <p className="text-xs text-gray-500">{t('dashboard.passwordChange.minLength')}</p>
+      </div>
+      <div className="space-y-2">
+        <Label>{t('dashboard.passwordChange.confirmPassword')}</Label>
+        <Input
+          type={showPasswords ? "text" : "password"}
+          value={passwordData.confirmPassword}
+          onChange={(e) => setPasswordData({...passwordData, confirmPassword: e.target.value})}
+          required
+        />
+      </div>
+      <div className="flex items-center space-x-2">
+        <input
+          type="checkbox"
+          id="showPasswords"
+          checked={showPasswords}
+          onChange={(e) => setShowPasswords(e.target.checked)}
+          className="rounded"
+        />
+        <label htmlFor="showPasswords" className="text-sm text-gray-600 dark:text-gray-400">
+          {t('dashboard.passwordChange.showPasswords')}
+        </label>
+      </div>
+      <Button type="submit" className="bg-[#C1272D] hover:bg-[#8B1F1F]">
+        {t('dashboard.passwordChange.changeButton')}
+      </Button>
+    </form>
+  );
+};
+
 const Dashboard = () => {
   const { t, language } = useLanguage();
   const { user, setUser } = useAuth();
