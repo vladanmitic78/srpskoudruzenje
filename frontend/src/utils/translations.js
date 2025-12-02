@@ -343,6 +343,10 @@ const translations = {
       topic: 'Ämne',
       message: 'Meddelande',
       send: 'Skicka',
+      addressLabel: 'Adress',
+      emailLabel: 'E-post',
+      phoneLabel: 'Telefon',
+      loading: 'Laddar...',
       topics: {
         member: 'Bli medlem',
         finance: 'Ekonomi',
