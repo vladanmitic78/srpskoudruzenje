@@ -949,21 +949,21 @@ const AdminDashboard = () => {
                               }}
                               className="px-3 py-1 bg-blue-600 text-white text-sm rounded hover:bg-blue-700 transition-colors"
                             >
-                              Edit
+                              {t('admin.actions.edit')}
                             </button>
                             {event.status === 'active' && (
                               <button
                                 onClick={() => handleCancelEvent(event)}
                                 className="px-3 py-1 bg-yellow-600 text-white text-sm rounded hover:bg-yellow-700 transition-colors"
                               >
-                                Cancel
+                                {t('admin.events.cancelEvent')}
                               </button>
                             )}
                             <button
                               onClick={() => handleDeleteEvent(event.id)}
                               className="px-3 py-1 bg-red-600 text-white text-sm rounded hover:bg-red-700 transition-colors"
                             >
-                              Delete
+                              {t('admin.actions.delete')}
                             </button>
                           </div>
                         </div>
