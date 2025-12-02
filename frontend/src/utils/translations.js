@@ -67,6 +67,10 @@ const translations = {
       topic: 'Tema',
       message: 'Poruka',
       send: 'Pošalji',
+      addressLabel: 'Adresa',
+      emailLabel: 'Email',
+      phoneLabel: 'Telefon',
+      loading: 'Učitavanje...',
       topics: {
         member: 'Postani član',
         finance: 'Finansije',
