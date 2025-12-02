@@ -323,7 +323,7 @@ const ModeratorDashboard = () => {
             </TabsTrigger>
             <TabsTrigger value="invoices">
               <CreditCard className="h-4 w-4 mr-2" />
-              {t('dashboard.invoicesTab')}
+              {t('dashboard.invoices')}
             </TabsTrigger>
             <TabsTrigger value="trainings">
               <Calendar className="h-4 w-4 mr-2" />
@@ -331,7 +331,7 @@ const ModeratorDashboard = () => {
             </TabsTrigger>
             <TabsTrigger value="membership">
               <Shield className="h-4 w-4 mr-2" />
-              {t('dashboard.membershipTab')}
+              {t('dashboard.membership')}
             </TabsTrigger>
             
             {/* Management Tabs (based on permissions) */}
