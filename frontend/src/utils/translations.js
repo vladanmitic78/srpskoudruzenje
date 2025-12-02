@@ -1028,7 +1028,18 @@ const translations = {
         orgNumber: 'Organisationsnummer (Org. nr)',
         vatNumber: 'Momsnummer',
         bankAccount: 'Bankkonto',
-        saveButton: 'Spara inställningar'
+        saveButton: 'Spara inställningar',
+        passwordChangeTitle: 'Ändra lösenord',
+        currentPassword: 'Nuvarande lösenord',
+        newPassword: 'Nytt lösenord',
+        confirmPassword: 'Bekräfta nytt lösenord',
+        showPasswords: 'Visa lösenord',
+        changePasswordButton: 'Ändra lösenord',
+        passwordMinLength: 'Minst 8 tecken',
+        passwordMismatch: 'Lösenorden matchar inte',
+        passwordTooShort: 'Nytt lösenord måste vara minst 8 tecken',
+        passwordSuccess: 'Lösenordet har ändrats',
+        passwordError: 'Fel vid ändring av lösenord'
       }
     }
   }
