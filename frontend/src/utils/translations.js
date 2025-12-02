@@ -551,6 +551,36 @@ const translations = {
       status: {
         paid: 'Paid',
         unpaid: 'Unpaid'
+      },
+      events: {
+        title: 'Events & Training Management',
+        addEvent: '+ Add Event',
+        noEvents: 'No events scheduled. Click "Add Event" to create one.',
+        cancelled: 'CANCELLED',
+        at: 'at',
+        reason: 'Reason',
+        participantsConfirmed: 'participant(s) confirmed',
+        cancelEvent: 'Cancel',
+        deleteConfirmation: 'Are you sure you want to delete this event? This action cannot be undone.',
+        deleteSuccess: 'Event deleted successfully',
+        deleteFailed: 'Failed to delete event',
+        createTitle: 'Create New Event/Training',
+        editTitle: 'Edit Event/Training',
+        createButton: 'Create Event',
+        updateButton: 'Update Event',
+        form: {
+          date: 'Date',
+          time: 'Time',
+          location: 'Location',
+          titleEn: 'Title (English)',
+          titleSrLatin: 'Title (Serbian Latin)',
+          titleSrCyrillic: 'Title (Serbian Cyrillic)',
+          titleSv: 'Title (Swedish)',
+          descriptionEn: 'Description (English)',
+          descriptionSrLatin: 'Description (Serbian Latin)',
+          descriptionSrCyrillic: 'Description (Serbian Cyrillic)',
+          descriptionSv: 'Description (Swedish)'
+        }
       }
     }
   },
