@@ -2588,6 +2588,23 @@ const AdminDashboard = () => {
               </div>
             </TabsContent>
           )}
+
+
+          {/* Admin Management Tab - Only Super Admin */}
+          {isSuperAdmin && (
+            <TabsContent value="admin-management" className="space-y-6">
+              <Card className="border-2 border-[#C1272D]/20">
+                <CardHeader>
+                  <CardTitle>{t('admin.adminManagement.title')}</CardTitle>
+                  <p className="text-sm text-gray-600">{t('admin.adminManagement.description')}</p>
+                </CardHeader>
+                <CardContent>
+                  <AdminManagementPanel t={t} />
+                </CardContent>
+              </Card>
+            </TabsContent>
+          )}
+
         </Tabs>
 
         {/* Create Invoice Dialog */}
