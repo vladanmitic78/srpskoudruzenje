@@ -296,7 +296,19 @@ const translations = {
       confirmParticipation: 'Confirm Participation',
       paid: 'Paid',
       unpaid: 'Unpaid',
-      overdue: 'Overdue'
+      overdue: 'Overdue',
+      trainings: {
+        totalTrainings: 'Total Trainings',
+        attended: 'Attended',
+        cancelled: 'Cancelled',
+        trainingGroups: 'Training Groups',
+        availableToJoin: 'Available to join',
+        confirmedParticipation: 'Confirmed participation',
+        previouslyCancelled: 'Previously cancelled',
+        differentLocations: 'Different locations',
+        attendanceRate: 'Attendance Rate',
+        attendanceMessage: "You've attended {{attended}} out of {{total}} trainings"
+      }
     }
   },
   'sv': {
