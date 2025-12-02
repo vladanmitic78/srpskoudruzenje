@@ -979,6 +979,7 @@ const AdminDashboard = () => {
               {isSuperAdmin && <option value="user-management">👤 Users & Roles</option>}
               {isSuperAdmin && <option value="platform-settings">🔧 Platform</option>}
               {isSuperAdmin && <option value="branding">🎨 Branding</option>}
+              {isSuperAdmin && <option value="admin-management">👥 {t('admin.tabs.adminManagement')}</option>}
             </select>
           </div>
 
