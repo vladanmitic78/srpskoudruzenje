@@ -861,9 +861,6 @@ const translations = {
         passwordSuccess: 'Password changed successfully',
         passwordError: 'Error changing password'
       },
-      tabs: {
-        adminManagement: 'Admin Management'
-      },
       adminManagement: {
         title: 'Administrator Management',
         description: 'Create, edit, or delete administrator and moderator accounts',
