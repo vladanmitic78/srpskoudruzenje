@@ -63,6 +63,35 @@ async def update_user_profile(
         }
     }
 
+@router.post("/change-password")
+async def change_password(
+    password_change: PasswordChange,
+    current_user: dict = Depends(get_current_user),
+    request: Request = None
+):
+    """Change user password"""
+    db = request.app.state.db
+    
+    # Verify current password
+    if not verify_password(password_change.currentPassword, current_user["hashed_password"]):
+        raise HTTPException(status_code=400, detail="Current password is incorrect")
+    
+    # Validate new password length
+    if len(password_change.newPassword) < 8:
+        raise HTTPException(status_code=400, detail="New password must be at least 8 characters long")
+    
+    # Hash new password
+    new_hashed_password = hash_password(password_change.newPassword)
+    
+    # Update password in database
+    await db.users.update_one(
+        {"_id": current_user["_id"]},
+        {"$set": {"hashed_password": new_hashed_password, "updatedAt": datetime.utcnow()}}
+    )
+    
+    return {"success": True, "message": "Password changed successfully"}
+
+
 @router.post("/cancel-membership")
 async def cancel_membership(
     cancellation: MembershipCancellation,
