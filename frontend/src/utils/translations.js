@@ -458,9 +458,28 @@ const translations = {
         exportExcel: 'Export Excel',
         exportXML: 'Export XML',
         viewDetails: 'View Details',
-        delete: 'Delete'
+        delete: 'Delete',
+        download: 'Download',
+        remove: 'Remove',
+        upload: 'Upload',
+        edit: 'Edit',
+        markPaid: 'Mark Paid'
       },
-      membersManagement: 'Members Management'
+      membersManagement: 'Members Management',
+      invoicesManagement: 'Invoices Management',
+      createInvoice: 'Create Invoice',
+      loadingInvoices: 'Loading invoices...',
+      noInvoicesFound: 'No invoices found.',
+      tableHeaders: {
+        member: 'Member',
+        description: 'Description',
+        amount: 'Amount',
+        dueDate: 'Due Date',
+        paymentDate: 'Payment Date',
+        status: 'Status',
+        file: 'File',
+        actions: 'Actions'
+      }
     }
   },
   'sv': {
