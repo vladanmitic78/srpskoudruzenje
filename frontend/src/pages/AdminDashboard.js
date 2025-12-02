@@ -545,31 +545,31 @@ const AdminDashboard = () => {
             {(isAdmin && !isModerator) && (
               <TabsTrigger value="members">
                 <Users className="h-4 w-4 mr-2" />
-                Members
+                {t('admin.tabs.members')}
               </TabsTrigger>
             )}
             {/* Invoices tab - Only Admin and Super Admin */}
             {(isAdmin && !isModerator) && (
               <TabsTrigger value="invoices">
                 <FileText className="h-4 w-4 mr-2" />
-                Invoices
+                {t('admin.tabs.invoices')}
               </TabsTrigger>
             )}
             {/* Events tab - All roles */}
             <TabsTrigger value="events">
               <Calendar className="h-4 w-4 mr-2" />
-              Events
+              {t('admin.tabs.events')}
             </TabsTrigger>
             {/* Content tab - All roles */}
             <TabsTrigger value="content">
               <Settings className="h-4 w-4 mr-2" />
-              Content
+              {t('admin.tabs.content')}
             </TabsTrigger>
             {/* Settings tab - Only Admin and Super Admin */}
             {(isAdmin && !isModerator) && (
               <TabsTrigger value="settings">
                 <Settings className="h-4 w-4 mr-2" />
-                Settings
+                {t('admin.tabs.settings')}
               </TabsTrigger>
             )}
             {/* Users & Roles tab - Only Super Admin */}
