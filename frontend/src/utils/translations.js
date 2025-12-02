@@ -116,6 +116,29 @@ const translations = {
         attendanceRate: 'Stopa prisustva',
         attendanceMessage: 'Prisustvovali ste {{attended}} od {{total}} treninga'
       }
+    },
+    admin: {
+      stats: {
+        totalMembers: 'Ukupno članova',
+        paidInvoices: 'Plaćene fakture',
+        unpaidInvoices: 'Neplaćene fakture',
+        totalRevenue: 'Ukupan prihod'
+      },
+      tabs: {
+        members: 'Članovi',
+        invoices: 'Fakture',
+        events: 'Događaji',
+        content: 'Sadržaj',
+        settings: 'Podešavanja'
+      },
+      actions: {
+        exportPDF: 'Izvezi PDF',
+        exportExcel: 'Izvezi Excel',
+        exportXML: 'Izvezi XML',
+        viewDetails: 'Pogledaj detalje',
+        delete: 'Obriši'
+      },
+      membersManagement: 'Upravljanje članovima'
     }
   },
   'sr-cyrillic': {
