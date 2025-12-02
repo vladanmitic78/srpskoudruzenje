@@ -1166,6 +1166,48 @@ const translations = {
         passwordTooShort: 'Nytt lösenord måste vara minst 8 tecken',
         passwordSuccess: 'Lösenordet har ändrats',
         passwordError: 'Fel vid ändring av lösenord'
+      },
+      tabs: {
+        adminManagement: 'Adminhantering'
+      },
+      adminManagement: {
+        title: 'Administratörshantering',
+        description: 'Skapa, redigera eller radera administratörs- och moderatorkonton',
+        createButton: 'Skapa Admin',
+        searchPlaceholder: 'Sök efter namn eller e-post...',
+        allRoles: 'Alla roller',
+        adminRole: 'Admin',
+        moderatorRole: 'Moderator',
+        superadminRole: 'Super Admin',
+        loading: 'Laddar...',
+        noAdmins: 'Inga administratörer',
+        name: 'Namn',
+        email: 'E-post',
+        role: 'Roll',
+        status: 'Status',
+        createdAt: 'Skapad',
+        actions: 'Åtgärder',
+        resetPassword: 'Återställ lösenord',
+        createTitle: 'Skapa nytt adminkonto',
+        editTitle: 'Redigera adminkonto',
+        fullName: 'Fullständigt namn',
+        createInfo: 'Ett tillfälligt lösenord skickas till den angivna e-postadressen.',
+        createSubmit: 'Skapa konto',
+        updateSubmit: 'Uppdatera konto',
+        emailNotEditable: 'E-post kan inte ändras',
+        statusActive: 'Aktiv',
+        statusInactive: 'Inaktiv',
+        resetPasswordConfirm: 'Är du säker på att du vill återställa lösenordet för denna administratör?',
+        deleteConfirm: 'Är du säker på att du vill radera detta adminkonto? Denna åtgärd kan inte ångras.',
+        loadError: 'Fel vid laddning av administratörer',
+        createSuccess: 'Adminkonto skapat och inbjudningsmail skickat',
+        createError: 'Fel vid skapande av adminkonto',
+        updateSuccess: 'Adminkonto uppdaterat',
+        updateError: 'Fel vid uppdatering av adminkonto',
+        resetPasswordSuccess: 'Lösenord återställt. E-post skickat till administratör.',
+        resetPasswordError: 'Fel vid återställning av lösenord',
+        deleteSuccess: 'Adminkonto raderat',
+        deleteError: 'Fel vid radering av adminkonto'
       }
     }
   }
