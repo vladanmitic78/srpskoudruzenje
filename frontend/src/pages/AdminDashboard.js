@@ -460,6 +460,7 @@ const AdminManagementPanel = ({ t }) => {
 const AdminDashboard = () => {
   const { isAdmin, isSuperAdmin, isModerator, user } = useAuth();
   const { t } = useLanguage();
+  const { updateBranding } = useBranding();
   const [statistics, setStatistics] = useState(null);
   const [users, setUsers] = useState([]);
   const [events, setEvents] = useState([]);
