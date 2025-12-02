@@ -28,7 +28,7 @@ const SerbianStory = () => {
   return (
     <div className="min-h-screen py-16">
       <div className="container mx-auto px-4">
-        <h1 className="text-4xl md:text-5xl font-bold text-[#8B1F1F] dark:text-[#C1272D] mb-12 text-center">
+        <h1 className="text-4xl md:text-5xl font-bold text-[var(--color-secondary)] dark:text-[var(--color-primary)] mb-12 text-center">
           Srpska priča / Serbian Story
         </h1>
 
@@ -39,7 +39,7 @@ const SerbianStory = () => {
             <p className="text-center text-gray-600 dark:text-gray-300">No stories available yet.</p>
           ) : (
             stories.map((story) => (
-            <Card key={story.id} className="overflow-hidden border-2 border-[#C1272D]/20 hover:shadow-xl transition-all duration-300">
+            <Card key={story.id} className="overflow-hidden border-2 border-[var(--color-primary)]/20 hover:shadow-xl transition-all duration-300">
               {story.image && (
                 <div className="relative h-64 md:h-96 overflow-hidden">
                   <img
@@ -47,7 +47,7 @@ const SerbianStory = () => {
                     alt={story.title[language]}
                     className="w-full h-full object-cover"
                   />
-                  <div className="absolute top-4 right-4 bg-[#C1272D] text-white px-4 py-2 rounded-full text-sm font-semibold shadow-lg">
+                  <div className="absolute top-4 right-4 bg-[var(--color-button-primary)] text-white px-4 py-2 rounded-full text-sm font-semibold shadow-lg">
                     {story.date}
                   </div>
                 </div>
@@ -66,7 +66,7 @@ const SerbianStory = () => {
                   <Button 
                     asChild
                     variant="outline"
-                    className="border-2 border-[#C1272D] text-[#C1272D] hover:bg-[#C1272D] hover:text-white"
+                    className="border-2 border-[var(--color-primary)] text-[var(--color-primary)] hover:bg-[var(--color-button-primary)] hover:text-white"
                   >
                     <a href={story.url} target="_blank" rel="noopener noreferrer">
                       Learn More
