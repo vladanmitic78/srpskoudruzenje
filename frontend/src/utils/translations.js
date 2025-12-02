@@ -400,6 +400,7 @@ const translations = {
       trainingsTab: 'Träningar',
       membership: 'Medlemskap',
       cancelMembership: 'Avsluta medlemskap',
+      submitCancellationRequest: 'Skicka avbokningsförfrågan',
       confirmParticipation: 'Bekräfta deltagande',
       paid: 'Betald',
       unpaid: 'Obetald',
