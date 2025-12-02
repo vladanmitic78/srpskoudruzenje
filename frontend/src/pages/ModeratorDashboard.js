@@ -634,7 +634,7 @@ const ModeratorDashboard = () => {
 
           {/* Gallery Tab Content */}
           {permissions.manageGallery && (
-            <TabsContent value="gallery">
+            <TabsContent value="manage-gallery">
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between">
                   <CardTitle>{t('admin.content.galleryTitle')}</CardTitle>
