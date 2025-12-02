@@ -2764,12 +2764,12 @@ const AdminDashboard = () => {
         <Dialog open={createEventOpen} onOpenChange={setCreateEventOpen}>
           <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
             <DialogHeader>
-              <DialogTitle>Create New Event/Training</DialogTitle>
+              <DialogTitle>{t('admin.events.createTitle')}</DialogTitle>
             </DialogHeader>
             <div className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium mb-2">Date *</label>
+                  <label className="block text-sm font-medium mb-2">{t('admin.events.form.date')} *</label>
                   <input
                     type="date"
                     value={eventForm.date}
@@ -2778,7 +2778,7 @@ const AdminDashboard = () => {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium mb-2">Time *</label>
+                  <label className="block text-sm font-medium mb-2">{t('admin.events.form.time')} *</label>
                   <input
                     type="time"
                     value={eventForm.time}
@@ -2789,7 +2789,7 @@ const AdminDashboard = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium mb-2">Location *</label>
+                <label className="block text-sm font-medium mb-2">{t('admin.events.form.location')} *</label>
                 <input
                   type="text"
                   value={eventForm.location}
@@ -2800,7 +2800,7 @@ const AdminDashboard = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium mb-2">Title (English) *</label>
+                <label className="block text-sm font-medium mb-2">{t('admin.events.form.titleEn')} *</label>
                 <input
                   type="text"
                   value={eventForm.title.en}
