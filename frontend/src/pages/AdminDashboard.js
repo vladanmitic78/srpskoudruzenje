@@ -6,8 +6,106 @@ import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../components/ui/tabs';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '../components/ui/dialog';
 import { Users, FileText, Calendar, Settings, BarChart, Palette, Upload, Mail } from 'lucide-react';
-import { adminAPI, eventsAPI, invoicesAPI, newsAPI, contentAPI, storiesAPI, galleryAPI, settingsAPI } from '../services/api';
+import { adminAPI, eventsAPI, invoicesAPI, newsAPI, contentAPI, storiesAPI, galleryAPI, settingsAPI, userAPI } from '../services/api';
 import { toast } from 'sonner';
+import { Button } from '../components/ui/button';
+import { Input } from '../components/ui/input';
+import { Label } from '../components/ui/label';
+
+// Admin Password Change Component
+const AdminPasswordChangeForm = ({ t }) => {
+  const [passwordData, setPasswordData] = useState({
+    currentPassword: '',
+    newPassword: '',
+    confirmPassword: ''
+  });
+  const [showPasswords, setShowPasswords] = useState(false);
+
+  const handlePasswordChange = async (e) => {
+    e.preventDefault();
+
+    // Validate passwords match
+    if (passwordData.newPassword !== passwordData.confirmPassword) {
+      toast.error(t('admin.settings.passwordMismatch'));
+      return;
+    }
+
+    // Validate password length
+    if (passwordData.newPassword.length < 8) {
+      toast.error(t('admin.settings.passwordTooShort'));
+      return;
+    }
+
+    try {
+      const response = await userAPI.changePassword({
+        currentPassword: passwordData.currentPassword,
+        newPassword: passwordData.newPassword
+      });
+
+      if (response.success) {
+        toast.success(t('admin.settings.passwordSuccess'));
+        // Reset form
+        setPasswordData({
+          currentPassword: '',
+          newPassword: '',
+          confirmPassword: ''
+        });
+      }
+    } catch (error) {
+      const errorMessage = error.response?.data?.detail || t('admin.settings.passwordError');
+      toast.error(errorMessage);
+    }
+  };
+
+  return (
+    <form onSubmit={handlePasswordChange} className="space-y-4 max-w-md">
+      <div className="space-y-2">
+        <Label>{t('admin.settings.currentPassword')}</Label>
+        <Input
+          type={showPasswords ? "text" : "password"}
+          value={passwordData.currentPassword}
+          onChange={(e) => setPasswordData({...passwordData, currentPassword: e.target.value})}
+          required
+        />
+      </div>
+      <div className="space-y-2">
+        <Label>{t('admin.settings.newPassword')}</Label>
+        <Input
+          type={showPasswords ? "text" : "password"}
+          value={passwordData.newPassword}
+          onChange={(e) => setPasswordData({...passwordData, newPassword: e.target.value})}
+          required
+          minLength={8}
+        />
+        <p className="text-xs text-gray-500">{t('admin.settings.passwordMinLength')}</p>
+      </div>
+      <div className="space-y-2">
+        <Label>{t('admin.settings.confirmPassword')}</Label>
+        <Input
+          type={showPasswords ? "text" : "password"}
+          value={passwordData.confirmPassword}
+          onChange={(e) => setPasswordData({...passwordData, confirmPassword: e.target.value})}
+          required
+        />
+      </div>
+      <div className="flex items-center space-x-2">
+        <input
+          type="checkbox"
+          id="showPasswordsAdmin"
+          checked={showPasswords}
+          onChange={(e) => setShowPasswords(e.target.checked)}
+          className="rounded"
+        />
+        <label htmlFor="showPasswordsAdmin" className="text-sm text-gray-600 dark:text-gray-400">
+          {t('admin.settings.showPasswords')}
+        </label>
+      </div>
+      <Button type="submit" className="bg-[#C1272D] hover:bg-[#8B1F1F]">
+        {t('admin.settings.changePasswordButton')}
+      </Button>
+    </form>
+  );
+};
 
 const AdminDashboard = () => {
   const { isAdmin, isSuperAdmin, isModerator, user } = useAuth();
