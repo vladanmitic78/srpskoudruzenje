@@ -463,20 +463,49 @@ const ModeratorDashboard = () => {
               </CardHeader>
               <CardContent>
                 {userInvoices.length === 0 ? (
-                  <p className="text-center text-gray-500 py-8">{t('dashboard.invoices.noInvoices')}</p>
+                  <p className="text-center text-gray-500 py-8">No invoices yet.</p>
                 ) : (
                   <div className="space-y-4">
                     {userInvoices.map((invoice) => (
-                      <div key={invoice.id} className="flex items-center justify-between p-4 border rounded-lg">
-                        <div className="flex-1">
-                          <p className="font-semibold">{invoice.type || 'Invoice'}</p>
-                          <p className="text-sm text-gray-500">{invoice.date}</p>
-                        </div>
-                        <div className="text-right">
-                          <p className="font-bold">{invoice.amount} SEK</p>
-                          <Badge variant={invoice.paid ? 'success' : 'destructive'}>
-                            {invoice.paid ? t('dashboard.invoices.paid') : t('dashboard.invoices.unpaid')}
-                          </Badge>
+                      <div key={invoice.id} className={`p-4 border-2 rounded-lg ${
+                        invoice.status === 'paid' 
+                          ? 'border-green-200 bg-green-50 dark:bg-green-900/20' 
+                          : 'border-yellow-200 bg-yellow-50 dark:bg-yellow-900/20'
+                      }`}>
+                        <div className="flex items-start justify-between">
+                          <div className="flex-1">
+                            <p className="font-semibold text-gray-900 dark:text-white">
+                              {invoice.description}
+                            </p>
+                            <p className="text-sm text-gray-600 dark:text-gray-300">
+                              Due: {invoice.dueDate}
+                            </p>
+                            {invoice.paymentDate && (
+                              <p className="text-sm text-gray-600 dark:text-gray-300">
+                                Paid: {invoice.paymentDate}
+                              </p>
+                            )}
+                            {invoice.fileUrl && (
+                              <a
+                                href={`${process.env.REACT_APP_BACKEND_URL}${invoice.fileUrl}`}
+                                download
+                                className="inline-block mt-2 px-3 py-1 bg-blue-600 text-white text-sm rounded hover:bg-blue-700"
+                              >
+                                📄 Download Invoice
+                              </a>
+                            )}
+                          </div>
+                          <div className="text-right">
+                            <p className="text-xl font-bold text-gray-900 dark:text-white">
+                              {invoice.amount} {invoice.currency}
+                            </p>
+                            <Badge 
+                              variant={invoice.status === 'paid' ? 'default' : 'destructive'}
+                              className={invoice.status === 'paid' ? 'bg-green-600' : 'bg-yellow-600'}
+                            >
+                              {invoice.status === 'paid' ? 'Paid' : 'Unpaid'}
+                            </Badge>
+                          </div>
                         </div>
                       </div>
                     ))}
