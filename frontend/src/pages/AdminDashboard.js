@@ -1171,8 +1171,8 @@ const AdminDashboard = () => {
                         <div className="flex items-start justify-between mb-2">
                           <div className="flex-1">
                             <h4 className="font-semibold">{album.title?.en || album.description?.en || album.description?.['sr-latin']}</h4>
-                            <p className="text-sm text-gray-500">{album.date} • {album.place || 'No location'}</p>
-                            <p className="text-sm text-gray-600 mt-1">{album.images?.length || 0} photos</p>
+                            <p className="text-sm text-gray-500">{album.date} • {album.place || t('admin.content.noLocation')}</p>
+                            <p className="text-sm text-gray-600 mt-1">{album.images?.length || 0} {t('admin.content.photos')}</p>
                           </div>
                           <div className="flex gap-2">
                             <button
