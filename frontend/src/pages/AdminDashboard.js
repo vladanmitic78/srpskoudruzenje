@@ -1235,25 +1235,25 @@ const AdminDashboard = () => {
             <TabsContent value="settings">
             <Card className="border-2 border-[#C1272D]/20">
               <CardHeader>
-                <CardTitle>Association Settings</CardTitle>
+                <CardTitle>{t('admin.settings.title')}</CardTitle>
               </CardHeader>
               <CardContent>
                 <form onSubmit={async (e) => {
                   e.preventDefault();
                   try {
                     await settingsAPI.update(settings);
-                    toast.success('Settings updated successfully');
+                    toast.success(t('admin.settings.updateSuccess'));
                   } catch (error) {
-                    toast.error('Failed to update settings');
+                    toast.error(t('admin.settings.updateFailed'));
                   }
                 }} className="space-y-6">
                   
                   {/* Contact Information */}
                   <div>
-                    <h3 className="text-lg font-semibold mb-4 text-gray-900 dark:text-white">Contact Information</h3>
+                    <h3 className="text-lg font-semibold mb-4 text-gray-900 dark:text-white">{t('admin.settings.contactInfo')}</h3>
                     <div className="space-y-4">
                       <div>
-                        <label className="block text-sm font-medium mb-2">Address</label>
+                        <label className="block text-sm font-medium mb-2">{t('admin.settings.address')}</label>
                         <input
                           type="text"
                           value={settings.address}
