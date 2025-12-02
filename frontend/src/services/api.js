@@ -82,6 +82,11 @@ export const userAPI = {
     return response.data;
   },
   
+  changePassword: async (passwordData) => {
+    const response = await api.post('/users/change-password', passwordData);
+    return response.data;
+  },
+  
   cancelMembership: async (reason) => {
     const response = await api.post('/users/cancel-membership', { reason });
     return response.data;
