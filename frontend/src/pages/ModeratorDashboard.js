@@ -370,6 +370,195 @@ const ModeratorDashboard = () => {
             )}
           </TabsList>
 
+
+          {/* USER TABS - Personal Data, Invoices, Events, Membership */}
+          
+          {/* Personal Data Tab */}
+          <TabsContent value="personal">
+            <Card>
+              <CardHeader>
+                <CardTitle>{t('dashboard.personalDataTab')}</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                {/* User Information Display */}
+                {userData && (
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <Label className="text-sm font-medium text-gray-600 dark:text-gray-400">
+                        {t('dashboard.personalData.fullName')}
+                      </Label>
+                      <p className="mt-1 text-lg font-semibold">{userData.fullName}</p>
+                    </div>
+                    <div>
+                      <Label className="text-sm font-medium text-gray-600 dark:text-gray-400">
+                        {t('dashboard.personalData.email')}
+                      </Label>
+                      <p className="mt-1 text-lg font-semibold">{userData.email}</p>
+                    </div>
+                    <div>
+                      <Label className="text-sm font-medium text-gray-600 dark:text-gray-400">
+                        {t('dashboard.personalData.phone')}
+                      </Label>
+                      <p className="mt-1 text-lg font-semibold">{userData.phone || 'N/A'}</p>
+                    </div>
+                    <div>
+                      <Label className="text-sm font-medium text-gray-600 dark:text-gray-400">
+                        {t('dashboard.personalData.birthYear')}
+                      </Label>
+                      <p className="mt-1 text-lg font-semibold">{userData.birthYear || 'N/A'}</p>
+                    </div>
+                  </div>
+                )}
+
+                {/* Password Change Section */}
+                <div className="border-t pt-6 mt-6">
+                  <h3 className="text-lg font-semibold mb-4">{t('dashboard.passwordChange.title')}</h3>
+                  <form onSubmit={async (e) => {
+                    e.preventDefault();
+                    if (passwordData.newPassword !== passwordData.confirmPassword) {
+                      toast.error(t('dashboard.passwordChange.passwordMismatch'));
+                      return;
+                    }
+                    if (passwordData.newPassword.length < 8) {
+                      toast.error(t('dashboard.passwordChange.passwordTooShort'));
+                      return;
+                    }
+                    try {
+                      await userAPI.changePassword({
+                        currentPassword: passwordData.currentPassword,
+                        newPassword: passwordData.newPassword
+                      });
+                      toast.success(t('dashboard.passwordChange.success'));
+                      setPasswordData({ currentPassword: '', newPassword: '', confirmPassword: '' });
+                    } catch (error) {
+                      toast.error(t('dashboard.passwordChange.error'));
+                    }
+                  }} className="space-y-4 max-w-md">
+                    <div>
+                      <Label>{t('dashboard.passwordChange.currentPassword')}</Label>
+                      <Input
+                        type="password"
+                        value={passwordData.currentPassword}
+                        onChange={(e) => setPasswordData({...passwordData, currentPassword: e.target.value})}
+                        required
+                      />
+                    </div>
+                    <div>
+                      <Label>{t('dashboard.passwordChange.newPassword')}</Label>
+                      <Input
+                        type="password"
+                        value={passwordData.newPassword}
+                        onChange={(e) => setPasswordData({...passwordData, newPassword: e.target.value})}
+                        required
+                      />
+                    </div>
+                    <div>
+                      <Label>{t('dashboard.passwordChange.confirmPassword')}</Label>
+                      <Input
+                        type="password"
+                        value={passwordData.confirmPassword}
+                        onChange={(e) => setPasswordData({...passwordData, confirmPassword: e.target.value})}
+                        required
+                      />
+                    </div>
+                    <Button type="submit" className="bg-[var(--color-button-primary)] hover:bg-[var(--color-button-hover)]">
+                      {t('dashboard.passwordChange.changePassword')}
+                    </Button>
+                  </form>
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* Invoices Tab */}
+          <TabsContent value="invoices">
+            <Card>
+              <CardHeader>
+                <CardTitle>{t('dashboard.invoicesTab')}</CardTitle>
+              </CardHeader>
+              <CardContent>
+                {userInvoices.length === 0 ? (
+                  <p className="text-center text-gray-500 py-8">{t('dashboard.invoices.noInvoices')}</p>
+                ) : (
+                  <div className="space-y-4">
+                    {userInvoices.map((invoice) => (
+                      <div key={invoice.id} className="flex items-center justify-between p-4 border rounded-lg">
+                        <div className="flex-1">
+                          <p className="font-semibold">{invoice.type || 'Invoice'}</p>
+                          <p className="text-sm text-gray-500">{invoice.date}</p>
+                        </div>
+                        <div className="text-right">
+                          <p className="font-bold">{invoice.amount} SEK</p>
+                          <Badge variant={invoice.paid ? 'success' : 'destructive'}>
+                            {invoice.paid ? t('dashboard.invoices.paid') : t('dashboard.invoices.unpaid')}
+                          </Badge>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* Events/Trainings Tab */}
+          <TabsContent value="trainings">
+            <Card>
+              <CardHeader>
+                <CardTitle>{t('dashboard.trainingsTab')}</CardTitle>
+              </CardHeader>
+              <CardContent>
+                {userEvents.length === 0 ? (
+                  <p className="text-center text-gray-500 py-8">{t('dashboard.events.noEvents')}</p>
+                ) : (
+                  <div className="space-y-4">
+                    {userEvents.map((event) => (
+                      <div key={event.id} className="p-4 border rounded-lg">
+                        <h3 className="font-semibold text-lg">{event.title?.en || event.title?.['sr-latin']}</h3>
+                        <p className="text-sm text-gray-500">
+                          📅 {event.date} {event.time && `• ${event.time}`}
+                        </p>
+                        <p className="text-sm text-gray-500">📍 {event.location}</p>
+                        {event.status === 'cancelled' && (
+                          <Badge variant="destructive" className="mt-2">
+                            {t('admin.events.cancelled')}
+                          </Badge>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* Membership Tab */}
+          <TabsContent value="membership">
+            <Card>
+              <CardHeader>
+                <CardTitle>{t('dashboard.membershipTab')}</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between p-4 border rounded-lg bg-green-50 dark:bg-green-900/20">
+                    <div>
+                      <p className="font-semibold">{t('dashboard.membership.status')}</p>
+                      <p className="text-sm text-gray-500">{t('dashboard.membership.activeMember')}</p>
+                    </div>
+                    <Badge variant="success">{t('dashboard.membership.active')}</Badge>
+                  </div>
+                  <div className="p-4 border rounded-lg">
+                    <p className="text-sm text-gray-600 dark:text-gray-400">
+                      {t('dashboard.membership.benefits')}
+                    </p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* MANAGEMENT TABS (Based on Permissions) */}
+
           {/* Events Tab Content */}
           {permissions.manageEvents && (
             <TabsContent value="manage-events">
