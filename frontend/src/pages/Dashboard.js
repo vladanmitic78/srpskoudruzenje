@@ -295,7 +295,7 @@ const Dashboard = () => {
                 <form className="space-y-6" onSubmit={(e) => { e.preventDefault(); handleSaveProfile(); }}>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <Label>Full Name *</Label>
+                      <Label>{t('dashboard.personalData.fullName')} *</Label>
                       <Input 
                         required
                         value={userData.fullName || ''}
@@ -303,7 +303,7 @@ const Dashboard = () => {
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label>Year of Birth *</Label>
+                      <Label>{t('dashboard.personalData.yearOfBirth')} *</Label>
                       <Input 
                         required
                         type="number"
@@ -315,12 +315,12 @@ const Dashboard = () => {
                       />
                       {userData.yearOfBirth && (
                         <p className="text-sm text-gray-600 dark:text-gray-400">
-                          Age: {calculateAge(userData.yearOfBirth)} years
+                          {t('dashboard.personalData.age')}: {calculateAge(userData.yearOfBirth)} {t('dashboard.personalData.years')}
                         </p>
                       )}
                     </div>
                     <div className="space-y-2">
-                      <Label>Email</Label>
+                      <Label>{t('dashboard.personalData.email')}</Label>
                       <Input 
                         type="email"
                         value={userData.email || ''}
@@ -328,7 +328,7 @@ const Dashboard = () => {
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label>Phone</Label>
+                      <Label>{t('dashboard.personalData.phone')}</Label>
                       <Input 
                         type="tel"
                         value={userData.phone || ''}
@@ -336,7 +336,7 @@ const Dashboard = () => {
                       />
                     </div>
                     <div className="space-y-2 md:col-span-2">
-                      <Label>Street Address</Label>
+                      <Label>{t('dashboard.personalData.streetAddress')}</Label>
                       <Input 
                         value={userData.address || ''}
                         onChange={(e) => setUserData({...userData, address: e.target.value})}
