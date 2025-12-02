@@ -313,6 +313,33 @@ export const adminAPI = {
     });
     return response.data;
   },
+  
+  // Admin Management APIs (Super Admin only)
+  getAllAdmins: async (role = null) => {
+    const url = role ? `/admin/admins?role=${role}` : '/admin/admins';
+    const response = await api.get(url);
+    return response.data;
+  },
+  
+  createAdmin: async (adminData) => {
+    const response = await api.post('/admin/admins/create', adminData);
+    return response.data;
+  },
+  
+  updateAdmin: async (adminId, updateData) => {
+    const response = await api.put(`/admin/admins/${adminId}`, updateData);
+    return response.data;
+  },
+  
+  resetAdminPassword: async (adminId) => {
+    const response = await api.post(`/admin/admins/${adminId}/reset-password`);
+    return response.data;
+  },
+  
+  deleteAdmin: async (adminId) => {
+    const response = await api.delete(`/admin/admins/${adminId}`);
+    return response.data;
+  },
 };
 
 // ==================== Content Management APIs ====================
