@@ -290,7 +290,7 @@ const translations = {
       title: 'Dashboard',
       personalData: 'Personal Data',
       invoices: 'Invoices',
-      trainings: 'Trainings',
+      trainingsTab: 'Trainings',
       membership: 'Membership',
       cancelMembership: 'Cancel Membership',
       confirmParticipation: 'Confirm Participation',
