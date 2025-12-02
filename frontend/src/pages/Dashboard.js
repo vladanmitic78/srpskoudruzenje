@@ -273,7 +273,7 @@ const Dashboard = () => {
             </TabsTrigger>
             <TabsTrigger value="trainings">
               <Calendar className="h-4 w-4 mr-2" />
-              {t('dashboard.trainings')}
+              {t('dashboard.trainingsTab')}
             </TabsTrigger>
             <TabsTrigger value="membership">
               <AlertCircle className="h-4 w-4 mr-2" />
