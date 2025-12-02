@@ -746,6 +746,36 @@ const translations = {
       status: {
         paid: 'Betald',
         unpaid: 'Obetald'
+      },
+      events: {
+        title: 'Hantering av evenemang och träningar',
+        addEvent: '+ Lägg till evenemang',
+        noEvents: 'Inga evenemang schemalagda. Klicka på "Lägg till evenemang" för att skapa ett.',
+        cancelled: 'INSTÄLLT',
+        at: 'kl',
+        reason: 'Anledning',
+        participantsConfirmed: 'deltagare bekräftade',
+        cancelEvent: 'Avbryt',
+        deleteConfirmation: 'Är du säker på att du vill radera detta evenemang? Denna åtgärd kan inte ångras.',
+        deleteSuccess: 'Evenemanget raderades',
+        deleteFailed: 'Misslyckades med att radera evenemanget',
+        createTitle: 'Skapa nytt evenemang/träning',
+        editTitle: 'Redigera evenemang/träning',
+        createButton: 'Skapa evenemang',
+        updateButton: 'Uppdatera evenemang',
+        form: {
+          date: 'Datum',
+          time: 'Tid',
+          location: 'Plats',
+          titleEn: 'Titel (Engelska)',
+          titleSrLatin: 'Titel (Serbiska Latin)',
+          titleSrCyrillic: 'Titel (Serbiska Kyrilliska)',
+          titleSv: 'Titel (Svenska)',
+          descriptionEn: 'Beskrivning (Engelska)',
+          descriptionSrLatin: 'Beskrivning (Serbiska Latin)',
+          descriptionSrCyrillic: 'Beskrivning (Serbiska Kyrilliska)',
+          descriptionSv: 'Beskrivning (Svenska)'
+        }
       }
     }
   }
