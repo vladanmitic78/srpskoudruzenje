@@ -82,7 +82,7 @@ const translations = {
       title: 'Kontrolna tabla',
       personalData: 'Lični podaci',
       invoices: 'Fakture',
-      trainings: 'Treninzi',
+      trainingsTab: 'Treninzi',
       membership: 'Članstvo',
       cancelMembership: 'Otkaži članstvo',
       confirmParticipation: 'Potvrdi učešće',
