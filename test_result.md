@@ -257,11 +257,11 @@ backend:
 
   - task: "Moderator Dashboard - Events Management"
     implemented: true
-    working: false
+    working: true
     file: "/app/frontend/src/pages/ModeratorDashboard.js"
-    stuck_count: 1
+    stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: "NA"
         agent: "main"
@@ -269,6 +269,9 @@ backend:
       - working: false
         agent: "testing"
         comment: "❌ TESTED: Events functionality exists in code but tabs are not clickable due to UI rendering issues. Backend API calls work (GET /api/events/ returns 200 OK). Need to fix tab navigation and translation system."
+      - working: true
+        agent: "testing"
+        comment: "✅ EVENTS MANAGEMENT WORKING: Events tab is now clickable and fully functional. 'Add Event' button (+ Dodaj događaj) is visible and working. Event creation dialog opens successfully with proper form fields (date, time, location, title, description). Dialog can be opened and closed properly. All CRUD operations accessible through UI."
 
   - task: "Moderator Dashboard - Content Management"
     implemented: true
