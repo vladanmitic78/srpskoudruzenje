@@ -340,6 +340,12 @@ export const adminAPI = {
     const response = await api.delete(`/admin/admins/${adminId}`);
     return response.data;
   },
+  
+  // Get current user's permissions
+  getMyPermissions: async () => {
+    const response = await api.get('/admin/my-permissions');
+    return response.data;
+  },
 };
 
 // ==================== Content Management APIs ====================
