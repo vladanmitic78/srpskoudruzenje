@@ -767,7 +767,18 @@ const translations = {
         orgNumber: 'Organization Number (Org. nr)',
         vatNumber: 'VAT Number',
         bankAccount: 'Bank Account',
-        saveButton: 'Save Settings'
+        saveButton: 'Save Settings',
+        passwordChangeTitle: 'Change Password',
+        currentPassword: 'Current Password',
+        newPassword: 'New Password',
+        confirmPassword: 'Confirm New Password',
+        showPasswords: 'Show Passwords',
+        changePasswordButton: 'Change Password',
+        passwordMinLength: 'Minimum 8 characters',
+        passwordMismatch: 'Passwords do not match',
+        passwordTooShort: 'New password must be at least 8 characters',
+        passwordSuccess: 'Password changed successfully',
+        passwordError: 'Error changing password'
       }
     }
   },
