@@ -52,6 +52,12 @@ module.exports = {
   				'3': 'hsl(var(--chart-3))',
   				'4': 'hsl(var(--chart-4))',
   				'5': 'hsl(var(--chart-5))'
+  			},
+  			brand: {
+  				primary: 'var(--color-primary)',
+  				secondary: 'var(--color-secondary)',
+  				'button-primary': 'var(--color-button-primary)',
+  				'button-hover': 'var(--color-button-hover)'
   			}
   		},
   		keyframes: {
