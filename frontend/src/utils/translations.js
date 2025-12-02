@@ -641,7 +641,6 @@ const translations = {
       redirectMessage: 'Овај одељак ће приказати исту функционалност као админ контролна табла.'
     }
   },
-  },
   'en': {
     nav: {
       home: 'Home',
