@@ -107,6 +107,355 @@ const AdminPasswordChangeForm = ({ t }) => {
   );
 };
 
+
+// Admin Management Panel Component
+const AdminManagementPanel = ({ t }) => {
+  const [admins, setAdmins] = useState([]);
+  const [filteredAdmins, setFilteredAdmins] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [roleFilter, setRoleFilter] = useState('all');
+  const [searchTerm, setSearchTerm] = useState('');
+  const [createModalOpen, setCreateModalOpen] = useState(false);
+  const [editModalOpen, setEditModalOpen] = useState(false);
+  const [selectedAdmin, setSelectedAdmin] = useState(null);
+  const [newAdmin, setNewAdmin] = useState({
+    email: '',
+    fullName: '',
+    role: 'admin'
+  });
+
+  // Load admins
+  const loadAdmins = async () => {
+    try {
+      setLoading(true);
+      const response = await adminAPI.getAllAdmins();
+      setAdmins(response.admins || []);
+      setFilteredAdmins(response.admins || []);
+    } catch (error) {
+      toast.error(t('admin.adminManagement.loadError'));
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    loadAdmins();
+  }, []);
+
+  // Filter admins
+  useEffect(() => {
+    let filtered = [...admins];
+    
+    // Filter by role
+    if (roleFilter !== 'all') {
+      filtered = filtered.filter(admin => admin.role === roleFilter);
+    }
+    
+    // Filter by search term
+    if (searchTerm) {
+      filtered = filtered.filter(admin =>
+        admin.fullName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        admin.email?.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+    }
+    
+    setFilteredAdmins(filtered);
+  }, [roleFilter, searchTerm, admins]);
+
+  // Create admin
+  const handleCreateAdmin = async (e) => {
+    e.preventDefault();
+    try {
+      await adminAPI.createAdmin(newAdmin);
+      toast.success(t('admin.adminManagement.createSuccess'));
+      setCreateModalOpen(false);
+      setNewAdmin({ email: '', fullName: '', role: 'admin' });
+      loadAdmins();
+    } catch (error) {
+      const errorMsg = error.response?.data?.detail || t('admin.adminManagement.createError');
+      toast.error(errorMsg);
+    }
+  };
+
+  // Update admin
+  const handleUpdateAdmin = async (e) => {
+    e.preventDefault();
+    try {
+      await adminAPI.updateAdmin(selectedAdmin.id, {
+        fullName: selectedAdmin.fullName,
+        role: selectedAdmin.role,
+        status: selectedAdmin.status
+      });
+      toast.success(t('admin.adminManagement.updateSuccess'));
+      setEditModalOpen(false);
+      setSelectedAdmin(null);
+      loadAdmins();
+    } catch (error) {
+      const errorMsg = error.response?.data?.detail || t('admin.adminManagement.updateError');
+      toast.error(errorMsg);
+    }
+  };
+
+  // Reset password
+  const handleResetPassword = async (adminId) => {
+    if (!window.confirm(t('admin.adminManagement.resetPasswordConfirm'))) return;
+    
+    try {
+      await adminAPI.resetAdminPassword(adminId);
+      toast.success(t('admin.adminManagement.resetPasswordSuccess'));
+    } catch (error) {
+      const errorMsg = error.response?.data?.detail || t('admin.adminManagement.resetPasswordError');
+      toast.error(errorMsg);
+    }
+  };
+
+  // Delete admin
+  const handleDeleteAdmin = async (adminId) => {
+    if (!window.confirm(t('admin.adminManagement.deleteConfirm'))) return;
+    
+    try {
+      await adminAPI.deleteAdmin(adminId);
+      toast.success(t('admin.adminManagement.deleteSuccess'));
+      loadAdmins();
+    } catch (error) {
+      const errorMsg = error.response?.data?.detail || t('admin.adminManagement.deleteError');
+      toast.error(errorMsg);
+    }
+  };
+
+  return (
+    <div className="space-y-6">
+      {/* Header with Create Button */}
+      <div className="flex justify-between items-center">
+        <Button
+          onClick={() => setCreateModalOpen(true)}
+          className="bg-[#C1272D] hover:bg-[#8B1F1F]"
+        >
+          + {t('admin.adminManagement.createButton')}
+        </Button>
+      </div>
+
+      {/* Filters */}
+      <div className="flex gap-4 flex-wrap">
+        <div className="flex-1 min-w-[200px]">
+          <Input
+            placeholder={t('admin.adminManagement.searchPlaceholder')}
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+        </div>
+        <select
+          value={roleFilter}
+          onChange={(e) => setRoleFilter(e.target.value)}
+          className="p-2 border rounded"
+        >
+          <option value="all">{t('admin.adminManagement.allRoles')}</option>
+          <option value="admin">{t('admin.adminManagement.adminRole')}</option>
+          <option value="moderator">{t('admin.adminManagement.moderatorRole')}</option>
+          <option value="superadmin">{t('admin.adminManagement.superadminRole')}</option>
+        </select>
+      </div>
+
+      {/* Admin List */}
+      {loading ? (
+        <p className="text-center py-8">{t('admin.adminManagement.loading')}</p>
+      ) : filteredAdmins.length === 0 ? (
+        <p className="text-center py-8 text-gray-500">{t('admin.adminManagement.noAdmins')}</p>
+      ) : (
+        <div className="overflow-x-auto">
+          <table className="w-full border-collapse">
+            <thead>
+              <tr className="border-b-2 border-gray-200">
+                <th className="text-left py-3 px-4">{t('admin.adminManagement.name')}</th>
+                <th className="text-left py-3 px-4">{t('admin.adminManagement.email')}</th>
+                <th className="text-left py-3 px-4">{t('admin.adminManagement.role')}</th>
+                <th className="text-left py-3 px-4">{t('admin.adminManagement.status')}</th>
+                <th className="text-left py-3 px-4">{t('admin.adminManagement.createdAt')}</th>
+                <th className="text-right py-3 px-4">{t('admin.adminManagement.actions')}</th>
+              </tr>
+            </thead>
+            <tbody>
+              {filteredAdmins.map((admin) => (
+                <tr key={admin.id} className="border-b border-gray-100 hover:bg-gray-50">
+                  <td className="py-3 px-4">{admin.fullName}</td>
+                  <td className="py-3 px-4">{admin.email}</td>
+                  <td className="py-3 px-4">
+                    <span className={`px-2 py-1 rounded text-xs font-semibold ${
+                      admin.role === 'superadmin' ? 'bg-purple-100 text-purple-800' :
+                      admin.role === 'admin' ? 'bg-red-100 text-red-800' :
+                      'bg-blue-100 text-blue-800'
+                    }`}>
+                      {admin.role}
+                    </span>
+                  </td>
+                  <td className="py-3 px-4">
+                    <span className={`px-2 py-1 rounded text-xs ${
+                      admin.status === 'active' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
+                    }`}>
+                      {admin.status || 'active'}
+                    </span>
+                  </td>
+                  <td className="py-3 px-4 text-sm text-gray-600">
+                    {admin.createdAt ? new Date(admin.createdAt).toLocaleDateString() : 'N/A'}
+                  </td>
+                  <td className="py-3 px-4">
+                    {admin.role !== 'superadmin' && (
+                      <div className="flex gap-2 justify-end">
+                        <Button
+                          onClick={() => {
+                            setSelectedAdmin(admin);
+                            setEditModalOpen(true);
+                          }}
+                          className="text-xs bg-blue-600 hover:bg-blue-700"
+                        >
+                          {t('admin.actions.edit')}
+                        </Button>
+                        <Button
+                          onClick={() => handleResetPassword(admin.id)}
+                          className="text-xs bg-yellow-600 hover:bg-yellow-700"
+                        >
+                          {t('admin.adminManagement.resetPassword')}
+                        </Button>
+                        <Button
+                          onClick={() => handleDeleteAdmin(admin.id)}
+                          className="text-xs bg-red-600 hover:bg-red-700"
+                        >
+                          {t('admin.actions.delete')}
+                        </Button>
+                      </div>
+                    )}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+
+      {/* Create Admin Modal */}
+      <Dialog open={createModalOpen} onOpenChange={setCreateModalOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>{t('admin.adminManagement.createTitle')}</DialogTitle>
+          </DialogHeader>
+          <form onSubmit={handleCreateAdmin} className="space-y-4">
+            <div className="space-y-2">
+              <Label>{t('admin.adminManagement.fullName')} *</Label>
+              <Input
+                required
+                value={newAdmin.fullName}
+                onChange={(e) => setNewAdmin({...newAdmin, fullName: e.target.value})}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label>{t('admin.adminManagement.email')} *</Label>
+              <Input
+                type="email"
+                required
+                value={newAdmin.email}
+                onChange={(e) => setNewAdmin({...newAdmin, email: e.target.value})}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label>{t('admin.adminManagement.role')} *</Label>
+              <select
+                value={newAdmin.role}
+                onChange={(e) => setNewAdmin({...newAdmin, role: e.target.value})}
+                className="w-full p-2 border rounded"
+              >
+                <option value="admin">{t('admin.adminManagement.adminRole')}</option>
+                <option value="moderator">{t('admin.adminManagement.moderatorRole')}</option>
+              </select>
+            </div>
+            <p className="text-sm text-gray-600">
+              {t('admin.adminManagement.createInfo')}
+            </p>
+            <div className="flex gap-2">
+              <Button type="submit" className="flex-1 bg-[#C1272D] hover:bg-[#8B1F1F]">
+                {t('admin.adminManagement.createSubmit')}
+              </Button>
+              <Button
+                type="button"
+                onClick={() => setCreateModalOpen(false)}
+                className="flex-1 bg-gray-600 hover:bg-gray-700"
+              >
+                {t('admin.actions.cancel')}
+              </Button>
+            </div>
+          </form>
+        </DialogContent>
+      </Dialog>
+
+      {/* Edit Admin Modal */}
+      {selectedAdmin && (
+        <Dialog open={editModalOpen} onOpenChange={setEditModalOpen}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>{t('admin.adminManagement.editTitle')}</DialogTitle>
+            </DialogHeader>
+            <form onSubmit={handleUpdateAdmin} className="space-y-4">
+              <div className="space-y-2">
+                <Label>{t('admin.adminManagement.fullName')} *</Label>
+                <Input
+                  required
+                  value={selectedAdmin.fullName}
+                  onChange={(e) => setSelectedAdmin({...selectedAdmin, fullName: e.target.value})}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label>{t('admin.adminManagement.email')}</Label>
+                <Input
+                  type="email"
+                  value={selectedAdmin.email}
+                  disabled
+                  className="bg-gray-100"
+                />
+                <p className="text-xs text-gray-500">{t('admin.adminManagement.emailNotEditable')}</p>
+              </div>
+              <div className="space-y-2">
+                <Label>{t('admin.adminManagement.role')} *</Label>
+                <select
+                  value={selectedAdmin.role}
+                  onChange={(e) => setSelectedAdmin({...selectedAdmin, role: e.target.value})}
+                  className="w-full p-2 border rounded"
+                >
+                  <option value="admin">{t('admin.adminManagement.adminRole')}</option>
+                  <option value="moderator">{t('admin.adminManagement.moderatorRole')}</option>
+                </select>
+              </div>
+              <div className="space-y-2">
+                <Label>{t('admin.adminManagement.status')}</Label>
+                <select
+                  value={selectedAdmin.status || 'active'}
+                  onChange={(e) => setSelectedAdmin({...selectedAdmin, status: e.target.value})}
+                  className="w-full p-2 border rounded"
+                >
+                  <option value="active">{t('admin.adminManagement.statusActive')}</option>
+                  <option value="inactive">{t('admin.adminManagement.statusInactive')}</option>
+                </select>
+              </div>
+              <div className="flex gap-2">
+                <Button type="submit" className="flex-1 bg-[#C1272D] hover:bg-[#8B1F1F]">
+                  {t('admin.adminManagement.updateSubmit')}
+                </Button>
+                <Button
+                  type="button"
+                  onClick={() => setEditModalOpen(false)}
+                  className="flex-1 bg-gray-600 hover:bg-gray-700"
+                >
+                  {t('admin.actions.cancel')}
+                </Button>
+              </div>
+            </form>
+          </DialogContent>
+        </Dialog>
+      )}
+    </div>
+  );
+};
+
+
 const AdminDashboard = () => {
   const { isAdmin, isSuperAdmin, isModerator, user } = useAuth();
   const { t } = useLanguage();
