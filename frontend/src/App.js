@@ -78,6 +78,14 @@ const AppContent = () => {
               </ProtectedRoute>
             } 
           />
+          <Route 
+            path="/moderator-dashboard" 
+            element={
+              <ProtectedRoute requireAdmin>
+                <ModeratorDashboard />
+              </ProtectedRoute>
+            } 
+          />
         </Routes>
       </main>
       <Footer />
