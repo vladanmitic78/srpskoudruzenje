@@ -293,11 +293,11 @@ backend:
 
   - task: "Moderator Dashboard - Gallery Management"
     implemented: true
-    working: false
+    working: true
     file: "/app/frontend/src/pages/ModeratorDashboard.js"
-    stuck_count: 1
+    stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: "NA"
         agent: "main"
@@ -305,6 +305,9 @@ backend:
       - working: false
         agent: "testing"
         comment: "❌ TESTED: Gallery management exists but tabs not accessible. Backend API working (GET /api/gallery/ returns 200 OK). Same UI rendering issues as other tabs."
+      - working: true
+        agent: "testing"
+        comment: "✅ GALLERY MANAGEMENT WORKING: Gallery tab (Galerija) is now clickable and fully functional. Shows 'Upravljanje galerijom (Albumi)' section with existing albums displayed. 'Create Album' button (Kreiraj album) is visible and accessible. Albums are properly listed with photos, edit/delete buttons functional. Gallery management interface working perfectly."
 
   - task: "Moderator Dashboard - Admin Route Restriction"
     implemented: true
