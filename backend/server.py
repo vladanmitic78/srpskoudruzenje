@@ -70,6 +70,32 @@ api_router.include_router(content.router, prefix="/content", tags=["Content Mana
 async def root():
     return {"message": "SKUD Täby API v2.0 - Backend Running", "status": "ok"}
 
+# Public branding endpoint (no auth required)
+@api_router.get("/public/branding")
+async def get_public_branding():
+    """Get branding settings (public endpoint)"""
+    branding = await db.branding_settings.find_one({"_id": "branding"})
+    
+    if not branding:
+        # Return default branding settings if none exist
+        return {
+            "logo": "",
+            "colors": {
+                "primary": "#C1272D",
+                "secondary": "#8B1F1F",
+                "buttonPrimary": "#C1272D",
+                "buttonHover": "#8B1F1F"
+            },
+            "language": {
+                "default": "sr",
+                "supported": ["sr", "en", "sv"]
+            }
+        }
+    
+    branding.pop("_id", None)
+    branding.pop("emailTemplates", None)  # Don't expose email templates publicly
+    return branding
+
 # Include the main API router
 app.include_router(api_router)
 
