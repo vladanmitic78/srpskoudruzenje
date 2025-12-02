@@ -2744,7 +2744,7 @@ const AdminDashboard = () => {
                                   ? 'bg-green-100 text-green-800' 
                                   : 'bg-red-100 text-red-800'
                               }`}>
-                                {invoice.status.toUpperCase()}
+                                {invoice.status === 'paid' ? t('admin.status.paid') : t('admin.status.unpaid')}
                               </span>
                             </div>
                           </div>
