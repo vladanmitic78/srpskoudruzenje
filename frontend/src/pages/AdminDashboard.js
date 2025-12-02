@@ -600,7 +600,7 @@ const AdminDashboard = () => {
             <TabsContent value="members">
             <Card className="border-2 border-[#C1272D]/20">
               <CardHeader className="flex flex-row items-center justify-between">
-                <CardTitle>Members Management</CardTitle>
+                <CardTitle>{t('admin.membersManagement')}</CardTitle>
                 <div className="flex gap-2">
                   <button
                     onClick={async () => {
