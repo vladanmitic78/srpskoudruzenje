@@ -275,11 +275,11 @@ backend:
 
   - task: "Moderator Dashboard - Content Management"
     implemented: true
-    working: false
+    working: true
     file: "/app/frontend/src/pages/ModeratorDashboard.js"
-    stuck_count: 1
+    stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: "NA"
         agent: "main"
@@ -287,6 +287,9 @@ backend:
       - working: false
         agent: "testing"
         comment: "❌ TESTED: Content management functionality exists but not accessible due to tab rendering issues. Backend APIs working (GET /api/news/, /api/stories/ return 200 OK). UI fixes needed."
+      - working: true
+        agent: "testing"
+        comment: "✅ CONTENT MANAGEMENT WORKING: Content tab (Sadržaj) is now clickable and accessible. News management section shows 'Upravljanje vestima (Početna strana)' and Stories section shows 'Upravljanje srpskom pričom'. Add News (Dodaj vest) and Add Story (Dodaj priču) buttons are visible and functional. Content management interface fully operational."
 
   - task: "Moderator Dashboard - Gallery Management"
     implemented: true
