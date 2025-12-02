@@ -2608,7 +2608,7 @@ const AdminDashboard = () => {
                         ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' 
                         : 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200'
                     }`}>
-                      {editingInvoice.status.toUpperCase()}
+                      {editingInvoice.status === 'paid' ? t('admin.status.paid') : t('admin.status.unpaid')}
                     </span>
                   </div>
                   <p className="text-xs text-gray-500 mt-1">Status cannot be changed here. Use &quot;Mark Paid&quot; button.</p>
