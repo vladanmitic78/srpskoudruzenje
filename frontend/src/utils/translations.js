@@ -1162,9 +1162,6 @@ const translations = {
         passwordSuccess: 'Lösenordet har ändrats',
         passwordError: 'Fel vid ändring av lösenord'
       },
-      tabs: {
-        adminManagement: 'Adminhantering'
-      },
       adminManagement: {
         title: 'Administratörshantering',
         description: 'Skapa, redigera eller radera administratörs- och moderatorkonton',
