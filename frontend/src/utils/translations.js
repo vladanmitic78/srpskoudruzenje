@@ -542,6 +542,29 @@ const translations = {
         attendanceRate: 'Närvarofrekvens',
         attendanceMessage: 'Du har varit på {{attended}} av {{total}} träningar'
       }
+    },
+    admin: {
+      stats: {
+        totalMembers: 'Totalt antal medlemmar',
+        paidInvoices: 'Betalda fakturor',
+        unpaidInvoices: 'Obetalda fakturor',
+        totalRevenue: 'Total intäkt'
+      },
+      tabs: {
+        members: 'Medlemmar',
+        invoices: 'Fakturor',
+        events: 'Evenemang',
+        content: 'Innehåll',
+        settings: 'Inställningar'
+      },
+      actions: {
+        exportPDF: 'Exportera PDF',
+        exportExcel: 'Exportera Excel',
+        exportXML: 'Exportera XML',
+        viewDetails: 'Visa detaljer',
+        delete: 'Radera'
+      },
+      membersManagement: 'Medlemshantering'
     }
   }
 };
