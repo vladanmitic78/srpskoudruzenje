@@ -443,7 +443,8 @@ const translations = {
         invoices: 'Фактуре',
         events: 'Догађаји',
         content: 'Садржај',
-        settings: 'Подешавања'
+        settings: 'Подешавања',
+        adminManagement: 'Управљање админима'
       },
       actions: {
         exportPDF: 'Извези PDF',
