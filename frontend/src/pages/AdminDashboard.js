@@ -1022,23 +1022,23 @@ const AdminDashboard = () => {
                             }}
                             className="px-3 py-1 text-sm bg-blue-500 text-white rounded hover:bg-blue-600"
                           >
-                            Edit
+                            {t('admin.actions.edit')}
                           </button>
                           <button
                             onClick={async () => {
-                              if (window.confirm('Delete this news item?')) {
+                              if (window.confirm(t('admin.content.deleteNewsConfirm'))) {
                                 try {
                                   await newsAPI.delete(item.id);
                                   setNews(news.filter(n => n.id !== item.id));
-                                  toast.success('News deleted');
+                                  toast.success(t('admin.content.newsDeleteSuccess'));
                                 } catch (error) {
-                                  toast.error('Failed to delete news');
+                                  toast.error(t('admin.content.newsDeleteFailed'));
                                 }
                               }
                             }}
                             className="px-3 py-1 text-sm bg-red-500 text-white rounded hover:bg-red-600"
                           >
-                            Delete
+                            {t('admin.actions.delete')}
                           </button>
                         </div>
                       </div>
