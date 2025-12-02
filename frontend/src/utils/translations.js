@@ -706,7 +706,10 @@ const translations = {
       resetting: 'Resetting...',
       passwordMinLength: 'Minimum 6 characters',
       enterNewPassword: 'Enter new password',
-      confirmNewPassword: 'Confirm new password'
+      confirmNewPassword: 'Confirm new password',
+      loginSuccess: 'Login successful!',
+      loginFailed: 'Login failed',
+      invalidCredentials: 'Incorrect username or password'
     },
     contact: {
       title: 'Contact Us',
