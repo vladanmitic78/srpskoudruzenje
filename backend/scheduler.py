@@ -117,7 +117,10 @@ def start_scheduler(db: AsyncIOMotorDatabase):
     
     Schedule:
     - Event reminders: Daily at 9:00 AM (Stockholm time)
+    - Log cleanup: Monthly on 1st at 2:00 AM (Stockholm time)
     """
+    from activity_logger import cleanup_old_logs
+    
     global scheduler
     
     if scheduler is not None:
@@ -138,9 +141,21 @@ def start_scheduler(db: AsyncIOMotorDatabase):
             misfire_grace_time=3600  # Allow 1 hour grace period if server was down
         )
         
+        # Add log cleanup job - runs monthly on 1st at 2:00 AM
+        scheduler.add_job(
+            cleanup_old_logs,
+            trigger=CronTrigger(day=1, hour=2, minute=0),
+            args=[db, 365],  # 365 days = 1 year retention
+            id='log_cleanup',
+            name='Cleanup old activity logs',
+            replace_existing=True,
+            misfire_grace_time=86400  # Allow 24 hour grace period
+        )
+        
         scheduler.start()
         logger.info("✓ Background scheduler started successfully")
         logger.info("  - Event reminders: Daily at 9:00 AM (Stockholm time)")
+        logger.info("  - Log cleanup: Monthly on 1st at 2:00 AM (1 year retention)")
         
         return scheduler
         
