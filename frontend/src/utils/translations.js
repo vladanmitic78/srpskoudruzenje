@@ -487,6 +487,10 @@ const translations = {
         status: 'Status',
         file: 'File',
         actions: 'Actions'
+      },
+      status: {
+        paid: 'Paid',
+        unpaid: 'Unpaid'
       }
     }
   },
