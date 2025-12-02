@@ -692,7 +692,7 @@ const AdminDashboard = () => {
                               }}
                               className="px-3 py-1 bg-blue-600 text-white text-sm rounded hover:bg-blue-700"
                             >
-                              View Details
+                              {t('admin.actions.viewDetails')}
                             </button>
                             <button
                               onClick={async () => {
@@ -710,7 +710,7 @@ const AdminDashboard = () => {
                               }}
                               className="px-3 py-1 bg-red-600 text-white text-sm rounded hover:bg-red-700"
                             >
-                              Delete
+                              {t('admin.actions.delete')}
                             </button>
                           </div>
                         </div>
