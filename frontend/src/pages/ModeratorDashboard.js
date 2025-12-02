@@ -483,7 +483,7 @@ const ModeratorDashboard = () => {
 
           {/* Content Tab Content */}
           {permissions.manageContent && (
-            <TabsContent value="content">
+            <TabsContent value="manage-content">
               <div className="space-y-6">
                 {/* News Management */}
                 <Card>
