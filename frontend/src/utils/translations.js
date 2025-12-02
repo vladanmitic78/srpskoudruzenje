@@ -400,7 +400,19 @@ const translations = {
       confirmParticipation: 'Bekräfta deltagande',
       paid: 'Betald',
       unpaid: 'Obetald',
-      overdue: 'Försenad'
+      overdue: 'Försenad',
+      trainings: {
+        totalTrainings: 'Totalt antal träningar',
+        attended: 'Närvarade',
+        cancelled: 'Avbokade',
+        trainingGroups: 'Träningsgrupper',
+        availableToJoin: 'Tillgängliga att gå med i',
+        confirmedParticipation: 'Bekräftat deltagande',
+        previouslyCancelled: 'Tidigare avbokade',
+        differentLocations: 'Olika platser',
+        attendanceRate: 'Närvarofrekvens',
+        attendanceMessage: 'Du har varit på {{attended}} av {{total}} träningar'
+      }
     }
   }
 };
