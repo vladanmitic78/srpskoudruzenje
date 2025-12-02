@@ -58,13 +58,13 @@ const Contact = () => {
   return (
     <div className="min-h-screen py-16">
       <div className="container mx-auto px-4">
-        <h1 className="text-4xl md:text-5xl font-bold text-[#8B1F1F] dark:text-[#C1272D] mb-12 text-center">
+        <h1 className="text-4xl md:text-5xl font-bold text-[var(--color-secondary)] dark:text-[var(--color-primary)] mb-12 text-center">
           {t('contact.title')}
         </h1>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 max-w-6xl mx-auto">
           {/* Contact Form */}
-          <Card className="border-2 border-[#C1272D]/20">
+          <Card className="border-2 border-[var(--color-primary)]/20">
             <CardContent className="p-8">
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div className="space-y-2">
@@ -74,7 +74,7 @@ const Contact = () => {
                     required
                     value={formData.name}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                    className="border-gray-300 focus:border-[#C1272D]"
+                    className="border-gray-300 focus:border-[var(--color-primary)]"
                   />
                 </div>
 
@@ -86,7 +86,7 @@ const Contact = () => {
                     required
                     value={formData.email}
                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                    className="border-gray-300 focus:border-[#C1272D]"
+                    className="border-gray-300 focus:border-[var(--color-primary)]"
                   />
                 </div>
 
@@ -96,7 +96,7 @@ const Contact = () => {
                     value={formData.topic} 
                     onValueChange={(value) => setFormData({ ...formData, topic: value })}
                   >
-                    <SelectTrigger className="border-gray-300 focus:border-[#C1272D]">
+                    <SelectTrigger className="border-gray-300 focus:border-[var(--color-primary)]">
                       <SelectValue placeholder={t('contact.topic')} />
                     </SelectTrigger>
                     <SelectContent>
@@ -116,14 +116,14 @@ const Contact = () => {
                     rows={6}
                     value={formData.message}
                     onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                    className="border-gray-300 focus:border-[#C1272D] resize-none"
+                    className="border-gray-300 focus:border-[var(--color-primary)] resize-none"
                   />
                 </div>
 
                 <Button 
                   type="submit" 
                   disabled={submitting}
-                  className="w-full bg-[#C1272D] hover:bg-[#8B1F1F] text-white py-6 text-lg font-semibold disabled:opacity-50"
+                  className="w-full bg-[var(--color-button-primary)] hover:bg-[var(--color-button-hover)] text-white py-6 text-lg font-semibold disabled:opacity-50"
                 >
                   {submitting ? 'Sending...' : t('contact.send')}
                 </Button>
@@ -133,11 +133,11 @@ const Contact = () => {
 
           {/* Contact Information and Map */}
           <div className="space-y-8">
-            <Card className="border-2 border-[#C1272D]/20">
+            <Card className="border-2 border-[var(--color-primary)]/20">
               <CardContent className="p-8 space-y-6">
                 <div className="flex items-start space-x-4">
-                  <div className="p-3 bg-[#C1272D]/10 rounded-lg">
-                    <MapPin className="h-6 w-6 text-[#C1272D]" />
+                  <div className="p-3 bg-[var(--color-button-primary)]/10 rounded-lg">
+                    <MapPin className="h-6 w-6 text-[var(--color-primary)]" />
                   </div>
                   <div>
                     <h3 className="font-semibold text-gray-900 dark:text-white mb-1">{t('contact.addressLabel')}</h3>
@@ -146,14 +146,14 @@ const Contact = () => {
                 </div>
 
                 <div className="flex items-start space-x-4">
-                  <div className="p-3 bg-[#C1272D]/10 rounded-lg">
-                    <Mail className="h-6 w-6 text-[#C1272D]" />
+                  <div className="p-3 bg-[var(--color-button-primary)]/10 rounded-lg">
+                    <Mail className="h-6 w-6 text-[var(--color-primary)]" />
                   </div>
                   <div>
                     <h3 className="font-semibold text-gray-900 dark:text-white mb-1">{t('contact.emailLabel')}</h3>
                     <a 
                       href={`mailto:${settings?.contactEmail || ''}`}
-                      className="text-[#C1272D] hover:underline"
+                      className="text-[var(--color-primary)] hover:underline"
                     >
                       {settings?.contactEmail || t('contact.loading')}
                     </a>
@@ -161,14 +161,14 @@ const Contact = () => {
                 </div>
 
                 <div className="flex items-start space-x-4">
-                  <div className="p-3 bg-[#C1272D]/10 rounded-lg">
-                    <Phone className="h-6 w-6 text-[#C1272D]" />
+                  <div className="p-3 bg-[var(--color-button-primary)]/10 rounded-lg">
+                    <Phone className="h-6 w-6 text-[var(--color-primary)]" />
                   </div>
                   <div>
                     <h3 className="font-semibold text-gray-900 dark:text-white mb-1">{t('contact.phoneLabel')}</h3>
                     <a 
                       href={`tel:${settings?.contactPhone || ''}`}
-                      className="text-[#C1272D] hover:underline"
+                      className="text-[var(--color-primary)] hover:underline"
                     >
                       {settings?.contactPhone || t('contact.loading')}
                     </a>
@@ -178,7 +178,7 @@ const Contact = () => {
             </Card>
 
             {/* Map */}
-            <Card className="border-2 border-[#C1272D]/20 overflow-hidden">
+            <Card className="border-2 border-[var(--color-primary)]/20 overflow-hidden">
               <div className="h-80">
                 <iframe
                   title="Location Map"

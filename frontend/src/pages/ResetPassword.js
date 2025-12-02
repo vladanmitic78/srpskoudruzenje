@@ -60,16 +60,16 @@ const ResetPassword = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center py-16 px-4 bg-gray-50 dark:bg-gray-900">
-      <Card className="w-full max-w-md border-2 border-[#C1272D]/20">
+      <Card className="w-full max-w-md border-2 border-[var(--color-primary)]/20">
         <CardHeader className="space-y-1">
           <div className="flex justify-center mb-4">
             <img 
               src="/logo.jpg" 
               alt="SKUD Täby Logo" 
-              className="h-20 w-20 object-contain rounded-full border-2 border-[#C1272D]"
+              className="h-20 w-20 object-contain rounded-full border-2 border-[var(--color-primary)]"
             />
           </div>
-          <CardTitle className="text-2xl font-bold text-center text-[#8B1F1F] dark:text-[#C1272D]">
+          <CardTitle className="text-2xl font-bold text-center text-[var(--color-secondary)] dark:text-[var(--color-primary)]">
             {t('auth.resetPasswordTitle')}
           </CardTitle>
         </CardHeader>
@@ -87,7 +87,7 @@ const ResetPassword = () => {
                 value={formData.password}
                 onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                 placeholder={t('auth.enterNewPassword')}
-                className="border-gray-300 focus:border-[#C1272D]"
+                className="border-gray-300 focus:border-[var(--color-primary)]"
                 minLength={6}
               />
               <p className="text-xs text-gray-500">{t('auth.passwordMinLength')}</p>
@@ -102,7 +102,7 @@ const ResetPassword = () => {
                 value={formData.confirmPassword}
                 onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
                 placeholder={t('auth.confirmNewPassword')}
-                className="border-gray-300 focus:border-[#C1272D]"
+                className="border-gray-300 focus:border-[var(--color-primary)]"
                 minLength={6}
               />
             </div>
@@ -110,14 +110,14 @@ const ResetPassword = () => {
             <Button 
               type="submit" 
               disabled={loading}
-              className="w-full bg-[#C1272D] hover:bg-[#8B1F1F] text-white py-6"
+              className="w-full bg-[var(--color-button-primary)] hover:bg-[var(--color-button-hover)] text-white py-6"
             >
               {loading ? t('auth.resetting') : t('auth.resetPassword')}
             </Button>
           </form>
 
           <div className="mt-6 text-center">
-            <Link to="/login" className="text-sm text-[#C1272D] hover:underline">
+            <Link to="/login" className="text-sm text-[var(--color-primary)] hover:underline">
               {t('auth.backToLogin')}
             </Link>
           </div>

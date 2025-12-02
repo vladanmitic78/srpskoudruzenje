@@ -68,7 +68,7 @@ const Home = () => {
               </div>
             </div>
 
-            <h1 className="text-4xl md:text-6xl font-bold text-[#8B1F1F] dark:text-[#C1272D] leading-tight">
+            <h1 className="text-4xl md:text-6xl font-bold text-[var(--color-secondary)] dark:text-[var(--color-primary)] leading-tight">
               {t('home.welcome')}
             </h1>
             <p className="text-xl md:text-2xl text-gray-700 dark:text-gray-300">
@@ -79,14 +79,14 @@ const Home = () => {
               <Button 
                 asChild
                 size="lg"
-                className="bg-[#C1272D] hover:bg-[#8B1F1F] text-white px-8 py-6 text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-300"
+                className="bg-[var(--color-button-primary)] hover:bg-[var(--color-button-hover)] text-white px-8 py-6 text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-300"
               >
                 <Link to="/contact">{t('home.contact')}</Link>
               </Button>
               <Button 
                 size="lg"
                 variant="outline"
-                className="border-2 border-[#C1272D] text-[#C1272D] hover:bg-[#C1272D] hover:text-white px-8 py-6 text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-300"
+                className="border-2 border-[var(--color-primary)] text-[var(--color-primary)] hover:bg-[var(--color-button-primary)] hover:text-white px-8 py-6 text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-300"
                 onClick={() => {
                   document.getElementById('news')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
                 }}
@@ -102,13 +102,13 @@ const Home = () => {
       <section id="news" className="py-16 bg-white dark:bg-gray-900">
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-between mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-[#8B1F1F] dark:text-[#C1272D]">
+            <h2 className="text-3xl md:text-4xl font-bold text-[var(--color-secondary)] dark:text-[var(--color-primary)]">
               {t('home.news')}
             </h2>
             <Button
               variant="ghost"
               onClick={() => setShowAllNews(!showAllNews)}
-              className="text-[#C1272D] hover:bg-[#C1272D]/10"
+              className="text-[var(--color-primary)] hover:bg-[var(--color-button-primary)]/10"
             >
               {showAllNews ? t('home.news') : t('home.expandAll')}
               <ChevronRight className="ml-2 h-4 w-4" />
@@ -117,19 +117,19 @@ const Home = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {displayedNews.map((item) => (
-              <Card key={item.id} className="group hover:shadow-xl transition-all duration-300 overflow-hidden border-2 border-transparent hover:border-[#C1272D]/20">
+              <Card key={item.id} className="group hover:shadow-xl transition-all duration-300 overflow-hidden border-2 border-transparent hover:border-[var(--color-primary)]/20">
                 <div className="relative h-48 overflow-hidden">
                   <img
                     src={item.image}
                     alt={item.title[language]}
                     className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                   />
-                  <div className="absolute top-4 right-4 bg-[#C1272D] text-white px-3 py-1 rounded-full text-sm font-semibold shadow-lg">
+                  <div className="absolute top-4 right-4 bg-[var(--color-button-primary)] text-white px-3 py-1 rounded-full text-sm font-semibold shadow-lg">
                     {item.date}
                   </div>
                 </div>
                 <CardContent className="p-6">
-                  <h3 className="text-xl font-bold mb-3 text-gray-900 dark:text-white group-hover:text-[#C1272D] transition-colors">
+                  <h3 className="text-xl font-bold mb-3 text-gray-900 dark:text-white group-hover:text-[var(--color-primary)] transition-colors">
                     {item.title[language]}
                   </h3>
                   <p className="text-gray-600 dark:text-gray-300 line-clamp-3">
@@ -146,10 +146,10 @@ const Home = () => {
       <section id="events" className="py-16 bg-gray-50 dark:bg-gray-800">
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-between mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-[#8B1F1F] dark:text-[#C1272D]">
+            <h2 className="text-3xl md:text-4xl font-bold text-[var(--color-secondary)] dark:text-[var(--color-primary)]">
               {t('home.trainingsEvents')}
             </h2>
-            <Button asChild variant="ghost" className="text-[#C1272D] hover:bg-[#C1272D]/10">
+            <Button asChild variant="ghost" className="text-[var(--color-primary)] hover:bg-[var(--color-button-primary)]/10">
               <Link to="/contact">
                 {t('home.contact')}
                 <ChevronRight className="ml-2 h-4 w-4" />
@@ -164,10 +164,10 @@ const Home = () => {
               <p className="text-gray-600 dark:text-gray-300">No events scheduled yet.</p>
             ) : (
               events.map((event) => (
-              <Card key={event.id} className="hover:shadow-xl transition-all duration-300 border-2 border-transparent hover:border-[#C1272D]/20">
+              <Card key={event.id} className="hover:shadow-xl transition-all duration-300 border-2 border-transparent hover:border-[var(--color-primary)]/20">
                 <CardContent className="p-6 space-y-4">
                   <div className="flex items-start justify-between">
-                    <div className="flex items-center space-x-2 text-[#C1272D]">
+                    <div className="flex items-center space-x-2 text-[var(--color-primary)]">
                       <Calendar className="h-5 w-5" />
                       <span className="font-semibold">{event.date}</span>
                     </div>
@@ -192,7 +192,7 @@ const Home = () => {
                   <Button 
                     asChild
                     variant="link" 
-                    className="text-[#C1272D] hover:text-[#8B1F1F] p-0 h-auto font-semibold"
+                    className="text-[var(--color-primary)] hover:text-[var(--color-secondary)] p-0 h-auto font-semibold"
                   >
                     <Link to={isAuthenticated ? "/dashboard" : "/login"}>
                       {t('home.seeMore')}

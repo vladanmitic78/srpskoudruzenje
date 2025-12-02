@@ -99,21 +99,21 @@ const About = () => {
       <div className="container mx-auto px-4">
         {/* Header */}
         <div className="text-center mb-16">
-          <h1 className="text-4xl md:text-5xl font-bold text-[#8B1F1F] dark:text-[#C1272D] mb-6">
+          <h1 className="text-4xl md:text-5xl font-bold text-[var(--color-secondary)] dark:text-[var(--color-primary)] mb-6">
             O nama / About Us
           </h1>
-          <div className="w-24 h-1 bg-[#C1272D] mx-auto" />
+          <div className="w-24 h-1 bg-[var(--color-button-primary)] mx-auto" />
         </div>
 
         {/* Main Content */}
         <div className="max-w-4xl mx-auto mb-16">
-          <Card className="border-2 border-[#C1272D]/20">
+          <Card className="border-2 border-[var(--color-primary)]/20">
             <CardContent className="p-8">
               <div className="flex justify-center mb-8">
                 <img 
                   src="/logo.jpg" 
                   alt="SKUD Täby Logo" 
-                  className="h-32 w-32 object-contain rounded-full border-4 border-[#C1272D]"
+                  className="h-32 w-32 object-contain rounded-full border-4 border-[var(--color-primary)]"
                 />
               </div>
               {loading ? (
@@ -134,11 +134,11 @@ const About = () => {
           {features.map((feature, index) => {
             const Icon = feature.icon;
             return (
-              <Card key={index} className="group hover:shadow-xl transition-all duration-300 border-2 border-transparent hover:border-[#C1272D]/20">
+              <Card key={index} className="group hover:shadow-xl transition-all duration-300 border-2 border-transparent hover:border-[var(--color-primary)]/20">
                 <CardContent className="p-6 text-center space-y-4">
                   <div className="flex justify-center">
-                    <div className="p-4 bg-[#C1272D]/10 rounded-full group-hover:bg-[#C1272D] transition-colors duration-300">
-                      <Icon className="h-8 w-8 text-[#C1272D] group-hover:text-white transition-colors duration-300" />
+                    <div className="p-4 bg-[var(--color-button-primary)]/10 rounded-full group-hover:bg-[var(--color-button-primary)] transition-colors duration-300">
+                      <Icon className="h-8 w-8 text-[var(--color-primary)] group-hover:text-white transition-colors duration-300" />
                     </div>
                   </div>
                   <h3 className="text-xl font-bold text-gray-900 dark:text-white">

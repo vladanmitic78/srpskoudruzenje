@@ -68,7 +68,7 @@ const Gallery = () => {
   return (
     <div className="min-h-screen py-16">
       <div className="container mx-auto px-4">
-        <h1 className="text-4xl md:text-5xl font-bold text-[#8B1F1F] dark:text-[#C1272D] mb-12 text-center">
+        <h1 className="text-4xl md:text-5xl font-bold text-[var(--color-secondary)] dark:text-[var(--color-primary)] mb-12 text-center">
           Galerija / Gallery
         </h1>
 
@@ -81,7 +81,7 @@ const Gallery = () => {
             albums.map((album) => (
               <Card 
                 key={album.id} 
-                className="overflow-hidden border-2 border-[#C1272D]/20 hover:border-[#C1272D] transition-all cursor-pointer group"
+                className="overflow-hidden border-2 border-[var(--color-primary)]/20 hover:border-[var(--color-primary)] transition-all cursor-pointer group"
                 onClick={() => {
                   if (album.images && album.images.length > 0) {
                     openLightbox(album, 0);

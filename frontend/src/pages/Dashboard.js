@@ -100,7 +100,7 @@ const PasswordChangeForm = () => {
           {t('dashboard.passwordChange.showPasswords')}
         </label>
       </div>
-      <Button type="submit" className="bg-[#C1272D] hover:bg-[#8B1F1F]">
+      <Button type="submit" className="bg-[var(--color-button-primary)] hover:bg-[var(--color-button-hover)]">
         {t('dashboard.passwordChange.changeButton')}
       </Button>
     </form>
@@ -357,7 +357,7 @@ const Dashboard = () => {
   return (
     <div className="min-h-screen py-16 bg-gray-50 dark:bg-gray-900">
       <div className="container mx-auto px-4">
-        <h1 className="text-4xl font-bold text-[#8B1F1F] dark:text-[#C1272D] mb-8">
+        <h1 className="text-4xl font-bold text-[var(--color-secondary)] dark:text-[var(--color-primary)] mb-8">
           {t('dashboard.title')}
         </h1>
 
@@ -383,7 +383,7 @@ const Dashboard = () => {
 
           {/* Personal Data Tab */}
           <TabsContent value="personal">
-            <Card className="border-2 border-[#C1272D]/20">
+            <Card className="border-2 border-[var(--color-primary)]/20">
               <CardHeader>
                 <CardTitle>{t('dashboard.personalDataTab')}</CardTitle>
               </CardHeader>
@@ -442,9 +442,9 @@ const Dashboard = () => {
 
                   {/* Parent/Guardian Information - Only shown for users under 18 */}
                   {showParentFields && (
-                    <div className="border-t-2 border-[#C1272D]/20 pt-6 mt-6">
+                    <div className="border-t-2 border-[var(--color-primary)]/20 pt-6 mt-6">
                       <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center">
-                        <AlertCircle className="h-5 w-5 mr-2 text-[#C1272D]" />
+                        <AlertCircle className="h-5 w-5 mr-2 text-[var(--color-primary)]" />
                         Parent/Guardian Information (Required for users under 18)
                       </h3>
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -480,7 +480,7 @@ const Dashboard = () => {
                     </div>
                   )}
 
-                  <Button type="submit" className="bg-[#C1272D] hover:bg-[#8B1F1F]">
+                  <Button type="submit" className="bg-[var(--color-button-primary)] hover:bg-[var(--color-button-hover)]">
                     {t('dashboard.personalData.saveChanges')}
                   </Button>
                 </form>
@@ -488,7 +488,7 @@ const Dashboard = () => {
             </Card>
 
             {/* Password Change Card */}
-            <Card className="border-2 border-[#C1272D]/20 mt-6">
+            <Card className="border-2 border-[var(--color-primary)]/20 mt-6">
               <CardHeader>
                 <CardTitle>{t('dashboard.passwordChange.title')}</CardTitle>
               </CardHeader>
@@ -500,7 +500,7 @@ const Dashboard = () => {
 
           {/* Invoices Tab */}
           <TabsContent value="invoices">
-            <Card className="border-2 border-[#C1272D]/20">
+            <Card className="border-2 border-[var(--color-primary)]/20">
               <CardHeader>
                 <CardTitle>{t('dashboard.invoices')}</CardTitle>
               </CardHeader>
@@ -618,11 +618,11 @@ const Dashboard = () => {
             </div>
 
             {/* Attendance Rate Progress Bar */}
-            <Card className="border-2 border-[#C1272D]/20 mb-6">
+            <Card className="border-2 border-[var(--color-primary)]/20 mb-6">
               <CardContent className="pt-6">
                 <div className="flex items-center justify-between mb-2">
                   <p className="text-sm font-medium text-gray-700 dark:text-gray-300">{t('dashboard.trainings.attendanceRate')}</p>
-                  <p className="text-lg font-bold text-[#C1272D]">{trainingStats.attendanceRate}%</p>
+                  <p className="text-lg font-bold text-[var(--color-primary)]">{trainingStats.attendanceRate}%</p>
                 </div>
                 <div className="w-full bg-gray-200 rounded-full h-4 dark:bg-gray-700">
                   <div 
@@ -636,7 +636,7 @@ const Dashboard = () => {
               </CardContent>
             </Card>
 
-            <Card className="border-2 border-[#C1272D]/20">
+            <Card className="border-2 border-[var(--color-primary)]/20">
               <CardHeader>
                 <CardTitle>{t('dashboard.trainingsTab')}</CardTitle>
               </CardHeader>
@@ -698,7 +698,7 @@ const Dashboard = () => {
 
           {/* Membership Tab */}
           <TabsContent value="membership">
-            <Card className="border-2 border-[#C1272D]/20">
+            <Card className="border-2 border-[var(--color-primary)]/20">
               <CardHeader>
                 <CardTitle>{t('dashboard.membership')}</CardTitle>
               </CardHeader>
@@ -740,7 +740,7 @@ const Dashboard = () => {
         {showProfileModal && (
           <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-4">
             <div className="bg-white dark:bg-gray-800 rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl">
-              <div className="bg-[#C1272D] text-white p-6 rounded-t-lg">
+              <div className="bg-[var(--color-button-primary)] text-white p-6 rounded-t-lg">
                 <h2 className="text-2xl font-bold flex items-center">
                   <AlertCircle className="h-6 w-6 mr-3" />
                   Complete Your Profile
@@ -820,9 +820,9 @@ const Dashboard = () => {
 
                 {/* Parent/Guardian Information - Only shown for users under 18 */}
                 {showParentFields && (
-                  <div className="border-t-2 border-[#C1272D]/20 pt-6 mt-6">
+                  <div className="border-t-2 border-[var(--color-primary)]/20 pt-6 mt-6">
                     <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center">
-                      <AlertCircle className="h-5 w-5 mr-2 text-[#C1272D]" />
+                      <AlertCircle className="h-5 w-5 mr-2 text-[var(--color-primary)]" />
                       Parent/Guardian Information (Required for users under 18)
                     </h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -863,7 +863,7 @@ const Dashboard = () => {
                 <div className="flex gap-4 pt-6 border-t">
                   <Button 
                     onClick={handleSaveProfile}
-                    className="flex-1 bg-[#C1272D] hover:bg-[#8B1F1F] text-white py-6 text-lg font-semibold"
+                    className="flex-1 bg-[var(--color-button-primary)] hover:bg-[var(--color-button-hover)] text-white py-6 text-lg font-semibold"
                   >
                     Save Profile & Continue
                   </Button>
