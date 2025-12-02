@@ -115,6 +115,19 @@ const translations = {
         differentLocations: 'Različite lokacije',
         attendanceRate: 'Stopa prisustva',
         attendanceMessage: 'Prisustvovali ste {{attended}} od {{total}} treninga'
+      },
+      passwordChange: {
+        title: 'Promena lozinke',
+        currentPassword: 'Trenutna lozinka',
+        newPassword: 'Nova lozinka',
+        confirmPassword: 'Potvrdi novu lozinku',
+        showPasswords: 'Prikaži lozinke',
+        changeButton: 'Promeni lozinku',
+        minLength: 'Minimalno 8 karaktera',
+        passwordMismatch: 'Lozinke se ne poklapaju',
+        passwordTooShort: 'Nova lozinka mora imati najmanje 8 karaktera',
+        success: 'Lozinka uspešno promenjena',
+        error: 'Greška pri promeni lozinke'
       }
     },
     admin: {
