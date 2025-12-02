@@ -1365,7 +1365,7 @@ const AdminDashboard = () => {
                         />
                       </div>
                       <div>
-                        <label className="block text-sm font-medium mb-2">VAT Number</label>
+                        <label className="block text-sm font-medium mb-2">{t('admin.settings.vatNumber')}</label>
                         <input
                           type="text"
                           value={settings.vatNumber}
@@ -1375,7 +1375,7 @@ const AdminDashboard = () => {
                         />
                       </div>
                       <div>
-                        <label className="block text-sm font-medium mb-2">Bank Account</label>
+                        <label className="block text-sm font-medium mb-2">{t('admin.settings.bankAccount')}</label>
                         <input
                           type="text"
                           value={settings.bankAccount}
@@ -1391,7 +1391,7 @@ const AdminDashboard = () => {
                     type="submit"
                     className="w-full px-6 py-3 bg-[#C1272D] text-white rounded-md hover:bg-[#8B1F1F] font-semibold"
                   >
-                    Save Settings
+                    {t('admin.settings.saveButton')}
                   </button>
                 </form>
               </CardContent>
