@@ -320,7 +320,6 @@ const translations = {
       redirectMessage: 'Ovaj odeljak će prikazati istu funkcionalnost kao admin kontrolna tabla.'
     }
   },
-  },
   'sr-cyrillic': {
     nav: {
       home: 'Почетна',
