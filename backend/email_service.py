@@ -606,3 +606,119 @@ def get_invoice_upload_notification(user_name: str, invoice_description: str, am
     """
     
     return html, text
+
+
+def get_admin_invitation_template(name: str, email: str, role: str, temporary_password: str):
+    """Generate admin invitation email (bilingual: Serbian & Swedish)"""
+    
+    html = f"""
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <style>
+            body {{ font-family: Arial, sans-serif; line-height: 1.6; color: #333; }}
+            .container {{ max-width: 600px; margin: 0 auto; padding: 20px; }}
+            .header {{ background-color: #C1272D; color: white; padding: 20px; text-align: center; }}
+            .content {{ background-color: #f9f9f9; padding: 30px; border-radius: 5px; margin-top: 20px; }}
+            .credentials {{ background-color: #fff; padding: 15px; border-left: 4px solid #C1272D; margin: 20px 0; }}
+            .button {{ display: inline-block; background-color: #C1272D; color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px; margin: 20px 0; }}
+            .footer {{ text-align: center; margin-top: 30px; padding-top: 20px; border-top: 1px solid #ddd; color: #666; font-size: 12px; }}
+            .warning {{ background-color: #fff3cd; border-left: 4px solid #ffc107; padding: 10px; margin: 15px 0; }}
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <div class="header">
+                <h1>🎉 Dobrodošli / Välkommen</h1>
+                <p>Srpsko Kulturno Društvo Täby</p>
+            </div>
+            
+            <div class="content">
+                <h2>Poštovani/a {name},</h2>
+                <p>Kreiran je Vaš administratorski nalog za Srpsko Kulturno Društvo Täby.</p>
+                
+                <h3>Vaši pristupni podaci:</h3>
+                <div class="credentials">
+                    <p><strong>Email:</strong> {email}</p>
+                    <p><strong>Uloga:</strong> {role}</p>
+                    <p><strong>Privremena lozinka:</strong> {temporary_password}</p>
+                </div>
+                
+                <div class="warning">
+                    <p><strong>⚠️ Važno:</strong> Molimo promenite lozinku nakon prvog prijavljivanja.</p>
+                </div>
+                
+                <a href="http://localhost:3000/login" class="button">Prijavite se</a>
+                
+                <hr style="margin: 30px 0;">
+                
+                <h2>Hej {name},</h2>
+                <p>Ditt administratörskonto för Serbiska Kulturföreningen Täby har skapats.</p>
+                
+                <h3>Dina inloggningsuppgifter:</h3>
+                <div class="credentials">
+                    <p><strong>E-post:</strong> {email}</p>
+                    <p><strong>Roll:</strong> {role}</p>
+                    <p><strong>Tillfälligt lösenord:</strong> {temporary_password}</p>
+                </div>
+                
+                <div class="warning">
+                    <p><strong>⚠️ Viktigt:</strong> Vänligen ändra ditt lösenord efter första inloggningen.</p>
+                </div>
+                
+                <a href="http://localhost:3000/login" class="button">Logga in</a>
+            </div>
+            
+            <div class="footer">
+                <p>Srpsko Kulturno Društvo Täby<br>
+                info@srpskoudruzenjetaby.se</p>
+                <p style="font-size: 10px; color: #999; margin-top: 10px;">
+                    Ova poruka je automatski generisana. / Detta meddelande är automatiskt genererat.
+                </p>
+            </div>
+        </div>
+    </body>
+    </html>
+    """
+    
+    text = f"""
+    Dobrodošli / Välkommen
+    Srpsko Kulturno Društvo Täby
+    
+    ---
+    
+    Poštovani/a {name},
+    
+    Kreiran je Vaš administratorski nalog za Srpsko Kulturno Društvo Täby.
+    
+    Vaši pristupni podaci:
+    - Email: {email}
+    - Uloga: {role}
+    - Privremena lozinka: {temporary_password}
+    
+    ⚠️ VAŽNO: Molimo promenite lozinku nakon prvog prijavljivanja.
+    
+    Prijavite se na: http://localhost:3000/login
+    
+    ---
+    
+    Hej {name},
+    
+    Ditt administratörskonto för Serbiska Kulturföreningen Täby har skapats.
+    
+    Dina inloggningsuppgifter:
+    - E-post: {email}
+    - Roll: {role}
+    - Tillfälligt lösenord: {temporary_password}
+    
+    ⚠️ VIKTIGT: Vänligen ändra ditt lösenord efter första inloggningen.
+    
+    Logga in på: http://localhost:3000/login
+    
+    ---
+    
+    Srpsko Kulturno Društvo Täby
+    info@srpskoudruzenjetaby.se
+    """
+    
+    return html, text
