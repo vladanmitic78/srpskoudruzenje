@@ -1,7 +1,8 @@
-from fastapi import APIRouter, Depends, Request
-from models import UserResponse, UserUpdate, MembershipCancellation
+from fastapi import APIRouter, Depends, Request, HTTPException
+from models import UserResponse, UserUpdate, MembershipCancellation, PasswordChange
 from dependencies import get_current_user
 from email_service import send_email
+from auth_utils import verify_password, hash_password
 from datetime import datetime
 
 router = APIRouter()
