@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useLanguage } from '../context/LanguageContext';
-import { adminAPI, eventsAPI, contentAPI, galleryAPI, newsAPI, storiesAPI } from '../services/api';
+import { adminAPI, eventsAPI, contentAPI, galleryAPI, newsAPI, storiesAPI, userAPI, invoicesAPI } from '../services/api';
 import { toast } from 'sonner';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../components/ui/tabs';
@@ -9,7 +9,8 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '../components/
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
 import { Label } from '../components/ui/label';
-import { Calendar, FileText, Image, X } from 'lucide-react';
+import { Badge } from '../components/ui/badge';
+import { Calendar, FileText, Image, X, User, CreditCard, Shield } from 'lucide-react';
 
 const ModeratorDashboard = () => {
   const { t } = useLanguage();
