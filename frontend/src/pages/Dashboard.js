@@ -385,7 +385,7 @@ const Dashboard = () => {
                   )}
 
                   <Button type="submit" className="bg-[#C1272D] hover:bg-[#8B1F1F]">
-                    Save Changes
+                    {t('dashboard.personalData.saveChanges')}
                   </Button>
                 </form>
               </CardContent>
