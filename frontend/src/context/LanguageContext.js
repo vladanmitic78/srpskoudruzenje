@@ -20,7 +20,7 @@ export const LanguageProvider = ({ children }) => {
     localStorage.setItem('language', language);
   }, [language]);
 
-  const t = (key) => {
+  const t = (key, params = {}) => {
     const keys = key.split('.');
     let value = translations[language];
     
@@ -32,7 +32,16 @@ export const LanguageProvider = ({ children }) => {
       }
     }
     
-    return value || key;
+    let result = value || key;
+    
+    // Replace placeholders like {{attended}} with actual values
+    if (typeof result === 'string' && params) {
+      Object.keys(params).forEach(paramKey => {
+        result = result.replace(new RegExp(`{{${paramKey}}}`, 'g'), params[paramKey]);
+      });
+    }
+    
+    return result;
   };
 
   return (
