@@ -560,9 +560,6 @@ const translations = {
         passwordSuccess: 'Лозинка успешно промењена',
         passwordError: 'Грешка при промени лозинке'
       },
-      tabs: {
-        adminManagement: 'Управљање админима'
-      },
       adminManagement: {
         title: 'Управљање администраторима',
         description: 'Креирај, уреди или обриши администраторске и модераторске налоге',
