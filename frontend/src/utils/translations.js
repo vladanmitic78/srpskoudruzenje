@@ -161,6 +161,36 @@ const translations = {
       status: {
         paid: 'Plaćeno',
         unpaid: 'Neplaćeno'
+      },
+      events: {
+        title: 'Upravljanje događajima i treninzima',
+        addEvent: '+ Dodaj događaj',
+        noEvents: 'Nema zakazanih događaja. Kliknite "Dodaj događaj" da kreirate.',
+        cancelled: 'OTKAZANO',
+        at: 'u',
+        reason: 'Razlog',
+        participantsConfirmed: 'učesnik(a) potvrđeno',
+        cancelEvent: 'Otkaži',
+        deleteConfirmation: 'Da li ste sigurni da želite da obrišete ovaj događaj? Ova akcija se ne može poništiti.',
+        deleteSuccess: 'Događaj uspešno obrisan',
+        deleteFailed: 'Brisanje događaja nije uspelo',
+        createTitle: 'Kreiraj novi događaj/trening',
+        editTitle: 'Izmeni događaj/trening',
+        createButton: 'Kreiraj događaj',
+        updateButton: 'Ažuriraj događaj',
+        form: {
+          date: 'Datum',
+          time: 'Vreme',
+          location: 'Lokacija',
+          titleEn: 'Naslov (Engleski)',
+          titleSrLatin: 'Naslov (Srpski Latinica)',
+          titleSrCyrillic: 'Naslov (Srpski Ćirilica)',
+          titleSv: 'Naslov (Švedski)',
+          descriptionEn: 'Opis (Engleski)',
+          descriptionSrLatin: 'Opis (Srpski Latinica)',
+          descriptionSrCyrillic: 'Opis (Srpski Ćirilica)',
+          descriptionSv: 'Opis (Švedski)'
+        }
       }
     }
   },
