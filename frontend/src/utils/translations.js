@@ -157,6 +157,10 @@ const translations = {
         status: 'Status',
         file: 'Datoteka',
         actions: 'Akcije'
+      },
+      status: {
+        paid: 'Plaćeno',
+        unpaid: 'Neplaćeno'
       }
     }
   },
