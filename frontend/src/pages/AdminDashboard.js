@@ -788,18 +788,18 @@ const AdminDashboard = () => {
                                         download
                                         className="px-2 py-1 bg-blue-600 text-white text-xs rounded hover:bg-blue-700 text-center"
                                       >
-                                        📄 Download
+                                        📄 {t('admin.actions.download')}
                                       </a>
                                       <button
                                         onClick={() => handleDeleteInvoiceFile(invoice.id)}
                                         className="px-2 py-1 bg-gray-600 text-white text-xs rounded hover:bg-gray-700"
                                       >
-                                        🗑️ Remove
+                                        🗑️ {t('admin.actions.remove')}
                                       </button>
                                     </>
                                   ) : (
                                     <label className="px-2 py-1 bg-purple-600 text-white text-xs rounded hover:bg-purple-700 cursor-pointer text-center">
-                                      📤 Upload
+                                      📤 {t('admin.actions.upload')}
                                       <input
                                         type="file"
                                         accept=".pdf,.doc,.docx,.xlsx,.xls,.jpg,.jpeg,.png"
