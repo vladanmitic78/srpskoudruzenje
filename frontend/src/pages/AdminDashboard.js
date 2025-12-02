@@ -823,14 +823,14 @@ const AdminDashboard = () => {
                                     }}
                                     className="px-3 py-1 bg-blue-600 text-white text-xs rounded hover:bg-blue-700"
                                   >
-                                    Edit
+                                    {t('admin.actions.edit')}
                                   </button>
                                   {invoice.status === 'unpaid' && (
                                     <button
                                       onClick={() => handleMarkPaid(invoice.id)}
                                       className="px-3 py-1 bg-green-600 text-white text-xs rounded hover:bg-green-700"
                                     >
-                                      Mark Paid
+                                      {t('admin.actions.markPaid')}
                                     </button>
                                   )}
                                   <button
@@ -848,7 +848,7 @@ const AdminDashboard = () => {
                                     }}
                                     className="px-3 py-1 bg-red-600 text-white text-xs rounded hover:bg-red-700"
                                   >
-                                    Delete
+                                    {t('admin.actions.delete')}
                                   </button>
                                 </div>
                               </td>
