@@ -981,7 +981,7 @@ const AdminDashboard = () => {
               {/* News Management (Home Page) */}
               <Card className="border-2 border-[#C1272D]/20">
                 <CardHeader className="flex flex-row items-center justify-between">
-                  <CardTitle>News Management (Home Page)</CardTitle>
+                  <CardTitle>{t('admin.content.newsTitle')}</CardTitle>
                   <button
                     onClick={() => {
                       setEditingNews(null);
@@ -996,7 +996,7 @@ const AdminDashboard = () => {
                     }}
                     className="px-4 py-2 bg-[#C1272D] text-white rounded hover:bg-[#8B1F1F]"
                   >
-                    ➕ Add News
+                    {t('admin.content.addNews')}
                   </button>
                 </CardHeader>
                 <CardContent>
