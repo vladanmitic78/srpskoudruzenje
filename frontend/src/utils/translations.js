@@ -142,7 +142,8 @@ const translations = {
         invoices: 'Fakture',
         events: 'Događaji',
         content: 'Sadržaj',
-        settings: 'Podešavanja'
+        settings: 'Podešavanja',
+        adminManagement: 'Upravljanje adminima'
       },
       actions: {
         exportPDF: 'Izvezi PDF',
