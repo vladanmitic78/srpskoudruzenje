@@ -2973,7 +2973,9 @@ const AdminDashboard = () => {
                         },
                         body: JSON.stringify(brandingSettings)
                       });
-                      toast.success('Branding settings saved successfully');
+                      // Update branding context to apply colors immediately
+                      updateBranding(brandingSettings);
+                      toast.success('Branding settings saved successfully! Colors will update across the site.');
                     } catch (error) {
                       toast.error('Failed to save branding settings');
                     }
