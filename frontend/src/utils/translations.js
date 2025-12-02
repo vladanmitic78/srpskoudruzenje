@@ -1046,6 +1046,11 @@ const translations = {
     },
     dashboard: {
       title: 'Instrumentpanel',
+      loading: 'Laddar...',
+      permissionsError: 'Det gick inte att ladda behörigheter',
+      noPermissions: 'Inga behörigheter tilldelade. Kontakta administratören.',
+      noAccess: 'Ingen åtkomst',
+      noPermissionsMessage: 'Du har inga behörigheter tilldelade. Vänligen kontakta en Super Administratör.',
       personalDataTab: 'Personuppgifter',
       personalData: {
         fullName: 'Fullständigt namn',
