@@ -637,6 +637,19 @@ const translations = {
         differentLocations: 'Different locations',
         attendanceRate: 'Attendance Rate',
         attendanceMessage: "You've attended {{attended}} out of {{total}} trainings"
+      },
+      passwordChange: {
+        title: 'Change Password',
+        currentPassword: 'Current Password',
+        newPassword: 'New Password',
+        confirmPassword: 'Confirm New Password',
+        showPasswords: 'Show Passwords',
+        changeButton: 'Change Password',
+        minLength: 'Minimum 8 characters',
+        passwordMismatch: 'Passwords do not match',
+        passwordTooShort: 'New password must be at least 8 characters',
+        success: 'Password changed successfully',
+        error: 'Error changing password'
       }
     },
     admin: {
