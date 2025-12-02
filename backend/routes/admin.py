@@ -471,4 +471,369 @@ async def test_event_reminders(
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error executing reminder job: {str(e)}")
 
+
+
+# ==================== Phase 5.1: Admin Management ====================
+
+@router.get("/admins")
+async def get_all_admins(
+    admin: dict = Depends(get_superadmin_user),
+    request: Request = None,
+    role: str = None
+):
+    """
+    Get list of all admin users (Super Admin only)
+    Can filter by role (admin, moderator)
+    """
+    db = request.app.state.db
+    
+    try:
+        # Build query
+        query = {"role": {"$in": ["admin", "moderator", "superadmin"]}}
+        
+        if role and role in ["admin", "moderator"]:
+            query["role"] = role
+        
+        # Fetch admins
+        cursor = db.users.find(query, {
+            "_id": 0,
+            "id": 1,
+            "email": 1,
+            "fullName": 1,
+            "role": 1,
+            "emailVerified": 1,
+            "createdAt": 1,
+            "lastActive": 1,
+            "status": 1
+        }).sort("createdAt", -1)
+        
+        admins = await cursor.to_list(length=100)
+        
+        return {
+            "success": True,
+            "admins": admins,
+            "total": len(admins)
+        }
+        
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to fetch admins: {str(e)}")
+
+
+@router.post("/admins/create")
+async def create_admin_account(
+    admin_data: dict,
+    admin: dict = Depends(get_superadmin_user),
+    request: Request = None
+):
+    """
+    Create new admin or moderator account (Super Admin only)
+    Sends invitation email with temporary password
+    """
+    from auth_utils import hash_password
+    from email_service import send_email, get_admin_invitation_template
+    from activity_logger import log_admin_activity
+    import secrets
+    import string
+    
+    db = request.app.state.db
+    
+    try:
+        # Validate required fields
+        required_fields = ["email", "fullName", "role"]
+        for field in required_fields:
+            if field not in admin_data:
+                raise HTTPException(status_code=400, detail=f"Missing required field: {field}")
+        
+        # Validate role
+        if admin_data["role"] not in ["admin", "moderator"]:
+            raise HTTPException(status_code=400, detail="Role must be 'admin' or 'moderator'")
+        
+        # Check if email already exists
+        existing_user = await db.users.find_one({"email": admin_data["email"]})
+        if existing_user:
+            raise HTTPException(status_code=400, detail="Email already exists")
+        
+        # Generate temporary password
+        temp_password = ''.join(secrets.choice(string.ascii_letters + string.digits) for _ in range(12))
+        
+        # Create new admin user
+        from uuid import uuid4
+        new_admin = {
+            "id": str(uuid4()),
+            "email": admin_data["email"],
+            "username": admin_data["email"],
+            "fullName": admin_data["fullName"],
+            "role": admin_data["role"],
+            "hashed_password": hash_password(temp_password),
+            "emailVerified": True,
+            "status": "active",
+            "createdAt": datetime.utcnow(),
+            "createdBy": admin["_id"]
+        }
+        
+        # Insert into database
+        await db.users.insert_one(new_admin)
+        
+        # Send invitation email
+        html_content, text_content = get_admin_invitation_template(
+            name=admin_data["fullName"],
+            email=admin_data["email"],
+            role=admin_data["role"].capitalize(),
+            temporary_password=temp_password
+        )
+        
+        await send_email(
+            to_email=admin_data["email"],
+            subject="Admin Account Created - Srpsko Kulturno Društvo Täby",
+            html_content=html_content,
+            text_content=text_content
+        )
+        
+        # Log activity
+        await log_admin_activity(
+            db=db,
+            admin_id=admin["_id"],
+            admin_name=admin.get("fullName", admin.get("email")),
+            action="create",
+            target_type="admin_user",
+            target_id=new_admin["id"],
+            details={
+                "email": admin_data["email"],
+                "role": admin_data["role"],
+                "fullName": admin_data["fullName"]
+            }
+        )
+        
+        return {
+            "success": True,
+            "message": "Admin account created and invitation email sent",
+            "admin": {
+                "id": new_admin["id"],
+                "email": new_admin["email"],
+                "fullName": new_admin["fullName"],
+                "role": new_admin["role"]
+            }
+        }
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to create admin account: {str(e)}")
+
+
+@router.put("/admins/{admin_id}")
+async def update_admin_account(
+    admin_id: str,
+    update_data: dict,
+    admin: dict = Depends(get_superadmin_user),
+    request: Request = None
+):
+    """
+    Update admin account details (Super Admin only)
+    Can change role, status, profile information
+    """
+    from activity_logger import log_admin_activity
+    
+    db = request.app.state.db
+    
+    try:
+        # Prevent self-edit for critical fields
+        if admin_id == admin["_id"] and "role" in update_data:
+            raise HTTPException(status_code=400, detail="Cannot change your own role")
+        
+        # Fetch existing admin
+        existing_admin = await db.users.find_one({"id": admin_id}, {"_id": 0})
+        if not existing_admin:
+            raise HTTPException(status_code=404, detail="Admin not found")
+        
+        # Prevent modifying super admin accounts
+        if existing_admin["role"] == "superadmin":
+            raise HTTPException(status_code=403, detail="Cannot modify Super Admin accounts")
+        
+        # Validate role if changing
+        if "role" in update_data and update_data["role"] not in ["admin", "moderator"]:
+            raise HTTPException(status_code=400, detail="Role must be 'admin' or 'moderator'")
+        
+        # Build update document
+        allowed_fields = ["fullName", "role", "status", "phone"]
+        update_doc = {k: v for k, v in update_data.items() if k in allowed_fields}
+        update_doc["updatedAt"] = datetime.utcnow()
+        
+        # Update database
+        await db.users.update_one(
+            {"id": admin_id},
+            {"$set": update_doc}
+        )
+        
+        # Log activity
+        await log_admin_activity(
+            db=db,
+            admin_id=admin["_id"],
+            admin_name=admin.get("fullName", admin.get("email")),
+            action="edit",
+            target_type="admin_user",
+            target_id=admin_id,
+            details={
+                "changes": update_doc,
+                "adminEmail": existing_admin["email"]
+            }
+        )
+        
+        return {
+            "success": True,
+            "message": "Admin account updated successfully"
+        }
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to update admin account: {str(e)}")
+
+
+@router.post("/admins/{admin_id}/reset-password")
+async def reset_admin_password(
+    admin_id: str,
+    admin: dict = Depends(get_superadmin_user),
+    request: Request = None
+):
+    """
+    Reset admin password and send new temporary password (Super Admin only)
+    """
+    from auth_utils import hash_password
+    from email_service import send_email
+    from activity_logger import log_admin_activity
+    import secrets
+    import string
+    
+    db = request.app.state.db
+    
+    try:
+        # Fetch admin
+        target_admin = await db.users.find_one({"id": admin_id}, {"_id": 0})
+        if not target_admin:
+            raise HTTPException(status_code=404, detail="Admin not found")
+        
+        # Prevent resetting super admin passwords
+        if target_admin["role"] == "superadmin":
+            raise HTTPException(status_code=403, detail="Cannot reset Super Admin password")
+        
+        # Generate new temporary password
+        temp_password = ''.join(secrets.choice(string.ascii_letters + string.digits) for _ in range(12))
+        
+        # Update password
+        await db.users.update_one(
+            {"id": admin_id},
+            {"$set": {
+                "hashed_password": hash_password(temp_password),
+                "updatedAt": datetime.utcnow()
+            }}
+        )
+        
+        # Send email with new password
+        html_content = f"""
+        <h2>Password Reset - Srpsko Kulturno Društvo Täby</h2>
+        <p>Your password has been reset by a Super Administrator.</p>
+        <p><strong>New Temporary Password:</strong> {temp_password}</p>
+        <p><strong>⚠️ Important:</strong> Please change this password after logging in.</p>
+        <p><a href="http://localhost:3000/login">Login Here</a></p>
+        """
+        
+        text_content = f"""
+        Password Reset - Srpsko Kulturno Društvo Täby
+        
+        Your password has been reset by a Super Administrator.
+        
+        New Temporary Password: {temp_password}
+        
+        ⚠️ Important: Please change this password after logging in.
+        
+        Login: http://localhost:3000/login
+        """
+        
+        await send_email(
+            to_email=target_admin["email"],
+            subject="Password Reset - Admin Account",
+            html_content=html_content,
+            text_content=text_content
+        )
+        
+        # Log activity
+        await log_admin_activity(
+            db=db,
+            admin_id=admin["_id"],
+            admin_name=admin.get("fullName", admin.get("email")),
+            action="reset_password",
+            target_type="admin_user",
+            target_id=admin_id,
+            details={"adminEmail": target_admin["email"]}
+        )
+        
+        return {
+            "success": True,
+            "message": "Password reset successfully. Email sent to admin."
+        }
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to reset password: {str(e)}")
+
+
+@router.delete("/admins/{admin_id}")
+async def delete_admin_account(
+    admin_id: str,
+    admin: dict = Depends(get_superadmin_user),
+    request: Request = None
+):
+    """
+    Delete admin account (Super Admin only)
+    Cannot delete yourself or other Super Admins
+    """
+    from activity_logger import log_admin_activity
+    
+    db = request.app.state.db
+    
+    try:
+        # Prevent self-delete
+        if admin_id == admin["_id"]:
+            raise HTTPException(status_code=400, detail="Cannot delete your own account")
+        
+        # Fetch admin to delete
+        target_admin = await db.users.find_one({"id": admin_id}, {"_id": 0})
+        if not target_admin:
+            raise HTTPException(status_code=404, detail="Admin not found")
+        
+        # Prevent deleting super admins
+        if target_admin["role"] == "superadmin":
+            raise HTTPException(status_code=403, detail="Cannot delete Super Admin accounts")
+        
+        # Delete admin
+        await db.users.delete_one({"id": admin_id})
+        
+        # Log activity
+        await log_admin_activity(
+            db=db,
+            admin_id=admin["_id"],
+            admin_name=admin.get("fullName", admin.get("email")),
+            action="delete",
+            target_type="admin_user",
+            target_id=admin_id,
+            details={
+                "deletedEmail": target_admin["email"],
+                "deletedRole": target_admin["role"],
+                "deletedName": target_admin.get("fullName")
+            }
+        )
+        
+        return {
+            "success": True,
+            "message": "Admin account deleted successfully"
+        }
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to delete admin account: {str(e)}")
+
+
     return {"success": True, "message": "Permissions updated successfully"}
