@@ -186,7 +186,7 @@ const translations = {
       title: 'Контролна табла',
       personalData: 'Лични подаци',
       invoices: 'Фактуре',
-      trainings: 'Тренинзи',
+      trainingsTab: 'Тренинзи',
       membership: 'Чланство',
       cancelMembership: 'Откажи чланство',
       confirmParticipation: 'Потврди учешће',
