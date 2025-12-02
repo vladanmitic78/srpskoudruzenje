@@ -14,6 +14,9 @@ import shutil
 # Import routes
 from routes import auth, users, news, events, invoices, gallery, stories, settings, admin, contact, content
 
+# Import scheduler
+from scheduler import start_scheduler, stop_scheduler
+
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
 
