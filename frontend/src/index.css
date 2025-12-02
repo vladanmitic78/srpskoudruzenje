@@ -44,6 +44,12 @@ code {
         --chart-4: 43 74% 66%;
         --chart-5: 27 87% 67%;
         --radius: 0.5rem;
+        
+        /* Brand colors - dynamically updated by BrandingContext */
+        --color-primary: #C1272D;
+        --color-secondary: #8B1F1F;
+        --color-button-primary: #C1272D;
+        --color-button-hover: #8B1F1F;
     }
     .dark {
         --background: 0 0% 3.9%;
