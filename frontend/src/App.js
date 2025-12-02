@@ -21,6 +21,7 @@ import ResetPassword from './pages/ResetPassword';
 import VerifyEmail from './pages/VerifyEmail';
 import Dashboard from './pages/Dashboard';
 import AdminDashboard from './pages/AdminDashboard';
+import ModeratorDashboard from './pages/ModeratorDashboard';
 
 // Protected Route Component
 const ProtectedRoute = ({ children, requireAdmin = false }) => {
