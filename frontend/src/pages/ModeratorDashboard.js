@@ -17,7 +17,17 @@ const ModeratorDashboard = () => {
   const { user } = useAuth();
   const [permissions, setPermissions] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState('');
+  const [activeTab, setActiveTab] = useState('personal');
+
+  // User data state
+  const [userData, setUserData] = useState(null);
+  const [userInvoices, setUserInvoices] = useState([]);
+  const [userEvents, setUserEvents] = useState([]);
+  const [passwordData, setPasswordData] = useState({
+    currentPassword: '',
+    newPassword: '',
+    confirmPassword: ''
+  });
 
   // Events state
   const [events, setEvents] = useState([]);
