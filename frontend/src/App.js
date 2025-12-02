@@ -85,7 +85,7 @@ const AppContent = () => {
           <Route 
             path="/moderator-dashboard" 
             element={
-              <ProtectedRoute requireAdmin>
+              <ProtectedRoute requireModerator>
                 <ModeratorDashboard />
               </ProtectedRoute>
             } 
