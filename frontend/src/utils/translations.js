@@ -199,7 +199,17 @@ const translations = {
     },
     dashboard: {
       title: 'Контролна табла',
-      personalData: 'Лични подаци',
+      personalDataTab: 'Лични подаци',
+      personalData: {
+        fullName: 'Име и презиме',
+        yearOfBirth: 'Година рођења',
+        age: 'Старост',
+        years: 'године',
+        email: 'Имејл',
+        phone: 'Телефон',
+        streetAddress: 'Адреса',
+        saveChanges: 'Сачувај измене'
+      },
       invoices: 'Фактуре',
       trainingsTab: 'Тренинзи',
       membership: 'Чланство',
