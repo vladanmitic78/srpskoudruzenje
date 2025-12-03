@@ -662,7 +662,7 @@ async def create_admin_account(
             subject="Admin Account Created - Srpsko Kulturno Društvo Täby",
             html_content=html_content,
             text_content=text_content
-        )
+        , db=request.app.state.db)
         
         # Log activity
         await log_admin_activity(
@@ -830,7 +830,7 @@ async def reset_admin_password(
             subject="Password Reset - Admin Account",
             html_content=html_content,
             text_content=text_content
-        )
+        , db=request.app.state.db)
         
         # Log activity
         await log_admin_activity(

@@ -157,7 +157,7 @@ async def upload_invoice_file(
                 "Nova Faktura / Ny Faktura - SKUD Täby",
                 html_content,
                 text_content
-            )
+            , db=request.app.state.db)
             logger.info(f"Invoice notification email sent to {user['email']}")
     except Exception as e:
         logger.error(f"Failed to send invoice notification email: {str(e)}")

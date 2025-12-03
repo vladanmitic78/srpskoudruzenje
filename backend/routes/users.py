@@ -117,6 +117,6 @@ async def cancel_membership(
         "Membership Cancellation Request",
         html,
         f"Cancellation request from {current_user['fullName']}: {cancellation.reason}"
-    )
+    , db=request.app.state.db)
     
     return {"success": True, "message": "Membership cancellation request submitted"}

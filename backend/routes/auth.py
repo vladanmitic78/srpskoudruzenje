@@ -60,7 +60,7 @@ async def register(user_data: UserCreate, request: Request):
         "Verifikacija email adrese / E-postverifiering - SKUD Täby",
         html_content,
         text_content
-    )
+    , db=request.app.state.db)
     
     # Send admin notification email
     admin_email = "info@srpskoudruzenjetaby.se"
@@ -78,7 +78,7 @@ async def register(user_data: UserCreate, request: Request):
             "Nova Registracija / Ny Registrering - SKUD Täby",
             admin_html,
             admin_text
-        )
+        , db=request.app.state.db)
     except Exception as e:
         logger.error(f"Failed to send admin notification: {str(e)}")
     
@@ -189,7 +189,7 @@ async def forgot_password(email: str, request: Request):
         "Password Reset - SKUD Täby",
         html,
         f"Reset your password: {reset_link}"
-    )
+    , db=request.app.state.db)
     
     return {"success": True, "message": "If email exists, reset instructions sent"}
 
