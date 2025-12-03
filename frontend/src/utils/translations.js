@@ -685,7 +685,9 @@ const translations = {
       loading: 'Loading...',
       noData: 'No data available',
       page: 'Page',
-      of: 'of'
+      of: 'of',
+      switchToSerbian: 'Switch to Serbian',
+      switchToSwedish: 'Switch to Swedish'
     },
     home: {
       welcome: 'Welcome',
