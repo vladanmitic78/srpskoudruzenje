@@ -669,6 +669,11 @@ const translations = {
       dashboard: 'Dashboard',
       logout: 'Logout'
     },
+    common: {
+      learnMore: 'Learn More',
+      loading: 'Loading...',
+      noData: 'No data available'
+    },
     home: {
       welcome: 'Welcome',
       organizationName: 'Serbian Cultural Association Täby',
