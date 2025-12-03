@@ -173,7 +173,8 @@ async def cancel_participation(
             admin_email,
             "✗ Otkazano Učešće / Avbokad Deltagande - SKUD Täby",
             admin_html,
-            admin_text
+            admin_text,
+            db=db
         )
     except Exception as e:
         logger.error(f"Failed to send admin cancellation notification: {str(e)}")
