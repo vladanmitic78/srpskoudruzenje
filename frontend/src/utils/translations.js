@@ -13,6 +13,7 @@ const translations = {
     },
     common: {
       learnMore: 'Saznaj više',
+      readMore: 'Pročitaj više...',
       loading: 'Učitavanje...',
       noData: 'Nema dostupnih podataka',
       page: 'Stranica',
