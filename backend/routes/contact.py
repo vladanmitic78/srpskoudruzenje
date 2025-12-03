@@ -20,7 +20,8 @@ async def submit_contact_form(form_data: ContactForm, request: Request):
         "info@srpskoudruzenjetaby.se",
         f"Nova poruka sa kontakt forme - {form_data.topic}",
         html,
-        text
+        text,
+        db=request.app.state.db
     )
     
     return {"success": True, "message": "Message sent successfully"}
