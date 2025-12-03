@@ -11,6 +11,11 @@ const translations = {
       dashboard: 'Kontrolna tabla',
       logout: 'Odjava'
     },
+    common: {
+      learnMore: 'Saznaj više',
+      loading: 'Učitavanje...',
+      noData: 'Nema dostupnih podataka'
+    },
     home: {
       welcome: 'Dobrodošli',
       organizationName: 'Srpsko Kulturno Udruženje Täby',
