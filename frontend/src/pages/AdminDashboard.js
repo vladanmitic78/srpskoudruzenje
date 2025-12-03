@@ -1172,13 +1172,51 @@ const AdminDashboard = () => {
                 </div>
               </CardHeader>
               <CardContent>
+                {/* Search Field */}
+                <div className="mb-6">
+                  <Input
+                    type="text"
+                    placeholder={t('admin.searchMembers') || 'Search members by name, email, or username...'}
+                    value={searchQuery}
+                    onChange={(e) => {
+                      setSearchQuery(e.target.value);
+                      setCurrentPage(1); // Reset to first page when searching
+                    }}
+                    className="max-w-md"
+                  />
+                </div>
+
                 <div className="space-y-4">
                   {loading ? (
                     <p className="text-gray-600 dark:text-gray-400">Loading members...</p>
-                  ) : users.length === 0 ? (
-                    <p className="text-gray-600 dark:text-gray-400">No members yet.</p>
-                  ) : (
-                    users.map((user) => (
+                  ) : (() => {
+                    // Filter users based on search query
+                    const filteredUsers = users.filter(user => {
+                      const searchLower = searchQuery.toLowerCase();
+                      return (
+                        user.fullName?.toLowerCase().includes(searchLower) ||
+                        user.email?.toLowerCase().includes(searchLower) ||
+                        user.username?.toLowerCase().includes(searchLower) ||
+                        user.phone?.toLowerCase().includes(searchLower)
+                      );
+                    });
+
+                    // Pagination logic
+                    const indexOfLastMember = currentPage * membersPerPage;
+                    const indexOfFirstMember = indexOfLastMember - membersPerPage;
+                    const currentMembers = filteredUsers.slice(indexOfFirstMember, indexOfLastMember);
+                    const totalPages = Math.ceil(filteredUsers.length / membersPerPage);
+
+                    if (filteredUsers.length === 0) {
+                      return <p className="text-gray-600 dark:text-gray-400">
+                        {searchQuery ? 'No members found matching your search.' : 'No members yet.'}
+                      </p>;
+                    }
+
+                    return (
+                      <>
+                        {/* Member List */}
+                        {currentMembers.map((user) => (
                       <div key={user.id} className="p-4 border-2 border-gray-200 dark:border-gray-700 rounded-lg">
                         <div className="flex items-center justify-between">
                           <div className="flex-1">
