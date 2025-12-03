@@ -969,7 +969,7 @@ const translations = {
       },
       comingSoon: 'Management functionality will be loaded here.',
       redirectMessage: 'This section will show the same management interface as the admin dashboard.'
-    }
+    },
   },
   'sv': {
     nav: {
