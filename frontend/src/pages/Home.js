@@ -136,7 +136,7 @@ const Home = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {displayedNews.map((item) => (
-              <Card key={item.id} className="group hover:shadow-xl transition-all duration-300 overflow-hidden border-2 border-transparent hover:border-[var(--color-primary)]/20">
+              <Card key={item.id} className="group hover:shadow-xl transition-all duration-300 overflow-hidden border-2 border-transparent hover:border-[var(--color-primary)]/20 flex flex-col">
                 <div className="relative h-48 overflow-hidden">
                   <img
                     src={item.image}
@@ -147,13 +147,19 @@ const Home = () => {
                     {item.date}
                   </div>
                 </div>
-                <CardContent className="p-6">
+                <CardContent className="p-6 flex flex-col flex-grow">
                   <h3 className="text-xl font-bold mb-3 text-gray-900 dark:text-white group-hover:text-[var(--color-primary)] transition-colors">
                     {item.title[language]}
                   </h3>
-                  <p className="text-gray-600 dark:text-gray-300 line-clamp-3">
+                  <p className="text-gray-600 dark:text-gray-300 line-clamp-3 flex-grow">
                     {item.text[language]}
                   </p>
+                  <button
+                    onClick={() => openNewsDialog(item)}
+                    className="text-[var(--color-primary)] hover:text-[var(--color-secondary)] font-semibold text-sm mt-3 text-left hover:underline"
+                  >
+                    {t('common.readMore') || 'Read more...'}
+                  </button>
                 </CardContent>
               </Card>
             ))}
