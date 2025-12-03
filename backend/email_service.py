@@ -18,15 +18,11 @@ async def send_email(to_email: str, subject: str, html_content: str, text_conten
     try:
         message = MIMEMultipart('alternative')
         
-        # Improved headers to prevent spam filtering
-        message['From'] = f"SKUD Täby <{FROM_EMAIL}>"
+        # Headers - using simple format that Loopia accepts
+        message['From'] = FROM_EMAIL
         message['To'] = to_email
         message['Subject'] = subject
         message['Reply-To'] = FROM_EMAIL
-        message['Return-Path'] = FROM_EMAIL
-        message['X-Mailer'] = 'SKUD Täby Platform'
-        message['X-Priority'] = '3'
-        message['MIME-Version'] = '1.0'
         
         # Add Message-ID to improve deliverability
         import time
