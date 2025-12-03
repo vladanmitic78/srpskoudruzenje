@@ -1259,7 +1259,8 @@ const AdminDashboard = () => {
                             </button>
                           </div>
                         </div>
-                        ))}
+                      </div>
+                    ))}
 
                         {/* Pagination Controls */}
                         {totalPages > 1 && (
