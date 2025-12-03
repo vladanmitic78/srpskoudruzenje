@@ -1,15 +1,20 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useLanguage } from '../context/LanguageContext';
 import { Card, CardContent } from '../components/ui/card';
+import { Button } from '../components/ui/button';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { galleryAPI } from '../services/api';
 
+const ALBUMS_PER_PAGE = 9;
+
 const Gallery = () => {
-  const { language } = useLanguage();
+  const { language, t } = useLanguage();
   const [albums, setAlbums] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedAlbum, setSelectedAlbum] = useState(null);
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
 
   useEffect(() => {
     const fetchGallery = async () => {
