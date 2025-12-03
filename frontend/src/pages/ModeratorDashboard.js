@@ -547,7 +547,7 @@ const ModeratorDashboard = () => {
                 <CardTitle>{t('dashboard.trainingsTab')}</CardTitle>
               </CardHeader>
               <CardContent>
-                {userEvents.length === 0 ? (
+                {!Array.isArray(userEvents) || userEvents.length === 0 ? (
                   <p className="text-center text-gray-500 py-8">No upcoming events.</p>
                 ) : (
                   <div className="space-y-4">
