@@ -60,14 +60,20 @@ async def send_email(to_email: str, subject: str, html_content: str, text_conten
         message.attach(html_part)
 
         # Connect and send using SSL (for port 465)
+        # For SSL on port 465, we need to use use_tls=False and start_tls=False
+        # then connect with SSL context directly
+        import ssl
+        context = ssl.create_default_context()
+        
         await aiosmtplib.send(
             message,
             hostname=smtp_config['smtp_host'],
             port=smtp_config['smtp_port'],
             username=smtp_config['smtp_user'],
             password=smtp_config['smtp_password'],
-            use_tls=True,  # Use SSL/TLS for port 465
-            start_tls=False  # Don't use STARTTLS (that's for port 587)
+            use_tls=False,  # Don't use STARTTLS
+            start_tls=False,  # Don't use STARTTLS
+            tls_context=context  # Use SSL context for implicit SSL
         )
         logger.info(f"Email sent successfully to {to_email} via {smtp_config['smtp_host']}:{smtp_config['smtp_port']}")
         return True
