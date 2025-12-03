@@ -731,7 +731,9 @@ def get_admin_invitation_template(name: str, email: str, role: str, temporary_pa
     Logga in på: http://localhost:3000/login
     
     ---
+    """
     
+    return html, text
 
 
 def get_contact_form_confirmation(name: str):
