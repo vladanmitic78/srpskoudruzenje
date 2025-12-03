@@ -870,7 +870,7 @@ class EventsAPITester:
             await self.cleanup_session()
 
         # Print summary
-        print("=" * 60)
+        print("=" * 80)
         print("📊 TEST SUMMARY")
         print(f"✅ Passed: {self.results['passed']}")
         print(f"❌ Failed: {self.results['failed']}")
@@ -879,6 +879,11 @@ class EventsAPITester:
             print("\n🔍 FAILED TESTS:")
             for error in self.results['errors']:
                 print(f"   • {error}")
+        
+        print("\n📧 SMTP Configuration Notes:")
+        print("   • Check backend logs for SMTP configuration messages")
+        print("   • Emails should be sent via configured or default SMTP settings")
+        print("   • Port 465 = TLS, Port 587 = STARTTLS")
 
         return self.results['failed'] == 0
 
