@@ -15,7 +15,7 @@ import { Calendar, MapPin, ChevronRight, X } from 'lucide-react';
 import { newsAPI, eventsAPI } from '../services/api';
 
 const Home = () => {
-  const { language, t } = useLanguage();
+  const { language, setLanguage, t } = useLanguage();
   const { isAuthenticated } = useAuth();
   const [showAllNews, setShowAllNews] = useState(false);
   const [news, setNews] = useState([]);
@@ -32,6 +32,14 @@ const Home = () => {
   const closeNewsDialog = () => {
     setIsNewsDialogOpen(false);
     setTimeout(() => setSelectedNews(null), 200);
+  };
+
+  const switchToSerbian = () => {
+    setLanguage('sr-cyrillic');
+  };
+
+  const switchToSwedish = () => {
+    setLanguage('sv');
   };
 
   useEffect(() => {
