@@ -447,7 +447,7 @@ const ModeratorDashboard = () => {
                       />
                     </div>
                     <Button type="submit" className="bg-[var(--color-button-primary)] hover:bg-[var(--color-button-hover)]">
-                      {t('dashboard.passwordChange.changePassword')}
+                      {t('dashboard.passwordChange.changeButton')}
                     </Button>
                   </form>
                 </div>
