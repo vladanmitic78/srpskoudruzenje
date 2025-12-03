@@ -39,11 +39,11 @@ async def get_smtp_settings(db=None):
         "from_name": "Srpsko Kulturno Udruženje Täby"
     }
 
-async def send_email(to_email: str, subject: str, html_content: str, text_content: str = None):
+async def send_email(to_email: str, subject: str, html_content: str, text_content: str = None, db=None):
     """Send email using configured SMTP server"""
     try:
         # Get SMTP settings from database
-        smtp_config = await get_smtp_settings()
+        smtp_config = await get_smtp_settings(db)
         
         message = MIMEMultipart('alternative')
         message['From'] = f"{smtp_config['from_name']} <{smtp_config['from_email']}>"
