@@ -14,6 +14,7 @@ const translations = {
     common: {
       learnMore: 'Saznaj više',
       readMore: 'Pročitaj više...',
+      watchVideo: '🎬 Pogledaj video',
       loading: 'Učitavanje...',
       noData: 'Nema dostupnih podataka',
       page: 'Stranica',
