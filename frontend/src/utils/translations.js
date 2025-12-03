@@ -1019,7 +1019,9 @@ const translations = {
       loading: 'Laddar...',
       noData: 'Ingen data tillgänglig',
       page: 'Sida',
-      of: 'av'
+      of: 'av',
+      switchToSerbian: 'Byt till serbiska',
+      switchToSwedish: 'Byt till svenska'
     },
     home: {
       welcome: 'Välkommen',
