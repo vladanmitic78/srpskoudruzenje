@@ -93,12 +93,26 @@ const ModeratorDashboard = () => {
         setUserData(userDataResponse);
 
         // Fetch user's invoices
-        const invoicesResponse = await invoicesAPI.getMy();
-        setUserInvoices(invoicesResponse.items || []);
+        try {
+          const invoicesResponse = await invoicesAPI.getMy();
+          setUserInvoices(invoicesResponse.items || invoicesResponse || []);
+        } catch (err) {
+          console.error('Error fetching invoices:', err);
+          setUserInvoices([]);
+        }
 
-        // Fetch user's registered events
-        const eventsResponse = await eventsAPI.getAll();
-        setUserEvents(eventsResponse.items || []);
+        // Fetch upcoming events (for user's trainings tab)
+        try {
+          const eventsResponse = await eventsAPI.getAll();
+          const allEvents = eventsResponse.items || eventsResponse || [];
+          // Filter to show only upcoming events
+          const today = new Date().toISOString().split('T')[0];
+          const upcomingEvents = allEvents.filter(event => event.date >= today && event.status === 'active');
+          setUserEvents(upcomingEvents);
+        } catch (err) {
+          console.error('Error fetching events:', err);
+          setUserEvents([]);
+        }
         
       } catch (error) {
         console.error('Error fetching data:', error);
