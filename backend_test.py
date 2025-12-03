@@ -827,9 +827,9 @@ class EventsAPITester:
 
     async def run_all_tests(self):
         """Run all tests in sequence"""
-        print("🚀 Starting Backend API Testing (Events + Password Reset)...")
+        print("🚀 Starting Backend API Testing (Events + Password Reset + Dynamic SMTP)...")
         print(f"Backend URL: {BACKEND_URL}")
-        print("=" * 60)
+        print("=" * 80)
 
         await self.setup_session()
 
@@ -856,6 +856,15 @@ class EventsAPITester:
             await self.test_reset_password_invalid_token()
             await self.test_password_reset_flow_simulation()
             await self.test_password_reset_email_format()
+
+            # Dynamic SMTP Configuration Tests
+            print("\n📧 Testing Dynamic SMTP Configuration...")
+            await self.test_get_platform_settings_default()
+            await self.test_contact_form_default_smtp()
+            await self.test_update_platform_settings_smtp()
+            await self.test_contact_form_with_db_smtp()
+            await self.test_incomplete_smtp_config_fallback()
+            await self.test_port_based_tls_configuration()
 
         finally:
             await self.cleanup_session()
