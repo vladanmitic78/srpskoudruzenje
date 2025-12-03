@@ -998,6 +998,11 @@ const translations = {
       dashboard: 'Instrumentpanel',
       logout: 'Logga ut'
     },
+    common: {
+      learnMore: 'Läs mer',
+      loading: 'Laddar...',
+      noData: 'Ingen data tillgänglig'
+    },
     home: {
       welcome: 'Välkommen',
       organizationName: 'Serbiska Kulturföreningen Täby',
