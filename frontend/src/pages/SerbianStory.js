@@ -29,14 +29,14 @@ const SerbianStory = () => {
     <div className="min-h-screen py-16">
       <div className="container mx-auto px-4">
         <h1 className="text-4xl md:text-5xl font-bold text-[var(--color-secondary)] dark:text-[var(--color-primary)] mb-12 text-center">
-          Srpska priča / Serbian Story
+          {t('nav.serbianStory')}
         </h1>
 
         <div className="max-w-4xl mx-auto space-y-8">
           {loading ? (
-            <p className="text-center text-gray-600 dark:text-gray-300">Loading stories...</p>
+            <p className="text-center text-gray-600 dark:text-gray-300">{t('common.loading') || 'Loading stories...'}</p>
           ) : stories.length === 0 ? (
-            <p className="text-center text-gray-600 dark:text-gray-300">No stories available yet.</p>
+            <p className="text-center text-gray-600 dark:text-gray-300">{t('common.noData') || 'No stories available yet.'}</p>
           ) : (
             stories.map((story) => (
             <Card key={story.id} className="overflow-hidden border-2 border-[var(--color-primary)]/20 hover:shadow-xl transition-all duration-300">
