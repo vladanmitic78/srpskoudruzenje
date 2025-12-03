@@ -132,17 +132,17 @@ async def send_email(to_email: str, subject: str, html_content: str, text_conten
         html_part = MIMEText(html_content, 'html', 'utf-8')
         message.attach(html_part)
 
-        # Connect and send - ORIGINAL WORKING CONFIGURATION
+        # Connect and send - Using dynamic configuration
         await aiosmtplib.send(
             message,
-            hostname=SMTP_HOST,
-            port=SMTP_PORT,
-            username=SMTP_USER,
-            password=SMTP_PASSWORD,
-            use_tls=True,  # Use TLS for port 465
-            start_tls=False  # Don't use STARTTLS (that's for port 587)
+            hostname=smtp_config['host'],
+            port=smtp_config['port'],
+            username=smtp_config['user'],
+            password=smtp_config['password'],
+            use_tls=smtp_config['use_tls'],
+            start_tls=smtp_config['start_tls']
         )
-        logger.info(f"Email sent successfully to {to_email}")
+        logger.info(f"Email sent successfully to {to_email} via {smtp_config['host']}:{smtp_config['port']}")
         return True
     except Exception as e:
         logger.error(f"Failed to send email to {to_email}: {str(e)}")
