@@ -92,7 +92,8 @@ async def send_event_reminders(db: AsyncIOMotorDatabase):
                         to_email=user_email,
                         subject=f"Podsetnik: {event_title} - Sutra! / Påminnelse: {event_title} - Imorgon!",
                         html_content=html_content,
-                        text_content=text_content
+                        text_content=text_content,
+                        db=db
                     )
                     
                     if success:
