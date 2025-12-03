@@ -58,52 +58,110 @@ const SerbianStory = () => {
           {t('nav.serbianStory')}
         </h1>
 
-        <div className="max-w-4xl mx-auto space-y-8">
-          {loading ? (
-            <p className="text-center text-gray-600 dark:text-gray-300">{t('common.loading') || 'Loading stories...'}</p>
-          ) : stories.length === 0 ? (
-            <p className="text-center text-gray-600 dark:text-gray-300">{t('common.noData') || 'No stories available yet.'}</p>
-          ) : (
-            stories.map((story) => (
-            <Card key={story.id} className="overflow-hidden border-2 border-[var(--color-primary)]/20 hover:shadow-xl transition-all duration-300">
-              {story.image && (
-                <div className="relative h-64 md:h-96 overflow-hidden">
-                  <img
-                    src={story.image}
-                    alt={story.title[language]}
-                    className="w-full h-full object-cover"
-                  />
-                  <div className="absolute top-4 right-4 bg-[var(--color-button-primary)] text-white px-4 py-2 rounded-full text-sm font-semibold shadow-lg">
-                    {story.date}
-                  </div>
+        {loading ? (
+          <p className="text-center text-gray-600 dark:text-gray-300">{t('common.loading') || 'Loading stories...'}</p>
+        ) : stories.length === 0 ? (
+          <p className="text-center text-gray-600 dark:text-gray-300">{t('common.noData') || 'No stories available yet.'}</p>
+        ) : (
+          <>
+            {/* 3x3 Grid of Stories */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-7xl mx-auto mb-8">
+              {currentStories.map((story) => (
+                <Card key={story.id} className="overflow-hidden border-2 border-[var(--color-primary)]/20 hover:shadow-xl transition-all duration-300 flex flex-col h-full">
+                  {story.image && (
+                    <div className="relative h-48 overflow-hidden">
+                      <img
+                        src={story.image}
+                        alt={story.title[language]}
+                        className="w-full h-full object-cover"
+                      />
+                      <div className="absolute top-2 right-2 bg-[var(--color-button-primary)] text-white px-3 py-1 rounded-full text-xs font-semibold shadow-lg">
+                        {story.date}
+                      </div>
+                    </div>
+                  )}
+                  
+                  <CardContent className="p-4 flex flex-col flex-grow">
+                    <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-3 line-clamp-2">
+                      {story.title[language]}
+                    </h2>
+                    
+                    <p className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed mb-4 text-justify line-clamp-4 flex-grow">
+                      {story.text[language]}
+                    </p>
+                    
+                    {story.url && (
+                      <Button 
+                        asChild
+                        variant="outline"
+                        size="sm"
+                        className="border-2 border-[var(--color-primary)] text-[var(--color-primary)] hover:bg-[var(--color-button-primary)] hover:text-white w-full"
+                      >
+                        <a href={story.url} target="_blank" rel="noopener noreferrer">
+                          {t('common.learnMore') || 'Learn More'}
+                          <ExternalLink className="ml-2 h-3 w-3" />
+                        </a>
+                      </Button>
+                    )}
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+
+            {/* Pagination Controls */}
+            {totalPages > 1 && (
+              <div className="flex items-center justify-center gap-2 mt-8">
+                {/* Previous Button */}
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={goToPrevious}
+                  disabled={currentPage === 1}
+                  className="border-2 border-[var(--color-primary)] text-[var(--color-primary)] hover:bg-[var(--color-button-primary)] hover:text-white disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  <ChevronLeft className="h-4 w-4" />
+                </Button>
+
+                {/* Page Numbers */}
+                <div className="flex gap-2">
+                  {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                    <Button
+                      key={page}
+                      variant={currentPage === page ? "default" : "outline"}
+                      size="sm"
+                      onClick={() => goToPage(page)}
+                      className={
+                        currentPage === page
+                          ? "bg-[var(--color-button-primary)] text-white hover:bg-[var(--color-button-hover)]"
+                          : "border-2 border-[var(--color-primary)] text-[var(--color-primary)] hover:bg-[var(--color-button-primary)] hover:text-white"
+                      }
+                    >
+                      {page}
+                    </Button>
+                  ))}
                 </div>
-              )}
-              
-              <CardContent className="p-8">
-                <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-6">
-                  {story.title[language]}
-                </h2>
-                
-                <p className="text-lg text-gray-700 dark:text-gray-300 leading-relaxed mb-6 text-justify">
-                  {story.text[language]}
-                </p>
-                
-                {story.url && (
-                  <Button 
-                    asChild
-                    variant="outline"
-                    className="border-2 border-[var(--color-primary)] text-[var(--color-primary)] hover:bg-[var(--color-button-primary)] hover:text-white"
-                  >
-                    <a href={story.url} target="_blank" rel="noopener noreferrer">
-                      {t('common.learnMore') || 'Learn More'}
-                      <ExternalLink className="ml-2 h-4 w-4" />
-                    </a>
-                  </Button>
-                )}
-              </CardContent>
-            </Card>
-          )))}
-        </div>
+
+                {/* Next Button */}
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={goToNext}
+                  disabled={currentPage === totalPages}
+                  className="border-2 border-[var(--color-primary)] text-[var(--color-primary)] hover:bg-[var(--color-button-primary)] hover:text-white disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  <ChevronRight className="h-4 w-4" />
+                </Button>
+              </div>
+            )}
+
+            {/* Page Info */}
+            {totalPages > 1 && (
+              <p className="text-center text-sm text-gray-600 dark:text-gray-400 mt-4">
+                {t('common.page') || 'Page'} {currentPage} {t('common.of') || 'of'} {totalPages}
+              </p>
+            )}
+          </>
+        )}
       </div>
     </div>
   );
