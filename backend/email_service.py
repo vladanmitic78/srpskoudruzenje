@@ -761,7 +761,7 @@ def get_contact_form_confirmation(name: str):
                 <h2 style="text-align: center; color: #4CAF50;">Poruka primljena / Meddelande mottaget</h2>
                 
                 <p><strong>Srpski:</strong></p>
-                <p>Poštovani/a {name},</p>
+                <p>Poštovani/a {{name}},</p>
                 <p>Hvala Vam što ste nas kontaktirali!</p>
                 <p>Vaša poruka je uspešno primljena i mi ćemo Vam odgovoriti u najkraćem mogućem roku.</p>
                 <p>Očekujte naš odgovor uskoro.</p>
@@ -769,7 +769,7 @@ def get_contact_form_confirmation(name: str):
                 <hr style="margin: 30px 0; border: 0; border-top: 1px solid #ddd;">
                 
                 <p><strong>Svenska:</strong></p>
-                <p>Hej {name},</p>
+                <p>Hej {{name}},</p>
                 <p>Tack för att du kontaktade oss!</p>
                 <p>Ditt meddelande har tagits emot och vi kommer att svara så snart som möjligt.</p>
                 <p>Förvänta dig vårt svar inom kort.</p>
@@ -790,7 +790,7 @@ def get_contact_form_confirmation(name: str):
         </div>
     </body>
     </html>
-    """
+    """.replace('{{name}}', name)
     
     text = f"""
 Srpsko Kulturno Udruženje Täby / Serbiska Kulturföreningen Täby
