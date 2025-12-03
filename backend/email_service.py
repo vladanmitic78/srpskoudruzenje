@@ -6,47 +6,18 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-async def get_smtp_settings(db=None):
-    """Fetch SMTP settings from database"""
-    try:
-        if db is not None:
-            platform_settings = await db.platform_settings.find_one({"_id": "system"})
-        else:
-            # If no db provided, try to get it from server context
-            from server import db as server_db
-            platform_settings = await server_db.platform_settings.find_one({"_id": "system"})
-        
-        if platform_settings and "email" in platform_settings:
-            email_config = platform_settings["email"]
-            return {
-                "smtp_host": email_config.get("smtpHost", "mailcluster.loopia.se"),
-                "smtp_port": email_config.get("smtpPort", 465),
-                "smtp_user": email_config.get("smtpUser", "info@srpskoudruzenjetaby.se"),
-                "smtp_password": email_config.get("smtpPassword", ""),
-                "from_email": email_config.get("fromEmail", "info@srpskoudruzenjetaby.se"),
-                "from_name": email_config.get("fromName", "Srpsko Kulturno Udruženje Täby")
-            }
-    except Exception as e:
-        logger.error(f"Failed to fetch SMTP settings from database: {e}")
-    
-    # Fallback to hardcoded defaults
-    return {
-        "smtp_host": "mailcluster.loopia.se",
-        "smtp_port": 465,
-        "smtp_user": "info@srpskoudruzenjetaby.se",
-        "smtp_password": "sssstaby2025",
-        "from_email": "info@srpskoudruzenjetaby.se",
-        "from_name": "Srpsko Kulturno Udruženje Täby"
-    }
+# Email configuration - HARDCODED (working setup)
+SMTP_HOST = "mailcluster.loopia.se"
+SMTP_PORT = 465  # SSL/TLS
+SMTP_USER = "info@srpskoudruzenjetaby.se"
+SMTP_PASSWORD = "sssstaby2025"
+FROM_EMAIL = "info@srpskoudruzenjetaby.se"
 
 async def send_email(to_email: str, subject: str, html_content: str, text_content: str = None, db=None):
-    """Send email using configured SMTP server"""
+    """Send email using Loopia SMTP server"""
     try:
-        # Get SMTP settings from database
-        smtp_config = await get_smtp_settings(db)
-        
         message = MIMEMultipart('alternative')
-        message['From'] = f"{smtp_config['from_name']} <{smtp_config['from_email']}>"
+        message['From'] = FROM_EMAIL
         message['To'] = to_email
         message['Subject'] = subject
 
@@ -59,27 +30,20 @@ async def send_email(to_email: str, subject: str, html_content: str, text_conten
         html_part = MIMEText(html_content, 'html', 'utf-8')
         message.attach(html_part)
 
-        # Connect and send using SSL (for port 465)
-        # For SSL on port 465, we need to use use_tls=False and start_tls=False
-        # then connect with SSL context directly
-        import ssl
-        context = ssl.create_default_context()
-        
+        # Connect and send - ORIGINAL WORKING CONFIGURATION
         await aiosmtplib.send(
             message,
-            hostname=smtp_config['smtp_host'],
-            port=smtp_config['smtp_port'],
-            username=smtp_config['smtp_user'],
-            password=smtp_config['smtp_password'],
-            use_tls=False,  # Don't use STARTTLS
-            start_tls=False,  # Don't use STARTTLS
-            tls_context=context  # Use SSL context for implicit SSL
+            hostname=SMTP_HOST,
+            port=SMTP_PORT,
+            username=SMTP_USER,
+            password=SMTP_PASSWORD,
+            use_tls=True,  # Use TLS for port 465
+            start_tls=False  # Don't use STARTTLS (that's for port 587)
         )
-        logger.info(f"Email sent successfully to {to_email} via {smtp_config['smtp_host']}:{smtp_config['smtp_port']}")
+        logger.info(f"Email sent successfully to {to_email}")
         return True
     except Exception as e:
         logger.error(f"Failed to send email to {to_email}: {str(e)}")
-        logger.error(f"SMTP Config: {smtp_config['smtp_host']}:{smtp_config['smtp_port']}, User: {smtp_config['smtp_user']}")
         return False
 
 def get_verification_email_template(name: str, verification_link: str):
