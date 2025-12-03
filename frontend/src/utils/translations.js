@@ -14,7 +14,9 @@ const translations = {
     common: {
       learnMore: 'Saznaj više',
       loading: 'Učitavanje...',
-      noData: 'Nema dostupnih podataka'
+      noData: 'Nema dostupnih podataka',
+      page: 'Stranica',
+      of: 'od'
     },
     home: {
       welcome: 'Dobrodošli',
