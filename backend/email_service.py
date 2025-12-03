@@ -835,9 +835,3 @@ Täby Centrum 1, 183 30 Täby
     """
     
     return html, text
-
-    Srpsko Kulturno Društvo Täby
-    info@srpskoudruzenjetaby.se
-    """
-    
-    return html, text
