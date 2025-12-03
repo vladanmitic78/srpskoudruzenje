@@ -4,7 +4,14 @@ import { useLanguage } from '../context/LanguageContext';
 import { useAuth } from '../context/AuthContext';
 import { Button } from '../components/ui/button';
 import { Card, CardContent } from '../components/ui/card';
-import { Calendar, MapPin, ChevronRight } from 'lucide-react';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from '../components/ui/dialog';
+import { Calendar, MapPin, ChevronRight, X } from 'lucide-react';
 import { newsAPI, eventsAPI } from '../services/api';
 
 const Home = () => {
@@ -14,6 +21,18 @@ const Home = () => {
   const [news, setNews] = useState([]);
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [selectedNews, setSelectedNews] = useState(null);
+  const [isNewsDialogOpen, setIsNewsDialogOpen] = useState(false);
+
+  const openNewsDialog = (newsItem) => {
+    setSelectedNews(newsItem);
+    setIsNewsDialogOpen(true);
+  };
+
+  const closeNewsDialog = () => {
+    setIsNewsDialogOpen(false);
+    setTimeout(() => setSelectedNews(null), 200);
+  };
 
   useEffect(() => {
     const fetchData = async () => {
