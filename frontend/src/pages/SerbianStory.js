@@ -69,7 +69,7 @@ const SerbianStory = () => {
                     className="border-2 border-[var(--color-primary)] text-[var(--color-primary)] hover:bg-[var(--color-button-primary)] hover:text-white"
                   >
                     <a href={story.url} target="_blank" rel="noopener noreferrer">
-                      Learn More
+                      {t('common.learnMore') || 'Learn More'}
                       <ExternalLink className="ml-2 h-4 w-4" />
                     </a>
                   </Button>
