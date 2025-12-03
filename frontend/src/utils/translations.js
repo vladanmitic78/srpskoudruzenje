@@ -321,7 +321,7 @@ const translations = {
       },
       comingSoon: 'Funkcionalnost upravljanja će biti učitana ovde.',
       redirectMessage: 'Ovaj odeljak će prikazati istu funkcionalnost kao admin kontrolna tabla.'
-    }
+    },
   },
   'sr-cyrillic': {
     nav: {
