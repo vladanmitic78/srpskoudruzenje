@@ -100,13 +100,13 @@ const Gallery = () => {
           Galerija / Gallery
         </h1>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
           {loading ? (
-            <p className="col-span-full text-center text-gray-600 dark:text-gray-300">Loading gallery...</p>
+            <p className="col-span-full text-center text-gray-600 dark:text-gray-300">{t('common.loading') || 'Loading gallery...'}</p>
           ) : albums.length === 0 ? (
-            <p className="col-span-full text-center text-gray-600 dark:text-gray-300">No albums yet.</p>
+            <p className="col-span-full text-center text-gray-600 dark:text-gray-300">{t('common.noData') || 'No albums yet.'}</p>
           ) : (
-            albums.map((album) => (
+            currentAlbums.map((album) => (
               <Card 
                 key={album.id} 
                 className="overflow-hidden border-2 border-[var(--color-primary)]/20 hover:border-[var(--color-primary)] transition-all cursor-pointer group"
