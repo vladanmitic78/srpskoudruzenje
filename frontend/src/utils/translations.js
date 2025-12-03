@@ -1007,7 +1007,9 @@ const translations = {
     common: {
       learnMore: 'Läs mer',
       loading: 'Laddar...',
-      noData: 'Ingen data tillgänglig'
+      noData: 'Ingen data tillgänglig',
+      page: 'Sida',
+      of: 'av'
     },
     home: {
       welcome: 'Välkommen',
