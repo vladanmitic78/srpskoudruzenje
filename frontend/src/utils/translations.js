@@ -676,7 +676,9 @@ const translations = {
     common: {
       learnMore: 'Learn More',
       loading: 'Loading...',
-      noData: 'No data available'
+      noData: 'No data available',
+      page: 'Page',
+      of: 'of'
     },
     home: {
       welcome: 'Welcome',
