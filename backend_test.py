@@ -535,6 +535,276 @@ class EventsAPITester:
             self.log_result("Password Reset Email Format", False, f"Exception: {str(e)}")
             return False
 
+    # Dynamic SMTP Configuration Tests
+    async def test_get_platform_settings_default(self):
+        """Test GET /api/admin/platform-settings - should return defaults if no DB config"""
+        if not self.admin_token:
+            self.log_result("Get Platform Settings (Default)", False, "No admin token available")
+            return False
+
+        try:
+            headers = {"Authorization": f"Bearer {self.admin_token}"}
+            async with self.session.get(f"{BACKEND_URL}/admin/platform-settings", headers=headers) as response:
+                if response.status == 200:
+                    data = await response.json()
+                    # Check if default email settings are present
+                    if "email" in data and isinstance(data["email"], dict):
+                        email_config = data["email"]
+                        # Should have empty SMTP settings (defaults)
+                        self.log_result("Get Platform Settings (Default)", True, f"Retrieved default settings with email config: {email_config}")
+                        return True
+                    else:
+                        self.log_result("Get Platform Settings (Default)", False, "Missing email configuration in response")
+                        return False
+                else:
+                    text = await response.text()
+                    self.log_result("Get Platform Settings (Default)", False, f"HTTP {response.status}: {text}")
+                    return False
+        except Exception as e:
+            self.log_result("Get Platform Settings (Default)", False, f"Exception: {str(e)}")
+            return False
+
+    async def test_update_platform_settings_smtp(self):
+        """Test PUT /api/admin/platform-settings - Update SMTP configuration"""
+        if not self.admin_token:
+            self.log_result("Update Platform Settings SMTP", False, "No admin token available")
+            return False
+
+        try:
+            # Test SMTP configuration from the review request
+            smtp_config = {
+                "email": {
+                    "smtpHost": "mailcluster.loopia.se",
+                    "smtpPort": 465,
+                    "smtpUser": "info@srpskoudruzenjetaby.se",
+                    "smtpPassword": "sssstaby2025",
+                    "fromEmail": "info@srpskoudruzenjetaby.se",
+                    "fromName": "SKUD Täby"
+                }
+            }
+
+            headers = {"Authorization": f"Bearer {self.admin_token}"}
+            async with self.session.put(f"{BACKEND_URL}/admin/platform-settings", json=smtp_config, headers=headers) as response:
+                if response.status == 200:
+                    data = await response.json()
+                    if data.get("success"):
+                        self.log_result("Update Platform Settings SMTP", True, "SMTP configuration updated successfully")
+                        return True
+                    else:
+                        self.log_result("Update Platform Settings SMTP", False, "Update failed - invalid response")
+                        return False
+                else:
+                    text = await response.text()
+                    self.log_result("Update Platform Settings SMTP", False, f"HTTP {response.status}: {text}")
+                    return False
+        except Exception as e:
+            self.log_result("Update Platform Settings SMTP", False, f"Exception: {str(e)}")
+            return False
+
+    async def test_contact_form_with_db_smtp(self):
+        """Test POST /api/contact/ - Contact form submission using database SMTP config"""
+        try:
+            contact_data = {
+                "name": "Test User SMTP",
+                "email": "testuser@example.com",
+                "topic": "other",
+                "message": "Testing dynamic SMTP configuration - this email should be sent using database SMTP settings (Loopia server)."
+            }
+
+            async with self.session.post(f"{BACKEND_URL}/contact/", json=contact_data) as response:
+                if response.status == 200:
+                    data = await response.json()
+                    if data.get("success"):
+                        self.log_result("Contact Form (DB SMTP)", True, "Contact form submitted successfully - check logs for SMTP config used")
+                        return True
+                    else:
+                        self.log_result("Contact Form (DB SMTP)", False, "Contact form submission failed")
+                        return False
+                else:
+                    text = await response.text()
+                    self.log_result("Contact Form (DB SMTP)", False, f"HTTP {response.status}: {text}")
+                    return False
+        except Exception as e:
+            self.log_result("Contact Form (DB SMTP)", False, f"Exception: {str(e)}")
+            return False
+
+    async def test_incomplete_smtp_config_fallback(self):
+        """Test PUT /api/admin/platform-settings - Incomplete SMTP config should fallback to defaults"""
+        if not self.admin_token:
+            self.log_result("Incomplete SMTP Config Fallback", False, "No admin token available")
+            return False
+
+        try:
+            # Incomplete SMTP configuration (missing password)
+            incomplete_config = {
+                "email": {
+                    "smtpHost": "mailcluster.loopia.se",
+                    "smtpPort": 465,
+                    "smtpUser": "info@srpskoudruzenjetaby.se",
+                    # Missing smtpPassword
+                    "fromEmail": "info@srpskoudruzenjetaby.se",
+                    "fromName": "SKUD Täby"
+                }
+            }
+
+            headers = {"Authorization": f"Bearer {self.admin_token}"}
+            async with self.session.put(f"{BACKEND_URL}/admin/platform-settings", json=incomplete_config, headers=headers) as response:
+                if response.status == 200:
+                    data = await response.json()
+                    if data.get("success"):
+                        # Now test contact form - should fallback to defaults
+                        contact_data = {
+                            "name": "Test Fallback User",
+                            "email": "testfallback@example.com",
+                            "topic": "other",
+                            "message": "Testing SMTP fallback - incomplete config should use defaults."
+                        }
+                        
+                        async with self.session.post(f"{BACKEND_URL}/contact/", json=contact_data) as contact_response:
+                            if contact_response.status == 200:
+                                contact_data = await contact_response.json()
+                                if contact_data.get("success"):
+                                    self.log_result("Incomplete SMTP Config Fallback", True, "Incomplete config saved, contact form works (should use default SMTP)")
+                                    return True
+                                else:
+                                    self.log_result("Incomplete SMTP Config Fallback", False, "Contact form failed with incomplete config")
+                                    return False
+                            else:
+                                self.log_result("Incomplete SMTP Config Fallback", False, f"Contact form HTTP {contact_response.status}")
+                                return False
+                    else:
+                        self.log_result("Incomplete SMTP Config Fallback", False, "Failed to save incomplete config")
+                        return False
+                else:
+                    text = await response.text()
+                    self.log_result("Incomplete SMTP Config Fallback", False, f"HTTP {response.status}: {text}")
+                    return False
+        except Exception as e:
+            self.log_result("Incomplete SMTP Config Fallback", False, f"Exception: {str(e)}")
+            return False
+
+    async def test_port_based_tls_configuration(self):
+        """Test different SMTP ports for TLS configuration (465 = TLS, 587 = STARTTLS)"""
+        if not self.admin_token:
+            self.log_result("Port-based TLS Configuration", False, "No admin token available")
+            return False
+
+        try:
+            # Test port 587 (STARTTLS)
+            starttls_config = {
+                "email": {
+                    "smtpHost": "mailcluster.loopia.se",
+                    "smtpPort": 587,
+                    "smtpUser": "info@srpskoudruzenjetaby.se",
+                    "smtpPassword": "sssstaby2025",
+                    "fromEmail": "info@srpskoudruzenjetaby.se",
+                    "fromName": "SKUD Täby"
+                }
+            }
+
+            headers = {"Authorization": f"Bearer {self.admin_token}"}
+            async with self.session.put(f"{BACKEND_URL}/admin/platform-settings", json=starttls_config, headers=headers) as response:
+                if response.status == 200:
+                    # Test contact form with port 587
+                    contact_data = {
+                        "name": "Test Port 587 User",
+                        "email": "testport587@example.com",
+                        "topic": "other",
+                        "message": "Testing SMTP port 587 (STARTTLS) configuration."
+                    }
+                    
+                    async with self.session.post(f"{BACKEND_URL}/contact/", json=contact_data) as contact_response:
+                        if contact_response.status == 200:
+                            # Now test port 465 (TLS)
+                            tls_config = {
+                                "email": {
+                                    "smtpHost": "mailcluster.loopia.se",
+                                    "smtpPort": 465,
+                                    "smtpUser": "info@srpskoudruzenjetaby.se",
+                                    "smtpPassword": "sssstaby2025",
+                                    "fromEmail": "info@srpskoudruzenjetaby.se",
+                                    "fromName": "SKUD Täby"
+                                }
+                            }
+                            
+                            async with self.session.put(f"{BACKEND_URL}/admin/platform-settings", json=tls_config, headers=headers) as tls_response:
+                                if tls_response.status == 200:
+                                    contact_data["name"] = "Test Port 465 User"
+                                    contact_data["email"] = "testport465@example.com"
+                                    contact_data["message"] = "Testing SMTP port 465 (TLS) configuration."
+                                    
+                                    async with self.session.post(f"{BACKEND_URL}/contact/", json=contact_data) as final_response:
+                                        if final_response.status == 200:
+                                            self.log_result("Port-based TLS Configuration", True, "Both port 587 (STARTTLS) and 465 (TLS) configurations tested successfully")
+                                            return True
+                                        else:
+                                            self.log_result("Port-based TLS Configuration", False, f"Port 465 test failed: {final_response.status}")
+                                            return False
+                                else:
+                                    self.log_result("Port-based TLS Configuration", False, f"Failed to update to port 465: {tls_response.status}")
+                                    return False
+                        else:
+                            self.log_result("Port-based TLS Configuration", False, f"Port 587 test failed: {contact_response.status}")
+                            return False
+                else:
+                    text = await response.text()
+                    self.log_result("Port-based TLS Configuration", False, f"Failed to update to port 587: {response.status}: {text}")
+                    return False
+        except Exception as e:
+            self.log_result("Port-based TLS Configuration", False, f"Exception: {str(e)}")
+            return False
+
+    async def test_contact_form_default_smtp(self):
+        """Test POST /api/contact/ - Contact form with no database SMTP config (should use defaults)"""
+        if not self.admin_token:
+            self.log_result("Contact Form (Default SMTP)", False, "No admin token available")
+            return False
+
+        try:
+            # Clear SMTP configuration to test defaults
+            empty_config = {
+                "email": {
+                    "smtpHost": "",
+                    "smtpPort": 587,
+                    "smtpUser": "",
+                    "smtpPassword": "",
+                    "fromEmail": "",
+                    "fromName": ""
+                }
+            }
+
+            headers = {"Authorization": f"Bearer {self.admin_token}"}
+            async with self.session.put(f"{BACKEND_URL}/admin/platform-settings", json=empty_config, headers=headers) as response:
+                if response.status == 200:
+                    # Test contact form - should use hardcoded defaults
+                    contact_data = {
+                        "name": "Test Default SMTP User",
+                        "email": "testdefault@example.com",
+                        "topic": "other",
+                        "message": "Testing default SMTP configuration - should use hardcoded Loopia settings."
+                    }
+                    
+                    async with self.session.post(f"{BACKEND_URL}/contact/", json=contact_data) as contact_response:
+                        if contact_response.status == 200:
+                            contact_result = await contact_response.json()
+                            if contact_result.get("success"):
+                                self.log_result("Contact Form (Default SMTP)", True, "Contact form works with default SMTP config")
+                                return True
+                            else:
+                                self.log_result("Contact Form (Default SMTP)", False, "Contact form failed with default config")
+                                return False
+                        else:
+                            text = await contact_response.text()
+                            self.log_result("Contact Form (Default SMTP)", False, f"Contact form HTTP {contact_response.status}: {text}")
+                            return False
+                else:
+                    text = await response.text()
+                    self.log_result("Contact Form (Default SMTP)", False, f"Failed to clear SMTP config: {response.status}: {text}")
+                    return False
+        except Exception as e:
+            self.log_result("Contact Form (Default SMTP)", False, f"Exception: {str(e)}")
+            return False
+
     async def test_backend_health(self):
         """Test backend health endpoint"""
         try:
