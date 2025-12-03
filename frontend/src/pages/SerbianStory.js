@@ -2,13 +2,16 @@ import React, { useState, useEffect } from 'react';
 import { useLanguage } from '../context/LanguageContext';
 import { Card, CardContent } from '../components/ui/card';
 import { Button } from '../components/ui/button';
-import { ExternalLink } from 'lucide-react';
+import { ExternalLink, ChevronLeft, ChevronRight } from 'lucide-react';
 import { storiesAPI } from '../services/api';
+
+const STORIES_PER_PAGE = 9;
 
 const SerbianStory = () => {
   const { language, t } = useLanguage();
   const [stories, setStories] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
 
   useEffect(() => {
     const fetchStories = async () => {
@@ -24,6 +27,29 @@ const SerbianStory = () => {
     
     fetchStories();
   }, []);
+
+  // Calculate pagination
+  const totalPages = Math.ceil(stories.length / STORIES_PER_PAGE);
+  const startIndex = (currentPage - 1) * STORIES_PER_PAGE;
+  const endIndex = startIndex + STORIES_PER_PAGE;
+  const currentStories = stories.slice(startIndex, endIndex);
+
+  const goToPage = (page) => {
+    setCurrentPage(page);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const goToPrevious = () => {
+    if (currentPage > 1) {
+      goToPage(currentPage - 1);
+    }
+  };
+
+  const goToNext = () => {
+    if (currentPage < totalPages) {
+      goToPage(currentPage + 1);
+    }
+  };
 
   return (
     <div className="min-h-screen py-16">
