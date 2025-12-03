@@ -345,6 +345,7 @@ const translations = {
     },
     common: {
       learnMore: 'Сазнај више',
+      readMore: 'Прочитај више...',
       loading: 'Учитавање...',
       noData: 'Нема доступних података',
       page: 'Страница',
