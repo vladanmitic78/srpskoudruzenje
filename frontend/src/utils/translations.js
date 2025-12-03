@@ -1009,6 +1009,7 @@ const translations = {
     },
     common: {
       learnMore: 'Läs mer',
+      readMore: 'Läs mer...',
       loading: 'Laddar...',
       noData: 'Ingen data tillgänglig',
       page: 'Sida',
