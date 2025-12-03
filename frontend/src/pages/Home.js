@@ -229,6 +229,42 @@ const Home = () => {
           </div>
         </div>
       </section>
+
+      {/* News Detail Dialog */}
+      <Dialog open={isNewsDialogOpen} onOpenChange={setIsNewsDialogOpen}>
+        <DialogContent className="max-w-3xl max-h-[80vh] overflow-y-auto">
+          {selectedNews && (
+            <>
+              <DialogHeader>
+                <div className="flex items-center justify-between mb-4">
+                  <span className="text-sm font-semibold text-[var(--color-primary)] bg-[var(--color-primary)]/10 px-3 py-1 rounded-full">
+                    {selectedNews.date}
+                  </span>
+                </div>
+                <DialogTitle className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">
+                  {selectedNews.title[language]}
+                </DialogTitle>
+              </DialogHeader>
+              
+              {selectedNews.image && (
+                <div className="relative h-64 md:h-96 w-full overflow-hidden rounded-lg mb-6">
+                  <img
+                    src={selectedNews.image}
+                    alt={selectedNews.title[language]}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+              )}
+              
+              <DialogDescription asChild>
+                <div className="text-base text-gray-700 dark:text-gray-300 leading-relaxed whitespace-pre-wrap">
+                  {selectedNews.text[language]}
+                </div>
+              </DialogDescription>
+            </>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
