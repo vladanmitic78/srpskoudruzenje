@@ -151,6 +151,59 @@ const Gallery = () => {
           )}
         </div>
 
+        {/* Pagination Controls */}
+        {!loading && totalPages > 1 && (
+          <>
+            <div className="flex items-center justify-center gap-2 mt-8">
+              {/* Previous Button */}
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={goToPrevious}
+                disabled={currentPage === 1}
+                className="border-2 border-[var(--color-primary)] text-[var(--color-primary)] hover:bg-[var(--color-button-primary)] hover:text-white disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                <ChevronLeft className="h-4 w-4" />
+              </Button>
+
+              {/* Page Numbers */}
+              <div className="flex gap-2">
+                {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                  <Button
+                    key={page}
+                    variant={currentPage === page ? "default" : "outline"}
+                    size="sm"
+                    onClick={() => goToPage(page)}
+                    className={
+                      currentPage === page
+                        ? "bg-[var(--color-button-primary)] text-white hover:bg-[var(--color-button-hover)]"
+                        : "border-2 border-[var(--color-primary)] text-[var(--color-primary)] hover:bg-[var(--color-button-primary)] hover:text-white"
+                    }
+                  >
+                    {page}
+                  </Button>
+                ))}
+              </div>
+
+              {/* Next Button */}
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={goToNext}
+                disabled={currentPage === totalPages}
+                className="border-2 border-[var(--color-primary)] text-[var(--color-primary)] hover:bg-[var(--color-button-primary)] hover:text-white disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                <ChevronRight className="h-4 w-4" />
+              </Button>
+            </div>
+
+            {/* Page Info */}
+            <p className="text-center text-sm text-gray-600 dark:text-gray-400 mt-4">
+              {t('common.page') || 'Page'} {currentPage} {t('common.of') || 'of'} {totalPages}
+            </p>
+          </>
+        )}
+
         {/* Lightbox Modal */}
         {lightboxOpen && selectedAlbum && selectedAlbum.images && (
           <div 
