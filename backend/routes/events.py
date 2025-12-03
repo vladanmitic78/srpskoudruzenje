@@ -117,7 +117,8 @@ async def confirm_participation(
             admin_email,
             "✓ Potvrđeno Učešće / Bekräftat Deltagande - SKUD Täby",
             admin_html,
-            admin_text
+            admin_text,
+            db=db
         )
     except Exception as e:
         logger.error(f"Failed to send admin participation notification: {str(e)}")
