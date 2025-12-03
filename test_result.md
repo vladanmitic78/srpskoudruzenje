@@ -222,6 +222,81 @@ backend:
         agent: "testing"
         comment: "✅ TESTED: POST /api/auth/reset-password works excellently. Validates reset token and expiry correctly. Updates hashed_password successfully. Clears resetToken and resetTokenExpiry fields from database after successful reset. Returns 400 for invalid/expired tokens. Complete password reset flow tested: old password rejected, new password works for login. All security measures working properly."
 
+  - task: "Dynamic SMTP Configuration - Get SMTP Config Function"
+    implemented: true
+    working: true
+    file: "/app/backend/email_service.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Added get_smtp_config() function to email_service.py. Reads SMTP settings from platform_settings collection, falls back to hardcoded defaults if not configured. Determines TLS settings based on port (465=TLS, 587=STARTTLS)."
+      - working: true
+        agent: "testing"
+        comment: "✅ TESTED: get_smtp_config() function works perfectly. Successfully reads from database when configured, falls back to defaults when incomplete/missing. Port-based TLS detection working (465=TLS, 587=STARTTLS). Logs confirm dynamic configuration switching."
+
+  - task: "Dynamic SMTP Configuration - Email Service Integration"
+    implemented: true
+    working: true
+    file: "/app/backend/email_service.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Modified send_email() function to use dynamic SMTP configuration. Now calls get_smtp_config() to fetch settings from database or use defaults. All email templates work with new system."
+      - working: true
+        agent: "testing"
+        comment: "✅ TESTED: send_email() function successfully uses dynamic configuration. Contact form emails sent using database SMTP settings when configured, defaults when not. All email sending attempts connect to correct SMTP servers with proper authentication."
+
+  - task: "Dynamic SMTP Configuration - Platform Settings API"
+    implemented: true
+    working: true
+    file: "/app/backend/routes/admin.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Platform settings API endpoints already exist. GET /api/admin/platform-settings returns current settings, PUT /api/admin/platform-settings updates configuration. Super Admin authentication enforced."
+      - working: true
+        agent: "testing"
+        comment: "✅ TESTED: Platform settings API works excellently. GET endpoint returns default email config when none exists. PUT endpoint successfully updates SMTP configuration in database. Super Admin authentication properly enforced. All CRUD operations functional."
+
+  - task: "Dynamic SMTP Configuration - Contact Form Integration"
+    implemented: true
+    working: true
+    file: "/app/backend/routes/contact.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Contact form already uses email_service.send_email() which now supports dynamic SMTP configuration. No changes needed to contact route."
+      - working: true
+        agent: "testing"
+        comment: "✅ TESTED: Contact form integration works perfectly. POST /api/contact/ successfully sends emails using dynamic SMTP configuration. Tested with database config, incomplete config (fallback), and different ports (465/587). All scenarios working correctly."
+
+  - task: "Dynamic SMTP Configuration - Fallback Mechanism"
+    implemented: true
+    working: true
+    file: "/app/backend/email_service.py"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: "NA"
+        agent: "main"
+        comment: "Implemented robust fallback mechanism. If database config is missing or incomplete (missing required fields), system falls back to hardcoded Loopia SMTP settings. Graceful error handling for database connection issues."
+      - working: true
+        agent: "testing"
+        comment: "✅ TESTED: Fallback mechanism works excellently. When SMTP config is incomplete (missing password), system correctly falls back to hardcoded defaults. Logs confirm 'Database SMTP config not fully configured, using defaults'. No crashes or errors during fallback scenarios."
+
   - task: "Moderator Dashboard - Login & Access"
     implemented: true
     working: true
