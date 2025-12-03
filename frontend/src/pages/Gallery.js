@@ -70,6 +70,29 @@ const Gallery = () => {
     return () => window.removeEventListener('keydown', handleKeyPress);
   }, [lightboxOpen, nextImage, prevImage, closeLightbox]);
 
+  // Calculate pagination
+  const totalPages = Math.ceil(albums.length / ALBUMS_PER_PAGE);
+  const startIndex = (currentPage - 1) * ALBUMS_PER_PAGE;
+  const endIndex = startIndex + ALBUMS_PER_PAGE;
+  const currentAlbums = albums.slice(startIndex, endIndex);
+
+  const goToPage = (page) => {
+    setCurrentPage(page);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const goToPrevious = () => {
+    if (currentPage > 1) {
+      goToPage(currentPage - 1);
+    }
+  };
+
+  const goToNext = () => {
+    if (currentPage < totalPages) {
+      goToPage(currentPage + 1);
+    }
+  };
+
   return (
     <div className="min-h-screen py-16">
       <div className="container mx-auto px-4">
