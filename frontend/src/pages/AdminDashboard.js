@@ -1259,9 +1259,70 @@ const AdminDashboard = () => {
                             </button>
                           </div>
                         </div>
-                      </div>
-                    ))
-                  )}
+                        ))}
+
+                        {/* Pagination Controls */}
+                        {totalPages > 1 && (
+                          <div className="flex items-center justify-between mt-6 pt-4 border-t">
+                            <div className="text-sm text-gray-600 dark:text-gray-400">
+                              Showing {indexOfFirstMember + 1} to {Math.min(indexOfLastMember, filteredUsers.length)} of {filteredUsers.length} members
+                            </div>
+                            <div className="flex gap-2">
+                              <Button
+                                onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                                disabled={currentPage === 1}
+                                variant="outline"
+                                size="sm"
+                              >
+                                Previous
+                              </Button>
+                              
+                              {/* Page Numbers */}
+                              <div className="flex gap-1">
+                                {Array.from({ length: totalPages }, (_, i) => i + 1)
+                                  .filter(page => {
+                                    // Show first page, last page, current page, and pages around current
+                                    return page === 1 || 
+                                           page === totalPages || 
+                                           (page >= currentPage - 1 && page <= currentPage + 1);
+                                  })
+                                  .map((page, index, array) => {
+                                    // Add ellipsis if there's a gap
+                                    const prevPage = array[index - 1];
+                                    const showEllipsis = prevPage && page - prevPage > 1;
+                                    
+                                    return (
+                                      <React.Fragment key={page}>
+                                        {showEllipsis && (
+                                          <span className="px-3 py-1 text-gray-500">...</span>
+                                        )}
+                                        <Button
+                                          onClick={() => setCurrentPage(page)}
+                                          variant={currentPage === page ? "default" : "outline"}
+                                          size="sm"
+                                          className={currentPage === page ? "bg-[var(--color-button-primary)] hover:bg-[var(--color-button-hover)]" : ""}
+                                        >
+                                          {page}
+                                        </Button>
+                                      </React.Fragment>
+                                    );
+                                  })}
+                              </div>
+
+                              <Button
+                                onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                                disabled={currentPage === totalPages}
+                                variant="outline"
+                                size="sm"
+                              >
+                                Next
+                              </Button>
+                            </div>
+                          </div>
+                        )}
+                      </>
+                    );
+                  })()}
                 </div>
               </CardContent>
             </Card>
