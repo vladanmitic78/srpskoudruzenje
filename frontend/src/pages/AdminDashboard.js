@@ -469,6 +469,11 @@ const AdminDashboard = () => {
   const [userDetailsOpen, setUserDetailsOpen] = useState(false);
   const [permissions, setPermissions] = useState(null);
   const [activeTab, setActiveTab] = useState(isModerator ? "events" : "members");
+  
+  // Search and Pagination state for Members
+  const [searchQuery, setSearchQuery] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const membersPerPage = 10;
   const [invoices, setInvoices] = useState([]);
   const [createInvoiceOpen, setCreateInvoiceOpen] = useState(false);
   const [editInvoiceOpen, setEditInvoiceOpen] = useState(false);
