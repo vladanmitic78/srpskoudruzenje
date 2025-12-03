@@ -1019,6 +1019,7 @@ const translations = {
     common: {
       learnMore: 'Läs mer',
       readMore: 'Läs mer...',
+      watchVideo: '🎬 Titta på video',
       loading: 'Laddar...',
       noData: 'Ingen data tillgänglig',
       page: 'Sida',
