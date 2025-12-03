@@ -388,9 +388,9 @@ const ModeratorDashboard = () => {
                     </div>
                     <div>
                       <Label className="text-sm font-medium text-gray-600 dark:text-gray-400">
-                        {t('dashboard.personalData.birthYear')}
+                        {t('dashboard.personalData.yearOfBirth')}
                       </Label>
-                      <p className="mt-1 text-lg font-semibold">{userData.birthYear || 'N/A'}</p>
+                      <p className="mt-1 text-lg font-semibold">{userData.yearOfBirth || 'N/A'}</p>
                     </div>
                   </div>
                 )}
