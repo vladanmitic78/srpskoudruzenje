@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-Backend API Testing for Serbian Cultural Association Events Management
-Tests all CRUD operations for events with authentication and email notifications
+Backend API Testing for Serbian Cultural Association
+Tests Events Management, Password Reset, and Dynamic SMTP Configuration
 """
 
 import asyncio
