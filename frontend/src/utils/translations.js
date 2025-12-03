@@ -684,6 +684,7 @@ const translations = {
     common: {
       learnMore: 'Learn More',
       readMore: 'Read more...',
+      watchVideo: '🎬 Watch Video',
       loading: 'Loading...',
       noData: 'No data available',
       page: 'Page',
