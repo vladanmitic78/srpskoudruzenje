@@ -3,14 +3,19 @@ from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 import os
 import logging
-from database import db
 
 logger = logging.getLogger(__name__)
 
-async def get_smtp_settings():
+async def get_smtp_settings(db=None):
     """Fetch SMTP settings from database"""
     try:
-        platform_settings = await db.platform_settings.find_one({"_id": "system"})
+        if db is not None:
+            platform_settings = await db.platform_settings.find_one({"_id": "system"})
+        else:
+            # If no db provided, try to get it from server context
+            from server import db as server_db
+            platform_settings = await server_db.platform_settings.find_one({"_id": "system"})
+        
         if platform_settings and "email" in platform_settings:
             email_config = platform_settings["email"]
             return {
