@@ -63,12 +63,13 @@ async def update_event(
                     user["email"],
                     "Otkazivanje treninga / Träningsinställning",
                     html,
-                    text
+                    text,
+                    db=db
                 )
                 
                 # Also send to parent email if exists
                 if user.get("parentEmail"):
-                    await send_email(user["parentEmail"], "Otkazivanje treninga / Träningsinställning", html, text)
+                    await send_email(user["parentEmail"], "Otkazivanje treninga / Träningsinställning", html, text, db=db)
     
     result = await db.events.update_one(
         {"_id": event_id},
