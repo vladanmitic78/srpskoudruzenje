@@ -351,7 +351,9 @@ const translations = {
       loading: 'Учитавање...',
       noData: 'Нема доступних података',
       page: 'Страница',
-      of: 'од'
+      of: 'од',
+      switchToSerbian: 'Пребаци на српски',
+      switchToSwedish: 'Пребаци на шведски'
     },
     home: {
       welcome: 'Добродошли',
