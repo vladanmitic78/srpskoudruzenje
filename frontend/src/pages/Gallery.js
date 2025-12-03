@@ -97,7 +97,7 @@ const Gallery = () => {
     <div className="min-h-screen py-16">
       <div className="container mx-auto px-4">
         <h1 className="text-4xl md:text-5xl font-bold text-[var(--color-secondary)] dark:text-[var(--color-primary)] mb-12 text-center">
-          Galerija / Gallery
+          {t('nav.gallery')}
         </h1>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
