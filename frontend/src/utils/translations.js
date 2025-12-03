@@ -340,6 +340,11 @@ const translations = {
       dashboard: 'Контролна табла',
       logout: 'Одјава'
     },
+    common: {
+      learnMore: 'Сазнај више',
+      loading: 'Учитавање...',
+      noData: 'Нема доступних података'
+    },
     home: {
       welcome: 'Добродошли',
       organizationName: 'Српско Културно Удружење Täby',
