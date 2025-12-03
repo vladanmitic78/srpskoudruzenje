@@ -95,7 +95,13 @@ const ModeratorDashboard = () => {
         // Fetch user's invoices
         try {
           const invoicesResponse = await invoicesAPI.getMy();
-          setUserInvoices(invoicesResponse.items || invoicesResponse || []);
+          if (Array.isArray(invoicesResponse)) {
+            setUserInvoices(invoicesResponse);
+          } else if (invoicesResponse && Array.isArray(invoicesResponse.items)) {
+            setUserInvoices(invoicesResponse.items);
+          } else {
+            setUserInvoices([]);
+          }
         } catch (err) {
           console.error('Error fetching invoices:', err);
           setUserInvoices([]);
@@ -104,7 +110,12 @@ const ModeratorDashboard = () => {
         // Fetch upcoming events (for user's trainings tab)
         try {
           const eventsResponse = await eventsAPI.getAll();
-          const allEvents = eventsResponse.items || eventsResponse || [];
+          let allEvents = [];
+          if (Array.isArray(eventsResponse)) {
+            allEvents = eventsResponse;
+          } else if (eventsResponse && Array.isArray(eventsResponse.items)) {
+            allEvents = eventsResponse.items;
+          }
           // Filter to show only upcoming events
           const today = new Date().toISOString().split('T')[0];
           const upcomingEvents = allEvents.filter(event => event.date >= today && event.status === 'active');
