@@ -487,7 +487,7 @@ const ModeratorDashboard = () => {
                 <CardTitle>{t('dashboard.invoices')}</CardTitle>
               </CardHeader>
               <CardContent>
-                {userInvoices.length === 0 ? (
+                {!Array.isArray(userInvoices) || userInvoices.length === 0 ? (
                   <p className="text-center text-gray-500 py-8">No invoices yet.</p>
                 ) : (
                   <div className="space-y-4">
