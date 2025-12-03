@@ -17,7 +17,9 @@ const translations = {
       loading: 'Učitavanje...',
       noData: 'Nema dostupnih podataka',
       page: 'Stranica',
-      of: 'od'
+      of: 'od',
+      switchToSerbian: 'Prebaci na srpski',
+      switchToSwedish: 'Prebaci na švedski'
     },
     home: {
       welcome: 'Dobrodošli',
