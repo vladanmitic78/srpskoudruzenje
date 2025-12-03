@@ -6,23 +6,110 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-# Email configuration - HARDCODED (working setup)
-SMTP_HOST = "mailcluster.loopia.se"
-SMTP_PORT = 465  # SSL/TLS
-SMTP_USER = "info@srpskoudruzenjetaby.se"
-SMTP_PASSWORD = "sssstaby2025"
-FROM_EMAIL = "info@srpskoudruzenjetaby.se"
+# Email configuration - HARDCODED FALLBACK (working setup)
+DEFAULT_SMTP_HOST = "mailcluster.loopia.se"
+DEFAULT_SMTP_PORT = 465  # SSL/TLS
+DEFAULT_SMTP_USER = "info@srpskoudruzenjetaby.se"
+DEFAULT_SMTP_PASSWORD = "sssstaby2025"
+DEFAULT_FROM_EMAIL = "info@srpskoudruzenjetaby.se"
+DEFAULT_FROM_NAME = "SKUD Täby"
+
+async def get_smtp_config(db):
+    """
+    Get SMTP configuration from database.
+    Falls back to hardcoded defaults if not configured or if there's an error.
+    """
+    try:
+        if db is None:
+            logger.warning("No database connection provided, using default SMTP config")
+            return {
+                'host': DEFAULT_SMTP_HOST,
+                'port': DEFAULT_SMTP_PORT,
+                'user': DEFAULT_SMTP_USER,
+                'password': DEFAULT_SMTP_PASSWORD,
+                'from_email': DEFAULT_FROM_EMAIL,
+                'from_name': DEFAULT_FROM_NAME,
+                'use_tls': True,
+                'start_tls': False
+            }
+        
+        # Try to get settings from database
+        settings = await db.platform_settings.find_one({"_id": "system"}, {"_id": 0})
+        
+        if settings and settings.get('email'):
+            email_config = settings['email']
+            
+            # Check if required fields are configured
+            if (email_config.get('smtpHost') and 
+                email_config.get('smtpUser') and 
+                email_config.get('smtpPassword')):
+                
+                smtp_port = email_config.get('smtpPort', 587)
+                
+                # Determine TLS settings based on port
+                if smtp_port == 465:
+                    use_tls = True
+                    start_tls = False
+                elif smtp_port == 587:
+                    use_tls = False
+                    start_tls = True
+                else:
+                    use_tls = False
+                    start_tls = False
+                
+                logger.info(f"Using SMTP config from database: {email_config.get('smtpHost')}:{smtp_port}")
+                
+                return {
+                    'host': email_config['smtpHost'],
+                    'port': smtp_port,
+                    'user': email_config['smtpUser'],
+                    'password': email_config['smtpPassword'],
+                    'from_email': email_config.get('fromEmail', DEFAULT_FROM_EMAIL),
+                    'from_name': email_config.get('fromName', DEFAULT_FROM_NAME),
+                    'use_tls': use_tls,
+                    'start_tls': start_tls
+                }
+        
+        # If we get here, database config is incomplete or missing
+        logger.info("Database SMTP config not fully configured, using defaults")
+        return {
+            'host': DEFAULT_SMTP_HOST,
+            'port': DEFAULT_SMTP_PORT,
+            'user': DEFAULT_SMTP_USER,
+            'password': DEFAULT_SMTP_PASSWORD,
+            'from_email': DEFAULT_FROM_EMAIL,
+            'from_name': DEFAULT_FROM_NAME,
+            'use_tls': True,
+            'start_tls': False
+        }
+        
+    except Exception as e:
+        logger.error(f"Error fetching SMTP config from database: {str(e)}, using defaults")
+        return {
+            'host': DEFAULT_SMTP_HOST,
+            'port': DEFAULT_SMTP_PORT,
+            'user': DEFAULT_SMTP_USER,
+            'password': DEFAULT_SMTP_PASSWORD,
+            'from_email': DEFAULT_FROM_EMAIL,
+            'from_name': DEFAULT_FROM_NAME,
+            'use_tls': True,
+            'start_tls': False
+        }
 
 async def send_email(to_email: str, subject: str, html_content: str, text_content: str = None, db=None):
-    """Send email using Loopia SMTP server"""
+    """Send email using configured or default SMTP server"""
     try:
+        # Get SMTP configuration (from database or defaults)
+        smtp_config = await get_smtp_config(db)
+        
         message = MIMEMultipart('alternative')
         
-        # Headers - using simple format that Loopia accepts
-        message['From'] = FROM_EMAIL
+        # Headers - using simple format that most SMTP servers accept
+        from_header = f"{smtp_config['from_name']} <{smtp_config['from_email']}>" if smtp_config['from_name'] else smtp_config['from_email']
+        message['From'] = from_header
         message['To'] = to_email
         message['Subject'] = subject
-        message['Reply-To'] = FROM_EMAIL
+        message['Reply-To'] = smtp_config['from_email']
         
         # Add Message-ID to improve deliverability
         import time
