@@ -6,7 +6,7 @@ import { ExternalLink } from 'lucide-react';
 import { storiesAPI } from '../services/api';
 
 const SerbianStory = () => {
-  const { language } = useLanguage();
+  const { language, t } = useLanguage();
   const [stories, setStories] = useState([]);
   const [loading, setLoading] = useState(true);
 
