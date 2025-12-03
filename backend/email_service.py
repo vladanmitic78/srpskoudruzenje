@@ -17,13 +17,32 @@ async def send_email(to_email: str, subject: str, html_content: str, text_conten
     """Send email using Loopia SMTP server"""
     try:
         message = MIMEMultipart('alternative')
-        message['From'] = FROM_EMAIL
+        
+        # Improved headers to prevent spam filtering
+        message['From'] = f"SKUD Täby <{FROM_EMAIL}>"
         message['To'] = to_email
         message['Subject'] = subject
+        message['Reply-To'] = FROM_EMAIL
+        message['Return-Path'] = FROM_EMAIL
+        message['X-Mailer'] = 'SKUD Täby Platform'
+        message['X-Priority'] = '3'
+        message['MIME-Version'] = '1.0'
+        
+        # Add Message-ID to improve deliverability
+        import time
+        import hashlib
+        msg_id = hashlib.md5(f"{to_email}{time.time()}".encode()).hexdigest()
+        message['Message-ID'] = f"<{msg_id}@srpskoudruzenjetaby.se>"
 
-        # Add plain text version
+        # Add plain text version (important for spam filters)
         if text_content:
             text_part = MIMEText(text_content, 'plain', 'utf-8')
+            message.attach(text_part)
+        else:
+            # If no text provided, create a simple text version from HTML
+            import re
+            text_fallback = re.sub('<[^<]+?>', '', html_content)
+            text_part = MIMEText(text_fallback, 'plain', 'utf-8')
             message.attach(text_part)
 
         # Add HTML version
