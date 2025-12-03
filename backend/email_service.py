@@ -732,6 +732,108 @@ def get_admin_invitation_template(name: str, email: str, role: str, temporary_pa
     
     ---
     
+
+
+def get_contact_form_confirmation(name: str):
+    """Generate confirmation email for contact form submitter (Serbian & Swedish)"""
+    
+    html = f"""
+    <html>
+    <head>
+        <style>
+            body {{ font-family: Arial, sans-serif; line-height: 1.6; color: #333; }}
+            .container {{ max-width: 600px; margin: 0 auto; padding: 20px; }}
+            .header {{ background-color: #C1272D; color: white; padding: 20px; text-align: center; }}
+            .content {{ background-color: #f9f9f9; padding: 30px; border: 1px solid #ddd; }}
+            .footer {{ text-align: center; padding: 20px; font-size: 12px; color: #666; }}
+            .check {{ font-size: 48px; color: #4CAF50; text-align: center; }}
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <div class="header">
+                <h1>Srpsko Kulturno Udruženje Täby</h1>
+                <h2>Serbiska Kulturföreningen Täby</h2>
+            </div>
+            <div class="content">
+                <div class="check">✓</div>
+                
+                <h2 style="text-align: center; color: #4CAF50;">Poruka primljena / Meddelande mottaget</h2>
+                
+                <p><strong>Srpski:</strong></p>
+                <p>Poštovani/a {name},</p>
+                <p>Hvala Vam što ste nas kontaktirali!</p>
+                <p>Vaša poruka je uspešno primljena i mi ćemo Vam odgovoriti u najkraćem mogućem roku.</p>
+                <p>Očekujte naš odgovor uskoro.</p>
+                
+                <hr style="margin: 30px 0; border: 0; border-top: 1px solid #ddd;">
+                
+                <p><strong>Svenska:</strong></p>
+                <p>Hej {name},</p>
+                <p>Tack för att du kontaktade oss!</p>
+                <p>Ditt meddelande har tagits emot och vi kommer att svara så snart som möjligt.</p>
+                <p>Förvänta dig vårt svar inom kort.</p>
+                
+                <hr style="margin: 30px 0; border: 0; border-top: 1px solid #ddd;">
+                
+                <p style="font-size: 12px; color: #666; text-align: center;">
+                    <strong>Kontakt / Contact:</strong><br>
+                    Email: info@srpskoudruzenjetaby.se<br>
+                    Telefon / Telefon: +46 123 456 789
+                </p>
+            </div>
+            <div class="footer">
+                <p>Srpsko Kulturno Udruženje Täby<br>
+                Serbiska Kulturföreningen Täby</p>
+                <p>Täby Centrum 1, 183 30 Täby</p>
+            </div>
+        </div>
+    </body>
+    </html>
+    """
+    
+    text = f"""
+Srpsko Kulturno Udruženje Täby / Serbiska Kulturföreningen Täby
+
+✓ Poruka primljena / Meddelande mottaget
+
+---
+
+SRPSKI:
+
+Poštovani/a {name},
+
+Hvala Vam što ste nas kontaktirali!
+
+Vaša poruka je uspešno primljena i mi ćemo Vam odgovoriti u najkraćem mogućem roku.
+
+Očekujte naš odgovor uskoro.
+
+---
+
+SVENSKA:
+
+Hej {name},
+
+Tack för att du kontaktade oss!
+
+Ditt meddelande har tagits emot och vi kommer att svara så snart som möjligt.
+
+Förvänta dig vårt svar inom kort.
+
+---
+
+Kontakt / Contact:
+Email: info@srpskoudruzenjetaby.se
+Telefon / Telefon: +46 123 456 789
+
+Srpsko Kulturno Udruženje Täby
+Serbiska Kulturföreningen Täby
+Täby Centrum 1, 183 30 Täby
+    """
+    
+    return html, text
+
     Srpsko Kulturno Društvo Täby
     info@srpskoudruzenjetaby.se
     """
