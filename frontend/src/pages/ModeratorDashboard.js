@@ -637,7 +637,7 @@ const ModeratorDashboard = () => {
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-4">
-                    {events.length === 0 ? (
+                    {!Array.isArray(events) || events.length === 0 ? (
                       <p className="text-gray-600 dark:text-gray-400 text-center py-8">
                         {t('admin.events.noEvents')}
                       </p>
