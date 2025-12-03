@@ -66,84 +66,44 @@ const SerbianStory = () => {
           <>
             {/* 3x3 Grid of Stories */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-7xl mx-auto mb-8">
-              {currentStories.map((story) => {
-                // Helper function to get embed URL for YouTube/Vimeo videos
-                const getEmbedUrl = (url) => {
-                  if (!url) return null;
-                  
-                  // YouTube
-                  if (url.includes('youtube.com') || url.includes('youtu.be')) {
-                    const videoId = url.includes('youtu.be') 
-                      ? url.split('youtu.be/')[1]?.split('?')[0]
-                      : url.split('v=')[1]?.split('&')[0];
-                    return videoId ? `https://www.youtube.com/embed/${videoId}` : null;
-                  }
-                  
-                  // Vimeo
-                  if (url.includes('vimeo.com')) {
-                    const videoId = url.split('vimeo.com/')[1]?.split('?')[0];
-                    return videoId ? `https://player.vimeo.com/video/${videoId}` : null;
-                  }
-                  
-                  // Direct video URL (mp4, webm, etc.)
-                  if (url.match(/\.(mp4|webm|ogg)$/i)) {
-                    return url;
-                  }
-                  
-                  return null;
-                };
-
-                const embedUrl = getEmbedUrl(story.video);
-                const isDirect = story.video && story.video.match(/\.(mp4|webm|ogg)$/i);
-
-                return (
-                  <Card key={story.id} className="overflow-hidden border-2 border-[var(--color-primary)]/20 hover:shadow-xl transition-all duration-300 flex flex-col h-full">
-                    {/* Display Video if available, otherwise Image */}
-                    {story.video && embedUrl ? (
-                      <div className="relative h-48 overflow-hidden bg-black">
-                        {isDirect ? (
-                          <video
-                            src={embedUrl}
-                            controls
-                            className="w-full h-full object-contain"
-                          >
-                            Your browser does not support the video tag.
-                          </video>
-                        ) : (
-                          <iframe
-                            src={embedUrl}
-                            className="w-full h-full"
-                            frameBorder="0"
-                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                            allowFullScreen
-                            title={story.title[language]}
-                          />
-                        )}
-                        <div className="absolute top-2 right-2 bg-[var(--color-button-primary)] text-white px-3 py-1 rounded-full text-xs font-semibold shadow-lg">
-                          {story.date}
-                        </div>
+              {currentStories.map((story) => (
+                <Card key={story.id} className="overflow-hidden border-2 border-[var(--color-primary)]/20 hover:shadow-xl transition-all duration-300 flex flex-col h-full">
+                  {story.image && (
+                    <div className="relative h-48 overflow-hidden">
+                      <img
+                        src={story.image}
+                        alt={story.title[language]}
+                        className="w-full h-full object-cover"
+                      />
+                      <div className="absolute top-2 right-2 bg-[var(--color-button-primary)] text-white px-3 py-1 rounded-full text-xs font-semibold shadow-lg">
+                        {story.date}
                       </div>
-                    ) : story.image ? (
-                      <div className="relative h-48 overflow-hidden">
-                        <img
-                          src={story.image}
-                          alt={story.title[language]}
-                          className="w-full h-full object-cover"
-                        />
-                        <div className="absolute top-2 right-2 bg-[var(--color-button-primary)] text-white px-3 py-1 rounded-full text-xs font-semibold shadow-lg">
-                          {story.date}
-                        </div>
-                      </div>
-                    ) : null}
+                    </div>
+                  )}
+                  
+                  <CardContent className="p-4 flex flex-col flex-grow">
+                    <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-3 line-clamp-2">
+                      {story.title[language]}
+                    </h2>
                     
-                    <CardContent className="p-4 flex flex-col flex-grow">
-                      <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-3 line-clamp-2">
-                        {story.title[language]}
-                      </h2>
-                      
-                      <p className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed mb-4 text-justify line-clamp-4 flex-grow">
-                        {story.text[language]}
-                      </p>
+                    <p className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed mb-4 text-justify line-clamp-4 flex-grow">
+                      {story.text[language]}
+                    </p>
+                    
+                    <div className="space-y-2">
+                      {story.video && (
+                        <Button 
+                          asChild
+                          variant="outline"
+                          size="sm"
+                          className="border-2 border-[var(--color-primary)] text-[var(--color-primary)] hover:bg-[var(--color-button-primary)] hover:text-white w-full"
+                        >
+                          <a href={story.video} target="_blank" rel="noopener noreferrer">
+                            {t('common.watchVideo') || '🎬 Watch Video'}
+                            <ExternalLink className="ml-2 h-3 w-3" />
+                          </a>
+                        </Button>
+                      )}
                       
                       {story.url && (
                         <Button 
@@ -158,10 +118,10 @@ const SerbianStory = () => {
                           </a>
                         </Button>
                       )}
-                    </CardContent>
-                  </Card>
-                );
-              })}
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
             </div>
 
             {/* Pagination Controls */}
