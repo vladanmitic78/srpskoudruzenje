@@ -17,7 +17,6 @@ import { newsAPI, eventsAPI } from '../services/api';
 const Home = () => {
   const { language, setLanguage, t } = useLanguage();
   const { isAuthenticated } = useAuth();
-  const [showAllNews, setShowAllNews] = useState(false);
   const [news, setNews] = useState([]);
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
