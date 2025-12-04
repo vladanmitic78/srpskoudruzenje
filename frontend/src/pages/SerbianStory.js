@@ -5,7 +5,7 @@ import { Button } from '../components/ui/button';
 import { ExternalLink, ChevronLeft, ChevronRight } from 'lucide-react';
 import { storiesAPI } from '../services/api';
 
-const STORIES_PER_PAGE = 9;
+const STORIES_PER_PAGE = 6;
 
 const SerbianStory = () => {
   const { language, t } = useLanguage();
