@@ -104,9 +104,8 @@ async def send_email(to_email: str, subject: str, html_content: str, text_conten
         
         message = MIMEMultipart('alternative')
         
-        # Headers - using simple format that most SMTP servers accept
-        from_header = f"{smtp_config['from_name']} <{smtp_config['from_email']}>" if smtp_config['from_name'] else smtp_config['from_email']
-        message['From'] = from_header
+        # Headers - using simple format that Loopia accepts (plain email address only)
+        message['From'] = smtp_config['from_email']
         message['To'] = to_email
         message['Subject'] = subject
         message['Reply-To'] = smtp_config['from_email']
