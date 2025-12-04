@@ -60,7 +60,8 @@ const Home = () => {
     fetchData();
   }, []);
 
-  const displayedNews = showAllNews ? news : news.slice(0, 3);
+  // Always show only first 3 news items on home page
+  const displayedNews = news.slice(0, 3);
 
   return (
     <div className="min-h-screen">
