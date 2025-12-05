@@ -3,10 +3,13 @@ from fastapi.responses import FileResponse
 from datetime import datetime
 from pathlib import Path
 import shutil
+import logging
 
 from models import GalleryCreate, GalleryResponse
 from dependencies import get_admin_user
+from utils.media_optimizer import optimize_uploaded_file
 
+logger = logging.getLogger(__name__)
 router = APIRouter()
 
 @router.get("/")
