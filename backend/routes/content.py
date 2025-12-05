@@ -105,6 +105,10 @@ async def list_all_pages(admin: dict = Depends(get_admin_user), request: Request
 from fastapi import UploadFile, File
 from pathlib import Path
 import shutil
+import logging
+from utils.media_optimizer import optimize_uploaded_file
+
+logger = logging.getLogger(__name__)
 
 @router.post("/gallery/upload")
 async def upload_gallery_file(
@@ -133,6 +137,10 @@ async def upload_gallery_file(
     # Save file
     with open(file_path, "wb") as buffer:
         shutil.copyfileobj(file.file, buffer)
+    
+    # Automatically optimize the uploaded file
+    optimize_uploaded_file(file_path)
+    logger.info(f"Optimized uploaded content file: {safe_filename}")
     
     file_type = 'video' if file_ext in ['.mp4', '.webm', '.mov'] else 'image'
     file_url = f"/api/content/gallery/file/{safe_filename}"
