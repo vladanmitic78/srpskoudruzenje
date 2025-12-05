@@ -97,6 +97,10 @@ async def upload_gallery_image(
     with open(file_path, "wb") as buffer:
         shutil.copyfileobj(file.file, buffer)
     
+    # Automatically optimize the uploaded image
+    optimize_uploaded_file(file_path)
+    logger.info(f"Optimized uploaded gallery image: {safe_filename}")
+    
     # Add image URL to gallery
     image_url = f"/api/gallery/images/{safe_filename}"
     await db.gallery.update_one(
