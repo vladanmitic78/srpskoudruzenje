@@ -291,6 +291,10 @@ async def upload_serbian_story_image(
     with open(file_path, "wb") as buffer:
         shutil.copyfileobj(file.file, buffer)
     
+    # Automatically optimize the uploaded image
+    optimize_uploaded_file(file_path)
+    logger.info(f"Optimized uploaded Serbian story image: {safe_filename}")
+    
     file_url = f"/api/content/file/{safe_filename}"
     
     # Update story with image URL
