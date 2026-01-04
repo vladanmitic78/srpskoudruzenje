@@ -1503,7 +1503,17 @@ const AdminDashboard = () => {
               <CardContent>
                 {/* Member Filter Section */}
                 <div className="mb-6 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
-                  <h4 className="text-sm font-semibold mb-3 text-gray-700 dark:text-gray-300">{t('admin.filter.title')}</h4>
+                  <div className="flex justify-between items-center mb-3">
+                    <h4 className="text-sm font-semibold text-gray-700 dark:text-gray-300">{t('admin.filter.title')}</h4>
+                    {(memberFilter.invoiceId || memberFilter.paymentStatus !== 'all' || memberFilter.trainingGroup !== 'all') && (
+                      <button
+                        onClick={() => setMemberFilter({ invoiceId: '', paymentStatus: 'all', trainingGroup: 'all' })}
+                        className="text-xs text-red-600 hover:text-red-800 hover:underline"
+                      >
+                        ✕ {t('admin.filter.clearFilters')}
+                      </button>
+                    )}
+                  </div>
                   <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                     <div>
                       <label className="block text-xs font-medium mb-1 text-gray-600 dark:text-gray-400">{t('admin.filter.byInvoice')}</label>
