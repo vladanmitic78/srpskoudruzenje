@@ -175,8 +175,13 @@ async def get_filtered_members(
     if training_group and training_group != "all":
         query["trainingGroup"] = training_group
     
-    # Get all matching users
-    users = await db.users.find(query, {"_id": 0}).to_list(length=10000)
+    # Get all matching users - exclude sensitive fields
+    users = await db.users.find(query, {
+        "_id": 0, 
+        "hashed_password": 0, 
+        "verificationToken": 0, 
+        "resetToken": 0
+    }).to_list(length=10000)
     
     # If filtering by invoice payment status
     if invoice_id and payment_status != "all":
