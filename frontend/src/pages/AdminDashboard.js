@@ -1433,16 +1433,16 @@ const AdminDashboard = () => {
               <CardContent>
                 {/* Member Filter Section */}
                 <div className="mb-6 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
-                  <h4 className="text-sm font-semibold mb-3 text-gray-700 dark:text-gray-300">Filter & Export Members</h4>
+                  <h4 className="text-sm font-semibold mb-3 text-gray-700 dark:text-gray-300">{t('admin.filter.title')}</h4>
                   <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                     <div>
-                      <label className="block text-xs font-medium mb-1 text-gray-600 dark:text-gray-400">By Invoice</label>
+                      <label className="block text-xs font-medium mb-1 text-gray-600 dark:text-gray-400">{t('admin.filter.byInvoice')}</label>
                       <select
                         value={memberFilter.invoiceId}
                         onChange={(e) => setMemberFilter({...memberFilter, invoiceId: e.target.value})}
                         className="w-full p-2 text-sm border rounded dark:bg-gray-700 dark:border-gray-600"
                       >
-                        <option value="">All Invoices</option>
+                        <option value="">{t('admin.filter.allInvoices')}</option>
                         {invoices.map(inv => (
                           <option key={inv.id} value={inv.id}>
                             {inv.description} ({inv.dueDate})
@@ -1451,26 +1451,25 @@ const AdminDashboard = () => {
                       </select>
                     </div>
                     <div>
-                      <label className="block text-xs font-medium mb-1 text-gray-600 dark:text-gray-400">Payment Status</label>
+                      <label className="block text-xs font-medium mb-1 text-gray-600 dark:text-gray-400">{t('admin.filter.paymentStatus')}</label>
                       <select
                         value={memberFilter.paymentStatus}
                         onChange={(e) => setMemberFilter({...memberFilter, paymentStatus: e.target.value})}
                         className="w-full p-2 text-sm border rounded dark:bg-gray-700 dark:border-gray-600"
-                        disabled={!memberFilter.invoiceId}
                       >
-                        <option value="all">All</option>
-                        <option value="paid">Paid</option>
-                        <option value="unpaid">Unpaid</option>
+                        <option value="all">{t('admin.filter.all')}</option>
+                        <option value="paid">{t('admin.filter.paid')}</option>
+                        <option value="unpaid">{t('admin.filter.unpaid')}</option>
                       </select>
                     </div>
                     <div>
-                      <label className="block text-xs font-medium mb-1 text-gray-600 dark:text-gray-400">Training Group</label>
+                      <label className="block text-xs font-medium mb-1 text-gray-600 dark:text-gray-400">{t('admin.filter.trainingGroup')}</label>
                       <select
                         value={memberFilter.trainingGroup}
                         onChange={(e) => setMemberFilter({...memberFilter, trainingGroup: e.target.value})}
                         className="w-full p-2 text-sm border rounded dark:bg-gray-700 dark:border-gray-600"
                       >
-                        <option value="all">All Groups</option>
+                        <option value="all">{t('admin.filter.allGroups')}</option>
                         {trainingGroups.map(group => (
                           <option key={group} value={group}>{group}</option>
                         ))}
@@ -1481,7 +1480,7 @@ const AdminDashboard = () => {
                         onClick={handleDownloadFilteredMembers}
                         className="w-full px-4 py-2 bg-green-600 text-white text-sm rounded hover:bg-green-700 flex items-center justify-center gap-2"
                       >
-                        <span>📥</span> Download Excel
+                        <span>📥</span> {t('admin.filter.downloadExcel')}
                       </button>
                     </div>
                   </div>
