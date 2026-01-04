@@ -558,7 +558,9 @@ const translations = {
         unpaid: 'Неплаћено',
         trainingGroup: 'Тренинг група',
         allGroups: 'Све групе',
-        downloadExcel: 'Преузми Excel'
+        downloadExcel: 'Преузми Excel',
+        filteredMembers: 'Филтрирани чланови',
+        noMembersFound: 'Нема чланова који одговарају изабраним филтерима'
       },
       events: {
         title: 'Управљање догађајима и тренинзима',
