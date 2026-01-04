@@ -261,6 +261,8 @@ const translations = {
         instagramUrl: 'Instagram URL',
         youtubeUrl: 'YouTube URL',
         snapchatUrl: 'Snapchat URL',
+        show: 'Prikaži',
+        showOnFrontend: 'Prikaži na sajtu',
         orgDetails: 'Detalji organizacije',
         orgNumber: 'Matični broj (Org. nr)',
         vatNumber: 'PIB broj',
