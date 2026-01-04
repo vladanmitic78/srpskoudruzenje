@@ -12,12 +12,23 @@ router = APIRouter()
 async def get_my_invoices(current_user: dict = Depends(get_current_user), request: Request = None):
     """Get current user's invoices"""
     db = request.app.state.db
-    cursor = db.invoices.find({"userId": current_user["_id"]}).sort("createdAt", -1)
+    # Support both old userId and new userIds field
+    cursor = db.invoices.find({
+        "$or": [
+            {"userId": current_user["_id"]},
+            {"userIds": current_user["_id"]}
+        ]
+    }).sort("createdAt", -1)
     invoices_list = await cursor.to_list(length=100)
     
-    return {
-        "invoices": [{**item, "id": str(item["_id"])} for item in invoices_list]
-    }
+    # Remove MongoDB _id from nested objects
+    result = []
+    for item in invoices_list:
+        invoice = {**item, "id": str(item["_id"])}
+        invoice.pop("_id", None)
+        result.append(invoice)
+    
+    return {"invoices": result}
 
 @router.get("/")
 async def get_all_invoices(admin: dict = Depends(get_admin_user), request: Request = None):
