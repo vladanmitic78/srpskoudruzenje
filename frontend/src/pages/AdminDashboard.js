@@ -549,6 +549,15 @@ const AdminDashboard = () => {
       instagram: '',
       youtube: '',
       snapchat: ''
+    },
+    visibility: {
+      contactEmail: true,
+      contactPhone: true,
+      address: true,
+      socialMediaFacebook: false,
+      socialMediaInstagram: false,
+      socialMediaYoutube: false,
+      socialMediaSnapchat: false
     }
   });
 
