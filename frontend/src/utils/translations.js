@@ -563,7 +563,10 @@ const translations = {
         allGroups: 'Све групе',
         downloadExcel: 'Преузми Excel',
         filteredMembers: 'Филтрирани чланови',
-        noMembersFound: 'Нема чланова који одговарају изабраним филтерима'
+        noMembersFound: 'Нема чланова који одговарају изабраним филтерима',
+        noInvoicesMatchFilter: 'Нема фактура које одговарају изабраним филтерима',
+        clearFilters: 'Обриши филтере',
+        showingFiltered: 'Приказано'
       },
       events: {
         title: 'Управљање догађајима и тренинзима',
