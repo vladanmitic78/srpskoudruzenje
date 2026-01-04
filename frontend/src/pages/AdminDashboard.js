@@ -474,27 +474,7 @@ const AdminDashboard = () => {
   const [activeTab, setActiveTab] = useState(isModerator ? "events" : "members");
   
   // Search and Pagination state for Members
-  const [searchQuery, setSearchQuery] = useState('');
-  const [currentPage, setCurrentPage] = useState(1);
-  const membersPerPage = 10;
   const [invoices, setInvoices] = useState([]);
-  const [createInvoiceOpen, setCreateInvoiceOpen] = useState(false);
-  const [editInvoiceOpen, setEditInvoiceOpen] = useState(false);
-  const [editingInvoice, setEditingInvoice] = useState(null);
-  const [newInvoice, setNewInvoice] = useState({
-    userIds: [],
-    amount: '',
-    dueDate: '',
-    description: '',
-    trainingGroup: ''
-  });
-  const [memberFilter, setMemberFilter] = useState({
-    invoiceId: '',
-    paymentStatus: 'all',
-    trainingGroup: 'all'
-  });
-  const [filteredMembers, setFilteredMembers] = useState([]);
-  const [filterLoading, setFilterLoading] = useState(false);
   const [createEventOpen, setCreateEventOpen] = useState(false);
   const [editEventOpen, setEditEventOpen] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState(null);
