@@ -151,12 +151,13 @@ class EventResponse(EventBase):
 
 # Invoice Models
 class InvoiceBase(BaseModel):
-    userId: str
+    userIds: List[str]  # Changed from userId to support multiple members
     amount: float
     currency: str = "SEK"
     dueDate: str
     description: str
     fileUrl: Optional[str] = None
+    trainingGroup: Optional[str] = None  # Optional: link invoice to specific group
 
 class InvoiceCreate(InvoiceBase):
     pass
