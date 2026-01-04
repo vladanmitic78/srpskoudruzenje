@@ -1111,6 +1111,10 @@ const translations = {
     },
     footer: {
       rights: 'Alla rättigheter förbehållna',
+      allRightsReserved: 'Alla rättigheter förbehållna.',
+      websitePlatform: 'Webbplatsplattform',
+      usedUnderLicense: 'Används under licens.',
+      designedAndDeveloped: 'Designad och utvecklad av',
       designedBy: 'Designad och utvecklad av',
       quickLinks: 'Snabblänkar',
       contactInfo: 'Kontaktinformation',
