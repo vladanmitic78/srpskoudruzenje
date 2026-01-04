@@ -70,11 +70,13 @@ A full-stack web application for managing a Serbian cultural association in Täb
 - None currently
 
 ### P1 - High Priority  
-- Refactor AdminDashboard.js (4000+ lines needs splitting)
-- Verify admin statistics accuracy
+- Continue refactoring remaining AdminDashboard.js tabs (Content, Settings, UserManagement, PlatformSettings, Branding)
+- Current status: AdminDashboard.js reduced from ~4959 to ~3931 lines (21% reduction)
+- Extracted: MembersTab (256 lines), InvoicesTab (669 lines), EventsTab (132 lines)
 
 ### P2 - Medium Priority
-- User impersonation for Super Admins
+- Verify admin statistics accuracy
+- User impersonation feature for Super Admins
 - Training Groups management UI
 
 ### P3 - Low Priority / Backlog
