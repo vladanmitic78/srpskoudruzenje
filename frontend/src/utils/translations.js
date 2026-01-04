@@ -935,6 +935,8 @@ const translations = {
         instagramUrl: 'Instagram URL',
         youtubeUrl: 'YouTube URL',
         snapchatUrl: 'Snapchat URL',
+        show: 'Show',
+        showOnFrontend: 'Show on frontend',
         orgDetails: 'Organization Details',
         orgNumber: 'Organization Number (Org. nr)',
         vatNumber: 'VAT Number',
