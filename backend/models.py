@@ -247,13 +247,13 @@ class VisibilitySettings(BaseModel):
     bankAccount: bool = True
 
 class SettingsBase(BaseModel):
-    address: str
-    bankAccount: str
-    vatNumber: str
-    registrationNumber: str
+    address: str = ""
+    bankAccount: str = ""
+    vatNumber: str = ""
+    registrationNumber: str = ""
     contactEmail: EmailStr
-    contactPhone: str
-    socialMedia: SocialMedia
+    contactPhone: str = ""
+    socialMedia: SocialMedia = SocialMedia()
     visibility: Optional[VisibilitySettings] = None
 
 class SettingsInDB(SettingsBase):
