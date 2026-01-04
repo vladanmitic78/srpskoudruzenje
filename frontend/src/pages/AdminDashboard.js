@@ -557,7 +557,10 @@ const AdminDashboard = () => {
       socialMediaFacebook: false,
       socialMediaInstagram: false,
       socialMediaYoutube: false,
-      socialMediaSnapchat: false
+      socialMediaSnapchat: false,
+      orgNumber: true,
+      vatNumber: true,
+      bankAccount: true
     }
   });
 
