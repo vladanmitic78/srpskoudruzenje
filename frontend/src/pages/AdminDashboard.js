@@ -705,7 +705,22 @@ const AdminDashboard = () => {
         setStories(storiesData.stories || []);
         setAlbums(galleryData.items || []);
         if (settingsData) {
-          setSettings(settingsData);
+          // Ensure visibility field exists with defaults
+          setSettings({
+            ...settingsData,
+            visibility: settingsData.visibility || {
+              contactEmail: true,
+              contactPhone: true,
+              address: true,
+              socialMediaFacebook: false,
+              socialMediaInstagram: false,
+              socialMediaYoutube: false,
+              socialMediaSnapchat: false,
+              orgNumber: true,
+              vatNumber: true,
+              bankAccount: true
+            }
+          });
         }
         if (platformSettingsData && user?.role === 'superadmin') {
           setPlatformSettings(platformSettingsData);
