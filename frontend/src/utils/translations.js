@@ -752,6 +752,10 @@ const translations = {
     },
     footer: {
       rights: 'All rights reserved',
+      allRightsReserved: 'All rights reserved.',
+      websitePlatform: 'Website platform',
+      usedUnderLicense: 'Used under license.',
+      designedAndDeveloped: 'Designed and developed by',
       designedBy: 'Designed and developed by',
       quickLinks: 'Quick Links',
       contactInfo: 'Contact Information',
