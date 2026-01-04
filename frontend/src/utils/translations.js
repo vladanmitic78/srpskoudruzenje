@@ -910,7 +910,9 @@ const translations = {
         unpaid: 'Unpaid',
         trainingGroup: 'Training Group',
         allGroups: 'All Groups',
-        downloadExcel: 'Download Excel'
+        downloadExcel: 'Download Excel',
+        filteredMembers: 'Filtered Members',
+        noMembersFound: 'No members match the selected filters'
       },
       events: {
         title: 'Events & Training Management',
