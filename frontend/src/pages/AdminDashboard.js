@@ -1262,17 +1262,40 @@ const AdminDashboard = () => {
             )}
           </TabsList>
 
-          {/* Members Tab */}
-          {permissions?.viewMembers && (
-            <TabsContent value="members">
-            <Card className="border-2 border-[var(--color-primary)]/20">
-              <CardHeader className="flex flex-row items-center justify-between">
-                <CardTitle>{t('admin.membersManagement')}</CardTitle>
-                <div className="flex gap-2">
-                  <button
-                    onClick={async () => {
-                      try {
-                        const blob = await adminAPI.exportMembersPDF();
+          {/* Members Tab - Refactored Component */}
+          <MembersTab
+            t={t}
+            users={users}
+            setUsers={setUsers}
+            loading={loading}
+            permissions={permissions}
+            setSelectedUser={setSelectedUser}
+            setUserDetailsOpen={setUserDetailsOpen}
+          />
+
+          {/* Invoices Tab - Refactored Component */}
+          <InvoicesTab
+            t={t}
+            invoices={invoices}
+            setInvoices={setInvoices}
+            users={users}
+            loading={loading}
+            permissions={permissions}
+          />
+
+          {/* Events Tab - Refactored Component */}
+          <EventsTab
+            t={t}
+            events={events}
+            setSelectedEvent={setSelectedEvent}
+            setEventForm={setEventForm}
+            setCreateEventOpen={setCreateEventOpen}
+            setEditEventOpen={setEditEventOpen}
+            handleCancelEvent={handleCancelEvent}
+            handleDeleteEvent={handleDeleteEvent}
+          />
+
+          {/* Content Management Tab */}
                         const url = window.URL.createObjectURL(blob);
                         const a = document.createElement('a');
                         a.href = url;
