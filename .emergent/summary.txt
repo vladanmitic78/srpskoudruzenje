@@ -1,148 +1,189 @@
 <analysis>**original_problem_statement:**
-The user's initial goal was to fix login issues, remove Google OAuth, and implement a series of features for the Serbian Cultural Association website, including a CMS, an album-based gallery, and an admin settings page.
-
-During this session, the user's requests expanded to cover a wide range of features and bug fixes:
-1.  **Implement a dedicated, permission-driven Moderator Dashboard** that combines standard user features with specific management capabilities defined by a Super Admin.
-2.  **Fix the Admin Management tab,** which was not visible to the Super Admin.
-3.  **Implement a dynamic, site-wide branding/theming system** allowing the Super Admin to change primary and button colors.
-4.  **Fix the SMTP email system**, which was not sending emails after the user updated the settings to use their Loopia email server. This included debugging authentication errors and deliverability issues (emails going to spam).
-5.  **Fix broken user verification links,** which were incorrectly pointing to the backend API instead of the frontend application.
-6.  **Add search and pagination** to the Members list in the Admin Dashboard.
-7.  **Add internationalization (i18n)** to the Serbian Story page, which had hardcoded text.
-8.  **Implement a confirmation email** to be sent to users after they submit the contact form.
-9.  **Fix numerous UI/UX issues,** including missing/incorrect translation keys, duplicate icons, and application crashes.
+The user's initial problem was a failing contact form. This led to a series of feature requests and bug fixes throughout the session, including:
+1.  Fixing a bug on the Serbian Story page where a translation key was displayed instead of text.
+2.  Implementing dynamic SMTP configuration from the admin panel.
+3.  Adding pagination and grid layouts to the Serbian Story and Gallery pages.
+4.  Adding a Read More modal for news items and a Watch Video link for stories.
+5.  Making the language flags on the home page clickable language switchers.
+6.  Fixing a critical email sending failure related to the SMTP server's  header policy.
+7.  Implementing platform-wide automatic image optimization for performance.
+8.  Adding visibility toggles (checkboxes) in the Admin Settings to show/hide information in the website's footer.
+9.  A new, major feature request to support multi-member invoices and create an advanced member filtering system with a download option.
 
 **User's preferred language**: English
 
 **what currently exists?**
-The application is a full-stack project (React frontend, FastAPI backend, MongoDB) with a comprehensive Super Admin panel. Most of the user's requests from this session have been implemented:
--   A fully functional, hybrid **Moderator Dashboard** exists, showing both user-specific tabs (Profile, Invoices) and permission-based management tabs (Events, Content, Gallery).
--   A **dynamic branding system** is in place. The Super Admin can change the site's primary and button colors, and the changes are reflected across the entire website using CSS variables.
--   The **email system is functional** but uses a hardcoded configuration in . The agent's attempt to make it dynamic by reading from the database failed due to an SMTP authentication error with the user's provider. Emails are being sent successfully but may land in the spam folder.
--   **User verification emails** now contain the correct frontend URL.
--   The **Admin/Members list** now has a search bar and pagination.
--   The Serbian Story page is now fully translated.
--   The **contact form** now sends a confirmation email to the user.
+The application is a full-stack React/FastAPI/MongoDB project for a cultural association. Most features requested in this session have been implemented, including fixed bugs, UI enhancements, and performance optimizations.
+-   The backend has been updated to support multi-member invoices and training groups for users. A new API endpoint for filtered member exports has been created.
+-   The email system is functional with a dynamic configuration that reads from the database.
+-   The Serbian Story and Gallery pages have responsive, paginated grid layouts.
+-   The home page features a Read More modal for news, and images are optimized to prevent cropping.
+-   A platform-wide image optimization system is in place, which processes all new uploads automatically. A script has also optimized all existing images.
+-   The Admin Settings page has UI checkboxes for toggling the visibility of various contact, social media, and organization fields. However, this feature is currently **not working correctly**.
 
 **Last working item**:
--   **Last item agent was working:** Implementing a confirmation email that is sent to a user after they submit the contact form. The agent created a new email template and updated the  backend endpoint to send this new email to the form submitter's email address.
--   **Status:** USER VERIFICATION PENDING
--   **Agent Testing Done:** Y (The agent tested the API endpoint with  and confirmed it returned a success message).
--   **Which testing method agent to use?** Manual testing. The user has indicated they will perform the testing. The user needs to submit the contact form and check if they receive the confirmation email.
+-   **Last item agent was working:** Implementing multi-member invoices and an advanced member filtering/download system. The agent just completed the backend portion (updating Pydantic models and creating a new API endpoint) and received user confirmation to begin the frontend implementation.
+-   **Status:** IN PROGRESS
+-   **Agent Testing Done:** N
+-   **Which testing method agent to use?** Frontend testing agent (to be used after the UI is built).
 -   **User Testing Done:** N
 
 **All Pending/In progress Issue list**:
--   **Issue 1:** Incorrect statistics on the admin dashboard. (P2)
+-   **Issue 1:** Admin settings visibility is not working. (P0)
+-   **Issue 2:** Incorrect statistics on the admin dashboard. (P2)
 
 **Issues Detail:**
--   **Issue 1: Incorrect Admin Statistics**
-    -   **Attempted fixes:** None. This issue was carried over from the previous session but was deprioritized in favor of new user requests.
+-   **Issue 1: Admin settings visibility is not working**
+    -   **Attempted fixes:** The agent added a  field to the backend Pydantic model (), made model fields optional, and added default values on the frontend (). However, the user confirmed that unchecking a field in the admin panel does **not** hide it from the site's footer. The  attribute was also removed from the Snapchat field, which was a related bug.
+    -   **Next debug checklist:**
+        1.  Verify the frontend  function in  sends the complete  object, including the  data, to the backend.
+        2.  Trace the  request to ensure the  object is received and saved correctly in the  MongoDB collection.
+        3.  Debug  to ensure it correctly fetches the settings and uses the  flags to conditionally render the contact, social, and organization information.
+    -   **Why fix this issue and what will be achieved with the fix?** This is a critical bug reported multiple times by the user. Fixing it will give the administrator the intended control over which information is publicly visible.
+    -   **Status:** IN PROGRESS
+    -   **Is recurring issue?** Y
+    -   **Should Test frontend/backend/both after fix?** Both
+    -   **Blocked on other issue:** None
+-   **Issue 2: Incorrect Admin Statistics**
+    -   **Attempted fixes:** None. This is a low-priority carry-over from a previous session.
     -   **Next debug checklist:**
         1.  Analyze the aggregation logic in the  endpoint in .
-        2.  Compare the endpoint's output with manual queries against the , , and  collections to identify the discrepancy.
-        3.  Correct the backend endpoint logic to calculate and return the correct counts and totals.
-    -   **Why fix this issue and what will be achieved with the fix?** To ensure administrators see accurate and reliable data on their main dashboard, which is crucial for trust and decision-making.
+        2.  Compare the endpoint's output with manual database queries to find the discrepancy.
+        3.  Correct the backend logic.
+    -   **Why fix this issue and what will be achieved with the fix?** To provide accurate and reliable data on the main admin dashboard.
     -   **Status:** NOT STARTED
-    -   **Is recurring issue?** N
+    -   **Is recurring issue?** Y
     -   **Should Test frontend/backend/both after fix?** Backend
     -   **Blocked on other issue:** None
 
 **In progress Task List**:
--   None.
+-   **Task 1: Implement Frontend for Multi-Member Invoices and Member Filtering (P0)**
+    -   **Where to resume:** Begin modifying  to build the user interface for the new features. This includes:
+        1.  Updating the Create Invoice form to support selecting multiple members.
+        2.  Adding a Training Groups management section.
+        3.  Creating UI controls for filtering members (by invoice status, training group) and a Download button to trigger the new export API.
+    -   **What will be achieved with this?** This will complete the multi-member invoice and advanced filtering feature, providing a significant workflow improvement for administrators.
+    -   **Status:** IN PROGRESS
+    -   **Should Test frontend/backend/both after fix?** Both
+    -   **Blocked on something:** Blocked by **Issue 1**, as both involve significant changes to . It's recommended to fix the visibility issue before or alongside this task.
 
 **Upcoming and Future Tasks**
 
 -   **Upcoming Tasks:**
-    -   **Refactor  (P0):** This file is over 4000 lines and is a significant source of complexity and potential bugs. It must be broken down into smaller, reusable components for each dashboard tab (Members, Invoices, Events, etc.).
-    -   **Fix Dynamic SMTP Configuration (P1):** The attempt to read SMTP settings from the database failed due to a Policy violation: unauthorized use of sender address error from the Loopia mail server. The agent reverted to a hardcoded configuration. This should be revisited to make the email settings fully dynamic as intended.
+    -   **Refactor  (P1):** This file is over 4000 lines and is a major source of technical debt. It must be broken down into smaller, reusable components for each dashboard tab (Members, Invoices, Settings, etc.).
 -   **Future Tasks:**
-    -   **User Impersonation (P2):** An optional feature for Super Admins to log in as any user to troubleshoot issues.
+    -   **User Impersonation (P2):** An optional feature for Super Admins to log in as any user.
 
 **Completed work in this session**
--   **Feature: Hybrid Moderator Dashboard:** Built and debugged a complex dashboard for moderators that combines user-facing features with permission-based management controls.
--   **Feature: Dynamic Branding System:** Implemented a site-wide theming system allowing the Super Admin to change application colors, which are applied globally via CSS variables.
--   **Feature: Contact Form User Confirmation:** Added an automated confirmation email sent to users after they submit the contact form.
--   **Feature: Search & Pagination for Members List:** Added a search input and pagination controls to the Super Admin's Members tab.
--   **Critical Bug Fix: Email System:** Debugged and resolved multiple issues with the SMTP email service, including authentication failures and deliverability problems (emails landing in spam). The system is now functional with a hardcoded configuration.
--   **Critical Bug Fix: User Verification Link:** Corrected the user registration flow to generate verification links with the proper frontend URL, fixing a critical onboarding bug.
--   **Critical Bug Fix: Application Crashes:**
-    -   Resolved a site-wide crash caused by a syntax error in .
-    -   Fixed a login crash for the Moderator role () by adding data validation checks.
--   **Bug Fix: Admin Management Tab:** Resolved the issue preventing the Super Admin from seeing this tab (diagnosed as a login issue, not a UI bug).
--   **UI Fixes:**
-    -   Replaced duplicate icons on the Admin Dashboard with unique, context-appropriate ones.
-    -   Implemented translated error messages on the login page.
-    -   Translated the Serbian Story page.
-    -   Fixed dozens of incorrect or missing translation keys in the Moderator Dashboard.
-
-**Earlier issues found/mentioned but not fixed**
--   **Incorrect Admin Statistics:** This was identified in the previous session's handoff and remains unaddressed.
+-   **Critical Bug Fix: Email System:** Fixed multiple email-related bugs, including a backend crash caused by a , and resolved a Policy violation error from the Loopia SMTP server by correcting the  header format.
+-   **Feature: Dynamic SMTP Configuration:** The system can now fetch SMTP settings from the database, allowing admins to manage them from the UI.
+-   **Feature: Platform-wide Media Optimization:** Implemented automatic image optimization for all new uploads and ran a script to compress all existing images, significantly improving performance.
+-   **Feature: Read More for News:** Added a modal dialog to the home page news section to display full articles.
+-   **Feature: Clickable Flag Language Switcher:** Implemented language switching by clicking the Serbian/Swedish flags on the home page.
+-   **Feature: Grid Layout & Pagination:** Added responsive, paginated grid layouts to the Serbian Story (3x2) and Gallery (3x3) pages.
+-   **UI/UX Fixes:**
+    -   Fixed un-translated text on the Serbian Story and Gallery pages.
+    -   Changed the Main Events button on the home page to a Register button.
+    -   Removed the Show All link from the news section.
+    -   Fixed news images being cropped by changing CSS from  to .
+    -   Added a Watch Video link to Serbian Story cards when a video URL is available.
+    -   Removed the  attribute from optional fields in the admin settings form.
 
 **Code Architecture**
 
 
 **Key Technical Concepts**
--   **Frontend:** React, React Context for global state (, ), dynamic UI rendering based on permissions, TailwindCSS with dynamic theming via CSS variables.
--   **Backend:** FastAPI,  for asynchronous email, JWT-based Role-Based Access Control (RBAC).
--   **i18n:** Custom translation system using a large JavaScript object file ().
+-   **Frontend:** React, TailwindCSS, Axios, Shadcn UI components (), React Context for state management ().
+-   **Backend:** FastAPI, Pydantic for data modeling,  for asynchronous email, Pillow for image processing.
+-   **Debugging:** Tracing backend logs (backend                          RUNNING   pid 48, uptime 0:00:05
+code-server                      STOPPED   Not started
+frontend                         STOPPED   Jan 04 05:05 PM
+mongodb                          RUNNING   pid 50, uptime 0:00:04
+nginx-code-proxy                 RUNNING   pid 47, uptime 0:00:05
+supervisor> ), diagnosing Python , fixing SMTP server policy errors, and comparing code versions with commit 8263cb73806a0a00e372db3a2a264a11db33aa70
+Author: emergent-agent-e1 <github@emergent.sh>
+Date:   Sun Jan 4 17:02:38 2026 +0000
+
+    Auto-generated changes
+
+diff --git a/.emergent/emergent.yml b/.emergent/emergent.yml
+index b7e32c5..da67bdb 100644
+--- a/.emergent/emergent.yml
++++ b/.emergent/emergent.yml
+@@ -1,5 +1,5 @@
+ {
+   "env_image_name": "fastapi_react_mongo_shadcn_base_image_cloud_arm:release-19112025-2",
+   "job_id": "4039216d-4e3b-4bd7-915c-ee474414028f",
+-  "created_at": "2026-01-04T16:51:35.622327+00:00Z"
++  "created_at": "2026-01-04T17:02:38.059993+00:00Z"
+ }
+diff --git a/.gitignore b/.gitignore
+index b0ff06b..34e0e81 100644
+--- a/.gitignore
++++ b/.gitignore
+@@ -462,3 +462,7 @@ frontend/node_modules/.cache/default-development/0.pack
+ # Environment files
+ *.env
+ *.env.*
++-e 
++# Environment files
++*.env
++*.env.*.
 
 **key DB schema**
--   **platform_settings:** Stores system-level settings, including the (currently unused) SMTP configuration.
--   **branding_settings:** Stores the dynamic color theme settings (primary, secondary, etc.).
--   **permissions:** Stores role-based permissions that dictate what management features moderators can access.
+-   **platform_settings:** The corresponding Pydantic model was updated to include a  field to control frontend element visibility.
+-   **users:** The  model now has an optional  field.
+-   **invoices:** The  model was changed from  to  to support multi-member assignment.
 
 **changes in tech stack**
--   None.
+-   **Pillow:** This library is now actively used on the backend for automatic image optimization.
 
 **All files of reference**
--   : The main admin hub. **Critically needs refactoring.**
--   : The new hybrid dashboard for moderators.
--   : Contains the (currently hardcoded) SMTP logic.
--   : Manages the global color theme.
--   : The central file for all UI text and a frequent source of syntax errors.
--   : Contains the user registration logic with the fixed verification link.
+-   : The primary file for the next set of tasks. It is large, complex, and contains the code for the broken visibility feature.
+-   : Contains the updated data models for the new invoice/member features.
+-   : The component where the broken visibility settings need to be correctly implemented.
+-   : Contains the logic for the now-functional email system.
+-   : The new utility for handling image optimization.
 
 **Areas that need refactoring**:
--   **CRITICAL:** . At over 4000 lines, it is extremely difficult to maintain and is a source of bugs. It must be broken down into smaller components.
--   : This file is now also very large and complex. It should be refactored to reuse components from the main  and  to avoid code duplication.
--   : The SMTP configuration is hardcoded. The failed attempt to make it dynamic should be properly diagnosed and fixed to allow the Super Admin to manage email settings from the UI.
+-   **CRITICAL:** . At over 4000 lines, this file is a significant source of technical debt and must be broken down into smaller components to improve maintainability.
 
 **key api endpoints**
--   : (New) A public endpoint to fetch branding settings for the entire site.
--   : Modified to send a confirmation email to the user submitting the form.
--   : Modified to generate the correct frontend URL in verification emails.
+-   : The API for saving admin settings. Its model was updated to accept  data, but the end-to-end feature is not working.
+-   : A new endpoint created to handle the download of filtered member lists.
 
 **Critical Info for New Agent**
--   **User Testing:** The user has explicitly requested to handle testing themselves. Your workflow should be: implement the feature/fix, summarize what you've done, and hand it over to the user for verification.
--   **Email System State:** The email service in  is **hardcoded** to use the user's Loopia settings. This is a temporary fix. The agent's attempt to read settings from the database failed due to a Loopia server error. While emails are being sent, they often land in spam. Advise the user that setting up SPF/DKIM DNS records is necessary for a permanent deliverability fix.
--   **Refactoring Priority:** The  file is a major liability. Prioritize refactoring it into smaller components as soon as possible to improve stability and maintainability.
+-   **Priority 1 is the Visibility Bug:** The user has reported multiple times that the admin settings visibility feature is broken. You must fix this. The issue is end-to-end: from the frontend state management in , through the backend API, to the data being saved in the database and finally consumed by .
+-   ** is Fragile:** This file is extremely large and complex. Be very careful when making changes. The user has requested new features that will modify this file further. It is highly recommended to address the visibility bug before adding more complexity.
+-   **User Feedback is Fast:** The user actively tests features and provides immediate, specific feedback with screenshots. Implement, perform a basic self-test, and then hand over for user verification.
 
-**Last 10 User Messages and any pending user messages**
-1.  **please, check the picture (re: verification link):** User reported the verification link was broken (pointing to the backend). **Status: Completed.**
-2.  **Srpska priča / Serbian Story is not changing when I change languages:** User reported the page was not translated. **Status: Completed.**
-3.  **user who sends a message over the contact form does not get any confirmation email:** User requested a new feature. **Status: USER VERIFICATION PENDING.**
-4.  **I just registered a new user... and did not get verification email:** User reported a new registration email failed. **Status: Completed.**
-5.  **Test Verification Email received successfully. Can you push the platform to send an email with a verification link:** User confirmed a test email worked and requested the real one be sent. **Status: Completed.**
-6.  **please, check the picture (re: invalid token):** User reported getting an Invalid token error after clicking the verification link. Agent diagnosed this was because the link had already been used successfully. **Status: Completed.**
-7.  **Make a search field on Admin and super admin/members. Also, show 10 members per page.:** User requested a new feature. **Status: Completed.**
-8.  **I successfully received an email on my Gmail account... Now I see, info@... received all emails, but in SPAM folder. Can we fix that?:** User confirmed emails were working but going to spam. **Status: Completed** (agent added headers, but noted DNS records are the real fix).
-9.  **You can send a test email to my private email address...:** User provided a debug email address. **Status: Completed.**
-10. **I tested the contact form and training confirmation. Mails are not working.:** User reported emails were failing again after the agent's initial fix attempt. **Status: Completed.**
+**documents and test reports created in this job**
+-   
+-   
+
+**Last 10 User Messages and any pending HUMAN messages**
+1.  **Home page/News, remove Show All link...:** Completed.
+2.  **Home page/News/pictures. Can you make it that it fiths...:** Completed.
+3.  **Serbian Story, I think it is better to go with 3x2 per page...:** Completed.
+4.  **When All videos or pictures that are uploaded..., please optimise...:** Completed.
+5.  **Admin/Settings, please make a check field near every field...:** Implemented, but buggy.
+6.  **It is not ok. Even though I unmarked..., they are still visible...:** Reported the bug in the visibility feature. Still broken.
+7.  **It is not working ok: Snapchat URL: It seems that is a mandatory field...:** Reported two bugs.  field is fixed, but visibility is still broken.
+8.  **Totally not ok. Please check the picture... What field I uncheck, it is not shown...:** Re-emphasized the critical visibility bug. Still broken.
+9.  **OK, now next: Admin/Invoices... one invoice can be paid for by several members... filter and download members...:** New feature request. Backend part is done.
+10. **Yes:** User confirmation to proceed with the frontend implementation for the new invoice/member features. This is the next action item after fixing the visibility bug.
 
 **Project Health Check:**
 -   **Broken:**
-    -   The dynamic SMTP configuration is non-functional; the system relies on hardcoded credentials in .
-    -   The statistics on the admin dashboard are incorrect.
+    -   Admin settings visibility control is non-functional.
+    -   Admin dashboard statistics are incorrect.
 -   **Mocked:** None.
 
-**3rd Party Integrations**:
--   None.
-
 **Testing status**
--   **Testing agent used after significant changes:** YES. The testing agent was crucial for diagnosing the Admin Management tab issue, which turned out to be a login problem.
--   **Troubleshoot agent used after agent stuck in loop:** YES. The agent used it to analyze why the admin/superadmin login was failing, which pointed toward an auth logic issue.
+-   **Testing agent used after significant changes:** YES
+-   **Troubleshoot agent used after agent stuck in loop:** YES
 -   **Test files created:** []
--   **Known regressions:** The process of refactoring the email service introduced several regressions (authentication failures, header format issues) that were subsequently fixed by reverting to a hardcoded but stable configuration.
+-   **Known regressions:** The settings visibility feature is currently a regression; the UI was added, but the functionality is broken.
 
 **Credentials to test flow:**
 -   **Super Admin:**  / 
@@ -151,5 +192,6 @@ The application is a full-stack project (React frontend, FastAPI backend, MongoD
 -   **User (Test Account):**  / 
 
 **What agent forgot to execute**
--   The agent consistently postponed fixing the **incorrect statistics on the admin dashboard**, an issue carried over from the previous session.
--   The agent did not perform the **critical refactoring of **, despite acknowledging its importance multiple times. This remains a major piece of technical debt.</analysis>
+-   The agent failed to complete the end-to-end implementation of the settings visibility feature, only adding the UI checkboxes without connecting them to the frontend display logic, which the user immediately caught.
+-   The agent has consistently postponed fixing the incorrect statistics on the admin dashboard.
+-   The agent has not yet performed the critical refactoring of .</analysis>
