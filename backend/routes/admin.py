@@ -224,19 +224,21 @@ async def get_filtered_members(
                 paid_invoices = await db.invoices.find({"status": "paid"}).to_list(length=10000)
                 paid_user_ids = set()
                 for inv in paid_invoices:
-                    paid_user_ids.update(inv.get("userIds", []))
+                    if inv.get("userIds"):
+                        paid_user_ids.update(inv["userIds"])
                     if inv.get("userId"):
                         paid_user_ids.add(inv["userId"])
-                users = [u for u in users if u.get("username") in paid_user_ids or u.get("id") in paid_user_ids]
+                users = [u for u in users if u.get("id") in paid_user_ids]
             elif payment_status == "unpaid":
                 # Get all users who have at least one unpaid invoice
                 unpaid_invoices = await db.invoices.find({"status": "unpaid"}).to_list(length=10000)
                 unpaid_user_ids = set()
                 for inv in unpaid_invoices:
-                    unpaid_user_ids.update(inv.get("userIds", []))
+                    if inv.get("userIds"):
+                        unpaid_user_ids.update(inv["userIds"])
                     if inv.get("userId"):
                         unpaid_user_ids.add(inv["userId"])
-                users = [u for u in users if u.get("username") in unpaid_user_ids or u.get("id") in unpaid_user_ids]
+                users = [u for u in users if u.get("id") in unpaid_user_ids]
     
     # Export if format specified
     if export_format == "excel":
