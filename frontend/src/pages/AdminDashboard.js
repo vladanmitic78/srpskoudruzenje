@@ -902,6 +902,34 @@ const AdminDashboard = () => {
   // Get unique training groups from users
   const trainingGroups = [...new Set(users.filter(u => u.trainingGroup).map(u => u.trainingGroup))];
 
+  // Filter invoices based on memberFilter
+  const getFilteredInvoices = () => {
+    let filtered = [...invoices];
+    
+    // Filter by specific invoice
+    if (memberFilter.invoiceId) {
+      filtered = filtered.filter(inv => inv.id === memberFilter.invoiceId);
+    }
+    
+    // Filter by payment status
+    if (memberFilter.paymentStatus !== 'all') {
+      filtered = filtered.filter(inv => inv.status === memberFilter.paymentStatus);
+    }
+    
+    // Filter by training group - show invoices for members in that training group
+    if (memberFilter.trainingGroup !== 'all') {
+      const usersInGroup = users.filter(u => u.trainingGroup === memberFilter.trainingGroup).map(u => u.id);
+      filtered = filtered.filter(inv => {
+        const invoiceUserIds = inv.userIds || (inv.userId ? [inv.userId] : []);
+        return invoiceUserIds.some(uid => usersInGroup.includes(uid));
+      });
+    }
+    
+    return filtered;
+  };
+
+  const filteredInvoices = getFilteredInvoices();
+
   // Handle member filter download
   const handleDownloadFilteredMembers = async () => {
     try {
