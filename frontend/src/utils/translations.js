@@ -546,6 +546,18 @@ const translations = {
         paid: 'Плаћено',
         unpaid: 'Неплаћено'
       },
+      filter: {
+        title: 'Филтрирај и извези чланове',
+        byInvoice: 'По фактури',
+        allInvoices: 'Све фактуре',
+        paymentStatus: 'Статус плаћања',
+        all: 'Сви',
+        paid: 'Плаћено',
+        unpaid: 'Неплаћено',
+        trainingGroup: 'Тренинг група',
+        allGroups: 'Све групе',
+        downloadExcel: 'Преузми Excel'
+      },
       events: {
         title: 'Управљање догађајима и тренинзима',
         addEvent: '+ Додај догађај',
