@@ -190,39 +190,48 @@ async def get_filtered_members(
             invoice = await db.invoices.find_one({"_id": invoice_id})
             if not invoice:
                 raise HTTPException(status_code=404, detail="Invoice not found")
-        
-        # Support both old userId and new userIds
-        invoice_user_ids = invoice.get("userIds", [])
-        if invoice.get("userId"):
-            invoice_user_ids.append(invoice["userId"])
-        
-        # Get payment status for each user
-        if payment_status == "paid":
-            # Filter users who have paid this invoice
-            paid_invoices = await db.invoices.find({
-                "_id": invoice_id,
-                "status": "paid"
-            }).to_list(length=1)
-            if paid_invoices:
-                paid_user_ids = set(paid_invoices[0].get("userIds", []))
-                if paid_invoices[0].get("userId"):
-                    paid_user_ids.add(paid_invoices[0]["userId"])
-            else:
+            
+            # Support both old userId and new userIds
+            invoice_user_ids = invoice.get("userIds", [])
+            if invoice.get("userId"):
+                invoice_user_ids.append(invoice["userId"])
+            
+            # Get payment status for each user
+            if payment_status == "paid":
+                # Filter users who have paid this invoice
+                if invoice.get("status") == "paid":
+                    paid_user_ids = set(invoice_user_ids)
+                else:
+                    paid_user_ids = set()
+                users = [u for u in users if u.get("username") in paid_user_ids or u.get("id") in paid_user_ids]
+            elif payment_status == "unpaid":
+                # Filter users who haven't paid this invoice
+                if invoice.get("status") == "paid":
+                    # Invoice is paid, no unpaid users
+                    users = []
+                else:
+                    # Invoice is unpaid, return users assigned to this invoice
+                    users = [u for u in users if u.get("username") in invoice_user_ids or u.get("id") in invoice_user_ids]
+        else:
+            # Filter by ANY invoice payment status (no specific invoice selected)
+            if payment_status == "paid":
+                # Get all users who have at least one paid invoice
+                paid_invoices = await db.invoices.find({"status": "paid"}).to_list(length=10000)
                 paid_user_ids = set()
-            users = [u for u in users if u.get("username") in paid_user_ids or u.get("id") in paid_user_ids]
-        elif payment_status == "unpaid":
-            # Filter users who haven't paid this invoice
-            paid_invoices = await db.invoices.find({
-                "_id": invoice_id,
-                "status": "paid"
-            }).to_list(length=1)
-            if paid_invoices:
-                paid_user_ids = set(paid_invoices[0].get("userIds", []))
-                if paid_invoices[0].get("userId"):
-                    paid_user_ids.add(paid_invoices[0]["userId"])
-            else:
-                paid_user_ids = set()
-            users = [u for u in users if (u.get("username") in invoice_user_ids or u.get("id") in invoice_user_ids) and u.get("username") not in paid_user_ids and u.get("id") not in paid_user_ids]
+                for inv in paid_invoices:
+                    paid_user_ids.update(inv.get("userIds", []))
+                    if inv.get("userId"):
+                        paid_user_ids.add(inv["userId"])
+                users = [u for u in users if u.get("username") in paid_user_ids or u.get("id") in paid_user_ids]
+            elif payment_status == "unpaid":
+                # Get all users who have at least one unpaid invoice
+                unpaid_invoices = await db.invoices.find({"status": "unpaid"}).to_list(length=10000)
+                unpaid_user_ids = set()
+                for inv in unpaid_invoices:
+                    unpaid_user_ids.update(inv.get("userIds", []))
+                    if inv.get("userId"):
+                        unpaid_user_ids.add(inv["userId"])
+                users = [u for u in users if u.get("username") in unpaid_user_ids or u.get("id") in unpaid_user_ids]
     
     # Export if format specified
     if export_format == "excel":
