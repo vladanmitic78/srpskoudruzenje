@@ -479,10 +479,16 @@ const AdminDashboard = () => {
   const [editInvoiceOpen, setEditInvoiceOpen] = useState(false);
   const [editingInvoice, setEditingInvoice] = useState(null);
   const [newInvoice, setNewInvoice] = useState({
-    userId: '',
+    userIds: [],
     amount: '',
     dueDate: '',
-    description: ''
+    description: '',
+    trainingGroup: ''
+  });
+  const [memberFilter, setMemberFilter] = useState({
+    invoiceId: '',
+    paymentStatus: 'all',
+    trainingGroup: 'all'
   });
   const [createEventOpen, setCreateEventOpen] = useState(false);
   const [editEventOpen, setEditEventOpen] = useState(false);
