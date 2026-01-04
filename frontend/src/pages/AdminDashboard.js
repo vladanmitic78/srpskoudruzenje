@@ -490,6 +490,8 @@ const AdminDashboard = () => {
     paymentStatus: 'all',
     trainingGroup: 'all'
   });
+  const [filteredMembers, setFilteredMembers] = useState([]);
+  const [filterLoading, setFilterLoading] = useState(false);
   const [createEventOpen, setCreateEventOpen] = useState(false);
   const [editEventOpen, setEditEventOpen] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState(null);
