@@ -47,8 +47,10 @@ A full-stack web application for managing a Serbian cultural association in Täb
 
 ### Member Filtering & Export
 - Filter members by invoice, payment status, training group
+- Payment status filter works with or without specific invoice selected
 - Download filtered member lists as Excel/CSV
 - Secure export (no sensitive data exposed)
+- All filter labels translated to 4 languages (Serbian Latin, Serbian Cyrillic, English, Swedish)
 
 ### UI/UX Improvements
 - Admin settings visibility toggles (working)
