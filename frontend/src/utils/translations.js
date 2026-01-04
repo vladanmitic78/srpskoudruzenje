@@ -1273,7 +1273,10 @@ const translations = {
         allGroups: 'Alla grupper',
         downloadExcel: 'Ladda ner Excel',
         filteredMembers: 'Filtrerade medlemmar',
-        noMembersFound: 'Inga medlemmar matchar de valda filtren'
+        noMembersFound: 'Inga medlemmar matchar de valda filtren',
+        noInvoicesMatchFilter: 'Inga fakturor matchar de valda filtren',
+        clearFilters: 'Rensa filter',
+        showingFiltered: 'Visar'
       },
       events: {
         title: 'Hantering av evenemang och träningar',
