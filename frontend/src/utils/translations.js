@@ -896,6 +896,18 @@ const translations = {
         paid: 'Paid',
         unpaid: 'Unpaid'
       },
+      filter: {
+        title: 'Filter & Export Members',
+        byInvoice: 'By Invoice',
+        allInvoices: 'All Invoices',
+        paymentStatus: 'Payment Status',
+        all: 'All',
+        paid: 'Paid',
+        unpaid: 'Unpaid',
+        trainingGroup: 'Training Group',
+        allGroups: 'All Groups',
+        downloadExcel: 'Download Excel'
+      },
       events: {
         title: 'Events & Training Management',
         addEvent: '+ Add Event',
