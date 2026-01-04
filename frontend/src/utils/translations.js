@@ -514,6 +514,7 @@ const translations = {
         edit: 'Измени',
         markPaid: 'Означи плаћено'
       },
+      searchMembers: 'Претражи чланове по имену, имејлу или корисничком имену...',
       membersManagement: 'Управљање члановима',
       invoicesManagement: 'Управљање фактурама',
       createInvoice: 'Креирај фактуру',
