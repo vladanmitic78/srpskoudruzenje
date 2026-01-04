@@ -156,6 +156,83 @@ async def export_members_excel(admin: dict = Depends(get_admin_user), request: R
         headers={"Content-Disposition": f"attachment; filename=members_{datetime.utcnow().strftime('%Y%m%d')}.xlsx"}
     )
 
+@router.get("/members/filtered")
+async def get_filtered_members(
+    invoice_id: str = None,
+    payment_status: str = None,  # paid, unpaid, all
+    training_group: str = None,
+    export_format: str = None,  # excel, csv, json
+    admin: dict = Depends(get_admin_user),
+    request: Request = None
+):
+    """Get filtered members based on invoice payment status, training group, etc."""
+    db = request.app.state.db
+    
+    # Build query
+    query = {"role": "user"}
+    
+    # Filter by training group
+    if training_group and training_group != "all":
+        query["trainingGroup"] = training_group
+    
+    # Get all matching users
+    users = await db.users.find(query, {"_id": 0}).to_list(length=10000)
+    
+    # If filtering by invoice payment status
+    if invoice_id and payment_status != "all":
+        invoice = await db.invoices.find_one({"id": invoice_id})
+        if not invoice:
+            raise HTTPException(status_code=404, detail="Invoice not found")
+        
+        invoice_user_ids = invoice.get("userIds", [])
+        
+        # Get payment status for each user
+        if payment_status == "paid":
+            # Filter users who have paid this invoice
+            paid_users = await db.invoices.find({
+                "id": invoice_id,
+                "status": "paid"
+            }).to_list(length=1000)
+            paid_user_ids = set(paid_users[0].get("userIds", []) if paid_users else [])
+            users = [u for u in users if u.get("id") in paid_user_ids]
+        elif payment_status == "unpaid":
+            # Filter users who haven't paid this invoice
+            paid_users = await db.invoices.find({
+                "id": invoice_id,
+                "status": "paid"
+            }).to_list(length=1000)
+            paid_user_ids = set(paid_users[0].get("userIds", []) if paid_users else [])
+            users = [u for u in users if u.get("id") in invoice_user_ids and u.get("id") not in paid_user_ids]
+    
+    # Export if format specified
+    if export_format == "excel":
+        excel_buffer = generate_members_excel(users)
+        return StreamingResponse(
+            excel_buffer,
+            media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+            headers={"Content-Disposition": f"attachment; filename=filtered_members_{datetime.utcnow().strftime('%Y%m%d')}.xlsx"}
+        )
+    elif export_format == "csv":
+        # Generate CSV
+        import csv
+        import io
+        output = io.StringIO()
+        if users:
+            fieldnames = ["fullName", "email", "phone", "trainingGroup", "yearOfBirth"]
+            writer = csv.DictWriter(output, fieldnames=fieldnames)
+            writer.writeheader()
+            for user in users:
+                writer.writerow({k: user.get(k, "") for k in fieldnames})
+        output.seek(0)
+        return StreamingResponse(
+            iter([output.getvalue()]),
+            media_type="text/csv",
+            headers={"Content-Disposition": f"attachment; filename=filtered_members_{datetime.utcnow().strftime('%Y%m%d')}.csv"}
+        )
+    
+    # Return JSON by default
+    return {"members": users, "total": len(users)}
+
 @router.get("/users/{user_id}/details")
 async def get_user_details(
     user_id: str,
