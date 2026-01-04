@@ -1190,6 +1190,7 @@ const translations = {
         edit: 'Redigera',
         markPaid: 'Markera som betald'
       },
+      searchMembers: 'Sök medlemmar efter namn, e-post eller användarnamn...',
       membersManagement: 'Medlemshantering',
       invoicesManagement: 'Fakturahantering',
       createInvoice: 'Skapa faktura',
