@@ -1,0 +1,3 @@
+Cyrillic (line 600): show: 'Прикажи', showOnFrontend: 'Прикажи на сајту',
+English (line 935): show: 'Show', showOnFrontend: 'Show on frontend',
+Swedish (line 1270): show: 'Visa', showOnFrontend: 'Visa på hemsidan',
