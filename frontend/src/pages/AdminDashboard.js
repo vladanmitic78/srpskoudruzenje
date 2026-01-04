@@ -1520,12 +1520,43 @@ const AdminDashboard = () => {
                     <div className="flex items-end">
                       <button
                         onClick={handleDownloadFilteredMembers}
-                        className="w-full px-4 py-2 bg-green-600 text-white text-sm rounded hover:bg-green-700 flex items-center justify-center gap-2"
+                        disabled={filteredMembers.length === 0}
+                        className="w-full px-4 py-2 bg-green-600 text-white text-sm rounded hover:bg-green-700 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
                       >
-                        <span>📥</span> {t('admin.filter.downloadExcel')}
+                        <span>📥</span> {t('admin.filter.downloadExcel')} ({filteredMembers.length})
                       </button>
                     </div>
                   </div>
+                  
+                  {/* Filtered Members Preview */}
+                  {(memberFilter.paymentStatus !== 'all' || memberFilter.trainingGroup !== 'all' || memberFilter.invoiceId) && (
+                    <div className="mt-4 border-t pt-4">
+                      <h5 className="text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
+                        {t('admin.filter.filteredMembers') || 'Filtered Members'}: {filterLoading ? '...' : filteredMembers.length}
+                      </h5>
+                      {filterLoading ? (
+                        <p className="text-sm text-gray-500">Loading...</p>
+                      ) : filteredMembers.length === 0 ? (
+                        <p className="text-sm text-gray-500">{t('admin.filter.noMembersFound') || 'No members match the selected filters'}</p>
+                      ) : (
+                        <div className="max-h-48 overflow-y-auto">
+                          <div className="flex flex-wrap gap-2">
+                            {filteredMembers.map((member, index) => (
+                              <span 
+                                key={member.id || index} 
+                                className="inline-flex items-center px-2 py-1 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 text-xs rounded-full"
+                              >
+                                {member.fullName}
+                                {member.trainingGroup && (
+                                  <span className="ml-1 text-blue-600 dark:text-blue-400">[{member.trainingGroup}]</span>
+                                )}
+                              </span>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  )}
                 </div>
                 
                 <div className="space-y-4">
