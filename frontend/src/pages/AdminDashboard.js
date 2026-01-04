@@ -795,10 +795,18 @@ const AdminDashboard = () => {
 
   const handleCreateInvoice = async () => {
     try {
-      await invoicesAPI.create(newInvoice);
+      // Send userIds array to backend
+      const invoiceData = {
+        userIds: newInvoice.userIds,
+        amount: parseFloat(newInvoice.amount),
+        dueDate: newInvoice.dueDate,
+        description: newInvoice.description,
+        trainingGroup: newInvoice.trainingGroup || null
+      };
+      await invoicesAPI.create(invoiceData);
       toast.success('Invoice created successfully');
       setCreateInvoiceOpen(false);
-      setNewInvoice({ userId: '', amount: '', dueDate: '', description: '' });
+      setNewInvoice({ userIds: [], amount: '', dueDate: '', description: '', trainingGroup: '' });
       // Refresh invoices
       const invoicesData = await invoicesAPI.getAll();
       setInvoices(invoicesData.invoices || []);
