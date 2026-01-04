@@ -402,11 +402,11 @@ export const InvoicesTab = ({
                               rel="noopener noreferrer"
                               className="text-blue-600 hover:underline text-sm"
                             >
-                              📄 {t('admin.invoices.viewFile')}
+                              📄 {t('admin.actions.download')}
                             </a>
                           ) : (
                             <label className="cursor-pointer text-blue-600 hover:underline text-sm">
-                              📤 {t('admin.invoices.upload')}
+                              📤 {t('admin.actions.upload')}
                               <input
                                 type="file"
                                 className="hidden"
