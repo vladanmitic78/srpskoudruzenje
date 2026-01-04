@@ -2028,7 +2028,21 @@ const AdminDashboard = () => {
                         />
                       </div>
                       <div>
-                        <label className="block text-sm font-medium mb-2">{t('admin.settings.snapchatUrl')}</label>
+                        <div className="flex items-center justify-between mb-2">
+                          <label className="block text-sm font-medium">{t('admin.settings.snapchatUrl')}</label>
+                          <label className="flex items-center space-x-2 text-sm">
+                            <input
+                              type="checkbox"
+                              checked={settings.visibility?.socialMediaSnapchat !== false}
+                              onChange={(e) => setSettings({
+                                ...settings,
+                                visibility: {...settings.visibility, socialMediaSnapchat: e.target.checked}
+                              })}
+                              className="w-4 h-4 text-blue-600 rounded focus:ring-2"
+                            />
+                            <span className="text-gray-600 dark:text-gray-300">{t('admin.settings.show')}</span>
+                          </label>
+                        </div>
                         <input
                           type="url"
                           value={settings.socialMedia.snapchat}
