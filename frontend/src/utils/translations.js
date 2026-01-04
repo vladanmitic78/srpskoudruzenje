@@ -393,6 +393,10 @@ const translations = {
     },
     footer: {
       rights: 'Сва права задржана',
+      allRightsReserved: 'Сва права задржана.',
+      websitePlatform: 'Платформа веб сајта',
+      usedUnderLicense: 'Коришћено под лиценцом.',
+      designedAndDeveloped: 'Дизајнирано и развијено од стране',
       designedBy: 'Дизајнирано и развијено од стране',
       quickLinks: 'Брзе везе',
       contactInfo: 'Контакт информације',
