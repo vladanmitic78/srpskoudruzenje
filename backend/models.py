@@ -234,6 +234,18 @@ class SocialMedia(BaseModel):
     youtube: str
     snapchat: str
 
+class VisibilitySettings(BaseModel):
+    contactEmail: bool = True
+    contactPhone: bool = True
+    address: bool = True
+    socialMediaFacebook: bool = False
+    socialMediaInstagram: bool = False
+    socialMediaYoutube: bool = False
+    socialMediaSnapchat: bool = False
+    orgNumber: bool = True
+    vatNumber: bool = True
+    bankAccount: bool = True
+
 class SettingsBase(BaseModel):
     address: str
     bankAccount: str
@@ -242,6 +254,7 @@ class SettingsBase(BaseModel):
     contactEmail: EmailStr
     contactPhone: str
     socialMedia: SocialMedia
+    visibility: Optional[VisibilitySettings] = None
 
 class SettingsInDB(SettingsBase):
     id: str = Field(alias="_id")
