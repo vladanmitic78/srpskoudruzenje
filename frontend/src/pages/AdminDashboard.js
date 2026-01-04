@@ -891,6 +891,52 @@ const AdminDashboard = () => {
     return user ? user.fullName : 'Unknown User';
   };
 
+  // Get names for multiple user IDs
+  const getUserNames = (userIds) => {
+    if (!userIds || userIds.length === 0) return 'No members';
+    return userIds.map(id => getUserName(id)).join(', ');
+  };
+
+  // Get unique training groups from users
+  const trainingGroups = [...new Set(users.filter(u => u.trainingGroup).map(u => u.trainingGroup))];
+
+  // Handle member filter download
+  const handleDownloadFilteredMembers = async () => {
+    try {
+      const params = new URLSearchParams();
+      if (memberFilter.invoiceId) params.append('invoice_id', memberFilter.invoiceId);
+      if (memberFilter.paymentStatus !== 'all') params.append('payment_status', memberFilter.paymentStatus);
+      if (memberFilter.trainingGroup !== 'all') params.append('training_group', memberFilter.trainingGroup);
+      params.append('export_format', 'excel');
+      
+      const response = await fetch(
+        `${process.env.REACT_APP_BACKEND_URL}/api/admin/members/filtered?${params.toString()}`,
+        {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+          }
+        }
+      );
+      
+      if (!response.ok) throw new Error('Download failed');
+      
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `filtered_members_${new Date().toISOString().split('T')[0]}.xlsx`;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      a.remove();
+      
+      toast.success('Members exported successfully');
+    } catch (error) {
+      console.error('Download error:', error);
+      toast.error('Failed to download members');
+    }
+  };
+
   const handleCreateEvent = async () => {
     try {
       if (!eventForm.date || !eventForm.time || !eventForm.location) {
