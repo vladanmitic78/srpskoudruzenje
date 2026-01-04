@@ -147,34 +147,40 @@ async def upload_invoice_file(
         {"$set": {"fileUrl": file_url, "fileName": safe_filename}}
     )
     
-    # Send email notification to user
+    # Send email notification to user(s)
     try:
-        # Get user details
-        user = await db.users.find_one({"_id": invoice["userId"]})
-        if user and user.get("email"):
-            from email_service import send_email, get_invoice_upload_notification
-            
-            # Get backend URL for download link
-            backend_url = os.environ.get('REACT_APP_BACKEND_URL', 'http://localhost:8001')
-            frontend_url = backend_url.replace('/api', '')
-            download_link = f"{frontend_url}/dashboard"  # User goes to dashboard to see invoices
-            
-            html_content, text_content = get_invoice_upload_notification(
-                user_name=user.get("fullName", user.get("email")),
-                invoice_description=invoice["description"],
-                amount=invoice["amount"],
-                currency=invoice["currency"],
-                due_date=invoice["dueDate"],
-                download_link=download_link
-            )
-            
-            await send_email(
-                user["email"],
-                "Nova Faktura / Ny Faktura - SKUD Täby",
-                html_content,
-                text_content
-            , db=request.app.state.db)
-            logger.info(f"Invoice notification email sent to {user['email']}")
+        from email_service import send_email, get_invoice_upload_notification
+        
+        # Get backend URL for download link
+        backend_url = os.environ.get('REACT_APP_BACKEND_URL', 'http://localhost:8001')
+        frontend_url = backend_url.replace('/api', '')
+        download_link = f"{frontend_url}/dashboard"  # User goes to dashboard to see invoices
+        
+        # Handle both old userId and new userIds
+        user_ids = invoice.get("userIds", [])
+        if not user_ids and invoice.get("userId"):
+            user_ids = [invoice["userId"]]
+        
+        for user_id in user_ids:
+            user = await db.users.find_one({"_id": user_id})
+            if user and user.get("email"):
+                html_content, text_content = get_invoice_upload_notification(
+                    user_name=user.get("fullName", user.get("email")),
+                    invoice_description=invoice["description"],
+                    amount=invoice["amount"],
+                    currency=invoice["currency"],
+                    due_date=invoice["dueDate"],
+                    download_link=download_link
+                )
+                
+                await send_email(
+                    user["email"],
+                    "Nova Faktura / Ny Faktura - SKUD Täby",
+                    html_content,
+                    text_content,
+                    db=request.app.state.db
+                )
+                logger.info(f"Invoice notification email sent to {user['email']}")
     except Exception as e:
         logger.error(f"Failed to send invoice notification email: {str(e)}")
         # Don't fail the upload if email fails
