@@ -2066,33 +2066,72 @@ const AdminDashboard = () => {
                     <h3 className="text-lg font-semibold mb-4 text-gray-900 dark:text-white">{t('admin.settings.orgDetails')}</h3>
                     <div className="space-y-4">
                       <div>
-                        <label className="block text-sm font-medium mb-2">{t('admin.settings.orgNumber')}</label>
+                        <div className="flex items-center justify-between mb-2">
+                          <label className="block text-sm font-medium">{t('admin.settings.orgNumber')}</label>
+                          <label className="flex items-center space-x-2 text-sm">
+                            <input
+                              type="checkbox"
+                              checked={settings.visibility?.orgNumber !== false}
+                              onChange={(e) => setSettings({
+                                ...settings,
+                                visibility: {...settings.visibility, orgNumber: e.target.checked}
+                              })}
+                              className="w-4 h-4 text-blue-600 rounded focus:ring-2"
+                            />
+                            <span className="text-gray-600 dark:text-gray-300">{t('admin.settings.show')}</span>
+                          </label>
+                        </div>
                         <input
                           type="text"
                           value={settings.registrationNumber}
                           onChange={(e) => setSettings({...settings, registrationNumber: e.target.value})}
                           className="w-full p-3 border rounded-md"
-                          required
                         />
                       </div>
                       <div>
-                        <label className="block text-sm font-medium mb-2">{t('admin.settings.vatNumber')}</label>
+                        <div className="flex items-center justify-between mb-2">
+                          <label className="block text-sm font-medium">{t('admin.settings.vatNumber')}</label>
+                          <label className="flex items-center space-x-2 text-sm">
+                            <input
+                              type="checkbox"
+                              checked={settings.visibility?.vatNumber !== false}
+                              onChange={(e) => setSettings({
+                                ...settings,
+                                visibility: {...settings.visibility, vatNumber: e.target.checked}
+                              })}
+                              className="w-4 h-4 text-blue-600 rounded focus:ring-2"
+                            />
+                            <span className="text-gray-600 dark:text-gray-300">{t('admin.settings.show')}</span>
+                          </label>
+                        </div>
                         <input
                           type="text"
                           value={settings.vatNumber}
                           onChange={(e) => setSettings({...settings, vatNumber: e.target.value})}
                           className="w-full p-3 border rounded-md"
-                          required
                         />
                       </div>
                       <div>
-                        <label className="block text-sm font-medium mb-2">{t('admin.settings.bankAccount')}</label>
+                        <div className="flex items-center justify-between mb-2">
+                          <label className="block text-sm font-medium">{t('admin.settings.bankAccount')}</label>
+                          <label className="flex items-center space-x-2 text-sm">
+                            <input
+                              type="checkbox"
+                              checked={settings.visibility?.bankAccount !== false}
+                              onChange={(e) => setSettings({
+                                ...settings,
+                                visibility: {...settings.visibility, bankAccount: e.target.checked}
+                              })}
+                              className="w-4 h-4 text-blue-600 rounded focus:ring-2"
+                            />
+                            <span className="text-gray-600 dark:text-gray-300">{t('admin.settings.show')}</span>
+                          </label>
+                        </div>
                         <input
                           type="text"
                           value={settings.bankAccount}
                           onChange={(e) => setSettings({...settings, bankAccount: e.target.value})}
                           className="w-full p-3 border rounded-md"
-                          required
                         />
                       </div>
                     </div>
