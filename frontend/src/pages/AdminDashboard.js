@@ -2070,7 +2070,6 @@ const AdminDashboard = () => {
                           })}
                           placeholder="https://snapchat.com/add/..."
                           className="w-full p-3 border rounded-md"
-                          required
                         />
                       </div>
                     </div>
