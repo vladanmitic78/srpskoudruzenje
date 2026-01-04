@@ -40,6 +40,7 @@ class UserBase(BaseModel):
     parentName: Optional[str] = None
     parentEmail: Optional[EmailStr] = None
     parentPhone: Optional[str] = None
+    trainingGroup: Optional[str] = None  # folklor, kolo, choir, etc.
 
 class UserCreate(UserBase):
     password: str
