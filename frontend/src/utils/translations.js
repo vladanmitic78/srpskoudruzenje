@@ -1246,6 +1246,18 @@ const translations = {
         paid: 'Betald',
         unpaid: 'Obetald'
       },
+      filter: {
+        title: 'Filtrera och exportera medlemmar',
+        byInvoice: 'Enligt faktura',
+        allInvoices: 'Alla fakturor',
+        paymentStatus: 'Betalningsstatus',
+        all: 'Alla',
+        paid: 'Betald',
+        unpaid: 'Obetald',
+        trainingGroup: 'Träningsgrupp',
+        allGroups: 'Alla grupper',
+        downloadExcel: 'Ladda ner Excel'
+      },
       events: {
         title: 'Hantering av evenemang och träningar',
         addEvent: '+ Lägg till evenemang',
