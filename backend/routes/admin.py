@@ -183,11 +183,13 @@ async def get_filtered_members(
         "resetToken": 0
     }).to_list(length=10000)
     
-    # If filtering by invoice payment status
-    if invoice_id and payment_status != "all":
-        invoice = await db.invoices.find_one({"_id": invoice_id})
-        if not invoice:
-            raise HTTPException(status_code=404, detail="Invoice not found")
+    # Filter by payment status (with or without specific invoice)
+    if payment_status and payment_status != "all":
+        if invoice_id:
+            # Filter by specific invoice payment status
+            invoice = await db.invoices.find_one({"_id": invoice_id})
+            if not invoice:
+                raise HTTPException(status_code=404, detail="Invoice not found")
         
         # Support both old userId and new userIds
         invoice_user_ids = invoice.get("userIds", [])
