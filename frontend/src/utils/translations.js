@@ -852,6 +852,7 @@ const translations = {
         edit: 'Edit',
         markPaid: 'Mark Paid'
       },
+      searchMembers: 'Search members by name, email, or username...',
       membersManagement: 'Members Management',
       invoicesManagement: 'Invoices Management',
       createInvoice: 'Create Invoice',
