@@ -176,6 +176,7 @@ const translations = {
         edit: 'Izmeni',
         markPaid: 'Označi plaćeno'
       },
+      searchMembers: 'Pretraži članove po imenu, emailu ili korisničkom imenu...',
       membersManagement: 'Upravljanje članovima',
       invoicesManagement: 'Upravljanje fakturama',
       createInvoice: 'Kreiraj fakturu',
