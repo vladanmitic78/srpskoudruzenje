@@ -68,18 +68,28 @@ const SerbianStory = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-7xl mx-auto mb-8">
               {currentStories.map((story) => (
                 <Card key={story.id} className="overflow-hidden border-2 border-[var(--color-primary)]/20 hover:shadow-xl transition-all duration-300 flex flex-col h-full">
-                  {story.image && (
-                    <div className="relative h-48 overflow-hidden">
+                  <div className="relative h-48 overflow-hidden bg-gradient-to-br from-[var(--color-primary)]/20 to-[var(--color-secondary)]/20">
+                    {story.image ? (
                       <img
                         src={story.image}
                         alt={story.title[language]}
                         className="w-full h-full object-cover"
+                        onError={(e) => {
+                          e.target.style.display = 'none';
+                          e.target.nextSibling.style.display = 'flex';
+                        }}
                       />
-                      <div className="absolute top-2 right-2 bg-[var(--color-button-primary)] text-white px-3 py-1 rounded-full text-xs font-semibold shadow-lg">
-                        {story.date}
-                      </div>
+                    ) : null}
+                    <div 
+                      className={`absolute inset-0 ${story.image ? 'hidden' : 'flex'} items-center justify-center bg-gradient-to-br from-[var(--color-primary)]/30 to-[var(--color-secondary)]/30`}
+                      style={{ display: story.image ? 'none' : 'flex' }}
+                    >
+                      <span className="text-6xl">📖</span>
                     </div>
-                  )}
+                    <div className="absolute top-2 right-2 bg-[var(--color-button-primary)] text-white px-3 py-1 rounded-full text-xs font-semibold shadow-lg">
+                      {story.date}
+                    </div>
+                  </div>
                   
                   <CardContent className="p-4 flex flex-col flex-grow">
                     <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-3 line-clamp-2">
