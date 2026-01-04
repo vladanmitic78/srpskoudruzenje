@@ -1456,8 +1456,20 @@ const AdminDashboard = () => {
                             <tr key={invoice.id} className="border-b border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800">
                               <td className="p-3">
                                 <div>
-                                  <p className="font-medium">{getUserName(invoice.userId)}</p>
-                                  <p className="text-xs text-gray-500">{invoice.userId}</p>
+                                  <p className="font-medium">
+                                    {invoice.userIds && invoice.userIds.length > 0 
+                                      ? getUserNames(invoice.userIds)
+                                      : invoice.userId 
+                                        ? getUserName(invoice.userId)
+                                        : 'No members'
+                                    }
+                                  </p>
+                                  <p className="text-xs text-gray-500">
+                                    {invoice.userIds && invoice.userIds.length > 1 
+                                      ? `${invoice.userIds.length} members`
+                                      : invoice.userIds?.[0] || invoice.userId || ''
+                                    }
+                                  </p>
                                 </div>
                               </td>
                               <td className="p-3">{invoice.description}</td>
