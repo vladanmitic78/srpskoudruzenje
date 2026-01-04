@@ -1262,7 +1262,9 @@ const translations = {
         unpaid: 'Obetald',
         trainingGroup: 'Träningsgrupp',
         allGroups: 'Alla grupper',
-        downloadExcel: 'Ladda ner Excel'
+        downloadExcel: 'Ladda ner Excel',
+        filteredMembers: 'Filtrerade medlemmar',
+        noMembersFound: 'Inga medlemmar matchar de valda filtren'
       },
       events: {
         title: 'Hantering av evenemang och träningar',
