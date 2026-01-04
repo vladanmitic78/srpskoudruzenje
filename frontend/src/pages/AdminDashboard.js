@@ -13,6 +13,9 @@ import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
 import { Label } from '../components/ui/label';
 
+// Import refactored tab components
+import { MembersTab, InvoicesTab, EventsTab } from '../components/admin';
+
 // Admin Password Change Component
 const AdminPasswordChangeForm = ({ t }) => {
   const [passwordData, setPasswordData] = useState({
