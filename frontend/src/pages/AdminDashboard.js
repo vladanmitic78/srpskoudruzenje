@@ -1947,7 +1947,21 @@ const AdminDashboard = () => {
                     <h3 className="text-lg font-semibold mb-4 text-gray-900 dark:text-white">{t('admin.settings.socialMedia')}</h3>
                     <div className="space-y-4">
                       <div>
-                        <label className="block text-sm font-medium mb-2">{t('admin.settings.facebookUrl')}</label>
+                        <div className="flex items-center justify-between mb-2">
+                          <label className="block text-sm font-medium">{t('admin.settings.facebookUrl')}</label>
+                          <label className="flex items-center space-x-2 text-sm">
+                            <input
+                              type="checkbox"
+                              checked={settings.visibility?.socialMediaFacebook !== false}
+                              onChange={(e) => setSettings({
+                                ...settings,
+                                visibility: {...settings.visibility, socialMediaFacebook: e.target.checked}
+                              })}
+                              className="w-4 h-4 text-blue-600 rounded focus:ring-2"
+                            />
+                            <span className="text-gray-600 dark:text-gray-300">{t('admin.settings.show')}</span>
+                          </label>
+                        </div>
                         <input
                           type="url"
                           value={settings.socialMedia.facebook}
@@ -1957,11 +1971,24 @@ const AdminDashboard = () => {
                           })}
                           placeholder="https://facebook.com/..."
                           className="w-full p-3 border rounded-md"
-                          required
                         />
                       </div>
                       <div>
-                        <label className="block text-sm font-medium mb-2">{t('admin.settings.instagramUrl')}</label>
+                        <div className="flex items-center justify-between mb-2">
+                          <label className="block text-sm font-medium">{t('admin.settings.instagramUrl')}</label>
+                          <label className="flex items-center space-x-2 text-sm">
+                            <input
+                              type="checkbox"
+                              checked={settings.visibility?.socialMediaInstagram !== false}
+                              onChange={(e) => setSettings({
+                                ...settings,
+                                visibility: {...settings.visibility, socialMediaInstagram: e.target.checked}
+                              })}
+                              className="w-4 h-4 text-blue-600 rounded focus:ring-2"
+                            />
+                            <span className="text-gray-600 dark:text-gray-300">{t('admin.settings.show')}</span>
+                          </label>
+                        </div>
                         <input
                           type="url"
                           value={settings.socialMedia.instagram}
@@ -1971,11 +1998,24 @@ const AdminDashboard = () => {
                           })}
                           placeholder="https://instagram.com/..."
                           className="w-full p-3 border rounded-md"
-                          required
                         />
                       </div>
                       <div>
-                        <label className="block text-sm font-medium mb-2">{t('admin.settings.youtubeUrl')}</label>
+                        <div className="flex items-center justify-between mb-2">
+                          <label className="block text-sm font-medium">{t('admin.settings.youtubeUrl')}</label>
+                          <label className="flex items-center space-x-2 text-sm">
+                            <input
+                              type="checkbox"
+                              checked={settings.visibility?.socialMediaYoutube !== false}
+                              onChange={(e) => setSettings({
+                                ...settings,
+                                visibility: {...settings.visibility, socialMediaYoutube: e.target.checked}
+                              })}
+                              className="w-4 h-4 text-blue-600 rounded focus:ring-2"
+                            />
+                            <span className="text-gray-600 dark:text-gray-300">{t('admin.settings.show')}</span>
+                          </label>
+                        </div>
                         <input
                           type="url"
                           value={settings.socialMedia.youtube}
@@ -1985,7 +2025,6 @@ const AdminDashboard = () => {
                           })}
                           placeholder="https://youtube.com/..."
                           className="w-full p-3 border rounded-md"
-                          required
                         />
                       </div>
                       <div>
