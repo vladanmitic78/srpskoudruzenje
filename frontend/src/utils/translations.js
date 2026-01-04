@@ -208,7 +208,10 @@ const translations = {
         allGroups: 'Sve grupe',
         downloadExcel: 'Preuzmi Excel',
         filteredMembers: 'Filtrirani članovi',
-        noMembersFound: 'Nema članova koji odgovaraju izabranim filterima'
+        noMembersFound: 'Nema članova koji odgovaraju izabranim filterima',
+        noInvoicesMatchFilter: 'Nema faktura koje odgovaraju izabranim filterima',
+        clearFilters: 'Obriši filtere',
+        showingFiltered: 'Prikazano'
       },
       events: {
         title: 'Upravljanje događajima i treninzima',
