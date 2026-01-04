@@ -1272,6 +1272,8 @@ const translations = {
         instagramUrl: 'Instagram URL',
         youtubeUrl: 'YouTube URL',
         snapchatUrl: 'Snapchat URL',
+        show: 'Visa',
+        showOnFrontend: 'Visa på hemsidan',
         orgDetails: 'Organisationsdetaljer',
         orgNumber: 'Organisationsnummer (Org. nr)',
         vatNumber: 'Momsnummer',
