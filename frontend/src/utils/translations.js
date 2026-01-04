@@ -918,7 +918,10 @@ const translations = {
         allGroups: 'All Groups',
         downloadExcel: 'Download Excel',
         filteredMembers: 'Filtered Members',
-        noMembersFound: 'No members match the selected filters'
+        noMembersFound: 'No members match the selected filters',
+        noInvoicesMatchFilter: 'No invoices match the selected filters',
+        clearFilters: 'Clear Filters',
+        showingFiltered: 'Showing'
       },
       events: {
         title: 'Events & Training Management',
