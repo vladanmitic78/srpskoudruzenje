@@ -3342,25 +3342,78 @@ const AdminDashboard = () => {
 
         {/* Create Invoice Dialog */}
         <Dialog open={createInvoiceOpen} onOpenChange={setCreateInvoiceOpen}>
-          <DialogContent className="max-w-md">
+          <DialogContent className="max-w-lg max-h-[85vh] overflow-y-auto">
             <DialogHeader>
               <DialogTitle>Create New Invoice</DialogTitle>
             </DialogHeader>
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium mb-2">Select Member</label>
-                <select
-                  value={newInvoice.userId}
-                  onChange={(e) => setNewInvoice({...newInvoice, userId: e.target.value})}
-                  className="w-full p-2 border rounded dark:bg-gray-800 dark:border-gray-600"
-                >
-                  <option value="">Choose a member...</option>
+                <label className="block text-sm font-medium mb-2">Select Members (Multiple)</label>
+                <div className="border rounded-md p-2 max-h-48 overflow-y-auto bg-white dark:bg-gray-800">
+                  {/* Selected count */}
+                  <div className="mb-2 pb-2 border-b text-sm text-gray-600 dark:text-gray-400">
+                    {newInvoice.userIds.length} member(s) selected
+                  </div>
+                  {/* Quick select by training group */}
+                  <div className="mb-2 pb-2 border-b">
+                    <label className="block text-xs font-medium mb-1 text-gray-500">Quick Select by Training Group:</label>
+                    <select
+                      onChange={(e) => {
+                        if (e.target.value) {
+                          const groupUsers = users.filter(u => u.role === 'user' && u.trainingGroup === e.target.value);
+                          const groupUserIds = groupUsers.map(u => u.id);
+                          setNewInvoice({...newInvoice, userIds: [...new Set([...newInvoice.userIds, ...groupUserIds])], trainingGroup: e.target.value});
+                        }
+                      }}
+                      className="w-full p-1 text-sm border rounded dark:bg-gray-700 dark:border-gray-600"
+                    >
+                      <option value="">Select a group to add all members...</option>
+                      {trainingGroups.map(group => (
+                        <option key={group} value={group}>
+                          {group} ({users.filter(u => u.role === 'user' && u.trainingGroup === group).length} members)
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  {/* Member checkboxes */}
                   {users.filter(u => u.role === 'user').map(user => (
-                    <option key={user.id} value={user.id}>
-                      {user.fullName} ({user.email})
-                    </option>
+                    <label key={user.id} className="flex items-center space-x-2 p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={newInvoice.userIds.includes(user.id)}
+                        onChange={(e) => {
+                          if (e.target.checked) {
+                            setNewInvoice({...newInvoice, userIds: [...newInvoice.userIds, user.id]});
+                          } else {
+                            setNewInvoice({...newInvoice, userIds: newInvoice.userIds.filter(id => id !== user.id)});
+                          }
+                        }}
+                        className="w-4 h-4 text-blue-600 rounded"
+                      />
+                      <span className="text-sm">
+                        {user.fullName} 
+                        <span className="text-gray-500 ml-1">({user.email})</span>
+                        {user.trainingGroup && <span className="text-xs ml-1 text-blue-600">[{user.trainingGroup}]</span>}
+                      </span>
+                    </label>
                   ))}
-                </select>
+                </div>
+                <div className="mt-1 flex gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setNewInvoice({...newInvoice, userIds: users.filter(u => u.role === 'user').map(u => u.id)})}
+                    className="text-xs text-blue-600 hover:underline"
+                  >
+                    Select All
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setNewInvoice({...newInvoice, userIds: []})}
+                    className="text-xs text-red-600 hover:underline"
+                  >
+                    Clear All
+                  </button>
+                </div>
               </div>
 
               <div>
@@ -3398,10 +3451,10 @@ const AdminDashboard = () => {
               <div className="flex gap-2 pt-4">
                 <button
                   onClick={handleCreateInvoice}
-                  disabled={!newInvoice.userId || !newInvoice.amount || !newInvoice.dueDate || !newInvoice.description}
+                  disabled={newInvoice.userIds.length === 0 || !newInvoice.amount || !newInvoice.dueDate || !newInvoice.description}
                   className="flex-1 px-4 py-2 bg-[var(--color-button-primary)] text-white rounded hover:bg-[var(--color-button-hover)] disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  Create Invoice
+                  Create Invoice ({newInvoice.userIds.length} members)
                 </button>
                 <button
                   onClick={() => setCreateInvoiceOpen(false)}
