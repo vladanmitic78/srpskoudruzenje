@@ -67,22 +67,28 @@ const Footer = () => {
           <div>
             <h3 className="text-lg font-semibold mb-4">{t('footer.contactInfo')}</h3>
             <ul className="space-y-3">
-              <li className="flex items-start space-x-2 text-sm text-gray-200">
-                <MapPin className="h-4 w-4 mt-0.5 flex-shrink-0" />
-                <span>{settings?.address || 'Loading...'}</span>
-              </li>
-              <li className="flex items-center space-x-2 text-sm text-gray-200">
-                <Mail className="h-4 w-4 flex-shrink-0" />
-                <a href={`mailto:${settings?.contactEmail || ''}`} className="hover:text-white transition-colors">
-                  {settings?.contactEmail || 'Loading...'}
-                </a>
-              </li>
-              <li className="flex items-center space-x-2 text-sm text-gray-200">
-                <Phone className="h-4 w-4 flex-shrink-0" />
-                <a href={`tel:${settings?.contactPhone || ''}`} className="hover:text-white transition-colors">
-                  {settings?.contactPhone || 'Loading...'}
-                </a>
-              </li>
+              {settings?.visibility?.address !== false && settings?.address && (
+                <li className="flex items-start space-x-2 text-sm text-gray-200">
+                  <MapPin className="h-4 w-4 mt-0.5 flex-shrink-0" />
+                  <span>{settings.address}</span>
+                </li>
+              )}
+              {settings?.visibility?.contactEmail !== false && settings?.contactEmail && (
+                <li className="flex items-center space-x-2 text-sm text-gray-200">
+                  <Mail className="h-4 w-4 flex-shrink-0" />
+                  <a href={`mailto:${settings.contactEmail}`} className="hover:text-white transition-colors">
+                    {settings.contactEmail}
+                  </a>
+                </li>
+              )}
+              {settings?.visibility?.contactPhone !== false && settings?.contactPhone && (
+                <li className="flex items-center space-x-2 text-sm text-gray-200">
+                  <Phone className="h-4 w-4 flex-shrink-0" />
+                  <a href={`tel:${settings.contactPhone}`} className="hover:text-white transition-colors">
+                    {settings.contactPhone}
+                  </a>
+                </li>
+              )}
             </ul>
           </div>
 
