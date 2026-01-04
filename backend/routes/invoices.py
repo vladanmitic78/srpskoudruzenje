@@ -213,7 +213,11 @@ async def download_invoice_file(
     
     # Check if user has access (own invoice or admin)
     is_admin = current_user.get("role") in ["admin", "superadmin"]
-    is_owner = invoice["userId"] == current_user["_id"]
+    # Support both old userId and new userIds
+    user_ids = invoice.get("userIds", [])
+    if invoice.get("userId"):
+        user_ids.append(invoice["userId"])
+    is_owner = current_user["_id"] in user_ids
     
     if not is_admin and not is_owner:
         raise HTTPException(status_code=403, detail="Access denied")
