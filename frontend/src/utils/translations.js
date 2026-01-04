@@ -34,6 +34,10 @@ const translations = {
     },
     footer: {
       rights: 'Sva prava zadržana',
+      allRightsReserved: 'Sva prava zadržana.',
+      websitePlatform: 'Platforma veb sajta',
+      usedUnderLicense: 'Korišćeno pod licencom.',
+      designedAndDeveloped: 'Dizajnirano i razvijeno od strane',
       designedBy: 'Dizajnirano i razvijeno od strane',
       quickLinks: 'Brze veze',
       contactInfo: 'Kontakt informacije',
