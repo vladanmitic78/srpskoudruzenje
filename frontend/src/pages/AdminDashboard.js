@@ -1869,34 +1869,73 @@ const AdminDashboard = () => {
                     <h3 className="text-lg font-semibold mb-4 text-gray-900 dark:text-white">{t('admin.settings.contactInfo')}</h3>
                     <div className="space-y-4">
                       <div>
-                        <label className="block text-sm font-medium mb-2">{t('admin.settings.address')}</label>
+                        <div className="flex items-center justify-between mb-2">
+                          <label className="block text-sm font-medium">{t('admin.settings.address')}</label>
+                          <label className="flex items-center space-x-2 text-sm">
+                            <input
+                              type="checkbox"
+                              checked={settings.visibility?.address !== false}
+                              onChange={(e) => setSettings({
+                                ...settings,
+                                visibility: {...settings.visibility, address: e.target.checked}
+                              })}
+                              className="w-4 h-4 text-blue-600 rounded focus:ring-2"
+                            />
+                            <span className="text-gray-600 dark:text-gray-300">{t('admin.settings.showOnFrontend')}</span>
+                          </label>
+                        </div>
                         <input
                           type="text"
                           value={settings.address}
                           onChange={(e) => setSettings({...settings, address: e.target.value})}
                           className="w-full p-3 border rounded-md"
-                          required
                         />
                       </div>
                       <div className="grid grid-cols-2 gap-4">
                         <div>
-                          <label className="block text-sm font-medium mb-2">{t('admin.settings.contactEmail')}</label>
+                          <div className="flex items-center justify-between mb-2">
+                            <label className="block text-sm font-medium">{t('admin.settings.contactEmail')}</label>
+                            <label className="flex items-center space-x-2 text-sm">
+                              <input
+                                type="checkbox"
+                                checked={settings.visibility?.contactEmail !== false}
+                                onChange={(e) => setSettings({
+                                  ...settings,
+                                  visibility: {...settings.visibility, contactEmail: e.target.checked}
+                                })}
+                                className="w-4 h-4 text-blue-600 rounded focus:ring-2"
+                              />
+                              <span className="text-gray-600 dark:text-gray-300">{t('admin.settings.show')}</span>
+                            </label>
+                          </div>
                           <input
                             type="email"
                             value={settings.contactEmail}
                             onChange={(e) => setSettings({...settings, contactEmail: e.target.value})}
                             className="w-full p-3 border rounded-md"
-                            required
                           />
                         </div>
                         <div>
-                          <label className="block text-sm font-medium mb-2">{t('admin.settings.contactPhone')}</label>
+                          <div className="flex items-center justify-between mb-2">
+                            <label className="block text-sm font-medium">{t('admin.settings.contactPhone')}</label>
+                            <label className="flex items-center space-x-2 text-sm">
+                              <input
+                                type="checkbox"
+                                checked={settings.visibility?.contactPhone !== false}
+                                onChange={(e) => setSettings({
+                                  ...settings,
+                                  visibility: {...settings.visibility, contactPhone: e.target.checked}
+                                })}
+                                className="w-4 h-4 text-blue-600 rounded focus:ring-2"
+                              />
+                              <span className="text-gray-600 dark:text-gray-300">{t('admin.settings.show')}</span>
+                            </label>
+                          </div>
                           <input
                             type="tel"
                             value={settings.contactPhone}
                             onChange={(e) => setSettings({...settings, contactPhone: e.target.value})}
                             className="w-full p-3 border rounded-md"
-                            required
                           />
                         </div>
                       </div>
