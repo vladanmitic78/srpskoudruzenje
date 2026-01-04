@@ -229,10 +229,10 @@ class StoryResponse(StoryBase):
 
 # Settings Models
 class SocialMedia(BaseModel):
-    facebook: str
-    instagram: str
-    youtube: str
-    snapchat: str
+    facebook: str = ""
+    instagram: str = ""
+    youtube: str = ""
+    snapchat: str = ""
 
 class VisibilitySettings(BaseModel):
     contactEmail: bool = True
