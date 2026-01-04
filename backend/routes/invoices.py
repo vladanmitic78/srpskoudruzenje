@@ -37,9 +37,14 @@ async def get_all_invoices(admin: dict = Depends(get_admin_user), request: Reque
     cursor = db.invoices.find().sort("createdAt", -1)
     invoices_list = await cursor.to_list(length=1000)
     
-    return {
-        "invoices": [{**item, "id": str(item["_id"])} for item in invoices_list]
-    }
+    # Remove MongoDB _id from nested objects
+    result = []
+    for item in invoices_list:
+        invoice = {**item, "id": str(item["_id"])}
+        invoice.pop("_id", None)
+        result.append(invoice)
+    
+    return {"invoices": result}
 
 @router.post("/", response_model=InvoiceResponse)
 async def create_invoice(
