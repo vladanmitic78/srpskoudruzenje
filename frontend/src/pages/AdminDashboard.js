@@ -1592,6 +1592,8 @@ const AdminDashboard = () => {
                     <p className="text-gray-600 dark:text-gray-400">{t('admin.loadingInvoices')}</p>
                   ) : invoices.length === 0 ? (
                     <p className="text-gray-600 dark:text-gray-400">{t('admin.noInvoicesFound')}</p>
+                  ) : filteredInvoices.length === 0 ? (
+                    <p className="text-gray-600 dark:text-gray-400">{t('admin.filter.noInvoicesMatchFilter') || 'No invoices match the selected filters'}</p>
                   ) : (
                     <div className="overflow-x-auto">
                       <table className="w-full border-collapse">
@@ -1608,7 +1610,7 @@ const AdminDashboard = () => {
                           </tr>
                         </thead>
                         <tbody>
-                          {invoices.map((invoice) => (
+                          {filteredInvoices.map((invoice) => (
                             <tr key={invoice.id} className="border-b border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800">
                               <td className="p-3">
                                 <div>
