@@ -1597,6 +1597,13 @@ const AdminDashboard = () => {
                   )}
                 </div>
                 
+                {/* Invoice count indicator */}
+                {(memberFilter.invoiceId || memberFilter.paymentStatus !== 'all' || memberFilter.trainingGroup !== 'all') && invoices.length > 0 && (
+                  <div className="mb-2 text-sm text-gray-600 dark:text-gray-400">
+                    {t('admin.filter.showingFiltered')}: <span className="font-semibold">{filteredInvoices.length}</span> / {invoices.length} {t('admin.tabs.invoices').toLowerCase()}
+                  </div>
+                )}
+                
                 <div className="space-y-4">
                   {loading ? (
                     <p className="text-gray-600 dark:text-gray-400">{t('admin.loadingInvoices')}</p>
