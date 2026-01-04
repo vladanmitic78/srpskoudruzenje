@@ -429,14 +429,14 @@ export const InvoicesTab = ({
                               }}
                               className="text-blue-600 hover:underline text-sm"
                             >
-                              {t('admin.invoices.edit')}
+                              {t('admin.actions.edit')}
                             </button>
                             {invoice.status !== 'paid' && (
                               <button
                                 onClick={() => handleMarkAsPaid(invoice)}
                                 className="text-green-600 hover:underline text-sm"
                               >
-                                {t('admin.invoices.markPaid')}
+                                {t('admin.actions.markPaid')}
                               </button>
                             )}
                             <button
