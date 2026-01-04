@@ -1296,27 +1296,7 @@ const AdminDashboard = () => {
           />
 
           {/* Content Management Tab */}
-                        const url = window.URL.createObjectURL(blob);
-                        const a = document.createElement('a');
-                        a.href = url;
-                        a.download = `members_${new Date().toISOString().split('T')[0]}.pdf`;
-                        document.body.appendChild(a);
-                        a.click();
-                        window.URL.revokeObjectURL(url);
-                        toast.success('PDF exported successfully');
-                      } catch (error) {
-                        toast.error('Failed to export PDF');
-                      }
-                    }}
-                    className="px-4 py-2 bg-[var(--color-button-primary)] text-white rounded hover:bg-[var(--color-button-hover)] text-sm"
-                  >
-                    {t('admin.actions.exportPDF')}
-                  </button>
-                  <button
-                    onClick={async () => {
-                      try {
-                        const blob = await adminAPI.exportMembersExcel();
-                        const url = window.URL.createObjectURL(blob);
+          <TabsContent value="content">
                         const a = document.createElement('a');
                         a.href = url;
                         a.download = `members_${new Date().toISOString().split('T')[0]}.xlsx`;
