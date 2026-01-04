@@ -3476,14 +3476,16 @@ const AdminDashboard = () => {
             {editingInvoice && (
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium mb-2">Member</label>
-                  <input
-                    type="text"
-                    value={getUserName(editingInvoice.userId)}
-                    disabled
-                    className="w-full p-2 border rounded bg-gray-100 dark:bg-gray-700 dark:border-gray-600"
-                  />
-                  <p className="text-xs text-gray-500 mt-1">Member cannot be changed</p>
+                  <label className="block text-sm font-medium mb-2">Member(s)</label>
+                  <div className="w-full p-2 border rounded bg-gray-100 dark:bg-gray-700 dark:border-gray-600 text-sm">
+                    {editingInvoice.userIds && editingInvoice.userIds.length > 0 
+                      ? getUserNames(editingInvoice.userIds)
+                      : editingInvoice.userId 
+                        ? getUserName(editingInvoice.userId)
+                        : 'No members'
+                    }
+                  </div>
+                  <p className="text-xs text-gray-500 mt-1">Members cannot be changed</p>
                 </div>
 
                 <div>
