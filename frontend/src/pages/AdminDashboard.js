@@ -939,6 +939,46 @@ const AdminDashboard = () => {
     }
   };
 
+  // Fetch filtered members when filter changes
+  const fetchFilteredMembers = async () => {
+    // Only fetch if at least one filter is active
+    if (memberFilter.paymentStatus === 'all' && memberFilter.trainingGroup === 'all' && !memberFilter.invoiceId) {
+      setFilteredMembers([]);
+      return;
+    }
+    
+    setFilterLoading(true);
+    try {
+      const params = new URLSearchParams();
+      if (memberFilter.invoiceId) params.append('invoice_id', memberFilter.invoiceId);
+      if (memberFilter.paymentStatus !== 'all') params.append('payment_status', memberFilter.paymentStatus);
+      if (memberFilter.trainingGroup !== 'all') params.append('training_group', memberFilter.trainingGroup);
+      
+      const response = await fetch(
+        `${process.env.REACT_APP_BACKEND_URL}/api/admin/members/filtered?${params.toString()}`,
+        {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+          }
+        }
+      );
+      
+      if (response.ok) {
+        const data = await response.json();
+        setFilteredMembers(data.members || []);
+      }
+    } catch (error) {
+      console.error('Filter error:', error);
+    } finally {
+      setFilterLoading(false);
+    }
+  };
+
+  // Effect to fetch filtered members when filter changes
+  useEffect(() => {
+    fetchFilteredMembers();
+  }, [memberFilter]);
+
   const handleCreateEvent = async () => {
     try {
       if (!eventForm.date || !eventForm.time || !eventForm.location) {
