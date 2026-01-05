@@ -3,10 +3,13 @@ from fastapi.responses import FileResponse
 from datetime import datetime
 from pathlib import Path
 import shutil
+import logging
 
 from models import StoryCreate, StoryResponse
 from dependencies import get_admin_user
+from services.cloudinary_service import CloudinaryService, is_cloudinary_configured
 
+logger = logging.getLogger(__name__)
 router = APIRouter()
 
 @router.get("/")
@@ -76,7 +79,7 @@ async def upload_story_image(
     admin: dict = Depends(get_admin_user),
     request: Request = None
 ):
-    """Upload image for story (Admin only)"""
+    """Upload image for story (Admin only) - Uses Cloudinary for persistent storage"""
     # Validate file type
     allowed_extensions = ['.jpg', '.jpeg', '.png', '.gif', '.webp']
     file_ext = Path(file.filename).suffix.lower()
@@ -86,27 +89,50 @@ async def upload_story_image(
             detail=f"File type {file_ext} not allowed. Allowed: {', '.join(allowed_extensions)}"
         )
     
-    # Create uploads directory
+    # Check if Cloudinary is configured
+    if is_cloudinary_configured():
+        try:
+            # Read file content
+            file_content = await file.read()
+            
+            # Upload to Cloudinary
+            result = await CloudinaryService.upload_image(
+                file_content=file_content,
+                filename=file.filename,
+                content_type="stories"
+            )
+            
+            logger.info(f"Story image uploaded to Cloudinary: {result['secure_url']}")
+            
+            return {
+                "success": True, 
+                "imageUrl": result['secure_url'],
+                "cloudinaryId": result['public_id']
+            }
+            
+        except Exception as e:
+            logger.error(f"Cloudinary upload failed, falling back to local storage: {e}")
+            # Fall back to local storage if Cloudinary fails
+            await file.seek(0)
+    
+    # Fallback to local storage
     upload_dir = Path("/app/uploads/stories")
     upload_dir.mkdir(parents=True, exist_ok=True)
     
-    # Generate unique filename
     timestamp = datetime.utcnow().strftime("%Y%m%d_%H%M%S")
     safe_filename = f"story_{timestamp}{file_ext}"
     file_path = upload_dir / safe_filename
     
-    # Save file
     with open(file_path, "wb") as buffer:
         shutil.copyfileobj(file.file, buffer)
     
-    # Return URL
     file_url = f"/api/stories/images/{safe_filename}"
     
     return {"success": True, "imageUrl": file_url}
 
 @router.get("/images/{filename}")
 async def get_story_image(filename: str):
-    """Serve story image"""
+    """Serve story image (for locally stored images)"""
     file_path = Path("/app/uploads/stories") / filename
     
     if not file_path.exists():
