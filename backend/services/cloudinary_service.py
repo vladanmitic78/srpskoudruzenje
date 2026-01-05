@@ -8,16 +8,34 @@ import cloudinary.api
 import os
 import time
 import logging
+from dotenv import load_dotenv
+from pathlib import Path
 
 logger = logging.getLogger(__name__)
 
+# Load environment variables
+load_dotenv(Path(__file__).parent.parent / '.env')
+
 # Initialize Cloudinary configuration
-cloudinary.config(
-    cloud_name=os.environ.get("CLOUDINARY_CLOUD_NAME"),
-    api_key=os.environ.get("CLOUDINARY_API_KEY"),
-    api_secret=os.environ.get("CLOUDINARY_API_SECRET"),
-    secure=True
-)
+def _configure_cloudinary():
+    """Configure Cloudinary with environment variables"""
+    cloud_name = os.environ.get("CLOUDINARY_CLOUD_NAME")
+    api_key = os.environ.get("CLOUDINARY_API_KEY")
+    api_secret = os.environ.get("CLOUDINARY_API_SECRET")
+    
+    if cloud_name and api_key and api_secret:
+        cloudinary.config(
+            cloud_name=cloud_name,
+            api_key=api_key,
+            api_secret=api_secret,
+            secure=True
+        )
+        logger.info(f"Cloudinary configured with cloud_name: {cloud_name}")
+        return True
+    return False
+
+# Configure on module load
+_configure_cloudinary()
 
 class CloudinaryService:
     """Service class for handling all Cloudinary operations"""
