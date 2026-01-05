@@ -73,7 +73,7 @@ async def upload_gallery_image(
     admin: dict = Depends(get_admin_user),
     request: Request = None
 ):
-    """Upload image to gallery album (Admin only)"""
+    """Upload image to gallery album (Admin only) - Uses Cloudinary for persistent storage"""
     db = request.app.state.db
     
     # Validate file type
@@ -85,24 +85,52 @@ async def upload_gallery_image(
             detail=f"File type {file_ext} not allowed. Allowed: {', '.join(allowed_extensions)}"
         )
     
-    # Create uploads directory
+    # Check if Cloudinary is configured
+    if is_cloudinary_configured():
+        try:
+            # Read file content
+            file_content = await file.read()
+            
+            # Upload to Cloudinary
+            result = await CloudinaryService.upload_image(
+                file_content=file_content,
+                filename=file.filename,
+                content_type="gallery"
+            )
+            
+            image_url = result['secure_url']
+            logger.info(f"Gallery image uploaded to Cloudinary: {image_url}")
+            
+            # Add image URL to gallery
+            await db.gallery.update_one(
+                {"_id": gallery_id},
+                {"$push": {"images": image_url}}
+            )
+            
+            return {
+                "success": True, 
+                "imageUrl": image_url,
+                "cloudinaryId": result['public_id']
+            }
+            
+        except Exception as e:
+            logger.error(f"Cloudinary upload failed, falling back to local storage: {e}")
+            await file.seek(0)
+    
+    # Fallback to local storage
     upload_dir = Path("/app/uploads/gallery")
     upload_dir.mkdir(parents=True, exist_ok=True)
     
-    # Generate unique filename
     timestamp = datetime.utcnow().strftime("%Y%m%d_%H%M%S_%f")
     safe_filename = f"{gallery_id}_{timestamp}{file_ext}"
     file_path = upload_dir / safe_filename
     
-    # Save file
     with open(file_path, "wb") as buffer:
         shutil.copyfileobj(file.file, buffer)
     
-    # Automatically optimize the uploaded image
     optimize_uploaded_file(file_path)
     logger.info(f"Optimized uploaded gallery image: {safe_filename}")
     
-    # Add image URL to gallery
     image_url = f"/api/gallery/images/{safe_filename}"
     await db.gallery.update_one(
         {"_id": gallery_id},
