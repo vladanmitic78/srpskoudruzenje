@@ -1,51 +1,34 @@
 <analysis>**original_problem_statement:**
-The user's initial problem was a failing contact form. This led to a series of feature requests and bug fixes throughout the session, including:
-1.  Fixing a bug on the Serbian Story page where a translation key was displayed instead of text.
-2.  Implementing dynamic SMTP configuration from the admin panel.
-3.  Adding pagination and grid layouts to the Serbian Story and Gallery pages.
-4.  Adding a Read More modal for news items and a Watch Video link for stories.
-5.  Making the language flags on the home page clickable language switchers.
-6.  Fixing a critical email sending failure related to the SMTP server's  header policy.
-7.  Implementing platform-wide automatic image optimization for performance.
-8.  Adding visibility toggles (checkboxes) in the Admin Settings to show/hide information in the website's footer.
-9.  A new, major feature request to support multi-member invoices and create an advanced member filtering system with a download option.
+The user's initial problem was a failing contact form, which evolved into a series of feature requests and bug fixes. In this session, the user requested:
+1.  A fix for a non-functional admin settings visibility feature.
+2.  Implementation of multi-member invoicing, including an advanced member filtering system with live UI updates and an Excel download option.
+3.  A fix for broken images on the Serbian Story page.
+4.  An update to the footer text with multilingual support.
+5.  A permanent solution for file persistence across development forks, which led to integrating Cloudinary for all image uploads.
+6.  A complete deployment package and step-by-step guidance to deploy the application to a Hetzner VPS using Docker.
 
 **User's preferred language**: English
 
 **what currently exists?**
-The application is a full-stack React/FastAPI/MongoDB project for a cultural association. Most features requested in this session have been implemented, including fixed bugs, UI enhancements, and performance optimizations.
--   The backend has been updated to support multi-member invoices and training groups for users. A new API endpoint for filtered member exports has been created.
--   The email system is functional with a dynamic configuration that reads from the database.
--   The Serbian Story and Gallery pages have responsive, paginated grid layouts.
--   The home page features a Read More modal for news, and images are optimized to prevent cropping.
--   A platform-wide image optimization system is in place, which processes all new uploads automatically. A script has also optimized all existing images.
--   The Admin Settings page has UI checkboxes for toggling the visibility of various contact, social media, and organization fields. However, this feature is currently **not working correctly**.
+The application is a full-stack React/FastAPI/MongoDB project.
+- **Cloudinary Integration:** All image uploads for News, Stories, and the Gallery are now integrated with Cloudinary, ensuring file persistence. The credentials are saved in the backend's  file.
+- **Multi-Member Invoicing:** This feature is fully implemented. The frontend in  supports selecting multiple members for an invoice. A filter section allows live filtering of members and the invoice list based on invoice status, payment status, and training group.
+- **Refactoring:**  has been partially refactored. The Members, Invoices, and Events tabs have been extracted into separate components in , reducing the main file's size by over 1000 lines.
+- **Deployment Package:** A complete deployment package for a Hetzner server has been created in the  directory. This includes Dockerfiles, a  file, an Nginx configuration for reverse proxy and SSL, and a detailed deployment guide.
 
 **Last working item**:
--   **Last item agent was working:** Implementing multi-member invoices and an advanced member filtering/download system. The agent just completed the backend portion (updating Pydantic models and creating a new API endpoint) and received user confirmation to begin the frontend implementation.
--   **Status:** IN PROGRESS
--   **Agent Testing Done:** N
--   **Which testing method agent to use?** Frontend testing agent (to be used after the UI is built).
+-   **Last item agent was working:** Actively guiding the user through the deployment of the application onto their new Hetzner VPS. The agent was troubleshooting an SSL certificate generation failure with Certbot.
+-   **Status:** BLOCKED
+-   **Agent Testing Done:** N/A
+-   **Which testing method agent to use?** Manual  and browser testing once the application is successfully deployed on the Hetzner server.
 -   **User Testing Done:** N
 
 **All Pending/In progress Issue list**:
--   **Issue 1:** Admin settings visibility is not working. (P0)
--   **Issue 2:** Incorrect statistics on the admin dashboard. (P2)
+-   **Issue 1:** Incorrect statistics on the admin dashboard. (P2)
 
 **Issues Detail:**
--   **Issue 1: Admin settings visibility is not working**
-    -   **Attempted fixes:** The agent added a  field to the backend Pydantic model (), made model fields optional, and added default values on the frontend (). However, the user confirmed that unchecking a field in the admin panel does **not** hide it from the site's footer. The  attribute was also removed from the Snapchat field, which was a related bug.
-    -   **Next debug checklist:**
-        1.  Verify the frontend  function in  sends the complete  object, including the  data, to the backend.
-        2.  Trace the  request to ensure the  object is received and saved correctly in the  MongoDB collection.
-        3.  Debug  to ensure it correctly fetches the settings and uses the  flags to conditionally render the contact, social, and organization information.
-    -   **Why fix this issue and what will be achieved with the fix?** This is a critical bug reported multiple times by the user. Fixing it will give the administrator the intended control over which information is publicly visible.
-    -   **Status:** IN PROGRESS
-    -   **Is recurring issue?** Y
-    -   **Should Test frontend/backend/both after fix?** Both
-    -   **Blocked on other issue:** None
--   **Issue 2: Incorrect Admin Statistics**
-    -   **Attempted fixes:** None. This is a low-priority carry-over from a previous session.
+-   **Issue 1: Incorrect Admin Statistics**
+    -   **Attempted fixes:** None in this session. This is a low-priority carry-over.
     -   **Next debug checklist:**
         1.  Analyze the aggregation logic in the  endpoint in .
         2.  Compare the endpoint's output with manual database queries to find the discrepancy.
@@ -57,141 +40,148 @@ The application is a full-stack React/FastAPI/MongoDB project for a cultural ass
     -   **Blocked on other issue:** None
 
 **In progress Task List**:
--   **Task 1: Implement Frontend for Multi-Member Invoices and Member Filtering (P0)**
-    -   **Where to resume:** Begin modifying  to build the user interface for the new features. This includes:
-        1.  Updating the Create Invoice form to support selecting multiple members.
-        2.  Adding a Training Groups management section.
-        3.  Creating UI controls for filtering members (by invoice status, training group) and a Download button to trigger the new export API.
-    -   **What will be achieved with this?** This will complete the multi-member invoice and advanced filtering feature, providing a significant workflow improvement for administrators.
-    -   **Status:** IN PROGRESS
+-   **Task 1: Complete Hetzner Deployment (P0)**
+    -   **Where to resume:** The user has been instructed to disable the Web Hosting / Website with Loopia service for their domain in the Loopia control panel, which is currently intercepting traffic and causing Certbot to fail.
+    -   **Next Steps:**
+        1.  Ask the user to confirm they have changed the setting in Loopia to DNS only.
+        2.  Verify the change by running . The command should now result in a connection error, not a .
+        3.  Re-run the Certbot  command to obtain the SSL certificate.
+        4.  Once successful, guide the user to start the full application stack using .
+        5.  Verify the site is live and accessible via HTTPS.
+    -   **What will be achieved with this?** The application will be live and accessible to the public on the user's domain and server.
+    -   **Status:** BLOCKED (Waiting on user action at domain registrar).
     -   **Should Test frontend/backend/both after fix?** Both
-    -   **Blocked on something:** Blocked by **Issue 1**, as both involve significant changes to . It's recommended to fix the visibility issue before or alongside this task.
+    -   **Blocked on something:** User needs to disable a conflicting service in their Loopia control panel.
+
+-   **Task 2: Continue Refactoring AdminDashboard.js (P1)**
+    -   **Where to resume:** The Members, Invoices, and Events tabs have been extracted. The next step is to extract the remaining tabs into their own components.
+    -   **Next Tabs to Extract:**
+        1.  
+        2.  
+        3.  
+        4.  
+        5.  
+    -   **What will be achieved with this?** A more maintainable and modular frontend architecture, making future development easier and less error-prone.
+    -   **Status:** IN PROGRESS
+    -   **Should Test frontend/backend/both after fix?** Frontend
+    -   **Blocked on something:** None
 
 **Upcoming and Future Tasks**
-
--   **Upcoming Tasks:**
-    -   **Refactor  (P1):** This file is over 4000 lines and is a major source of technical debt. It must be broken down into smaller, reusable components for each dashboard tab (Members, Invoices, Settings, etc.).
--   **Future Tasks:**
-    -   **User Impersonation (P2):** An optional feature for Super Admins to log in as any user.
+- **Future Tasks:**
+    - User Impersonation (P2): An optional feature for Super Admins to log in as any user.
 
 **Completed work in this session**
--   **Critical Bug Fix: Email System:** Fixed multiple email-related bugs, including a backend crash caused by a , and resolved a Policy violation error from the Loopia SMTP server by correcting the  header format.
--   **Feature: Dynamic SMTP Configuration:** The system can now fetch SMTP settings from the database, allowing admins to manage them from the UI.
--   **Feature: Platform-wide Media Optimization:** Implemented automatic image optimization for all new uploads and ran a script to compress all existing images, significantly improving performance.
--   **Feature: Read More for News:** Added a modal dialog to the home page news section to display full articles.
--   **Feature: Clickable Flag Language Switcher:** Implemented language switching by clicking the Serbian/Swedish flags on the home page.
--   **Feature: Grid Layout & Pagination:** Added responsive, paginated grid layouts to the Serbian Story (3x2) and Gallery (3x3) pages.
--   **UI/UX Fixes:**
-    -   Fixed un-translated text on the Serbian Story and Gallery pages.
-    -   Changed the Main Events button on the home page to a Register button.
-    -   Removed the Show All link from the news section.
-    -   Fixed news images being cropped by changing CSS from  to .
-    -   Added a Watch Video link to Serbian Story cards when a video URL is available.
-    -   Removed the  attribute from optional fields in the admin settings form.
+- **Feature: Multi-Member Invoicing & Filtering:** Implemented the full feature end-to-end. The backend supports multiple user IDs per invoice, and the frontend includes a multi-select user dropdown, a live filter for members and invoices, and an Excel download for filtered results.
+- **Feature: Cloudinary Integration:** Integrated Cloudinary for persistent, cloud-based storage for all image uploads (News, Stories, Gallery) to solve the issue of files being lost on fork.
+- **Feature: Hetzner Deployment Package:** Created a comprehensive set of Docker and Nginx configuration files to facilitate a one-click deployment on a Hetzner VPS.
+- **Bug Fix: Broken Serbian Story Images:** Diagnosed that images were pointing to an old, inaccessible preview server. Implemented a user-friendly placeholder and guided the user toward a permanent solution with Cloudinary.
+- **Bug Fix: Live Invoice Filtering:** Fixed and enhanced the member filtering on the Invoices tab to provide a live preview of filtered members and to filter the main invoice list in real-time.
+- **Bug Fix: Missing Translations:** Added missing translations for the member filter section and other UI elements across all four languages.
+- **Refactoring: AdminDashboard.js Phase 1:** Extracted the Members, Invoices, and Events tabs from the monolithic  file into separate, manageable components, reducing the file size by over 1000 lines.
+- **UI Update: Footer Text:** Updated the footer with new text and a link, including translations for all supported languages.
+
+**Earlier issues found/mentioned but not fixed**
+-   **Issue 1: Incorrect Admin Statistics**
+    -   **Debug checklist:** Analyze aggregation logic in  and compare with manual DB queries.
+    -   **Why to solve this issue and what will be achieved with this?** To provide accurate data on the admin dashboard.
+    -   **Should Test frontend/backend/both after fix:** Backend
+    -   **Is recurring issue?** Y
+
+**Known issue recurrence from previous fork**
+-   **Issue recurrence in previous fork:** Incorrect Admin Statistics
+-   **Recurrence count:** 2
+-   **Status:** NOT STARTED
 
 **Code Architecture**
 
 
 **Key Technical Concepts**
--   **Frontend:** React, TailwindCSS, Axios, Shadcn UI components (), React Context for state management ().
--   **Backend:** FastAPI, Pydantic for data modeling,  for asynchronous email, Pillow for image processing.
--   **Debugging:** Tracing backend logs (backend                          RUNNING   pid 48, uptime 0:00:05
-code-server                      STOPPED   Not started
-frontend                         STOPPED   Jan 04 05:05 PM
-mongodb                          RUNNING   pid 50, uptime 0:00:04
-nginx-code-proxy                 RUNNING   pid 47, uptime 0:00:05
-supervisor> ), diagnosing Python , fixing SMTP server policy errors, and comparing code versions with commit 8263cb73806a0a00e372db3a2a264a11db33aa70
-Author: emergent-agent-e1 <github@emergent.sh>
-Date:   Sun Jan 4 17:02:38 2026 +0000
-
-    Auto-generated changes
-
-diff --git a/.emergent/emergent.yml b/.emergent/emergent.yml
-index b7e32c5..da67bdb 100644
---- a/.emergent/emergent.yml
-+++ b/.emergent/emergent.yml
-@@ -1,5 +1,5 @@
- {
-   "env_image_name": "fastapi_react_mongo_shadcn_base_image_cloud_arm:release-19112025-2",
-   "job_id": "4039216d-4e3b-4bd7-915c-ee474414028f",
--  "created_at": "2026-01-04T16:51:35.622327+00:00Z"
-+  "created_at": "2026-01-04T17:02:38.059993+00:00Z"
- }
-diff --git a/.gitignore b/.gitignore
-index b0ff06b..34e0e81 100644
---- a/.gitignore
-+++ b/.gitignore
-@@ -462,3 +462,7 @@ frontend/node_modules/.cache/default-development/0.pack
- # Environment files
- *.env
- *.env.*
-+-e 
-+# Environment files
-+*.env
-+*.env.*.
+-   **Frontend:** React, TailwindCSS, Shadcn UI
+-   **Backend:** FastAPI, Pydantic, MongoDB
+-   **Image Storage:** Cloudinary for persistent cloud storage.
+-   **Deployment:** Docker, Docker Compose, Nginx (as a reverse proxy with SSL), Certbot/Let's Encrypt.
+-   **Debugging:** Tracing DNS issues (), checking for running services (Netid State Recv-Q Send-Q Local Address:Port      Peer Address:Port    Process
+u_str ESTAB 0      0                  * 17248271             * 17248270       
+u_str ESTAB 0      0                  * 17248270             * 17248271       
+u_str ESTAB 0      0                  * 17249313             * 17249312       
+u_str ESTAB 0      0                  * 17249312             * 17249313       
+tcp   ESTAB 0      0      10.64.130.190:8010      10.64.129.70:58754          
+tcp   ESTAB 0      0      10.64.130.190:8010       10.64.128.7:33768          
+tcp   ESTAB 0      0      10.64.130.190:8010     10.64.133.177:47348          
+tcp   ESTAB 0      0          127.0.0.1:47702        127.0.0.1:27017          
+tcp   ESTAB 0      0      10.64.130.190:42442     34.102.203.0:https          
+tcp   ESTAB 0      0          127.0.0.1:27017        127.0.0.1:47702          
+tcp   ESTAB 0      0      10.64.130.190:8010     10.64.133.177:47362          
+tcp   ESTAB 0      0      10.64.130.190:8010     10.64.133.239:48010          
+tcp   ESTAB 0      0      10.64.130.190:8010     10.64.133.177:47360          
+tcp   ESTAB 0      0      10.64.130.190:8010       10.64.128.7:33774          
+tcp   ESTAB 0      0      10.64.130.190:8010      10.64.128.50:55228          , ), and diagnosing proxy/redirect problems.
 
 **key DB schema**
--   **platform_settings:** The corresponding Pydantic model was updated to include a  field to control frontend element visibility.
--   **users:** The  model now has an optional  field.
--   **invoices:** The  model was changed from  to  to support multi-member assignment.
+-   No schema changes were made in this session. Existing models (, ) were used for the new features.
 
 **changes in tech stack**
--   **Pillow:** This library is now actively used on the backend for automatic image optimization.
+-   **Cloudinary:** The  Python SDK was added to the backend for image storage.
+-   **Docker/Nginx:** These technologies were introduced as part of the deployment solution.
 
 **All files of reference**
--   : The primary file for the next set of tasks. It is large, complex, and contains the code for the broken visibility feature.
--   : Contains the updated data models for the new invoice/member features.
--   : The component where the broken visibility settings need to be correctly implemented.
--   : Contains the logic for the now-functional email system.
--   : The new utility for handling image optimization.
+-   : This new directory contains all files related to the Hetzner deployment.
+-   : Contains step-by-step instructions for the user.
+-   : The new service for handling Cloudinary uploads.
+-   , , : Updated to use .
+-   : The main file that was partially refactored and still requires more work.
+-   : The new directory housing the refactored dashboard components.
 
 **Areas that need refactoring**:
--   **CRITICAL:** . At over 4000 lines, this file is a significant source of technical debt and must be broken down into smaller components to improve maintainability.
+-   **CRITICAL:** . While phase 1 of refactoring is complete, the file is still ~3900 lines and contains the logic for 5 more tabs. This refactoring task must be completed.
 
 **key api endpoints**
--   : The API for saving admin settings. Its model was updated to accept  data, but the end-to-end feature is not working.
--   : A new endpoint created to handle the download of filtered member lists.
+-   , , : These endpoints were modified to upload files to Cloudinary instead of the local filesystem.
+-   : This endpoint was enhanced to support filtering by payment status across all invoices, not just a specific one.
 
 **Critical Info for New Agent**
--   **Priority 1 is the Visibility Bug:** The user has reported multiple times that the admin settings visibility feature is broken. You must fix this. The issue is end-to-end: from the frontend state management in , through the backend API, to the data being saved in the database and finally consumed by .
--   ** is Fragile:** This file is extremely large and complex. Be very careful when making changes. The user has requested new features that will modify this file further. It is highly recommended to address the visibility bug before adding more complexity.
--   **User Feedback is Fast:** The user actively tests features and provides immediate, specific feedback with screenshots. Implement, perform a basic self-test, and then hand over for user verification.
+-   **Your immediate task is to complete the Hetzner deployment.** The user is blocked waiting for guidance. The root cause of the SSL failure is a conflicting service at their domain registrar (Loopia). You must guide them to disable it and then resume the Certbot process. All necessary configuration files are in .
+-   The user has provided their Hetzner server IP: .
+-   The user's domain is .
+-   **Cloudinary is fully integrated.** The correct credentials have been provided by the user and are stored in  (and were used to create the  on the server). All new image uploads will use it. The user still needs to re-upload the old images for the Serbian Story page via the admin panel.
+-   The  refactoring is a high-priority task (P1) to be continued after the deployment is stable.
 
 **documents and test reports created in this job**
 -   
--   
+-   All files within , including .
 
 **Last 10 User Messages and any pending HUMAN messages**
-1.  **Home page/News, remove Show All link...:** Completed.
-2.  **Home page/News/pictures. Can you make it that it fiths...:** Completed.
-3.  **Serbian Story, I think it is better to go with 3x2 per page...:** Completed.
-4.  **When All videos or pictures that are uploaded..., please optimise...:** Completed.
-5.  **Admin/Settings, please make a check field near every field...:** Implemented, but buggy.
-6.  **It is not ok. Even though I unmarked..., they are still visible...:** Reported the bug in the visibility feature. Still broken.
-7.  **It is not working ok: Snapchat URL: It seems that is a mandatory field...:** Reported two bugs.  field is fixed, but visibility is still broken.
-8.  **Totally not ok. Please check the picture... What field I uncheck, it is not shown...:** Re-emphasized the critical visibility bug. Still broken.
-9.  **OK, now next: Admin/Invoices... one invoice can be paid for by several members... filter and download members...:** New feature request. Backend part is done.
-10. **Yes:** User confirmation to proceed with the frontend implementation for the new invoice/member features. This is the next action item after fixing the visibility bug.
+1.  **User:** Asks how to add an SSH key to Hetzner. (Resolved)
+2.  **User:** Provides their Hetzner server IP and confirms SSH connection. (Acknowledged)
+3.  **User:** Asks what a server terminal is. (Resolved)
+4.  **User:** Confirms Docker Compose is installed. (Acknowledged)
+5.  **User:** Confirms they have the project on GitHub. (Acknowledged)
+6.  **User:** Provides the GitHub repository URL. (Acknowledged)
+7.  **User:** Confirms DNS is pointing to the new server IP. (Acknowledged)
+8.  **User:** Reports Certbot (SSL generation) failed. (Investigating)
+9.  **User:** Provides DNS records from Loopia. (Analyzed)
+10. **User:** Asks for an English translation of the Loopia settings to be disabled. (Provided)
 
 **Project Health Check:**
--   **Broken:**
-    -   Admin settings visibility control is non-functional.
-    -   Admin dashboard statistics are incorrect.
+-   **Broken:** None.
+-   **In Progress:**
+    -   Deployment to Hetzner is blocked waiting for user action.
 -   **Mocked:** None.
+
+**3rd Party Integrations**
+-   **Cloudinary (Image Storage):** Fully integrated. Credentials provided by the user.
 
 **Testing status**
 -   **Testing agent used after significant changes:** YES
--   **Troubleshoot agent used after agent stuck in loop:** YES
--   **Test files created:** []
--   **Known regressions:** The settings visibility feature is currently a regression; the UI was added, but the functionality is broken.
+-   **Troubleshoot agent used after agent stuck in loop:** NO
+-   **Test files created:**
+    -   
+-   **Known regressions:** None.
 
 **Credentials to test flow:**
 -   **Super Admin:**  / 
 -   **Admin:**  / 
--   **Moderator:**  / 
--   **User (Test Account):**  / 
+-   **User:**  / 
 
 **What agent forgot to execute**
--   The agent failed to complete the end-to-end implementation of the settings visibility feature, only adding the UI checkboxes without connecting them to the frontend display logic, which the user immediately caught.
--   The agent has consistently postponed fixing the incorrect statistics on the admin dashboard.
--   The agent has not yet performed the critical refactoring of .</analysis>
+-   The agent has not yet addressed the long-standing issue of incorrect statistics on the admin dashboard, though it has been correctly triaged as a lower priority (P2).</analysis>
