@@ -8,6 +8,7 @@ import logging
 from models import GalleryCreate, GalleryResponse
 from dependencies import get_admin_user
 from utils.media_optimizer import optimize_uploaded_file
+from services.cloudinary_service import CloudinaryService, is_cloudinary_configured
 
 logger = logging.getLogger(__name__)
 router = APIRouter()
