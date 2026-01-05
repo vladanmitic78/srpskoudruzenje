@@ -64,15 +64,12 @@ class CloudinaryService:
             base_name = os.path.splitext(filename)[0]
             public_id = f"{content_type}_{base_name}_{int(time.time())}"
             
-            # Upload to Cloudinary with optimization
+            # Upload to Cloudinary - simplified parameters
             result = cloudinary.uploader.upload(
                 file_content,
                 folder=f"{folder}/{content_type}",
                 public_id=public_id,
-                resource_type="auto",
-                overwrite=False,
-                quality="auto:good",
-                fetch_format="auto"
+                resource_type="image"
             )
             
             logger.info(f"Successfully uploaded image to Cloudinary: {result['public_id']}")
