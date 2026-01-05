@@ -136,8 +136,12 @@ class CloudinaryService:
 # Helper function to check if Cloudinary is configured
 def is_cloudinary_configured() -> bool:
     """Check if Cloudinary credentials are set"""
-    return all([
-        os.environ.get("CLOUDINARY_CLOUD_NAME"),
-        os.environ.get("CLOUDINARY_API_KEY"),
-        os.environ.get("CLOUDINARY_API_SECRET")
-    ])
+    cloud_name = os.environ.get("CLOUDINARY_CLOUD_NAME")
+    api_key = os.environ.get("CLOUDINARY_API_KEY")
+    api_secret = os.environ.get("CLOUDINARY_API_SECRET")
+    
+    configured = all([cloud_name, api_key, api_secret])
+    if configured:
+        # Re-configure to ensure it's set
+        _configure_cloudinary()
+    return configured
