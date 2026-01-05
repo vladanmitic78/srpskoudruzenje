@@ -74,7 +74,7 @@ async def upload_news_image(
     admin: dict = Depends(get_admin_user),
     request: Request = None
 ):
-    """Upload image for news article (Admin only)"""
+    """Upload image for news article (Admin only) - Uses Cloudinary for persistent storage"""
     # Validate file type
     allowed_extensions = ['.jpg', '.jpeg', '.png', '.gif', '.webp']
     file_ext = Path(file.filename).suffix.lower()
@@ -84,20 +84,42 @@ async def upload_news_image(
             detail=f"File type {file_ext} not allowed. Allowed: {', '.join(allowed_extensions)}"
         )
     
-    # Create uploads directory
+    # Check if Cloudinary is configured
+    if is_cloudinary_configured():
+        try:
+            # Read file content
+            file_content = await file.read()
+            
+            # Upload to Cloudinary
+            result = await CloudinaryService.upload_image(
+                file_content=file_content,
+                filename=file.filename,
+                content_type="news"
+            )
+            
+            logger.info(f"News image uploaded to Cloudinary: {result['secure_url']}")
+            
+            return {
+                "success": True, 
+                "imageUrl": result['secure_url'],
+                "cloudinaryId": result['public_id']
+            }
+            
+        except Exception as e:
+            logger.error(f"Cloudinary upload failed, falling back to local storage: {e}")
+            await file.seek(0)
+    
+    # Fallback to local storage
     upload_dir = Path("/app/uploads/news")
     upload_dir.mkdir(parents=True, exist_ok=True)
     
-    # Generate unique filename
     timestamp = datetime.utcnow().strftime("%Y%m%d_%H%M%S")
     safe_filename = f"news_{timestamp}{file_ext}"
     file_path = upload_dir / safe_filename
     
-    # Save file
     with open(file_path, "wb") as buffer:
         shutil.copyfileobj(file.file, buffer)
     
-    # Return URL
     file_url = f"/api/news/images/{safe_filename}"
     
     return {"success": True, "imageUrl": file_url}
