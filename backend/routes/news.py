@@ -4,10 +4,13 @@ from typing import List
 from datetime import datetime
 from pathlib import Path
 import shutil
+import logging
 
 from models import NewsCreate, NewsResponse
 from dependencies import get_admin_user
+from services.cloudinary_service import CloudinaryService, is_cloudinary_configured
 
+logger = logging.getLogger(__name__)
 router = APIRouter()
 
 @router.get("/")
