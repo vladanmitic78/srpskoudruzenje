@@ -100,6 +100,7 @@ const translations = {
       noAccess: 'Nema pristupa',
       noPermissionsMessage: 'Nemate dodeljene dozvole. Molimo kontaktirajte Super Administratora.',
       personalDataTab: 'Lični podaci',
+      familyTab: 'Porodica',
       personalData: {
         fullName: 'Ime i prezime',
         yearOfBirth: 'Godina rođenja',
