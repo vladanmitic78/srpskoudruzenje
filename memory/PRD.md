@@ -18,10 +18,11 @@ Build and maintain a comprehensive membership management platform for the Serbia
 - Each family member gets their own login credentials
 - Automatic email with temporary password sent to new members
 - Family members visible under parent's account
-- Admin can add family members to any user
+- **Admin can add family members to any user via Admin Dashboard → Family tab**
 - Full CRUD operations for family management
 - Backend: `/app/backend/routes/family.py`
-- Frontend: `/app/frontend/src/components/FamilyMembersSection.jsx`
+- Frontend User: `/app/frontend/src/components/FamilyMembersSection.jsx`
+- Frontend Admin: `/app/frontend/src/components/AdminFamilyManagement.jsx`
 - API Endpoints:
   - `POST /api/family/members` - Add family member
   - `GET /api/family/members` - List family members
