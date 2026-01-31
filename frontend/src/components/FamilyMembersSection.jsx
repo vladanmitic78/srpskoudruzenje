@@ -16,6 +16,13 @@ const FamilyMembersSection = ({ t, user }) => {
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [selectedMember, setSelectedMember] = useState(null);
   
+  // Helper to get translation with fallback
+  const getText = (key, fallback) => {
+    const translated = t(key);
+    // If translation returns the key itself, use fallback
+    return (translated && !translated.includes('.')) ? translated : fallback;
+  };
+  
   // Form state for adding/editing members
   const [memberForm, setMemberForm] = useState({
     fullName: '',
