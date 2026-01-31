@@ -51,7 +51,7 @@ const FamilyMembersSection = ({ t, user }) => {
       setFamilyMembers(response.members || []);
     } catch (error) {
       console.error('Error loading family members:', error);
-      toast.error(t('family.loadError') || 'Failed to load family members');
+      toast.error(getText('family.loadError', 'Failed to load family members'));
     } finally {
       setLoading(false);
     }
@@ -80,18 +80,18 @@ const FamilyMembersSection = ({ t, user }) => {
     
     // Validation
     if (!memberForm.fullName || !memberForm.email || !memberForm.yearOfBirth) {
-      toast.error(t('family.requiredFields') || 'Please fill in all required fields');
+      toast.error(getText('family.requiredFields', 'Please fill in all required fields'));
       return;
     }
     
     try {
       await familyAPI.addMember(memberForm);
-      toast.success(t('family.addSuccess') || 'Family member added successfully! Login credentials sent to their email.');
+      toast.success(getText('family.addSuccess', 'Family member added successfully! Login credentials sent to their email.'));
       setAddModalOpen(false);
       resetForm();
       loadFamilyMembers();
     } catch (error) {
-      const errorMsg = error.response?.data?.detail || t('family.addError') || 'Failed to add family member';
+      const errorMsg = error.response?.data?.detail || getText('family.addError', 'Failed to add family member');
       toast.error(errorMsg);
     }
   };
@@ -104,29 +104,29 @@ const FamilyMembersSection = ({ t, user }) => {
     
     try {
       await familyAPI.updateMember(selectedMember.id, memberForm);
-      toast.success(t('family.updateSuccess') || 'Family member updated successfully');
+      toast.success(getText('family.updateSuccess', 'Family member updated successfully'));
       setEditModalOpen(false);
       setSelectedMember(null);
       resetForm();
       loadFamilyMembers();
     } catch (error) {
-      const errorMsg = error.response?.data?.detail || t('family.updateError') || 'Failed to update family member';
+      const errorMsg = error.response?.data?.detail || getText('family.updateError', 'Failed to update family member');
       toast.error(errorMsg);
     }
   };
   
   // Handle remove member
   const handleRemoveMember = async (memberId) => {
-    if (!window.confirm(t('family.removeConfirm') || 'Are you sure you want to remove this family member from your account? They will still be able to access their own account.')) {
+    if (!window.confirm(getText('family.removeConfirm', 'Are you sure you want to remove this family member from your account? They will still be able to access their own account.'))) {
       return;
     }
     
     try {
       await familyAPI.removeMember(memberId);
-      toast.success(t('family.removeSuccess') || 'Family member removed from your account');
+      toast.success(getText('family.removeSuccess', 'Family member removed from your account'));
       loadFamilyMembers();
     } catch (error) {
-      const errorMsg = error.response?.data?.detail || t('family.removeError') || 'Failed to remove family member';
+      const errorMsg = error.response?.data?.detail || getText('family.removeError', 'Failed to remove family member');
       toast.error(errorMsg);
     }
   };
@@ -149,10 +149,10 @@ const FamilyMembersSection = ({ t, user }) => {
   // Get relationship label
   const getRelationshipLabel = (relationship) => {
     const labels = {
-      child: t('family.relationshipChild') || 'Child',
-      spouse: t('family.relationshipSpouse') || 'Spouse',
-      friend: t('family.relationshipFriend') || 'Friend',
-      other: t('family.relationshipOther') || 'Other'
+      child: getText('family.relationshipChild', 'Child'),
+      spouse: getText('family.relationshipSpouse', 'Spouse'),
+      friend: getText('family.relationshipFriend', 'Friend'),
+      other: getText('family.relationshipOther', 'Other')
     };
     return labels[relationship] || relationship;
   };
@@ -163,10 +163,10 @@ const FamilyMembersSection = ({ t, user }) => {
       <div className="flex justify-between items-center">
         <div>
           <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
-            {t('family.title') || 'Family Members'}
+            {getText('family.title', 'Family Members')}
           </h2>
           <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
-            {t('family.description') || 'Manage your family members and their accounts'}
+            {getText('family.description', 'Manage your family members and their accounts')}
           </p>
         </div>
         
@@ -180,12 +180,12 @@ const FamilyMembersSection = ({ t, user }) => {
             data-testid="add-family-member-btn"
           >
             <UserPlus className="h-4 w-4 mr-2" />
-            {t('family.addButton') || 'Add Family Member'}
+            {getText('family.addButton', 'Add Family Member')}
           </Button>
         ) : (
           <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg p-3">
             <p className="text-sm text-yellow-800 dark:text-yellow-200">
-              {t('family.ageRestriction') || 'You must be 18 or older to add family members'}
+              {getText('family.ageRestriction', 'You must be 18 or older to add family members')}
             </p>
           </div>
         )}
@@ -196,7 +196,7 @@ const FamilyMembersSection = ({ t, user }) => {
         <CardHeader>
           <CardTitle className="flex items-center">
             <Users className="h-5 w-5 mr-2" />
-            {t('family.membersList') || 'Your Family Members'}
+            {getText('family.membersList', 'Your Family Members')}
             {familyMembers.length > 0 && (
               <Badge className="ml-2" variant="secondary">
                 {familyMembers.length}
@@ -207,7 +207,7 @@ const FamilyMembersSection = ({ t, user }) => {
         <CardContent>
           {loading ? (
             <div className="text-center py-8 text-gray-600 dark:text-gray-400">
-              {t('family.loading') || 'Loading family members...'}
+              {getText('family.loading', 'Loading family members...')}
             </div>
           ) : familyMembers.length === 0 ? (
             <div className="text-center py-8">
@@ -217,7 +217,7 @@ const FamilyMembersSection = ({ t, user }) => {
               </p>
               {canAddMembers && (
                 <p className="text-sm text-gray-500 mt-2">
-                  {t('family.addHint') || 'Click "Add Family Member" to add your children or friends.'}
+                  {getText('family.addHint', 'Click "Add Family Member" to add your children or friends.')}
                 </p>
               )}
             </div>
@@ -253,12 +253,12 @@ const FamilyMembersSection = ({ t, user }) => {
                         )}
                         <div className="flex items-center">
                           <Calendar className="h-4 w-4 mr-2" />
-                          {t('family.yearOfBirth') || 'Born'}: {member.yearOfBirth} ({calculateAge(member.yearOfBirth)} {t('family.years') || 'years'})
+                          {getText('family.yearOfBirth', 'Born')}: {member.yearOfBirth} ({calculateAge(member.yearOfBirth)} {getText('family.years', 'years')})
                         </div>
                         {member.trainingGroup && (
                           <div className="flex items-center">
                             <Users className="h-4 w-4 mr-2" />
-                            {t('family.trainingGroup') || 'Group'}: {member.trainingGroup}
+                            {getText('family.trainingGroup', 'Group')}: {member.trainingGroup}
                           </div>
                         )}
                       </div>
@@ -294,13 +294,13 @@ const FamilyMembersSection = ({ t, user }) => {
       <Card className="border-2 border-blue-200 bg-blue-50 dark:bg-blue-900/20">
         <CardContent className="pt-6">
           <h3 className="font-semibold text-blue-900 dark:text-blue-100 mb-2">
-            {t('family.infoTitle') || 'About Family Accounts'}
+            {getText('family.infoTitle', 'About Family Accounts')}
           </h3>
           <ul className="text-sm text-blue-800 dark:text-blue-200 space-y-1">
-            <li>• {t('family.info1') || 'Each family member gets their own login credentials'}</li>
-            <li>• {t('family.info2') || 'Login details are automatically sent to their email'}</li>
-            <li>• {t('family.info3') || 'Family members can view their own invoices and events'}</li>
-            <li>• {t('family.info4') || 'Removing a member only unlinks them from your account'}</li>
+            <li>• {getText('family.info1', 'Each family member gets their own login credentials')}</li>
+            <li>• {getText('family.info2', 'Login details are automatically sent to their email')}</li>
+            <li>• {getText('family.info3', 'Family members can view their own invoices and events')}</li>
+            <li>• {getText('family.info4', 'Removing a member only unlinks them from your account')}</li>
           </ul>
         </CardContent>
       </Card>
@@ -311,14 +311,14 @@ const FamilyMembersSection = ({ t, user }) => {
           <DialogHeader>
             <DialogTitle className="flex items-center">
               <UserPlus className="h-5 w-5 mr-2" />
-              {t('family.addTitle') || 'Add Family Member'}
+              {getText('family.addTitle', 'Add Family Member')}
             </DialogTitle>
           </DialogHeader>
           
           <form onSubmit={handleAddMember} className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label>{t('family.fullName') || 'Full Name'} *</Label>
+                <Label>{getText('family.fullName', 'Full Name')} *</Label>
                 <Input
                   required
                   value={memberForm.fullName}
@@ -329,7 +329,7 @@ const FamilyMembersSection = ({ t, user }) => {
               </div>
               
               <div className="space-y-2">
-                <Label>{t('family.email') || 'Email'} *</Label>
+                <Label>{getText('family.email', 'Email')} *</Label>
                 <Input
                   type="email"
                   required
@@ -341,7 +341,7 @@ const FamilyMembersSection = ({ t, user }) => {
               </div>
               
               <div className="space-y-2">
-                <Label>{t('family.yearOfBirth') || 'Year of Birth'} *</Label>
+                <Label>{getText('family.yearOfBirth', 'Year of Birth')} *</Label>
                 <Input
                   type="number"
                   required
@@ -355,22 +355,22 @@ const FamilyMembersSection = ({ t, user }) => {
               </div>
               
               <div className="space-y-2">
-                <Label>{t('family.relationship') || 'Relationship'} *</Label>
+                <Label>{getText('family.relationship', 'Relationship')} *</Label>
                 <select
                   value={memberForm.relationship}
                   onChange={(e) => setMemberForm({...memberForm, relationship: e.target.value})}
                   className="w-full p-2 border rounded-md bg-white dark:bg-gray-800"
                   data-testid="member-relationship-select"
                 >
-                  <option value="child">{t('family.relationshipChild') || 'Child'}</option>
-                  <option value="spouse">{t('family.relationshipSpouse') || 'Spouse'}</option>
-                  <option value="friend">{t('family.relationshipFriend') || 'Friend'}</option>
-                  <option value="other">{t('family.relationshipOther') || 'Other'}</option>
+                  <option value="child">{getText('family.relationshipChild', 'Child')}</option>
+                  <option value="spouse">{getText('family.relationshipSpouse', 'Spouse')}</option>
+                  <option value="friend">{getText('family.relationshipFriend', 'Friend')}</option>
+                  <option value="other">{getText('family.relationshipOther', 'Other')}</option>
                 </select>
               </div>
               
               <div className="space-y-2">
-                <Label>{t('family.phone') || 'Phone'}</Label>
+                <Label>{getText('family.phone', 'Phone')}</Label>
                 <Input
                   type="tel"
                   value={memberForm.phone}
@@ -380,13 +380,13 @@ const FamilyMembersSection = ({ t, user }) => {
               </div>
               
               <div className="space-y-2">
-                <Label>{t('family.trainingGroup') || 'Training Group'}</Label>
+                <Label>{getText('family.trainingGroup', 'Training Group')}</Label>
                 <select
                   value={memberForm.trainingGroup}
                   onChange={(e) => setMemberForm({...memberForm, trainingGroup: e.target.value})}
                   className="w-full p-2 border rounded-md bg-white dark:bg-gray-800"
                 >
-                  <option value="">{t('family.selectGroup') || 'Select a group'}</option>
+                  <option value="">{getText('family.selectGroup', 'Select a group')}</option>
                   <option value="folklor">Folklor</option>
                   <option value="kolo">Kolo</option>
                   <option value="choir">Choir</option>
@@ -396,7 +396,7 @@ const FamilyMembersSection = ({ t, user }) => {
             </div>
             
             <div className="space-y-2">
-              <Label>{t('family.address') || 'Address'}</Label>
+              <Label>{getText('family.address', 'Address')}</Label>
               <Input
                 value={memberForm.address}
                 onChange={(e) => setMemberForm({...memberForm, address: e.target.value})}
@@ -406,7 +406,7 @@ const FamilyMembersSection = ({ t, user }) => {
             
             <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg p-3">
               <p className="text-sm text-yellow-800 dark:text-yellow-200">
-                {t('family.credentialsNote') || '📧 Login credentials will be automatically sent to the email address provided.'}
+                {getText('family.credentialsNote', '📧 Login credentials will be automatically sent to the email address provided.')}
               </p>
             </div>
             
@@ -416,7 +416,7 @@ const FamilyMembersSection = ({ t, user }) => {
                 className="flex-1 bg-[var(--color-button-primary)] hover:bg-[var(--color-button-hover)]"
                 data-testid="submit-add-member-btn"
               >
-                {t('family.addSubmit') || 'Add Member'}
+                {getText('family.addSubmit', 'Add Member')}
               </Button>
               <Button
                 type="button"
@@ -424,7 +424,7 @@ const FamilyMembersSection = ({ t, user }) => {
                 variant="outline"
                 className="flex-1"
               >
-                {t('family.cancel') || 'Cancel'}
+                {getText('family.cancel', 'Cancel')}
               </Button>
             </div>
           </form>
@@ -437,14 +437,14 @@ const FamilyMembersSection = ({ t, user }) => {
           <DialogHeader>
             <DialogTitle className="flex items-center">
               <Edit className="h-5 w-5 mr-2" />
-              {t('family.editTitle') || 'Edit Family Member'}
+              {getText('family.editTitle', 'Edit Family Member')}
             </DialogTitle>
           </DialogHeader>
           
           <form onSubmit={handleEditMember} className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label>{t('family.fullName') || 'Full Name'} *</Label>
+                <Label>{getText('family.fullName', 'Full Name')} *</Label>
                 <Input
                   required
                   value={memberForm.fullName}
@@ -453,7 +453,7 @@ const FamilyMembersSection = ({ t, user }) => {
               </div>
               
               <div className="space-y-2">
-                <Label>{t('family.email') || 'Email'} *</Label>
+                <Label>{getText('family.email', 'Email')} *</Label>
                 <Input
                   type="email"
                   required
@@ -463,7 +463,7 @@ const FamilyMembersSection = ({ t, user }) => {
               </div>
               
               <div className="space-y-2">
-                <Label>{t('family.yearOfBirth') || 'Year of Birth'} *</Label>
+                <Label>{getText('family.yearOfBirth', 'Year of Birth')} *</Label>
                 <Input
                   type="number"
                   required
@@ -475,21 +475,21 @@ const FamilyMembersSection = ({ t, user }) => {
               </div>
               
               <div className="space-y-2">
-                <Label>{t('family.relationship') || 'Relationship'}</Label>
+                <Label>{getText('family.relationship', 'Relationship')}</Label>
                 <select
                   value={memberForm.relationship}
                   onChange={(e) => setMemberForm({...memberForm, relationship: e.target.value})}
                   className="w-full p-2 border rounded-md bg-white dark:bg-gray-800"
                 >
-                  <option value="child">{t('family.relationshipChild') || 'Child'}</option>
-                  <option value="spouse">{t('family.relationshipSpouse') || 'Spouse'}</option>
-                  <option value="friend">{t('family.relationshipFriend') || 'Friend'}</option>
-                  <option value="other">{t('family.relationshipOther') || 'Other'}</option>
+                  <option value="child">{getText('family.relationshipChild', 'Child')}</option>
+                  <option value="spouse">{getText('family.relationshipSpouse', 'Spouse')}</option>
+                  <option value="friend">{getText('family.relationshipFriend', 'Friend')}</option>
+                  <option value="other">{getText('family.relationshipOther', 'Other')}</option>
                 </select>
               </div>
               
               <div className="space-y-2">
-                <Label>{t('family.phone') || 'Phone'}</Label>
+                <Label>{getText('family.phone', 'Phone')}</Label>
                 <Input
                   type="tel"
                   value={memberForm.phone}
@@ -498,13 +498,13 @@ const FamilyMembersSection = ({ t, user }) => {
               </div>
               
               <div className="space-y-2">
-                <Label>{t('family.trainingGroup') || 'Training Group'}</Label>
+                <Label>{getText('family.trainingGroup', 'Training Group')}</Label>
                 <select
                   value={memberForm.trainingGroup}
                   onChange={(e) => setMemberForm({...memberForm, trainingGroup: e.target.value})}
                   className="w-full p-2 border rounded-md bg-white dark:bg-gray-800"
                 >
-                  <option value="">{t('family.selectGroup') || 'Select a group'}</option>
+                  <option value="">{getText('family.selectGroup', 'Select a group')}</option>
                   <option value="folklor">Folklor</option>
                   <option value="kolo">Kolo</option>
                   <option value="choir">Choir</option>
@@ -514,7 +514,7 @@ const FamilyMembersSection = ({ t, user }) => {
             </div>
             
             <div className="space-y-2">
-              <Label>{t('family.address') || 'Address'}</Label>
+              <Label>{getText('family.address', 'Address')}</Label>
               <Input
                 value={memberForm.address}
                 onChange={(e) => setMemberForm({...memberForm, address: e.target.value})}
@@ -526,7 +526,7 @@ const FamilyMembersSection = ({ t, user }) => {
                 type="submit"
                 className="flex-1 bg-[var(--color-button-primary)] hover:bg-[var(--color-button-hover)]"
               >
-                {t('family.saveChanges') || 'Save Changes'}
+                {getText('family.saveChanges', 'Save Changes')}
               </Button>
               <Button
                 type="button"
@@ -538,7 +538,7 @@ const FamilyMembersSection = ({ t, user }) => {
                 variant="outline"
                 className="flex-1"
               >
-                {t('family.cancel') || 'Cancel'}
+                {getText('family.cancel', 'Cancel')}
               </Button>
             </div>
           </form>
