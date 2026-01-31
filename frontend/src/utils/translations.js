@@ -438,6 +438,7 @@ const translations = {
       noAccess: 'Нема приступа',
       noPermissionsMessage: 'Немате додељене дозволе. Молимо контактирајте Супер Администратора.',
       personalDataTab: 'Лични подаци',
+      familyTab: 'Породица',
       personalData: {
         fullName: 'Име и презиме',
         yearOfBirth: 'Година рођења',
