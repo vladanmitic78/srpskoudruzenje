@@ -12,7 +12,7 @@ from typing import Optional, List
 import shutil
 
 # Import routes
-from routes import auth, users, news, events, invoices, gallery, stories, settings, admin, contact, content
+from routes import auth, users, news, events, invoices, gallery, stories, settings, admin, contact, content, family
 
 # Import scheduler
 from scheduler import start_scheduler, stop_scheduler
