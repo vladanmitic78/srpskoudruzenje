@@ -29,7 +29,15 @@ client = AsyncIOMotorClient(mongo_url)
 db = client[os.environ['DB_NAME']]
 
 # Create the main app
-app = FastAPI(title="SKUD Täby API", version="2.0.0")
+app = FastAPI(
+    title="SKUD Täby API", 
+    version="2.0.0",
+    docs_url="/api/docs",
+    redoc_url="/api/redoc"
+)
+
+# Add GZip compression middleware (compress responses > 500 bytes)
+app.add_middleware(GZipMiddleware, minimum_size=500)
 
 # Create a router with the /api prefix
 api_router = APIRouter(prefix="/api")
