@@ -1048,6 +1048,7 @@ const AdminDashboard = () => {
               className="w-full p-3 border-2 border-[var(--color-primary)]/20 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 font-medium"
             >
               {permissions?.viewMembers && <option value="members">👥 {t('admin.tabs.members')}</option>}
+              {permissions?.viewMembers && <option value="family">👨‍👩‍👧‍👦 {t('admin.tabs.family') || 'Family'}</option>}
               {permissions?.manageInvoices && <option value="invoices">📄 {t('admin.tabs.invoices')}</option>}
               {permissions?.manageEvents && <option value="events">📅 {t('admin.tabs.events')}</option>}
               {permissions?.manageContent && <option value="content">📝 {t('admin.tabs.content')}</option>}
