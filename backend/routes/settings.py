@@ -3,12 +3,18 @@ from datetime import datetime
 
 from models import SettingsBase
 from dependencies import get_admin_user
+from utils.cache import cache, settings_key, CACHE_TTL
 
 router = APIRouter()
 
 @router.get("/")
 async def get_settings(request: Request):
-    """Get association settings (public)"""
+    """Get association settings (public) - with caching"""
+    # Check cache first
+    cached = await cache.get(settings_key())
+    if cached:
+        return cached
+    
     db = request.app.state.db
     settings = await db.settings.find_one({})
     
@@ -18,6 +24,9 @@ async def get_settings(request: Request):
     # Remove _id from response
     settings.pop("_id", None)
     settings.pop("updatedAt", None)
+    
+    # Cache the result
+    await cache.set(settings_key(), settings, CACHE_TTL['settings'])
     
     return settings
 
@@ -38,5 +47,8 @@ async def update_settings(
         {"$set": update_data},
         upsert=True
     )
+    
+    # Invalidate cache
+    await cache.delete(settings_key())
     
     return {"success": True, "message": "Settings updated successfully"}
