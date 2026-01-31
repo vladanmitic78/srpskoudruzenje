@@ -15,7 +15,7 @@ jobs:
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.HETZNER_HOST }}
-          username: ${{ secrets.HETZNER_USERNAME }}
+          username: ${{ secrets.HETZNER_USER }}
           key: ${{ secrets.HETZNER_SSH_KEY }}
           script: |
             cd /var/www/skud-taby
