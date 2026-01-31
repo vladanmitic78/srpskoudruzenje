@@ -2,6 +2,7 @@ from fastapi import FastAPI, APIRouter, Depends, HTTPException, status, UploadFi
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from fastapi.staticfiles import StaticFiles
 from starlette.middleware.cors import CORSMiddleware
+from starlette.middleware.gzip import GZipMiddleware
 from motor.motor_asyncio import AsyncIOMotorClient
 from dotenv import load_dotenv
 from pathlib import Path
@@ -10,6 +11,8 @@ import logging
 from datetime import datetime, timedelta
 from typing import Optional, List
 import shutil
+from functools import lru_cache
+import asyncio
 
 # Import routes
 from routes import auth, users, news, events, invoices, gallery, stories, settings, admin, contact, content, family
