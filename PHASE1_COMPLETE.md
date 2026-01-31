@@ -3,7 +3,7 @@
 ## 🎉 Project Overview
 Successfully built a modern, multi-language website for the Serbian Cultural Association in Täby, Sweden.
 
-**Live URL**: https://kulturni-dashboard.preview.emergentagent.com
+**Live URL**: https://heritage-portal-7.preview.emergentagent.com
 
 ---
 
@@ -314,7 +314,7 @@ All data is currently stored in `/app/frontend/src/utils/mock.js`:
 ### Test the Website:
 
 1. **Visit Homepage:**
-   - URL: https://kulturni-dashboard.preview.emergentagent.com
+   - URL: https://heritage-portal-7.preview.emergentagent.com
    - Check language switcher (4 languages)
    - Test theme toggle (light/dark)
    - View news and events sections
