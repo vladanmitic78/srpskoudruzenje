@@ -18,15 +18,20 @@ jobs:
           username: ${{ secrets.HETZNER_USER }}
           key: ${{ secrets.HETZNER_SSH_KEY }}
           script: |
-            cd /var/www/skud-taby
+            cd /opt/skud-taby
+            
+            echo "📥 Pulling latest changes..."
             git pull origin main
-            cd backend
-            source venv/bin/activate
-            pip install -r requirements.txt
-            python scripts/optimize_database.py || true
-            sudo systemctl restart skud-backend
-            cd ../frontend
-            yarn install
-            yarn build
-            sudo systemctl reload nginx
-            echo "Deployment complete!"
+            
+            echo "🔄 Rebuilding Docker containers..."
+            docker-compose down
+            docker-compose build --no-cache
+            docker-compose up -d
+            
+            echo "⏳ Waiting for containers to start..."
+            sleep 10
+            
+            echo "✅ Checking container status..."
+            docker ps
+            
+            echo "🎉 Deployment complete!"
