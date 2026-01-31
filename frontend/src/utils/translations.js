@@ -1114,6 +1114,7 @@ const translations = {
       noAccess: 'Ingen åtkomst',
       noPermissionsMessage: 'Du har inga behörigheter tilldelade. Vänligen kontakta en Super Administratör.',
       personalDataTab: 'Personuppgifter',
+      familyTab: 'Familj',
       personalData: {
         fullName: 'Fullständigt namn',
         yearOfBirth: 'Födelseår',
