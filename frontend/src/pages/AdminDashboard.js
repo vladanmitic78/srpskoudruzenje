@@ -1061,15 +1061,22 @@ const AdminDashboard = () => {
 
           {/* Desktop Tabs - Show on large screens */}
           <TabsList className={`hidden lg:grid w-full ${
-            isSuperAdmin ? 'grid-cols-8 max-w-6xl' : 
+            isSuperAdmin ? 'grid-cols-9 max-w-7xl' : 
             isModerator ? 'grid-cols-2 max-w-xl' : 
-            'grid-cols-5 max-w-3xl'
+            'grid-cols-6 max-w-4xl'
           }`}>
             {/* Members tab */}
             {permissions?.viewMembers && (
               <TabsTrigger value="members">
                 <Users className="h-4 w-4 mr-2" />
                 {t('admin.tabs.members')}
+              </TabsTrigger>
+            )}
+            {/* Family tab - for managing family members */}
+            {permissions?.viewMembers && (
+              <TabsTrigger value="family" data-testid="admin-family-tab">
+                <UsersRound className="h-4 w-4 mr-2" />
+                {t('admin.tabs.family') || 'Family'}
               </TabsTrigger>
             )}
             {/* Invoices tab */}
