@@ -41,6 +41,8 @@ class UserBase(BaseModel):
     parentEmail: Optional[EmailStr] = None
     parentPhone: Optional[str] = None
     trainingGroup: Optional[str] = None  # folklor, kolo, choir, etc.
+    primaryAccountId: Optional[str] = None  # If this is a dependent member
+    dependentMembers: List[str] = []  # List of dependent member IDs
 
 class UserCreate(UserBase):
     password: str
