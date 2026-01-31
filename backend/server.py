@@ -77,35 +77,48 @@ api_router.include_router(contact.router, prefix="/contact", tags=["Contact"])
 api_router.include_router(content.router, prefix="/content", tags=["Content Management"])
 api_router.include_router(family.router, prefix="/family", tags=["Family Members"])
 
+# Import cache
+from utils.cache import cache, branding_key, CACHE_TTL
+
 # Root endpoint
 @api_router.get("/")
 async def root():
     return {"message": "SKUD Täby API v2.0 - Backend Running", "status": "ok"}
 
-# Public branding endpoint (no auth required)
+# Public branding endpoint (no auth required) - with caching
 @api_router.get("/public/branding")
 async def get_public_branding():
-    """Get branding settings (public endpoint)"""
+    """Get branding settings (public endpoint) - cached"""
+    # Check cache first
+    cached = await cache.get(branding_key())
+    if cached:
+        return cached
+    
     branding = await db.branding_settings.find_one({"_id": "branding"})
     
-    if not branding:
-        # Return default branding settings if none exist
-        return {
-            "logo": "",
-            "colors": {
-                "primary": "#C1272D",
-                "secondary": "#8B1F1F",
-                "buttonPrimary": "#C1272D",
-                "buttonHover": "#8B1F1F"
-            },
-            "language": {
-                "default": "sr",
-                "supported": ["sr", "en", "sv"]
-            }
+    default_branding = {
+        "logo": "",
+        "colors": {
+            "primary": "#C1272D",
+            "secondary": "#8B1F1F",
+            "buttonPrimary": "#C1272D",
+            "buttonHover": "#8B1F1F"
+        },
+        "language": {
+            "default": "sr",
+            "supported": ["sr", "en", "sv"]
         }
+    }
+    
+    if not branding:
+        await cache.set(branding_key(), default_branding, CACHE_TTL['branding'])
+        return default_branding
     
     branding.pop("_id", None)
     branding.pop("emailTemplates", None)  # Don't expose email templates publicly
+    
+    # Cache the result
+    await cache.set(branding_key(), branding, CACHE_TTL['branding'])
     return branding
 
 # Include the main API router
