@@ -26,6 +26,7 @@ jobs:
           host: ${{ secrets.HETZNER_HOST }}
           username: ${{ secrets.HETZNER_USERNAME }}
           key: ${{ secrets.HETZNER_SSH_KEY }}
+          passphrase: ${{ secrets.HETZNER_SSH_PASSPHRASE }}
           port: ${{ secrets.HETZNER_PORT || 22 }}
           script: |
             cd ${{ secrets.APP_PATH || '/var/www/skud-taby' }}
