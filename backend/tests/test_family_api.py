@@ -30,7 +30,7 @@ class TestFamilyAPISetup:
         """Get admin authentication token"""
         response = requests.post(
             f"{BASE_URL}/api/auth/login",
-            json={"email": SUPER_ADMIN_EMAIL, "password": SUPER_ADMIN_PASSWORD}
+            json={"username": SUPER_ADMIN_EMAIL, "password": SUPER_ADMIN_PASSWORD}
         )
         assert response.status_code == 200, f"Admin login failed: {response.text}"
         data = response.json()
@@ -63,7 +63,7 @@ class TestFamilyMembersCRUD:
         """Get admin authentication token"""
         response = requests.post(
             f"{BASE_URL}/api/auth/login",
-            json={"email": SUPER_ADMIN_EMAIL, "password": SUPER_ADMIN_PASSWORD}
+            json={"username": SUPER_ADMIN_EMAIL, "password": SUPER_ADMIN_PASSWORD}
         )
         assert response.status_code == 200, f"Admin login failed: {response.text}"
         data = response.json()
@@ -253,7 +253,7 @@ class TestAdminFamilyEndpoints:
         """Get admin authentication token"""
         response = requests.post(
             f"{BASE_URL}/api/auth/login",
-            json={"email": SUPER_ADMIN_EMAIL, "password": SUPER_ADMIN_PASSWORD}
+            json={"username": SUPER_ADMIN_EMAIL, "password": SUPER_ADMIN_PASSWORD}
         )
         assert response.status_code == 200
         return response.json()["token"]
@@ -329,7 +329,7 @@ class TestAgeRestriction:
         """Get admin authentication token"""
         response = requests.post(
             f"{BASE_URL}/api/auth/login",
-            json={"email": SUPER_ADMIN_EMAIL, "password": SUPER_ADMIN_PASSWORD}
+            json={"username": SUPER_ADMIN_EMAIL, "password": SUPER_ADMIN_PASSWORD}
         )
         return response.json()["token"]
     
@@ -407,7 +407,7 @@ class TestFamilyMemberLogin:
         """Get admin authentication token"""
         response = requests.post(
             f"{BASE_URL}/api/auth/login",
-            json={"email": SUPER_ADMIN_EMAIL, "password": SUPER_ADMIN_PASSWORD}
+            json={"username": SUPER_ADMIN_EMAIL, "password": SUPER_ADMIN_PASSWORD}
         )
         return response.json()["token"]
     
@@ -445,7 +445,7 @@ class TestCleanup:
         """Get admin authentication token"""
         response = requests.post(
             f"{BASE_URL}/api/auth/login",
-            json={"email": SUPER_ADMIN_EMAIL, "password": SUPER_ADMIN_PASSWORD}
+            json={"username": SUPER_ADMIN_EMAIL, "password": SUPER_ADMIN_PASSWORD}
         )
         return response.json()["token"]
     
