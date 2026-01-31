@@ -6,12 +6,13 @@ import { Navigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../components/ui/tabs';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '../components/ui/dialog';
-import { Users, FileText, Calendar, Settings, BarChart, Palette, Upload, Mail, BookOpen, Server, UserCog } from 'lucide-react';
+import { Users, FileText, Calendar, Settings, BarChart, Palette, Upload, Mail, BookOpen, Server, UserCog, UsersRound } from 'lucide-react';
 import { adminAPI, eventsAPI, invoicesAPI, newsAPI, contentAPI, storiesAPI, galleryAPI, settingsAPI, userAPI } from '../services/api';
 import { toast } from 'sonner';
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
 import { Label } from '../components/ui/label';
+import AdminFamilyManagement from '../components/AdminFamilyManagement';
 
 // Admin Password Change Component
 const AdminPasswordChangeForm = ({ t }) => {
