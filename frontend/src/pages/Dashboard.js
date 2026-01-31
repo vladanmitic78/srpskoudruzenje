@@ -701,6 +701,11 @@ const Dashboard = () => {
             </Card>
           </TabsContent>
 
+          {/* Family Members Tab */}
+          <TabsContent value="family">
+            <FamilyMembersSection t={t} user={user} />
+          </TabsContent>
+
           {/* Membership Tab */}
           <TabsContent value="membership">
             <Card className="border-2 border-[var(--color-primary)]/20">
