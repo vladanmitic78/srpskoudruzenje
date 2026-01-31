@@ -5,9 +5,11 @@ Build and maintain a comprehensive membership management platform for the Serbia
 
 ## Current Application Architecture
 - **Frontend:** React with TailwindCSS, Shadcn UI components
-- **Backend:** FastAPI (Python)
-- **Database:** MongoDB
+- **Backend:** FastAPI (Python) with GZip compression
+- **Database:** MongoDB with optimized indexes
 - **Email:** SMTP via Loopia (dynamic settings from database)
+- **Caching:** In-memory cache for frequently accessed data
+- **Performance:** Code splitting, lazy loading, virtual lists
 
 ## What's Been Implemented
 
