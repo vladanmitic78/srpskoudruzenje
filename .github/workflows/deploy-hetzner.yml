@@ -1,0 +1,60 @@
+name: Deploy to Hetzner
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Deployment environment'
+        required: true
+        default: 'production'
+        type: choice
+        options:
+          - production
+          - staging
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Deploy to Hetzner via SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.HETZNER_HOST }}
+          username: ${{ secrets.HETZNER_USERNAME }}
+          key: ${{ secrets.HETZNER_SSH_KEY }}
+          port: ${{ secrets.HETZNER_PORT || 22 }}
+          script: |
+            cd ${{ secrets.APP_PATH || '/var/www/skud-taby' }}
+            
+            echo "📥 Pulling latest changes..."
+            git pull origin main
+            
+            echo "🐍 Updating backend dependencies..."
+            cd backend
+            source venv/bin/activate || python3 -m venv venv && source venv/bin/activate
+            pip install -r requirements.txt
+            
+            echo "📊 Running database optimizations..."
+            python scripts/optimize_database.py || true
+            
+            echo "🔄 Restarting backend service..."
+            sudo systemctl restart skud-backend || sudo systemctl restart backend
+            
+            echo "📦 Building frontend..."
+            cd ../frontend
+            yarn install
+            yarn build
+            
+            echo "🔄 Restarting nginx..."
+            sudo systemctl reload nginx
+            
+            echo "✅ Deployment complete!"
+
+      - name: Deployment Status
+        if: always()
+        run: |
+          echo "Deployment to ${{ inputs.environment }} completed"
