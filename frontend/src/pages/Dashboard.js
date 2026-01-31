@@ -8,8 +8,9 @@ import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../components/ui/tabs';
 import { Badge } from '../components/ui/badge';
 import { toast } from 'sonner';
-import { User, FileText, Calendar, AlertCircle } from 'lucide-react';
+import { User, FileText, Calendar, AlertCircle, Users } from 'lucide-react';
 import { userAPI, invoicesAPI, eventsAPI } from '../services/api';
+import FamilyMembersSection from '../components/FamilyMembersSection';
 
 // Password Change Component
 const PasswordChangeForm = () => {
