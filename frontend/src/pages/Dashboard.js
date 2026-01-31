@@ -363,7 +363,7 @@ const Dashboard = () => {
         </h1>
 
         <Tabs defaultValue="invoices" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-4 max-w-2xl">
+          <TabsList className="grid w-full grid-cols-5 max-w-3xl">
             <TabsTrigger value="invoices">
               <FileText className="h-4 w-4 mr-2" />
               {t('dashboard.invoices')}
@@ -371,6 +371,10 @@ const Dashboard = () => {
             <TabsTrigger value="trainings">
               <Calendar className="h-4 w-4 mr-2" />
               {t('dashboard.trainingsTab')}
+            </TabsTrigger>
+            <TabsTrigger value="family" data-testid="family-tab">
+              <Users className="h-4 w-4 mr-2" />
+              {t('dashboard.familyTab') || 'Family'}
             </TabsTrigger>
             <TabsTrigger value="membership">
               <AlertCircle className="h-4 w-4 mr-2" />
