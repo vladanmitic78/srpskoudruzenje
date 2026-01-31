@@ -1366,6 +1366,13 @@ const AdminDashboard = () => {
           </TabsContent>
           )}
 
+          {/* Family Tab - Admin Family Management */}
+          {permissions?.viewMembers && (
+          <TabsContent value="family">
+            <AdminFamilyManagement t={t} users={users} />
+          </TabsContent>
+          )}
+
           {/* Invoices Tab */}
           {permissions?.manageInvoices && (
           <TabsContent value="invoices">
