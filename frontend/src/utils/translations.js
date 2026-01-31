@@ -776,6 +776,7 @@ const translations = {
       noAccess: 'No Access',
       noPermissionsMessage: 'You do not have any permissions assigned. Please contact a Super Administrator.',
       personalDataTab: 'Personal Data',
+      familyTab: 'Family',
       personalData: {
         fullName: 'Full Name',
         yearOfBirth: 'Year of Birth',
