@@ -406,4 +406,55 @@ export const contactAPI = {
   },
 };
 
+// ==================== Family APIs ====================
+export const familyAPI = {
+  // Get all family members for current user
+  getMembers: async () => {
+    const response = await api.get('/family/members');
+    return response.data;
+  },
+  
+  // Get a specific family member
+  getMember: async (memberId) => {
+    const response = await api.get(`/family/members/${memberId}`);
+    return response.data;
+  },
+  
+  // Add a new family member
+  addMember: async (memberData) => {
+    const response = await api.post('/family/members', memberData);
+    return response.data;
+  },
+  
+  // Update a family member
+  updateMember: async (memberId, memberData) => {
+    const response = await api.put(`/family/members/${memberId}`, memberData);
+    return response.data;
+  },
+  
+  // Remove a family member (unlink, doesn't delete account)
+  removeMember: async (memberId) => {
+    const response = await api.delete(`/family/members/${memberId}`);
+    return response.data;
+  },
+  
+  // Admin: Get all family relationships
+  adminGetAllFamilies: async () => {
+    const response = await api.get('/family/admin/all');
+    return response.data;
+  },
+  
+  // Admin: Add family member to any user
+  adminAddMember: async (userId, memberData) => {
+    const response = await api.post(`/family/admin/members/${userId}`, memberData);
+    return response.data;
+  },
+  
+  // Admin: Remove family member relationship
+  adminRemoveMember: async (memberId, deleteAccount = false) => {
+    const response = await api.delete(`/family/admin/members/${memberId}?delete_account=${deleteAccount}`);
+    return response.data;
+  },
+};
+
 export default api;
