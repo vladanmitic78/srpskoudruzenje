@@ -1,5 +1,7 @@
 // craco.config.js
 const path = require("path");
+const CompressionPlugin = require("compression-webpack-plugin");
+const TerserPlugin = require("terser-webpack-plugin");
 require("dotenv").config();
 
 // Environment variable overrides
@@ -34,7 +36,77 @@ const webpackConfig = {
     alias: {
       '@': path.resolve(__dirname, 'src'),
     },
-    configure: (webpackConfig) => {
+    configure: (webpackConfig, { env }) => {
+      const isProduction = env === 'production';
+
+      // Production optimizations
+      if (isProduction) {
+        // Add compression plugin for gzip and brotli
+        webpackConfig.plugins.push(
+          new CompressionPlugin({
+            filename: '[path][base].gz',
+            algorithm: 'gzip',
+            test: /\.(js|css|html|svg|json)$/,
+            threshold: 8192, // Only compress files > 8KB
+            minRatio: 0.8,
+          })
+        );
+
+        // Optimize TerserPlugin settings
+        webpackConfig.optimization = {
+          ...webpackConfig.optimization,
+          minimize: true,
+          minimizer: [
+            new TerserPlugin({
+              terserOptions: {
+                parse: { ecma: 8 },
+                compress: {
+                  ecma: 5,
+                  warnings: false,
+                  comparisons: false,
+                  inline: 2,
+                  drop_console: true, // Remove console.log in production
+                },
+                mangle: { safari10: true },
+                output: {
+                  ecma: 5,
+                  comments: false,
+                  ascii_only: true,
+                },
+              },
+              parallel: true,
+            }),
+          ],
+          // Split chunks for better caching
+          splitChunks: {
+            chunks: 'all',
+            cacheGroups: {
+              // Vendor chunk for npm packages
+              vendor: {
+                test: /[\\/]node_modules[\\/]/,
+                name: 'vendors',
+                chunks: 'all',
+                priority: 20,
+              },
+              // Common chunk for shared code
+              common: {
+                minChunks: 2,
+                priority: 10,
+                reuseExistingChunk: true,
+              },
+              // Separate chunk for large libraries
+              react: {
+                test: /[\\/]node_modules[\\/](react|react-dom|react-router)[\\/]/,
+                name: 'react',
+                chunks: 'all',
+                priority: 30,
+              },
+            },
+          },
+          // Runtime chunk for better caching
+          runtimeChunk: 'single',
+        };
+      }
 
       // Disable hot reload completely if environment variable is set
       if (config.disableHotReload) {
