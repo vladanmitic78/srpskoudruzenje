@@ -64,6 +64,7 @@ api_router.include_router(settings.router, prefix="/settings", tags=["Settings"]
 api_router.include_router(admin.router, prefix="/admin", tags=["Admin"])
 api_router.include_router(contact.router, prefix="/contact", tags=["Contact"])
 api_router.include_router(content.router, prefix="/content", tags=["Content Management"])
+api_router.include_router(family.router, prefix="/family", tags=["Family Members"])
 
 # Root endpoint
 @api_router.get("/")
