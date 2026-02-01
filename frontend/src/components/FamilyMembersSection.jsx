@@ -343,18 +343,6 @@ const FamilyMembersSection = ({ t, user }) => {
               </div>
               
               <div className="space-y-2">
-                <Label>{getText('family.email', 'Email')} *</Label>
-                <Input
-                  type="email"
-                  required
-                  value={memberForm.email}
-                  onChange={(e) => setMemberForm({...memberForm, email: e.target.value})}
-                  placeholder="member@email.com"
-                  data-testid="member-email-input"
-                />
-              </div>
-              
-              <div className="space-y-2">
                 <Label>{getText('family.yearOfBirth', 'Year of Birth')} *</Label>
                 <Input
                   type="number"
@@ -365,6 +353,22 @@ const FamilyMembersSection = ({ t, user }) => {
                   onChange={(e) => setMemberForm({...memberForm, yearOfBirth: e.target.value})}
                   placeholder="2010"
                   data-testid="member-year-input"
+                />
+              </div>
+              
+              <div className="space-y-2">
+                <Label>
+                  {getText('family.email', 'Email')} 
+                  {memberForm.yearOfBirth && (new Date().getFullYear() - parseInt(memberForm.yearOfBirth)) >= 18 
+                    ? ' *' 
+                    : ` (${getText('family.optionalForChildren', 'optional for children')})`}
+                </Label>
+                <Input
+                  type="email"
+                  value={memberForm.email}
+                  onChange={(e) => setMemberForm({...memberForm, email: e.target.value})}
+                  placeholder="member@email.com"
+                  data-testid="member-email-input"
                 />
               </div>
               
@@ -420,7 +424,9 @@ const FamilyMembersSection = ({ t, user }) => {
             
             <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg p-3">
               <p className="text-sm text-yellow-800 dark:text-yellow-200">
-                {getText('family.credentialsNote', '📧 Login credentials will be automatically sent to the email address provided.')}
+                {memberForm.yearOfBirth && (new Date().getFullYear() - parseInt(memberForm.yearOfBirth)) < 18 && !memberForm.email
+                  ? getText('family.childNotice', '📧 Since this is a child under 18 without email, all notifications will be sent to your email address.')
+                  : getText('family.credentialsNote', '📧 Login credentials will be automatically sent to the email address provided.')}
               </p>
             </div>
             
