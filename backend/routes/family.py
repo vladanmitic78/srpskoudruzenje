@@ -31,13 +31,14 @@ class FamilyMemberUpdate(BaseModel):
 class FamilyMemberResponse(BaseModel):
     id: str
     fullName: str
-    email: str
+    email: Optional[str] = None  # Optional for children
     yearOfBirth: str
     phone: Optional[str] = None
     address: Optional[str] = None
     trainingGroup: Optional[str] = None
     relationship: str
     primaryAccountId: str
+    parentEmail: Optional[str] = None  # Parent's email for notifications
     createdAt: datetime
 
 def calculate_age(year_of_birth: str) -> int:
