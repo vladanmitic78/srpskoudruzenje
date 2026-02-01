@@ -1,0 +1,57 @@
+services:
+  mongodb:
+    image: mongo:6
+    container_name: skud_mongodb
+    restart: always
+    volumes:
+      - mongodb_data:/data/db
+    networks:
+      - skud_network
+
+  backend:
+    build: ./backend
+    container_name: skud_backend
+    restart: always
+    environment:
+      - MONGO_URL=mongodb://mongodb:27017
+      - DB_NAME=skud_db
+    volumes:
+      - uploads_data:/app/uploads
+    depends_on:
+      - mongodb
+    networks:
+      - skud_network
+
+  frontend:
+    build: ./frontend
+    container_name: skud_frontend
+    restart: always
+    depends_on:
+      - backend
+    networks:
+      - skud_network
+
+  nginx:
+    image: nginx:alpine
+    container_name: skud_nginx
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./certbot/conf:/etc/letsencrypt:ro
+      - ./certbot/www:/var/www/certbot:ro
+    depends_on:
+      - backend
+      - frontend
+    networks:
+      - skud_network
+
+volumes:
+  mongodb_data:
+  uploads_data:
+
+networks:
+  skud_network:
+    driver: bridge
