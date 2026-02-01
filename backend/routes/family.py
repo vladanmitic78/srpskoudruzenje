@@ -12,7 +12,7 @@ router = APIRouter()
 # Pydantic models for family members
 class FamilyMemberCreate(BaseModel):
     fullName: str
-    email: EmailStr
+    email: Optional[str] = None  # Optional for children under 18
     yearOfBirth: str
     phone: Optional[str] = None
     address: Optional[str] = None
