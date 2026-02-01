@@ -50,7 +50,7 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 # Upload directory
-UPLOAD_DIR = Path("/app/backend/uploads")
+UPLOAD_DIR = Path("/app/uploads")
 UPLOAD_DIR.mkdir(exist_ok=True)
 (UPLOAD_DIR / "invoices").mkdir(exist_ok=True)
 (UPLOAD_DIR / "gallery").mkdir(exist_ok=True)
