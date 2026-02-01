@@ -78,15 +78,29 @@ const FamilyMembersSection = ({ t, user }) => {
   const handleAddMember = async (e) => {
     e.preventDefault();
     
-    // Validation
-    if (!memberForm.fullName || !memberForm.email || !memberForm.yearOfBirth) {
+    // Calculate member's age
+    const memberAge = memberForm.yearOfBirth 
+      ? new Date().getFullYear() - parseInt(memberForm.yearOfBirth)
+      : 0;
+    
+    // Validation - email required only for adults (18+)
+    if (!memberForm.fullName || !memberForm.yearOfBirth) {
       toast.error(getText('family.requiredFields', 'Please fill in all required fields'));
+      return;
+    }
+    
+    // Email required only for members 18+
+    if (memberAge >= 18 && !memberForm.email) {
+      toast.error(getText('family.emailRequiredAdult', 'Email is required for family members 18 years or older'));
       return;
     }
     
     try {
       await familyAPI.addMember(memberForm);
-      toast.success(getText('family.addSuccess', 'Family member added successfully! Login credentials sent to their email.'));
+      const message = memberAge < 18 && !memberForm.email
+        ? getText('family.addSuccessChild', 'Family member added successfully! Notifications will be sent to your email.')
+        : getText('family.addSuccess', 'Family member added successfully! Login credentials sent to their email.');
+      toast.success(message);
       setAddModalOpen(false);
       resetForm();
       loadFamilyMembers();
