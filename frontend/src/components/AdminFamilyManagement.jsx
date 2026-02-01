@@ -78,15 +78,29 @@ const AdminFamilyManagement = ({ t, users = [] }) => {
       return;
     }
     
-    if (!memberForm.fullName || !memberForm.email || !memberForm.yearOfBirth) {
+    // Calculate member's age
+    const memberAge = memberForm.yearOfBirth 
+      ? new Date().getFullYear() - parseInt(memberForm.yearOfBirth)
+      : 0;
+    
+    if (!memberForm.fullName || !memberForm.yearOfBirth) {
       toast.error(t('admin.family.requiredFields') || 'Please fill in all required fields');
+      return;
+    }
+    
+    // Email required only for members 18+
+    if (memberAge >= 18 && !memberForm.email) {
+      toast.error(t('admin.family.emailRequiredAdult') || 'Email is required for family members 18 years or older');
       return;
     }
     
     try {
       const userId = selectedUser.id || selectedUser._id;
       await familyAPI.adminAddMember(userId, memberForm);
-      toast.success(t('admin.family.addSuccess') || 'Family member added successfully! Login credentials sent to their email.');
+      const message = memberAge < 18 && !memberForm.email
+        ? (t('admin.family.addSuccessChild') || 'Family member added successfully! Notifications will be sent to parent\'s email.')
+        : (t('admin.family.addSuccess') || 'Family member added successfully! Login credentials sent to their email.');
+      toast.success(message);
       setAddModalOpen(false);
       resetForm();
       loadFamilies();
