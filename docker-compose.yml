@@ -14,7 +14,7 @@ services:
     restart: always
     environment:
       - MONGO_URL=mongodb://mongodb:27017
-      - DB_NAME=skud_db
+      - DB_NAME=skud_taby
     volumes:
       - uploads_data:/app/uploads
     depends_on:
