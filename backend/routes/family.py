@@ -58,6 +58,7 @@ async def add_family_member(
     """
     Add a family member (child/friend) to the current user's account.
     Only users 18+ can add family members.
+    Email is optional for children under 18 - notifications go to parent's email.
     """
     db = request.app.state.db
     
@@ -69,26 +70,49 @@ async def add_family_member(
             detail="You must be 18 or older to add family members"
         )
     
-    # Check if email already exists
-    existing_user = await db.users.find_one({"email": member_data.email})
-    if existing_user:
-        raise HTTPException(
-            status_code=400, 
-            detail="A user with this email already exists"
-        )
+    # Calculate member's age
+    member_age = calculate_age(member_data.yearOfBirth)
     
-    # Generate a temporary password for the new member
+    # Email is required only for members 18+
+    member_email = member_data.email
+    use_parent_email = False
+    
+    if member_age < 18:
+        # For minors, email is optional - use parent's email for communications
+        use_parent_email = not member_email
+        if not member_email:
+            member_email = None  # No separate email for child
+    else:
+        # Adults must have their own email
+        if not member_email:
+            raise HTTPException(
+                status_code=400,
+                detail="Email is required for family members 18 years or older"
+            )
+    
+    # Check if email already exists (only if email is provided)
+    if member_email:
+        existing_user = await db.users.find_one({"email": member_email})
+        if existing_user:
+            raise HTTPException(
+                status_code=400, 
+                detail="A user with this email already exists"
+            )
+    
+    # Generate a temporary password for the new member (if they have email)
     import secrets
     import string
-    temp_password = ''.join(secrets.choice(string.ascii_letters + string.digits) for _ in range(12))
+    temp_password = ''.join(secrets.choice(string.ascii_letters + string.digits) for _ in range(12)) if member_email else None
     
     # Create the family member user
     member_id = str(uuid4())
+    parent_email = user.get("email", "")
+    
     new_member = {
         "id": member_id,
         "_id": member_id,
-        "email": member_data.email,
-        "username": member_data.email,  # Use email as username
+        "email": member_email,  # Can be None for children
+        "username": member_email or f"child_{member_id[:8]}",  # Generate username if no email
         "fullName": member_data.fullName,
         "yearOfBirth": member_data.yearOfBirth,
         "phone": member_data.phone,
@@ -96,10 +120,13 @@ async def add_family_member(
         "trainingGroup": member_data.trainingGroup,
         "role": "user",
         "emailVerified": True,  # Family members are pre-verified
-        "hashed_password": hash_password(temp_password),
+        "hashed_password": hash_password(temp_password) if temp_password else hash_password(secrets.token_hex(16)),
         "primaryAccountId": user["_id"],  # Link to parent account
+        "parentEmail": parent_email,  # Store parent's email for notifications
         "relationship": member_data.relationship,
         "dependentMembers": [],
+        "isMinor": member_age < 18,
+        "useParentEmail": use_parent_email,
         "createdAt": datetime.utcnow(),
         "createdBy": user["_id"]
     }
@@ -113,62 +140,119 @@ async def add_family_member(
         {"$push": {"dependentMembers": member_id}}
     )
     
-    # Send welcome email with credentials
+    # Send notification email
     try:
         from email_service import send_email
         
-        html_content = f"""
-        <h2>Welcome to Srpsko Kulturno Društvo Täby!</h2>
-        <p>Dear {member_data.fullName},</p>
-        <p>You have been added as a family member by {user.get('fullName', 'your family member')}.</p>
-        <p>You can now log in to your own account using the following credentials:</p>
-        <p><strong>Email:</strong> {member_data.email}</p>
-        <p><strong>Temporary Password:</strong> {temp_password}</p>
-        <p><strong>⚠️ Important:</strong> Please change your password after your first login.</p>
-        <p><a href="{request.base_url}login">Login Here</a></p>
-        <br>
-        <p>Best regards,<br>SKUD Täby Team</p>
-        """
+        # Determine recipient email - parent's email if child has no email
+        notification_email = member_email if member_email else parent_email
         
-        text_content = f"""
-        Welcome to Srpsko Kulturno Društvo Täby!
-        
-        Dear {member_data.fullName},
-        
-        You have been added as a family member by {user.get('fullName', 'your family member')}.
-        
-        You can now log in to your own account:
-        Email: {member_data.email}
-        Temporary Password: {temp_password}
-        
-        ⚠️ Important: Please change your password after your first login.
-        
-        Best regards,
-        SKUD Täby Team
-        """
-        
-        await send_email(
-            to_email=member_data.email,
-            subject="Welcome to SKUD Täby - Your Account Has Been Created",
-            html_content=html_content,
-            text_content=text_content,
-            db=db
-        )
+        if member_email:
+            # Member has own email - send credentials to them
+            html_content = f"""
+            <h2>Welcome to Srpsko Kulturno Društvo Täby!</h2>
+            <p>Dear {member_data.fullName},</p>
+            <p>You have been added as a family member by {user.get('fullName', 'your family member')}.</p>
+            <p>You can now log in to your own account using the following credentials:</p>
+            <p><strong>Email:</strong> {member_email}</p>
+            <p><strong>Temporary Password:</strong> {temp_password}</p>
+            <p><strong>⚠️ Important:</strong> Please change your password after your first login.</p>
+            <p><a href="{request.base_url}login">Login Here</a></p>
+            <br>
+            <p>Best regards,<br>SKUD Täby Team</p>
+            """
+            
+            text_content = f"""
+            Welcome to Srpsko Kulturno Društvo Täby!
+            
+            Dear {member_data.fullName},
+            
+            You have been added as a family member by {user.get('fullName', 'your family member')}.
+            
+            You can now log in to your own account:
+            Email: {member_email}
+            Temporary Password: {temp_password}
+            
+            ⚠️ Important: Please change your password after your first login.
+            
+            Best regards,
+            SKUD Täby Team
+            """
+            
+            await send_email(
+                to_email=member_email,
+                subject="Welcome to SKUD Täby - Your Account Has Been Created",
+                html_content=html_content,
+                text_content=text_content,
+                db=db
+            )
+        else:
+            # Child has no email - notify parent
+            html_content = f"""
+            <h2>Family Member Added - Srpsko Kulturno Društvo Täby</h2>
+            <p>Dear {user.get('fullName', 'Parent')},</p>
+            <p>You have successfully added <strong>{member_data.fullName}</strong> as a family member to your account.</p>
+            <p>Since {member_data.fullName} is under 18, all platform communications will be sent to your email address.</p>
+            <p><strong>Member Details:</strong></p>
+            <ul>
+                <li>Name: {member_data.fullName}</li>
+                <li>Year of Birth: {member_data.yearOfBirth}</li>
+                <li>Relationship: {member_data.relationship}</li>
+            </ul>
+            <p>You can manage this family member from your dashboard.</p>
+            <br>
+            <p>Best regards,<br>SKUD Täby Team</p>
+            """
+            
+            text_content = f"""
+            Family Member Added - Srpsko Kulturno Društvo Täby
+            
+            Dear {user.get('fullName', 'Parent')},
+            
+            You have successfully added {member_data.fullName} as a family member to your account.
+            
+            Since {member_data.fullName} is under 18, all platform communications will be sent to your email address.
+            
+            Member Details:
+            - Name: {member_data.fullName}
+            - Year of Birth: {member_data.yearOfBirth}
+            - Relationship: {member_data.relationship}
+            
+            You can manage this family member from your dashboard.
+            
+            Best regards,
+            SKUD Täby Team
+            """
+            
+            await send_email(
+                to_email=parent_email,
+                subject=f"Family Member Added: {member_data.fullName}",
+                html_content=html_content,
+                text_content=text_content,
+                db=db
+            )
     except Exception as e:
-        print(f"Failed to send welcome email: {e}")
+        print(f"Failed to send email: {e}")
         # Don't fail the request if email fails
     
     # Return the created member (without sensitive data)
+    if use_parent_email:
+        message = f"Family member added successfully. Notifications will be sent to your email ({parent_email})"
+    else:
+        message = f"Family member added successfully. Login credentials sent to {member_email}"
+    
     return {
         "success": True,
-        "message": f"Family member added successfully. Login credentials sent to {member_data.email}",
+        "message": message,
         "member": {
             "id": member_id,
             "fullName": member_data.fullName,
-            "email": member_data.email,
+            "email": member_email,
             "yearOfBirth": member_data.yearOfBirth,
             "relationship": member_data.relationship,
-            "primaryAccountId": user["_id"]
+            "primaryAccountId": user["_id"],
+            "useParentEmail": use_parent_email,
+            "parentEmail": parent_email if use_parent_email else None
         }
     }
 
