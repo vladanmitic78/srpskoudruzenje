@@ -363,17 +363,6 @@ const AdminFamilyManagement = ({ t, users = [] }) => {
               </div>
               
               <div className="space-y-2">
-                <Label>{t('admin.family.email') || 'Email'} *</Label>
-                <Input
-                  type="email"
-                  required
-                  value={memberForm.email}
-                  onChange={(e) => setMemberForm({...memberForm, email: e.target.value})}
-                  placeholder="member@email.com"
-                />
-              </div>
-              
-              <div className="space-y-2">
                 <Label>{t('admin.family.yearOfBirth') || 'Year of Birth'} *</Label>
                 <Input
                   type="number"
@@ -383,6 +372,21 @@ const AdminFamilyManagement = ({ t, users = [] }) => {
                   value={memberForm.yearOfBirth}
                   onChange={(e) => setMemberForm({...memberForm, yearOfBirth: e.target.value})}
                   placeholder="2010"
+                />
+              </div>
+              
+              <div className="space-y-2">
+                <Label>
+                  {t('admin.family.email') || 'Email'}
+                  {memberForm.yearOfBirth && (new Date().getFullYear() - parseInt(memberForm.yearOfBirth)) >= 18 
+                    ? ' *' 
+                    : ` (${t('admin.family.optionalForChildren') || 'optional for children under 18'})`}
+                </Label>
+                <Input
+                  type="email"
+                  value={memberForm.email}
+                  onChange={(e) => setMemberForm({...memberForm, email: e.target.value})}
+                  placeholder="member@email.com"
                 />
               </div>
               
@@ -437,7 +441,9 @@ const AdminFamilyManagement = ({ t, users = [] }) => {
             
             <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg p-3">
               <p className="text-sm text-yellow-800 dark:text-yellow-200">
-                📧 {t('admin.family.credentialsNote') || 'Login credentials will be automatically sent to the email address provided.'}
+                {memberForm.yearOfBirth && (new Date().getFullYear() - parseInt(memberForm.yearOfBirth)) < 18 && !memberForm.email
+                  ? `📧 ${t('admin.family.childNotice') || "Since this is a child under 18 without email, all notifications will be sent to the parent's email address."}`
+                  : `📧 ${t('admin.family.credentialsNote') || 'Login credentials will be automatically sent to the email address provided.'}`}
               </p>
             </div>
             
