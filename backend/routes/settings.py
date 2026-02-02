@@ -57,10 +57,10 @@ async def get_hero_background(request: Request):
     }
     
     if not settings or "heroBackground" not in settings:
-        return default_hero
-    
-    hero = settings.get("heroBackground", default_hero)
-    hero["availableBackgrounds"] = DEFAULT_HERO_BACKGROUNDS
+        hero = default_hero
+    else:
+        hero = settings.get("heroBackground", default_hero)
+        hero["availableBackgrounds"] = DEFAULT_HERO_BACKGROUNDS
     
     # Get the URL based on selection
     selected_id = hero.get("selectedId", "serbian_swedish_2")
