@@ -81,16 +81,39 @@ const Home = () => {
 
   return (
     <div className="min-h-screen">
-      {/* Hero Section with Slider */}
+      {/* Hero Section with Dynamic Background */}
       <section className="relative bg-gradient-to-br from-blue-50 via-white to-blue-50 dark:from-gray-800 dark:via-gray-900 dark:to-gray-800 py-20 md:py-32 overflow-hidden">
-        <div className="absolute inset-0 opacity-5">
-          <div className="absolute inset-0" style={{
-            backgroundImage: `url(/logo.jpg)`,
-            backgroundSize: '200px',
-            backgroundRepeat: 'repeat',
-            backgroundPosition: 'center'
-          }} />
-        </div>
+        {/* Dynamic Background Pattern */}
+        {heroBackground.backgroundUrl && (
+          <div 
+            className="absolute inset-0"
+            style={{
+              opacity: heroBackground.opacity || 0.15
+            }}
+          >
+            <div 
+              className="absolute inset-0" 
+              style={{
+                backgroundImage: `url(${heroBackground.backgroundUrl})`,
+                backgroundSize: heroBackground.backgroundUrl.includes('logo') ? '200px' : 'cover',
+                backgroundRepeat: heroBackground.backgroundUrl.includes('logo') ? 'repeat' : 'no-repeat',
+                backgroundPosition: 'center'
+              }} 
+            />
+          </div>
+        )}
+        
+        {/* Fallback pattern if no background */}
+        {!heroBackground.backgroundUrl && (
+          <div className="absolute inset-0 opacity-5">
+            <div className="absolute inset-0" style={{
+              backgroundImage: `url(/logo.jpg)`,
+              backgroundSize: '200px',
+              backgroundRepeat: 'repeat',
+              backgroundPosition: 'center'
+            }} />
+          </div>
+        )}
         
         <div className="container mx-auto px-4 relative z-10">
           <div className="max-w-4xl mx-auto text-center space-y-8">
