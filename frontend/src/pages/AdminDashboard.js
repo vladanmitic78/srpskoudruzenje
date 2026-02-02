@@ -897,10 +897,10 @@ const AdminDashboard = () => {
     }
   };
 
-  const handleDownloadInvoiceFile = async (invoiceId, fileName) => {
+  const handleDownloadInvoiceFile = async (fileUrl, fileName) => {
     try {
       const response = await fetch(
-        `${process.env.REACT_APP_BACKEND_URL}/api/invoices/${invoiceId}/file/download`,
+        `${process.env.REACT_APP_BACKEND_URL}${fileUrl}`,
         {
           method: 'GET',
           headers: {
@@ -917,7 +917,7 @@ const AdminDashboard = () => {
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = fileName || 'invoice-file';
+      a.download = fileName || 'invoice.pdf';
       document.body.appendChild(a);
       a.click();
       window.URL.revokeObjectURL(url);
