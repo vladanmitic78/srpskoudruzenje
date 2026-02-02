@@ -67,6 +67,13 @@ async def create_invoice(
         pdf_filename = f"{invoice_id}.pdf"
         pdf_path = INVOICES_DIR / pdf_filename
         
+        # Fetch bank details from database
+        bank_details_doc = await db.settings.find_one({"_id": "bank_details"})
+        bank_details = None
+        if bank_details_doc:
+            bank_details_doc.pop("_id", None)
+            bank_details = bank_details_doc
+        
         generate_invoice_pdf(
             invoice_id=invoice_id,
             member_name=user.get("fullName", user.get("username", "Member")),
@@ -77,7 +84,8 @@ async def create_invoice(
             due_date=invoice.dueDate,
             created_at=created_at.isoformat(),
             output_path=str(pdf_path),
-            status="unpaid"
+            status="unpaid",
+            bank_details=bank_details
         )
         
         # Store the file URL and filename in the invoice
