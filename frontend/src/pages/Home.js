@@ -117,44 +117,47 @@ const Home = () => {
         
         <div className="container mx-auto px-4 relative z-10">
           <div className="max-w-4xl mx-auto text-center space-y-8">
-            <div className="flex justify-center items-center space-x-6 mb-8">
-              <button
-                onClick={switchToSerbian}
-                className="animate-wave cursor-pointer hover:scale-105 transition-transform duration-300 focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] rounded-lg"
-                title={t('common.switchToSerbian') || 'Switch to Serbian'}
-                aria-label="Switch to Serbian"
-              >
-                <img 
-                  src="https://upload.wikimedia.org/wikipedia/commons/f/ff/Flag_of_Serbia.svg" 
-                  alt="Serbian Flag" 
-                  className={`h-20 w-32 object-cover rounded-lg shadow-lg border-4 transition-all ${
-                    language === 'sr-cyrillic' ? 'border-[var(--color-primary)]' : 'border-white hover:border-[var(--color-primary)]/50'
-                  }`}
-                />
-              </button>
-              <button
-                onClick={switchToSwedish}
-                className="animate-wave cursor-pointer hover:scale-105 transition-transform duration-300 focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] rounded-lg"
-                style={{ animationDelay: '0.2s' }}
-                title={t('common.switchToSwedish') || 'Switch to Swedish'}
-                aria-label="Switch to Swedish"
-              >
-                <img 
-                  src="https://upload.wikimedia.org/wikipedia/en/4/4c/Flag_of_Sweden.svg" 
-                  alt="Swedish Flag" 
-                  className={`h-20 w-32 object-cover rounded-lg shadow-lg border-4 transition-all ${
-                    language === 'sv' ? 'border-[var(--color-primary)]' : 'border-white hover:border-[var(--color-primary)]/50'
-                  }`}
-                />
-              </button>
-            </div>
+            {/* Dark backdrop for flags and welcome text */}
+            <div className="inline-block bg-black/60 backdrop-blur-sm rounded-2xl px-12 py-8 shadow-2xl">
+              <div className="flex justify-center items-center space-x-6 mb-6">
+                <button
+                  onClick={switchToSerbian}
+                  className="animate-wave cursor-pointer hover:scale-105 transition-transform duration-300 focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] rounded-lg"
+                  title={t('common.switchToSerbian') || 'Switch to Serbian'}
+                  aria-label="Switch to Serbian"
+                >
+                  <img 
+                    src="https://upload.wikimedia.org/wikipedia/commons/f/ff/Flag_of_Serbia.svg" 
+                    alt="Serbian Flag" 
+                    className={`h-20 w-32 object-cover rounded-lg shadow-lg border-4 transition-all ${
+                      language === 'sr-cyrillic' ? 'border-[var(--color-primary)]' : 'border-white hover:border-[var(--color-primary)]/50'
+                    }`}
+                  />
+                </button>
+                <button
+                  onClick={switchToSwedish}
+                  className="animate-wave cursor-pointer hover:scale-105 transition-transform duration-300 focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] rounded-lg"
+                  style={{ animationDelay: '0.2s' }}
+                  title={t('common.switchToSwedish') || 'Switch to Swedish'}
+                  aria-label="Switch to Swedish"
+                >
+                  <img 
+                    src="https://upload.wikimedia.org/wikipedia/en/4/4c/Flag_of_Sweden.svg" 
+                    alt="Swedish Flag" 
+                    className={`h-20 w-32 object-cover rounded-lg shadow-lg border-4 transition-all ${
+                      language === 'sv' ? 'border-[var(--color-primary)]' : 'border-white hover:border-[var(--color-primary)]/50'
+                    }`}
+                  />
+                </button>
+              </div>
 
-            <h1 className="text-4xl md:text-6xl font-bold text-[var(--color-secondary)] dark:text-[var(--color-primary)] leading-tight">
-              {t('home.welcome')}
-            </h1>
-            <p className="text-xl md:text-2xl text-gray-700 dark:text-gray-300">
-              {t('home.organizationName')}
-            </p>
+              <h1 className="text-4xl md:text-6xl font-bold text-white leading-tight">
+                {t('home.welcome')}
+              </h1>
+              <p className="text-xl md:text-2xl text-gray-200 mt-4">
+                {t('home.organizationName')}
+              </p>
+            </div>
             
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-6">
               <Button 
