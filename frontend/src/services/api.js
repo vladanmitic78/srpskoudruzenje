@@ -196,6 +196,11 @@ export const invoicesAPI = {
     const response = await api.delete(`/invoices/${id}`);
     return response.data;
   },
+  
+  update: async (id, invoiceData) => {
+    const response = await api.put(`/invoices/${id}`, invoiceData);
+    return response.data;
+  },
 };
 
 // ==================== Gallery APIs ====================
