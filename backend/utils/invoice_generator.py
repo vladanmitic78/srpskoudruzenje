@@ -369,7 +369,7 @@ def generate_invoice_pdf(
     </font>
     """
     
-    content.append(Paragraph(footer_text, ParagraphStyle('Footer', alignment=TA_CENTER, fontSize=8, textColor=colors.grey)))
+    content.append(Paragraph(footer_text, ParagraphStyle('Footer', alignment=TA_CENTER, fontSize=8, textColor=colors.grey, fontName=FONT_NORMAL)))
     
     # ===== DECORATIVE BOTTOM LINE =====
     content.append(Spacer(1, 5*mm))
