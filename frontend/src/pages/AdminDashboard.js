@@ -3872,21 +3872,18 @@ const AdminDashboard = () => {
                   <div className="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-4">
                     <label className="text-xs text-gray-500 uppercase tracking-wide">Attached File</label>
                     <div className="flex gap-3 mt-2">
-                      <a
-                        href={`${process.env.REACT_APP_BACKEND_URL}${viewingInvoice.fileUrl}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
+                      <button
+                        onClick={() => handleDownloadInvoiceFile(viewingInvoice.fileUrl, viewingInvoice.fileName)}
                         className="flex-1 px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 text-center"
                       >
                         👁️ View File
-                      </a>
-                      <a
-                        href={`${process.env.REACT_APP_BACKEND_URL}${viewingInvoice.fileUrl}`}
-                        download
+                      </button>
+                      <button
+                        onClick={() => handleDownloadInvoiceFile(viewingInvoice.fileUrl, viewingInvoice.fileName)}
                         className="flex-1 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 text-center"
                       >
                         📥 Download File
-                      </a>
+                      </button>
                     </div>
                   </div>
                 )}
