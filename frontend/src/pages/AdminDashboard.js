@@ -1447,25 +1447,25 @@ const AdminDashboard = () => {
                                         rel="noopener noreferrer"
                                         className="px-2 py-1 bg-green-600 text-white text-xs rounded hover:bg-green-700 text-center"
                                       >
-                                        👁️ {t('admin.actions.view') || 'View'}
+                                        👁️ View
                                       </a>
                                       <a
                                         href={`${process.env.REACT_APP_BACKEND_URL}${invoice.fileUrl}`}
                                         download
                                         className="px-2 py-1 bg-blue-600 text-white text-xs rounded hover:bg-blue-700 text-center"
                                       >
-                                        📥 {t('admin.actions.download')}
+                                        📥 Download
                                       </a>
                                       <button
                                         onClick={() => handleDeleteInvoiceFile(invoice.id)}
-                                        className="px-2 py-1 bg-gray-600 text-white text-xs rounded hover:bg-gray-700"
+                                        className="px-2 py-1 bg-gray-500 text-white text-xs rounded hover:bg-gray-600"
                                       >
-                                        🗑️ {t('admin.actions.remove')}
+                                        ✕ Remove
                                       </button>
                                     </>
                                   ) : (
                                     <label className="px-2 py-1 bg-purple-600 text-white text-xs rounded hover:bg-purple-700 cursor-pointer text-center">
-                                      📤 {t('admin.actions.upload')}
+                                      📤 Upload
                                       <input
                                         type="file"
                                         accept=".pdf,.doc,.docx,.xlsx,.xls,.jpg,.jpeg,.png"
@@ -1477,13 +1477,13 @@ const AdminDashboard = () => {
                                 </div>
                               </td>
                               <td className="p-3">
-                                <div className="flex gap-2 flex-wrap">
+                                <div className="flex gap-1 flex-wrap">
                                   <button
                                     onClick={() => setViewingInvoice(invoice)}
-                                    className="px-3 py-1 bg-purple-600 text-white text-xs rounded hover:bg-purple-700"
+                                    className="px-2 py-1 bg-purple-600 text-white text-xs rounded hover:bg-purple-700"
                                     title="View invoice details"
                                   >
-                                    👁️ {t('admin.actions.details') || 'Details'}
+                                    👁️
                                   </button>
                                   <button
                                     onClick={() => {
@@ -1494,16 +1494,18 @@ const AdminDashboard = () => {
                                         setEditInvoiceOpen(true);
                                       }
                                     }}
-                                    className="px-3 py-1 bg-blue-600 text-white text-xs rounded hover:bg-blue-700"
+                                    className="px-2 py-1 bg-blue-600 text-white text-xs rounded hover:bg-blue-700"
+                                    title="Edit invoice"
                                   >
-                                    ✏️ {t('admin.actions.edit')}
+                                    ✏️
                                   </button>
                                   {invoice.status === 'unpaid' && (
                                     <button
                                       onClick={() => handleMarkPaid(invoice.id)}
-                                      className="px-3 py-1 bg-green-600 text-white text-xs rounded hover:bg-green-700"
+                                      className="px-2 py-1 bg-green-600 text-white text-xs rounded hover:bg-green-700"
+                                      title="Mark as paid"
                                     >
-                                      ✅ {t('admin.actions.markPaid')}
+                                      ✅
                                     </button>
                                   )}
                                   <button
@@ -1519,9 +1521,10 @@ const AdminDashboard = () => {
                                         }
                                       }
                                     }}
-                                    className="px-3 py-1 bg-red-600 text-white text-xs rounded hover:bg-red-700"
+                                    className="px-2 py-1 bg-red-600 text-white text-xs rounded hover:bg-red-700"
+                                    title="Delete invoice"
                                   >
-                                    🗑️ {t('admin.actions.delete')}
+                                    🗑️
                                   </button>
                                 </div>
                               </td>
