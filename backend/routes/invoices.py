@@ -67,6 +67,52 @@ async def mark_invoice_paid(
     
     return {"success": True, "message": "Invoice marked as paid"}
 
+@router.put("/{invoice_id}")
+async def update_invoice(
+    invoice_id: str,
+    invoice_data: dict,
+    admin: dict = Depends(get_admin_user),
+    request: Request = None
+):
+    """Update invoice details (Admin only)"""
+    db = request.app.state.db
+    
+    # Check if invoice exists
+    existing = await db.invoices.find_one({"_id": invoice_id})
+    if not existing:
+        raise HTTPException(status_code=404, detail="Invoice not found")
+    
+    # Don't allow editing paid invoices
+    if existing.get("status") == "paid":
+        raise HTTPException(status_code=400, detail="Cannot edit a paid invoice")
+    
+    # Build update data - only allow specific fields
+    update_fields = {}
+    allowed_fields = ["description", "amount", "currency", "dueDate", "userId"]
+    
+    for field in allowed_fields:
+        if field in invoice_data:
+            update_fields[field] = invoice_data[field]
+    
+    if not update_fields:
+        raise HTTPException(status_code=400, detail="No valid fields to update")
+    
+    update_fields["updatedAt"] = datetime.utcnow()
+    
+    result = await db.invoices.update_one(
+        {"_id": invoice_id},
+        {"$set": update_fields}
+    )
+    
+    if result.matched_count == 0:
+        raise HTTPException(status_code=404, detail="Invoice not found")
+    
+    # Return updated invoice
+    updated = await db.invoices.find_one({"_id": invoice_id})
+    updated["id"] = str(updated["_id"])
+    
+    return {"success": True, "message": "Invoice updated successfully", "invoice": updated}
+
 @router.delete("/{invoice_id}")
 async def delete_invoice(
     invoice_id: str,
