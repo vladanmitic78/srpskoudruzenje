@@ -47,7 +47,7 @@ async def register(user_data: UserCreate, request: Request):
     
     # Send verification email
     # Get frontend URL from environment or use production URL
-    frontend_url = os.environ.get('FRONTEND_URL', 'https://heritage-portal-7.preview.emergentagent.com')
+    frontend_url = os.environ.get('FRONTEND_URL', 'https://skud-member-portal.preview.emergentagent.com')
     verification_link = f"{frontend_url}/verify-email?token={verification_token}"
     html_content, text_content = get_verification_email_template(
         user_data.fullName,
