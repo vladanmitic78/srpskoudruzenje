@@ -1,12 +1,18 @@
 from fastapi import APIRouter, Depends, HTTPException, Request, UploadFile, File
 from datetime import datetime
 import shutil
+import os
 from pathlib import Path
 
 from models import InvoiceCreate, InvoiceResponse, InvoiceMarkPaid
 from dependencies import get_admin_user, get_current_user
+from utils.invoice_generator import generate_invoice_pdf
 
 router = APIRouter()
+
+# Ensure invoices directory exists
+INVOICES_DIR = Path("/app/uploads/invoices")
+INVOICES_DIR.mkdir(parents=True, exist_ok=True)
 
 @router.get("/my")
 async def get_my_invoices(current_user: dict = Depends(get_current_user), request: Request = None):
@@ -36,13 +42,52 @@ async def create_invoice(
     admin: dict = Depends(get_admin_user),
     request: Request = None
 ):
-    """Create invoice for a user (Admin only)"""
+    """Create invoice for a user (Admin only) - Auto-generates PDF"""
     db = request.app.state.db
+    
+    # Get user details for the invoice
+    user = await db.users.find_one({"_id": invoice.userId})
+    if not user:
+        user = await db.users.find_one({"id": invoice.userId})
+    
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    invoice_id = f"invoice_{int(datetime.utcnow().timestamp() * 1000)}"
+    created_at = datetime.utcnow()
+    
     invoice_dict = invoice.dict()
-    invoice_dict["_id"] = f"invoice_{int(datetime.utcnow().timestamp() * 1000)}"
+    invoice_dict["_id"] = invoice_id
     invoice_dict["status"] = "unpaid"
     invoice_dict["paymentDate"] = None
-    invoice_dict["createdAt"] = datetime.utcnow()
+    invoice_dict["createdAt"] = created_at
+    
+    # Generate PDF invoice
+    try:
+        pdf_filename = f"{invoice_id}.pdf"
+        pdf_path = INVOICES_DIR / pdf_filename
+        
+        generate_invoice_pdf(
+            invoice_id=invoice_id,
+            member_name=user.get("fullName", user.get("username", "Member")),
+            member_email=user.get("email", ""),
+            description=invoice.description,
+            amount=float(invoice.amount),
+            currency=invoice.currency or "SEK",
+            due_date=invoice.dueDate,
+            created_at=created_at.isoformat(),
+            output_path=str(pdf_path),
+            status="unpaid"
+        )
+        
+        # Store the file URL in the invoice
+        invoice_dict["fileUrl"] = f"/api/invoices/files/{pdf_filename}"
+        invoice_dict["pdfGenerated"] = True
+        
+    except Exception as e:
+        print(f"Failed to generate PDF: {e}")
+        invoice_dict["fileUrl"] = None
+        invoice_dict["pdfGenerated"] = False
     
     await db.invoices.insert_one(invoice_dict)
     
