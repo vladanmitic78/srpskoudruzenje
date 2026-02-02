@@ -165,7 +165,9 @@ class TestInvoicePDFGeneration:
         """Test GET /api/invoices/files/{filename} - View PDF file"""
         # First create an invoice to get a valid filename
         invoice = self.test_05_create_invoice_with_pdf()
-        filename = invoice["fileName"]
+        # Extract filename from fileUrl
+        filename = invoice["fileUrl"].split("/")[-1] if invoice.get("fileUrl") else None
+        assert filename, "No filename found in invoice"
         
         # Try to access the PDF file
         response = self.session.get(f"{BASE_URL}/api/invoices/files/{filename}")
@@ -206,8 +208,8 @@ class TestInvoicePDFGeneration:
         data = response.json()
         assert "invoices" in data
         
-        # Check if any invoices have PDF generated
-        invoices_with_pdf = [inv for inv in data["invoices"] if inv.get("pdfGenerated")]
+        # Check if any invoices have PDF generated (fileUrl present)
+        invoices_with_pdf = [inv for inv in data["invoices"] if inv.get("fileUrl")]
         print(f"✅ Found {len(data['invoices'])} total invoices, {len(invoices_with_pdf)} with PDF")
     
     def test_09_bank_details_appear_in_pdf(self):
