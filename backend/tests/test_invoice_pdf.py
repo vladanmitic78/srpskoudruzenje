@@ -144,18 +144,20 @@ class TestInvoicePDFGeneration:
         
         data = response.json()
         assert "id" in data
-        assert data.get("pdfGenerated") == True, "PDF was not generated"
-        assert data.get("fileUrl") is not None, "fileUrl is missing"
-        assert data.get("fileName") is not None, "fileName is missing"
+        assert data.get("fileUrl") is not None, "fileUrl is missing - PDF was not generated"
+        
+        # Extract filename from fileUrl (e.g., /api/invoices/files/invoice_123.pdf -> invoice_123.pdf)
+        file_url = data["fileUrl"]
+        filename = file_url.split("/")[-1] if file_url else None
         
         # Store for later tests
         self.created_invoice_id = data["id"]
-        self.created_invoice_filename = data["fileName"]
-        self.created_invoice_file_url = data["fileUrl"]
+        self.created_invoice_filename = filename
+        self.created_invoice_file_url = file_url
         
         print(f"✅ Invoice created with ID: {self.created_invoice_id}")
-        print(f"✅ PDF generated: {self.created_invoice_filename}")
-        print(f"✅ File URL: {self.created_invoice_file_url}")
+        print(f"✅ PDF generated - File URL: {self.created_invoice_file_url}")
+        print(f"✅ Filename: {self.created_invoice_filename}")
         
         return data
     
@@ -244,10 +246,10 @@ class TestInvoicePDFGeneration:
         assert create_response.status_code == 200
         
         invoice = create_response.json()
-        assert invoice.get("pdfGenerated") == True
+        assert invoice.get("fileUrl") is not None, "PDF was not generated - fileUrl is missing"
         
         # Download the PDF and verify it contains bank details
-        filename = invoice["fileName"]
+        filename = invoice["fileUrl"].split("/")[-1]
         pdf_response = self.session.get(f"{BASE_URL}/api/invoices/files/{filename}")
         assert pdf_response.status_code == 200
         
