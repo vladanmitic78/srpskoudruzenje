@@ -95,3 +95,26 @@ Build and maintain a comprehensive membership management platform for the Serbia
 ### P3 - Future Enhancements
 - Enhanced reporting and analytics
 - Bulk operations for member management
+
+## Recent Updates (Feb 2, 2026)
+
+### PDF Invoice Auto-Generation (COMPLETED)
+- **Feature**: Automatic PDF invoice generation when admin creates an invoice
+- **Bank Details Management**: Super Admins can configure bank details (Bank Name, Account Holder, IBAN, BIC/SWIFT, Bankgiro, Org Number, Swish) via Platform Settings → Bank Details section
+- **PDF Contents**: Professional template with Serbian cultural branding, member info, amount, due date, payment status, and bank details
+- **File Access**: View and Download buttons on invoices table
+- **Backend Files**:
+  - `/app/backend/utils/invoice_generator.py` - PDF generation using reportlab
+  - `/app/backend/routes/invoices.py` - Lines 39-103 (create), Lines 303-334 (file serving)
+  - `/app/backend/routes/admin.py` - Bank details endpoints (GET/PUT /api/admin/bank-details)
+- **Frontend Files**:
+  - `/app/frontend/src/pages/AdminDashboard.js` - Bank Details UI in Platform Settings tab
+- **Database**: Bank details stored in MongoDB `settings` collection with `_id='bank_details'`
+- **PDF Storage**: `/app/uploads/invoices/` directory
+- **API Endpoints**:
+  - `POST /api/invoices/` - Creates invoice with auto-generated PDF
+  - `GET /api/invoices/files/{filename}` - Serves PDF files
+  - `GET /api/admin/bank-details` - Returns bank details
+  - `PUT /api/admin/bank-details` - Updates bank details (Super Admin only)
+- **Testing**: All 14 backend tests passed, frontend verified working
+- **Test Files**: `/app/backend/tests/test_invoice_pdf.py`
