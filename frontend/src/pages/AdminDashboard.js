@@ -3650,6 +3650,136 @@ const AdminDashboard = () => {
           </DialogContent>
         </Dialog>
 
+        {/* Invoice Details/View Dialog */}
+        <Dialog open={!!viewingInvoice} onOpenChange={(open) => !open && setViewingInvoice(null)}>
+          <DialogContent className="max-w-2xl">
+            <DialogHeader>
+              <DialogTitle className="flex items-center gap-2">
+                📄 Invoice Details
+                {viewingInvoice?.status === 'paid' ? (
+                  <span className="px-3 py-1 rounded-full text-xs font-semibold bg-green-100 text-green-800">PAID</span>
+                ) : (
+                  <span className="px-3 py-1 rounded-full text-xs font-semibold bg-red-100 text-red-800">UNPAID</span>
+                )}
+              </DialogTitle>
+            </DialogHeader>
+            {viewingInvoice && (
+              <div className="space-y-6">
+                {/* Invoice Header */}
+                <div className="bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-secondary)] text-white p-6 rounded-lg">
+                  <div className="flex justify-between items-start">
+                    <div>
+                      <h2 className="text-2xl font-bold">SKUD Täby</h2>
+                      <p className="text-sm opacity-90">Srpsko Kulturno Udruženje Täby</p>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-sm opacity-90">Invoice #</p>
+                      <p className="font-mono font-bold">{viewingInvoice.id?.slice(-8).toUpperCase()}</p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Invoice Details */}
+                <div className="grid grid-cols-2 gap-6">
+                  <div className="space-y-4">
+                    <div>
+                      <label className="text-xs text-gray-500 uppercase tracking-wide">Billed To</label>
+                      <p className="font-semibold text-lg">{getUserName(viewingInvoice.userId)}</p>
+                    </div>
+                    <div>
+                      <label className="text-xs text-gray-500 uppercase tracking-wide">Description</label>
+                      <p className="font-medium">{viewingInvoice.description}</p>
+                    </div>
+                  </div>
+                  <div className="space-y-4">
+                    <div>
+                      <label className="text-xs text-gray-500 uppercase tracking-wide">Due Date</label>
+                      <p className="font-semibold">{viewingInvoice.dueDate}</p>
+                    </div>
+                    {viewingInvoice.paymentDate && (
+                      <div>
+                        <label className="text-xs text-gray-500 uppercase tracking-wide">Payment Date</label>
+                        <p className="font-semibold text-green-600">{viewingInvoice.paymentDate}</p>
+                      </div>
+                    )}
+                    <div>
+                      <label className="text-xs text-gray-500 uppercase tracking-wide">Created</label>
+                      <p className="text-sm">{new Date(viewingInvoice.createdAt).toLocaleDateString()}</p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Amount */}
+                <div className="bg-gray-100 dark:bg-gray-800 p-6 rounded-lg">
+                  <div className="flex justify-between items-center">
+                    <span className="text-lg font-medium">Total Amount</span>
+                    <span className="text-3xl font-bold text-[var(--color-primary)]">
+                      {viewingInvoice.amount} {viewingInvoice.currency || 'SEK'}
+                    </span>
+                  </div>
+                </div>
+
+                {/* File Section */}
+                {viewingInvoice.fileUrl && (
+                  <div className="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-4">
+                    <label className="text-xs text-gray-500 uppercase tracking-wide">Attached File</label>
+                    <div className="flex gap-3 mt-2">
+                      <a
+                        href={`${process.env.REACT_APP_BACKEND_URL}${viewingInvoice.fileUrl}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex-1 px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 text-center"
+                      >
+                        👁️ View File
+                      </a>
+                      <a
+                        href={`${process.env.REACT_APP_BACKEND_URL}${viewingInvoice.fileUrl}`}
+                        download
+                        className="flex-1 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 text-center"
+                      >
+                        📥 Download File
+                      </a>
+                    </div>
+                  </div>
+                )}
+
+                {/* Actions */}
+                <div className="flex gap-3 pt-4 border-t">
+                  {viewingInvoice.status === 'unpaid' && (
+                    <>
+                      <button
+                        onClick={() => {
+                          setEditingInvoice(viewingInvoice);
+                          setEditInvoiceOpen(true);
+                          setViewingInvoice(null);
+                        }}
+                        className="flex-1 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+                      >
+                        ✏️ Edit Invoice
+                      </button>
+                      <button
+                        onClick={async () => {
+                          await handleMarkPaid(viewingInvoice.id);
+                          setViewingInvoice(null);
+                        }}
+                        className="flex-1 px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
+                      >
+                        ✅ Mark as Paid
+                      </button>
+                    </>
+                  )}
+                  <button
+                    onClick={() => setViewingInvoice(null)}
+                    className="flex-1 px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700"
+                  >
+                    Close
+                  </button>
+                </div>
+              </div>
+            )}
+          </DialogContent>
+        </Dialog>
+
         {/* User Details Dialog */}
         <Dialog open={userDetailsOpen} onOpenChange={setUserDetailsOpen}>
           <DialogContent className="max-w-3xl max-h-[80vh] overflow-y-auto">
