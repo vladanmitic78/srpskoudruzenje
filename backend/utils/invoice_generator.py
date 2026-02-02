@@ -186,26 +186,26 @@ def generate_invoice_pdf(
         except:
             logo_element = None
     
-    # Organization info
+    # Organization info - using font face for Serbian character support
     org_info = f"""
-    <font size="16" color="#{PRIMARY_COLOR.hexval()[2:]}"><b>{ORG_DETAILS['name_short']}</b></font><br/>
-    <font size="9" color="#666666">{ORG_DETAILS['name']}</font><br/>
-    <font size="9" color="#666666">{ORG_DETAILS['address']}</font>
+    <font face="{FONT_BOLD}" size="16" color="#{PRIMARY_COLOR.hexval()[2:]}">{ORG_DETAILS['name_short']}</font><br/>
+    <font face="{FONT_NORMAL}" size="9" color="#666666">{ORG_DETAILS['name']}</font><br/>
+    <font face="{FONT_NORMAL}" size="9" color="#666666">{ORG_DETAILS['address']}</font>
     """
     
     # Invoice label
     invoice_label = f"""
-    <font size="24" color="#{PRIMARY_COLOR.hexval()[2:]}"><b>FAKTURA</b></font><br/>
-    <font size="10" color="#666666">Invoice / Račun</font>
+    <font face="{FONT_BOLD}" size="24" color="#{PRIMARY_COLOR.hexval()[2:]}">FAKTURA</font><br/>
+    <font face="{FONT_NORMAL}" size="10" color="#666666">Invoice / Račun</font>
     """
     
     if logo_element:
         header_table = Table([
-            [logo_element, Paragraph(org_info, normal_style), Paragraph(invoice_label, ParagraphStyle('Right', alignment=TA_RIGHT, fontSize=10))]
+            [logo_element, Paragraph(org_info, normal_style), Paragraph(invoice_label, ParagraphStyle('Right', alignment=TA_RIGHT, fontSize=10, fontName=FONT_NORMAL))]
         ], colWidths=[30*mm, 80*mm, 60*mm])
     else:
         header_table = Table([
-            [Paragraph(org_info, normal_style), '', Paragraph(invoice_label, ParagraphStyle('Right', alignment=TA_RIGHT, fontSize=10))]
+            [Paragraph(org_info, normal_style), '', Paragraph(invoice_label, ParagraphStyle('Right', alignment=TA_RIGHT, fontSize=10, fontName=FONT_NORMAL))]
         ], colWidths=[80*mm, 30*mm, 60*mm])
     
     header_table.setStyle(TableStyle([
