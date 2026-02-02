@@ -671,6 +671,17 @@ const AdminDashboard = () => {
     }
   });
 
+  // Super Admin - Bank Details for PDF Invoices
+  const [bankDetails, setBankDetails] = useState({
+    bankName: '',
+    accountHolder: 'Srpsko Kulturno Udruženje Täby',
+    iban: '',
+    bicSwift: '',
+    bankgiro: '',
+    orgNumber: '',
+    swish: ''
+  });
+
   const [logoPreview, setLogoPreview] = useState('');
   const [uploadingLogo, setUploadingLogo] = useState(false);
 
