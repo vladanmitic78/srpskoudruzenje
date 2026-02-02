@@ -364,6 +364,40 @@ async def update_platform_settings(
     return {"success": True, "message": "Platform settings updated successfully"}
 
 # Branding Settings Routes
+# Default hero backgrounds - Serbian-Swedish fusion patterns
+DEFAULT_HERO_BACKGROUNDS = [
+    {
+        "id": "serbian_swedish_1",
+        "name": "Serbian-Swedish Folk Art Fusion",
+        "url": "https://static.prod-images.emergentagent.com/jobs/912f6a5f-72f1-48e7-83f3-67436c52fa1c/images/55748851d8f8eae040b3b350010e2fd2d49583edf32844dafdb8fa5af6ff5d63.png",
+        "description": "Elegant pattern with Serbian geometric diamonds and Swedish Dala floral elements"
+    },
+    {
+        "id": "serbian_swedish_2", 
+        "name": "Cultural Heritage Pattern",
+        "url": "https://static.prod-images.emergentagent.com/jobs/912f6a5f-72f1-48e7-83f3-67436c52fa1c/images/00d305c9d7506067bfb941e1cb48738a1aeff07fdf2586daee6c638dd66097da.png",
+        "description": "Traditional Serbian embroidery meets Swedish folk art with roses and geometric shapes"
+    },
+    {
+        "id": "serbian_swedish_3",
+        "name": "Minimalist Heritage",
+        "url": "https://static.prod-images.emergentagent.com/jobs/912f6a5f-72f1-48e7-83f3-67436c52fa1c/images/9ee671f18ccb4058f5f72e0edc473fa47f47629fdf06fd9bf22cbfa86372c5bf.png",
+        "description": "Modern interpretation of Balkan and Nordic folk motifs"
+    },
+    {
+        "id": "logo_pattern",
+        "name": "Logo Pattern",
+        "url": "/logo.jpg",
+        "description": "Subtle repeating logo pattern"
+    },
+    {
+        "id": "solid_gradient",
+        "name": "Solid Gradient",
+        "url": "",
+        "description": "Clean gradient without pattern"
+    }
+]
+
 @router.get("/branding")
 async def get_branding_settings(
     superadmin: dict = Depends(get_superadmin_user),
@@ -378,6 +412,13 @@ async def get_branding_settings(
         # Return default branding settings if none exist
         return {
             "logo": "",
+            "heroBackground": {
+                "type": "pattern",
+                "selectedId": "serbian_swedish_2",
+                "customUrl": "",
+                "opacity": 0.15,
+                "availableBackgrounds": DEFAULT_HERO_BACKGROUNDS
+            },
             "colors": {
                 "primary": "#C1272D",
                 "secondary": "#8B1F1F",
@@ -407,6 +448,18 @@ async def get_branding_settings(
                 }
             }
         }
+    
+    # Add available backgrounds to response
+    if "heroBackground" not in settings:
+        settings["heroBackground"] = {
+            "type": "pattern",
+            "selectedId": "serbian_swedish_2",
+            "customUrl": "",
+            "opacity": 0.15,
+            "availableBackgrounds": DEFAULT_HERO_BACKGROUNDS
+        }
+    else:
+        settings["heroBackground"]["availableBackgrounds"] = DEFAULT_HERO_BACKGROUNDS
     
     settings.pop("_id", None)
     return settings
