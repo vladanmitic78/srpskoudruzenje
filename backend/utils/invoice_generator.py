@@ -1,6 +1,7 @@
 """
 Professional PDF Invoice Generator for SKUD Täby
 Generates beautiful invoices with Serbian cultural design elements
+Supports Serbian Latin characters (š, ž, đ, č, ć)
 """
 
 import os
@@ -13,8 +14,22 @@ from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, Tabl
 from reportlab.lib.enums import TA_CENTER, TA_RIGHT, TA_LEFT
 from reportlab.pdfgen import canvas
 from reportlab.graphics.shapes import Drawing, Rect, Line
+from reportlab.pdfbase import pdfmetrics
+from reportlab.pdfbase.ttfonts import TTFont
 from io import BytesIO
 import requests
+
+# Register DejaVu fonts for Serbian Latin character support
+DEJAVU_FONT_PATH = "/usr/share/fonts/truetype/dejavu/"
+try:
+    pdfmetrics.registerFont(TTFont('DejaVuSans', f'{DEJAVU_FONT_PATH}DejaVuSans.ttf'))
+    pdfmetrics.registerFont(TTFont('DejaVuSans-Bold', f'{DEJAVU_FONT_PATH}DejaVuSans-Bold.ttf'))
+    FONT_NORMAL = 'DejaVuSans'
+    FONT_BOLD = 'DejaVuSans-Bold'
+except Exception as e:
+    print(f"Warning: Could not load DejaVu fonts, falling back to Helvetica: {e}")
+    FONT_NORMAL = 'Helvetica'
+    FONT_BOLD = 'Helvetica-Bold'
 
 # SKUD Täby Brand Colors
 PRIMARY_COLOR = colors.HexColor('#C1272D')  # Serbian Red
