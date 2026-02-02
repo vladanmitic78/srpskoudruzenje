@@ -338,17 +338,17 @@ def generate_invoice_pdf(
     # Build bank info with Swish if available
     swish_line = ""
     if bd.get('swish'):
-        swish_line = f"<b>Swish:</b> {bd.get('swish')}<br/>"
+        swish_line = f"<font face=\"{FONT_BOLD}\">Swish:</font> {bd.get('swish')}<br/>"
     
     bank_info = f"""
-    <font size="10">
-    <b>Banknamn / Bank:</b> {bd.get('bankName', '____________________')}<br/>
-    <b>Kontoinnehavare / Account Holder:</b> {bd.get('accountHolder', 'Srpsko Kulturno Udruženje Täby')}<br/>
-    <b>IBAN:</b> {bd.get('iban', 'SE__ ____ ____ ____ ____ ____')}<br/>
-    <b>BIC/SWIFT:</b> {bd.get('bicSwift', '________')}<br/>
-    <b>Bankgiro:</b> {bd.get('bankgiro', '___-____')}<br/>
-    {swish_line}<b>Organisationsnummer:</b> {bd.get('orgNumber', '______-____')}<br/><br/>
-    <b>Referens / Reference:</b> {invoice_number}
+    <font face="{FONT_NORMAL}" size="10">
+    <font face="{FONT_BOLD}">Banknamn / Bank:</font> {bd.get('bankName', '____________________')}<br/>
+    <font face="{FONT_BOLD}">Kontoinnehavare:</font> {bd.get('accountHolder', 'Srpsko Kulturno Udruženje Täby')}<br/>
+    <font face="{FONT_BOLD}">IBAN:</font> {bd.get('iban', 'SE__ ____ ____ ____ ____ ____')}<br/>
+    <font face="{FONT_BOLD}">BIC/SWIFT:</font> {bd.get('bicSwift', '________')}<br/>
+    <font face="{FONT_BOLD}">Bankgiro:</font> {bd.get('bankgiro', '___-____')}<br/>
+    {swish_line}<font face="{FONT_BOLD}">Org.nummer:</font> {bd.get('orgNumber', '______-____')}<br/><br/>
+    <font face="{FONT_BOLD}">Referens / Reference:</font> {invoice_number}
     </font>
     """
     
@@ -367,13 +367,11 @@ def generate_invoice_pdf(
     
     # ===== FOOTER =====
     footer_text = f"""
-    <font size="8" color="#666666">
-    <b>{ORG_DETAILS['name']}</b><br/>
-    {ORG_DETAILS['address']} | {ORG_DETAILS['email']} | {ORG_DETAILS['website']}<br/><br/>
-    Vänligen ange fakturanummer ({invoice_number}) som referens vid betalning.<br/>
-    Please use invoice number ({invoice_number}) as reference when making payment.<br/>
-    Molimo navedite broj fakture ({invoice_number}) kao referencu pri plaćanju.
-    </font>
+    <font face="{FONT_BOLD}" size="8" color="#666666">{ORG_DETAILS['name']}</font><br/>
+    <font face="{FONT_NORMAL}" size="8" color="#666666">{ORG_DETAILS['address']} | {ORG_DETAILS['email']} | {ORG_DETAILS['website']}</font><br/><br/>
+    <font face="{FONT_NORMAL}" size="8" color="#666666">Vänligen ange fakturanummer ({invoice_number}) som referens vid betalning.</font><br/>
+    <font face="{FONT_NORMAL}" size="8" color="#666666">Please use invoice number ({invoice_number}) as reference when making payment.</font><br/>
+    <font face="{FONT_NORMAL}" size="8" color="#666666">Molimo navedite broj fakture ({invoice_number}) kao referencu pri plaćanju.</font>
     """
     
     content.append(Paragraph(footer_text, ParagraphStyle('Footer', alignment=TA_CENTER, fontSize=8, textColor=colors.grey, fontName=FONT_NORMAL)))
