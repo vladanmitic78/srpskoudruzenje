@@ -22,14 +22,15 @@ SECONDARY_COLOR = colors.HexColor('#8B1F1F')  # Dark Red
 GOLD_COLOR = colors.HexColor('#D4AF37')  # Gold accent
 BLUE_COLOR = colors.HexColor('#003399')  # Serbian Blue
 
-# Bank Account Details (to be filled when available)
-BANK_DETAILS = {
-    "bank_name": "____________________",
-    "account_holder": "Srpsko Kulturno Udruženje Täby",
+# Default Bank Account Details (fallback if not set in database)
+DEFAULT_BANK_DETAILS = {
+    "bankName": "____________________",
+    "accountHolder": "Srpsko Kulturno Udruženje Täby",
     "iban": "SE__ ____ ____ ____ ____ ____",
-    "bic_swift": "________",
+    "bicSwift": "________",
     "bankgiro": "___-____",
-    "org_number": "______-____",
+    "orgNumber": "______-____",
+    "swish": "",
 }
 
 # Organization Details
