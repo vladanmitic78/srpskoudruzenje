@@ -532,6 +532,57 @@ async def upload_logo(
     
     return {"success": True, "logo": logo_url}
 
+
+# Bank Details Routes (for PDF Invoices)
+
+@router.get("/bank-details")
+async def get_bank_details(
+    admin: dict = Depends(get_admin_user),
+    request: Request = None
+):
+    """Get bank details for invoices (Admin/SuperAdmin)"""
+    db = request.app.state.db
+    
+    settings = await db.settings.find_one({"_id": "bank_details"})
+    
+    if not settings:
+        # Return default placeholders
+        return {
+            "bankName": "",
+            "accountHolder": "Srpsko Kulturno Udruženje Täby",
+            "iban": "",
+            "bicSwift": "",
+            "bankgiro": "",
+            "orgNumber": "",
+            "swish": ""
+        }
+    
+    settings.pop("_id", None)
+    return settings
+
+
+@router.put("/bank-details")
+async def update_bank_details(
+    bank_data: dict,
+    superadmin: dict = Depends(get_superadmin_user),
+    request: Request = None
+):
+    """Update bank details for invoices (Super Admin only)"""
+    db = request.app.state.db
+    
+    # Only allow specific fields
+    allowed_fields = ["bankName", "accountHolder", "iban", "bicSwift", "bankgiro", "orgNumber", "swish"]
+    update_data = {k: v for k, v in bank_data.items() if k in allowed_fields}
+    
+    await db.settings.update_one(
+        {"_id": "bank_details"},
+        {"$set": update_data},
+        upsert=True
+    )
+    
+    return {"success": True, "message": "Bank details updated successfully"}
+
+
 # Role Permissions Routes
 
 
