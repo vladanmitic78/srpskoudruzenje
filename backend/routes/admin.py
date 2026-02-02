@@ -367,6 +367,18 @@ async def update_platform_settings(
 # Default hero backgrounds - Serbian-Swedish fusion patterns
 DEFAULT_HERO_BACKGROUNDS = [
     {
+        "id": "serbian_flag_1",
+        "name": "Serbian Flag with Folk Art",
+        "url": "https://static.prod-images.emergentagent.com/jobs/912f6a5f-72f1-48e7-83f3-67436c52fa1c/images/d2243371e0ec6b2ab6b4dffb395bad94466c877066f6023fae6877c3528ff92f.png",
+        "description": "Serbian flag with traditional embroidery patterns and coat of arms"
+    },
+    {
+        "id": "serbian_flag_2",
+        "name": "Serbian Flag Diagonal Design",
+        "url": "https://static.prod-images.emergentagent.com/jobs/912f6a5f-72f1-48e7-83f3-67436c52fa1c/images/531cc730ba67da35f94100a1a8839b6cdda60989e39cfccac3bbe8b70304b2d1.png",
+        "description": "Modern diagonal Serbian flag with geometric folk art borders"
+    },
+    {
         "id": "serbian_swedish_1",
         "name": "Serbian-Swedish Folk Art Fusion",
         "url": "https://static.prod-images.emergentagent.com/jobs/912f6a5f-72f1-48e7-83f3-67436c52fa1c/images/55748851d8f8eae040b3b350010e2fd2d49583edf32844dafdb8fa5af6ff5d63.png",
