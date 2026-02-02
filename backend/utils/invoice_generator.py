@@ -69,13 +69,20 @@ def generate_invoice_pdf(
     output_path: str,
     logo_path: str = None,
     status: str = "unpaid",
-    payment_date: str = None
+    payment_date: str = None,
+    bank_details: dict = None
 ) -> str:
     """
     Generate a professional PDF invoice
     
+    Args:
+        bank_details: Dict with bankName, accountHolder, iban, bicSwift, bankgiro, orgNumber, swish
+    
     Returns: Path to generated PDF file
     """
+    
+    # Use provided bank details or defaults
+    bd = bank_details or DEFAULT_BANK_DETAILS
     
     # Create the PDF document
     doc = SimpleDocTemplate(
