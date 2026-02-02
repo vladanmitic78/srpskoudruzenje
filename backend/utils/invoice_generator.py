@@ -238,24 +238,24 @@ def generate_invoice_pdf(
         created_date = created_at[:10] if created_at else datetime.now().strftime('%Y-%m-%d')
     
     info_left = f"""
-    <font size="9" color="#666666"><b>FAKTURA TILL / INVOICE TO:</b></font><br/><br/>
-    <font size="12"><b>{member_name}</b></font><br/>
-    <font size="10">{member_email}</font>
+    <font face="{FONT_NORMAL}" size="9" color="#666666">FAKTURA TILL / INVOICE TO:</font><br/><br/>
+    <font face="{FONT_BOLD}" size="12">{member_name}</font><br/>
+    <font face="{FONT_NORMAL}" size="10">{member_email}</font>
     """
     
     status_color = "#28a745" if status == "paid" else "#dc3545"
     status_text = "BETALD / PAID" if status == "paid" else "OBETALD / UNPAID"
     
     info_right = f"""
-    <font size="9" color="#666666"><b>FAKTURAINFORMATION:</b></font><br/><br/>
-    <font size="10"><b>Fakturanummer:</b> {invoice_number}</font><br/>
-    <font size="10"><b>Fakturadatum:</b> {created_date}</font><br/>
-    <font size="10"><b>Förfallodatum:</b> {due_date}</font><br/>
-    <font size="10"><b>Status:</b> <font color="{status_color}"><b>{status_text}</b></font></font>
+    <font face="{FONT_NORMAL}" size="9" color="#666666">FAKTURAINFORMATION:</font><br/><br/>
+    <font face="{FONT_NORMAL}" size="10">Fakturanummer: {invoice_number}</font><br/>
+    <font face="{FONT_NORMAL}" size="10">Fakturadatum: {created_date}</font><br/>
+    <font face="{FONT_NORMAL}" size="10">Förfallodatum: {due_date}</font><br/>
+    <font face="{FONT_BOLD}" size="10">Status: <font color="{status_color}">{status_text}</font></font>
     """
     
     if payment_date and status == "paid":
-        info_right += f"""<br/><font size="10"><b>Betalningsdatum:</b> {payment_date}</font>"""
+        info_right += f"""<br/><font face="{FONT_NORMAL}" size="10">Betalningsdatum: {payment_date}</font>"""
     
     info_table = Table([
         [Paragraph(info_left, normal_style), Paragraph(info_right, normal_style)]
