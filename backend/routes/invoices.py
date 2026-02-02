@@ -301,6 +301,42 @@ async def download_invoice_file(
         media_type="application/octet-stream"
     )
 
+@router.get("/files/{filename}")
+async def serve_invoice_file(
+    filename: str,
+    current_user: dict = Depends(get_current_user),
+    request: Request = None
+):
+    """Serve invoice PDF files (auto-generated or uploaded)"""
+    from fastapi.responses import FileResponse
+    db = request.app.state.db
+    
+    # Find invoice by filename
+    invoice = await db.invoices.find_one({"fileName": filename})
+    if not invoice:
+        raise HTTPException(status_code=404, detail="Invoice not found")
+    
+    # Check if user has access (own invoice or admin)
+    is_admin = current_user.get("role") in ["admin", "superadmin", "moderator"]
+    is_owner = invoice["userId"] == current_user.get("_id")
+    
+    if not is_admin and not is_owner:
+        raise HTTPException(status_code=403, detail="Access denied")
+    
+    # Get file path
+    file_path = Path("/app/uploads/invoices") / filename
+    
+    if not file_path.exists():
+        raise HTTPException(status_code=404, detail="Invoice file not found on server")
+    
+    # Return file as PDF
+    return FileResponse(
+        path=str(file_path),
+        filename=filename,
+        media_type="application/pdf"
+    )
+
+
 @router.delete("/{invoice_id}/file")
 async def delete_invoice_file(
     invoice_id: str,
