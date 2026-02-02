@@ -699,7 +699,7 @@ const AdminDashboard = () => {
           settingsAPI.get()
         ];
         
-        // Super Admin only: fetch platform settings, branding, and permissions
+        // Super Admin only: fetch platform settings, branding, permissions, and bank details
         if (user?.role === 'superadmin') {
           const token = localStorage.getItem('token');
           apiCalls.push(
@@ -711,12 +711,15 @@ const AdminDashboard = () => {
             }).then(r => r.json()),
             fetch(`${process.env.REACT_APP_BACKEND_URL}/api/admin/permissions`, {
               headers: { 'Authorization': `Bearer ${token}` }
+            }).then(r => r.json()),
+            fetch(`${process.env.REACT_APP_BACKEND_URL}/api/admin/bank-details`, {
+              headers: { 'Authorization': `Bearer ${token}` }
             }).then(r => r.json())
           );
         }
         
         const results = await Promise.all(apiCalls);
-        const [statsData, usersData, eventsData, invoicesData, newsData, storiesData, galleryData, settingsData, platformSettingsData, brandingSettingsData, permissionsData] = results;
+        const [statsData, usersData, eventsData, invoicesData, newsData, storiesData, galleryData, settingsData, platformSettingsData, brandingSettingsData, permissionsData, bankDetailsData] = results;
         setStatistics(statsData);
         setUsers(usersData.users || []);
         setEvents(eventsData.events || []);
@@ -753,6 +756,9 @@ const AdminDashboard = () => {
         }
         if (permissionsData && user?.role === 'superadmin') {
           setRolePermissions(permissionsData);
+        }
+        if (bankDetailsData && user?.role === 'superadmin') {
+          setBankDetails(bankDetailsData);
         }
       } catch (error) {
         console.error('Error fetching admin data:', error);
