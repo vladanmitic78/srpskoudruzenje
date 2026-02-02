@@ -179,6 +179,8 @@ class InvoiceResponse(InvoiceBase):
     status: str
     paymentDate: Optional[str] = None
     createdAt: datetime
+    pdfGenerated: Optional[bool] = None
+    fileName: Optional[str] = None
 
 class InvoiceMarkPaid(BaseModel):
     paymentDate: str
