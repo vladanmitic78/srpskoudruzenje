@@ -305,21 +305,28 @@ def generate_invoice_pdf(
     
     # ===== TOTAL AMOUNT =====
     total_data = [
-        ['', 'TOTALT ATT BETALA / TOTAL DUE:', f"{amount:,.2f} {currency}"]
+        ['TOTALT ATT BETALA:', f"{amount:,.2f} {currency}"],
+        ['TOTAL DUE:', '']
     ]
     
-    total_table = Table(total_data, colWidths=[70*mm, 60*mm, 40*mm])
+    total_table = Table(total_data, colWidths=[100*mm, 70*mm])
     total_table.setStyle(TableStyle([
-        ('ALIGN', (1, 0), (1, 0), 'RIGHT'),
-        ('ALIGN', (2, 0), (2, 0), 'RIGHT'),
-        ('FONTNAME', (1, 0), (-1, 0), FONT_BOLD),
-        ('FONTSIZE', (1, 0), (1, 0), 10),
-        ('FONTSIZE', (2, 0), (2, 0), 14),
-        ('TEXTCOLOR', (2, 0), (2, 0), PRIMARY_COLOR),
-        ('BACKGROUND', (1, 0), (-1, 0), colors.HexColor('#FFF3CD')),
-        ('BOTTOMPADDING', (0, 0), (-1, 0), 10),
+        ('ALIGN', (0, 0), (0, -1), 'RIGHT'),
+        ('ALIGN', (1, 0), (1, -1), 'RIGHT'),
+        ('FONTNAME', (0, 0), (-1, -1), FONT_BOLD),
+        ('FONTSIZE', (0, 0), (0, 0), 11),
+        ('FONTSIZE', (0, 1), (0, 1), 9),
+        ('FONTSIZE', (1, 0), (1, 0), 16),
+        ('TEXTCOLOR', (1, 0), (1, 0), PRIMARY_COLOR),
+        ('TEXTCOLOR', (0, 1), (0, 1), colors.grey),
+        ('BACKGROUND', (0, 0), (-1, -1), colors.HexColor('#FFF3CD')),
+        ('BOTTOMPADDING', (0, 0), (-1, 0), 5),
         ('TOPPADDING', (0, 0), (-1, 0), 10),
-        ('BOX', (1, 0), (-1, 0), 1, GOLD_COLOR),
+        ('BOTTOMPADDING', (0, 1), (-1, 1), 10),
+        ('TOPPADDING', (0, 1), (-1, 1), 0),
+        ('BOX', (0, 0), (-1, -1), 1, GOLD_COLOR),
+        ('SPAN', (1, 0), (1, 1)),
+        ('VALIGN', (1, 0), (1, 0), 'MIDDLE'),
     ]))
     
     content.append(total_table)
