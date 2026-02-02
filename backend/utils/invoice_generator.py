@@ -115,7 +115,7 @@ def generate_invoice_pdf(
     # Styles
     styles = getSampleStyleSheet()
     
-    # Custom styles
+    # Custom styles with DejaVu font for Serbian characters
     title_style = ParagraphStyle(
         'CustomTitle',
         parent=styles['Heading1'],
@@ -123,7 +123,7 @@ def generate_invoice_pdf(
         textColor=PRIMARY_COLOR,
         spaceAfter=5*mm,
         alignment=TA_LEFT,
-        fontName='Helvetica-Bold'
+        fontName=FONT_BOLD
     )
     
     subtitle_style = ParagraphStyle(
@@ -132,7 +132,8 @@ def generate_invoice_pdf(
         fontSize=11,
         textColor=colors.grey,
         spaceAfter=3*mm,
-        alignment=TA_LEFT
+        alignment=TA_LEFT,
+        fontName=FONT_NORMAL
     )
     
     header_style = ParagraphStyle(
@@ -142,7 +143,7 @@ def generate_invoice_pdf(
         textColor=SECONDARY_COLOR,
         spaceBefore=8*mm,
         spaceAfter=3*mm,
-        fontName='Helvetica-Bold'
+        fontName=FONT_BOLD
     )
     
     normal_style = ParagraphStyle(
@@ -150,7 +151,8 @@ def generate_invoice_pdf(
         parent=styles['Normal'],
         fontSize=10,
         textColor=colors.black,
-        spaceAfter=2*mm
+        spaceAfter=2*mm,
+        fontName=FONT_NORMAL
     )
     
     bold_style = ParagraphStyle(
@@ -158,14 +160,15 @@ def generate_invoice_pdf(
         parent=styles['Normal'],
         fontSize=10,
         textColor=colors.black,
-        fontName='Helvetica-Bold'
+        fontName=FONT_BOLD
     )
     
     small_style = ParagraphStyle(
         'Small',
         parent=styles['Normal'],
         fontSize=8,
-        textColor=colors.grey
+        textColor=colors.grey,
+        fontName=FONT_NORMAL
     )
     
     # Build content
