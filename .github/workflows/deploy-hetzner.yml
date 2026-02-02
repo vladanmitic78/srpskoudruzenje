@@ -2,6 +2,12 @@ name: Deploy to Hetzner
 
 on:
   workflow_dispatch:
+    inputs:
+      rebuild_all:
+        description: 'Rebuild all containers (frontend & backend)'
+        required: false
+        default: 'true'
+        type: boolean
 
 jobs:
   deploy:
@@ -21,17 +27,26 @@ jobs:
             cd /opt/skud-taby
             
             echo "📥 Pulling latest changes..."
-            git pull origin main
+            git fetch origin main
+            git reset --hard origin/main
             
             echo "🔄 Rebuilding Docker containers..."
-            docker-compose down
-            docker-compose build --no-cache
+            # Stop only frontend and backend, keep mongodb running to preserve data
+            docker-compose stop frontend backend nginx
+            
+            # Rebuild frontend and backend
+            docker-compose build --no-cache frontend backend
+            
+            # Start all services
             docker-compose up -d
             
             echo "⏳ Waiting for containers to start..."
-            sleep 10
+            sleep 15
             
             echo "✅ Checking container status..."
             docker ps
+            
+            echo "📊 Checking database connection..."
+            docker exec skud_mongodb mongosh skud_taby --eval "db.users.countDocuments()" || echo "DB check skipped"
             
             echo "🎉 Deployment complete!"
