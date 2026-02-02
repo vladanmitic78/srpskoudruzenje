@@ -22,6 +22,10 @@ const Home = () => {
   const [loading, setLoading] = useState(true);
   const [selectedNews, setSelectedNews] = useState(null);
   const [isNewsDialogOpen, setIsNewsDialogOpen] = useState(false);
+  const [heroBackground, setHeroBackground] = useState({
+    backgroundUrl: '',
+    opacity: 0.15
+  });
 
   const openNewsDialog = (newsItem) => {
     setSelectedNews(newsItem);
@@ -50,6 +54,18 @@ const Home = () => {
         ]);
         setNews(newsData.news || []);
         setEvents(eventsData.events || []);
+        
+        // Fetch hero background settings
+        try {
+          const API_BASE = process.env.REACT_APP_BACKEND_URL || '';
+          const heroResponse = await fetch(`${API_BASE}/api/settings/hero-background`);
+          if (heroResponse.ok) {
+            const heroData = await heroResponse.json();
+            setHeroBackground(heroData);
+          }
+        } catch (heroError) {
+          console.log('Using default hero background');
+        }
       } catch (error) {
         console.error('Error fetching data:', error);
       } finally {
