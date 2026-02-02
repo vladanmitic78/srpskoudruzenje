@@ -62,9 +62,9 @@ async def get_hero_background(request: Request):
     
     default_hero = {
         "type": "pattern",
-        "selectedId": "serbian_nemanjic_3",
+        "selectedId": "serbian_nemanjic_1",
         "customUrl": "",
-        "opacity": 0.25,
+        "opacity": 0.10,
         "availableBackgrounds": DEFAULT_HERO_BACKGROUNDS
     }
     
