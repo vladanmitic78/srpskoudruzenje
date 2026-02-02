@@ -282,7 +282,7 @@ def generate_invoice_pdf(
         # Header row
         ('BACKGROUND', (0, 0), (-1, 0), PRIMARY_COLOR),
         ('TEXTCOLOR', (0, 0), (-1, 0), colors.white),
-        ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+        ('FONTNAME', (0, 0), (-1, 0), FONT_BOLD),
         ('FONTSIZE', (0, 0), (-1, 0), 10),
         ('ALIGN', (0, 0), (-1, 0), 'LEFT'),
         ('ALIGN', (1, 0), (1, -1), 'RIGHT'),
@@ -290,7 +290,7 @@ def generate_invoice_pdf(
         ('TOPPADDING', (0, 0), (-1, 0), 8),
         
         # Data rows
-        ('FONTNAME', (0, 1), (-1, -1), 'Helvetica'),
+        ('FONTNAME', (0, 1), (-1, -1), FONT_NORMAL),
         ('FONTSIZE', (0, 1), (-1, -1), 10),
         ('BOTTOMPADDING', (0, 1), (-1, -1), 10),
         ('TOPPADDING', (0, 1), (-1, -1), 10),
@@ -312,7 +312,7 @@ def generate_invoice_pdf(
     total_table.setStyle(TableStyle([
         ('ALIGN', (1, 0), (1, 0), 'RIGHT'),
         ('ALIGN', (2, 0), (2, 0), 'RIGHT'),
-        ('FONTNAME', (1, 0), (-1, 0), 'Helvetica-Bold'),
+        ('FONTNAME', (1, 0), (-1, 0), FONT_BOLD),
         ('FONTSIZE', (1, 0), (1, 0), 10),
         ('FONTSIZE', (2, 0), (2, 0), 14),
         ('TEXTCOLOR', (2, 0), (2, 0), PRIMARY_COLOR),
