@@ -42,13 +42,22 @@ async def create_invoice(
     admin: dict = Depends(get_admin_user),
     request: Request = None
 ):
-    """Create invoice for a user (Admin only) - Auto-generates PDF"""
+    """Create invoice for user(s) (Admin only) - Auto-generates PDF"""
     db = request.app.state.db
     
+    # Support both single userId and multiple userIds
+    user_ids = invoice.userIds if hasattr(invoice, 'userIds') else [getattr(invoice, 'userId', None)]
+    
+    if not user_ids or not user_ids[0]:
+        raise HTTPException(status_code=400, detail="No user specified")
+    
+    # For single user invoices (most common case)
+    primary_user_id = user_ids[0]
+    
     # Get user details for the invoice
-    user = await db.users.find_one({"_id": invoice.userId})
+    user = await db.users.find_one({"_id": primary_user_id})
     if not user:
-        user = await db.users.find_one({"id": invoice.userId})
+        user = await db.users.find_one({"id": primary_user_id})
     
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
@@ -58,6 +67,7 @@ async def create_invoice(
     
     invoice_dict = invoice.dict()
     invoice_dict["_id"] = invoice_id
+    invoice_dict["userId"] = primary_user_id  # Store primary userId for backward compatibility
     invoice_dict["status"] = "unpaid"
     invoice_dict["paymentDate"] = None
     invoice_dict["createdAt"] = created_at
