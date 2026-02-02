@@ -310,14 +310,19 @@ def generate_invoice_pdf(
     # ===== PAYMENT INFORMATION =====
     content.append(Paragraph("<b>BETALNINGSINFORMATION / PAYMENT DETAILS</b>", header_style))
     
+    # Build bank info with Swish if available
+    swish_line = ""
+    if bd.get('swish'):
+        swish_line = f"<b>Swish:</b> {bd.get('swish')}<br/>"
+    
     bank_info = f"""
     <font size="10">
-    <b>Banknamn / Bank:</b> {BANK_DETAILS['bank_name']}<br/>
-    <b>Kontoinnehavare / Account Holder:</b> {BANK_DETAILS['account_holder']}<br/>
-    <b>IBAN:</b> {BANK_DETAILS['iban']}<br/>
-    <b>BIC/SWIFT:</b> {BANK_DETAILS['bic_swift']}<br/>
-    <b>Bankgiro:</b> {BANK_DETAILS['bankgiro']}<br/>
-    <b>Organisationsnummer:</b> {BANK_DETAILS['org_number']}<br/><br/>
+    <b>Banknamn / Bank:</b> {bd.get('bankName', '____________________')}<br/>
+    <b>Kontoinnehavare / Account Holder:</b> {bd.get('accountHolder', 'Srpsko Kulturno Udruženje Täby')}<br/>
+    <b>IBAN:</b> {bd.get('iban', 'SE__ ____ ____ ____ ____ ____')}<br/>
+    <b>BIC/SWIFT:</b> {bd.get('bicSwift', '________')}<br/>
+    <b>Bankgiro:</b> {bd.get('bankgiro', '___-____')}<br/>
+    {swish_line}<b>Organisationsnummer:</b> {bd.get('orgNumber', '______-____')}<br/><br/>
     <b>Referens / Reference:</b> {invoice_number}
     </font>
     """
