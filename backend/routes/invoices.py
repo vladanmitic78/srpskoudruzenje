@@ -80,8 +80,9 @@ async def create_invoice(
             status="unpaid"
         )
         
-        # Store the file URL in the invoice
+        # Store the file URL and filename in the invoice
         invoice_dict["fileUrl"] = f"/api/invoices/files/{pdf_filename}"
+        invoice_dict["fileName"] = pdf_filename
         invoice_dict["pdfGenerated"] = True
         
     except Exception as e:
