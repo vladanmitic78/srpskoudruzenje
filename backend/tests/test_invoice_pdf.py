@@ -130,9 +130,9 @@ class TestInvoicePDFGeneration:
         
         user_id = test_user.get("id") or test_user.get("_id")
         
-        # Create invoice
+        # Create invoice - API expects userIds as array
         invoice_data = {
-            "userId": user_id,
+            "userIds": [user_id],
             "amount": 500,
             "currency": "SEK",
             "dueDate": "2025-03-01",
@@ -233,7 +233,7 @@ class TestInvoicePDFGeneration:
             pytest.skip("No users found")
         
         invoice_data = {
-            "userId": user_id,
+            "userIds": [user_id],
             "amount": 750,
             "currency": "SEK",
             "dueDate": "2025-04-01",
