@@ -2837,6 +2837,104 @@ const AdminDashboard = () => {
               </Card>
 
               {/* Save Button */}
+              {/* Bank Details for PDF Invoices */}
+              <Card className="border-2 border-[var(--color-primary)]/20">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <FileText className="h-5 w-5" />
+                    Bank Details (For PDF Invoices)
+                  </CardTitle>
+                  <p className="text-sm text-gray-600">These details will appear on automatically generated PDF invoices</p>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <Label className="text-sm font-medium">Bank Name</Label>
+                      <Input
+                        placeholder="e.g., Swedbank"
+                        value={bankDetails.bankName}
+                        onChange={(e) => setBankDetails({...bankDetails, bankName: e.target.value})}
+                      />
+                    </div>
+                    <div>
+                      <Label className="text-sm font-medium">Account Holder</Label>
+                      <Input
+                        placeholder="Organization name"
+                        value={bankDetails.accountHolder}
+                        onChange={(e) => setBankDetails({...bankDetails, accountHolder: e.target.value})}
+                      />
+                    </div>
+                    <div>
+                      <Label className="text-sm font-medium">IBAN</Label>
+                      <Input
+                        placeholder="SE00 0000 0000 0000 0000 0000"
+                        value={bankDetails.iban}
+                        onChange={(e) => setBankDetails({...bankDetails, iban: e.target.value})}
+                      />
+                    </div>
+                    <div>
+                      <Label className="text-sm font-medium">BIC/SWIFT</Label>
+                      <Input
+                        placeholder="e.g., SWEDSESS"
+                        value={bankDetails.bicSwift}
+                        onChange={(e) => setBankDetails({...bankDetails, bicSwift: e.target.value})}
+                      />
+                    </div>
+                    <div>
+                      <Label className="text-sm font-medium">Bankgiro</Label>
+                      <Input
+                        placeholder="e.g., 123-4567"
+                        value={bankDetails.bankgiro}
+                        onChange={(e) => setBankDetails({...bankDetails, bankgiro: e.target.value})}
+                      />
+                    </div>
+                    <div>
+                      <Label className="text-sm font-medium">Organization Number</Label>
+                      <Input
+                        placeholder="e.g., 802123-4567"
+                        value={bankDetails.orgNumber}
+                        onChange={(e) => setBankDetails({...bankDetails, orgNumber: e.target.value})}
+                      />
+                    </div>
+                    <div className="md:col-span-2">
+                      <Label className="text-sm font-medium">Swish Number (Optional)</Label>
+                      <Input
+                        placeholder="e.g., 123 456 78 90"
+                        value={bankDetails.swish}
+                        onChange={(e) => setBankDetails({...bankDetails, swish: e.target.value})}
+                      />
+                    </div>
+                  </div>
+                  <div className="flex justify-end">
+                    <button
+                      onClick={async () => {
+                        try {
+                          const token = localStorage.getItem('token');
+                          const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/admin/bank-details`, {
+                            method: 'PUT',
+                            headers: {
+                              'Content-Type': 'application/json',
+                              'Authorization': `Bearer ${token}`
+                            },
+                            body: JSON.stringify(bankDetails)
+                          });
+                          if (response.ok) {
+                            toast.success('Bank details saved successfully! New invoices will include these details.');
+                          } else {
+                            throw new Error('Failed to save');
+                          }
+                        } catch (error) {
+                          toast.error('Failed to save bank details');
+                        }
+                      }}
+                      className="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 font-semibold"
+                    >
+                      Save Bank Details
+                    </button>
+                  </div>
+                </CardContent>
+              </Card>
+
               <div className="flex justify-end">
                 <button
                   onClick={async () => {
