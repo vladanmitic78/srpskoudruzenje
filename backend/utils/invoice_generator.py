@@ -363,29 +363,19 @@ def generate_invoice_pdf(
     return output_path
 
 
-def update_bank_details(
-    bank_name: str = None,
-    iban: str = None,
-    bic_swift: str = None,
-    bankgiro: str = None,
-    org_number: str = None
-):
-    """Update bank details for future invoices"""
-    global BANK_DETAILS
-    if bank_name:
-        BANK_DETAILS['bank_name'] = bank_name
-    if iban:
-        BANK_DETAILS['iban'] = iban
-    if bic_swift:
-        BANK_DETAILS['bic_swift'] = bic_swift
-    if bankgiro:
-        BANK_DETAILS['bankgiro'] = bankgiro
-    if org_number:
-        BANK_DETAILS['org_number'] = org_number
-
-
 # Test function
 if __name__ == "__main__":
+    # Example with custom bank details
+    test_bank_details = {
+        "bankName": "Swedbank",
+        "accountHolder": "Srpsko Kulturno Udruženje Täby",
+        "iban": "SE12 3456 7890 1234 5678 90",
+        "bicSwift": "SWEDSESS",
+        "bankgiro": "123-4567",
+        "orgNumber": "802123-4567",
+        "swish": "123 456 78 90"
+    }
+    
     output = generate_invoice_pdf(
         invoice_id="INV-2024-001234",
         member_name="Test Member",
@@ -396,6 +386,7 @@ if __name__ == "__main__":
         due_date="2024-12-31",
         created_at="2024-11-15T10:30:00Z",
         output_path="/tmp/test_invoice.pdf",
-        status="unpaid"
+        status="unpaid",
+        bank_details=test_bank_details
     )
     print(f"Generated: {output}")
