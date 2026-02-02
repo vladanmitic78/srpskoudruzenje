@@ -1491,21 +1491,18 @@ const AdminDashboard = () => {
                                 <div className="flex flex-col gap-1">
                                   {invoice.fileUrl ? (
                                     <>
-                                      <a
-                                        href={`${process.env.REACT_APP_BACKEND_URL}${invoice.fileUrl}`}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
+                                      <button
+                                        onClick={() => handleDownloadInvoiceFile(invoice.fileUrl, invoice.fileName)}
                                         className="px-2 py-1 bg-green-600 text-white text-xs rounded hover:bg-green-700 text-center"
                                       >
                                         👁️ View
-                                      </a>
-                                      <a
-                                        href={`${process.env.REACT_APP_BACKEND_URL}${invoice.fileUrl}`}
-                                        download
+                                      </button>
+                                      <button
+                                        onClick={() => handleDownloadInvoiceFile(invoice.fileUrl, invoice.fileName)}
                                         className="px-2 py-1 bg-blue-600 text-white text-xs rounded hover:bg-blue-700 text-center"
                                       >
                                         📥 Download
-                                      </a>
+                                      </button>
                                       <button
                                         onClick={() => handleDeleteInvoiceFile(invoice.id)}
                                         className="px-2 py-1 bg-gray-500 text-white text-xs rounded hover:bg-gray-600"
