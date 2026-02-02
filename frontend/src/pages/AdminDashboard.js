@@ -897,6 +897,39 @@ const AdminDashboard = () => {
     }
   };
 
+  const handleDownloadInvoiceFile = async (invoiceId, fileName) => {
+    try {
+      const response = await fetch(
+        `${process.env.REACT_APP_BACKEND_URL}/api/invoices/${invoiceId}/file/download`,
+        {
+          method: 'GET',
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+          }
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error('Download failed');
+      }
+
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = fileName || 'invoice-file';
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+      
+      toast.success('File downloaded successfully');
+    } catch (error) {
+      toast.error('Failed to download file');
+      console.error(error);
+    }
+  };
+
 
   const getUserName = (userId) => {
     const user = users.find(u => u.id === userId);
