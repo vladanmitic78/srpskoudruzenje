@@ -3033,6 +3033,157 @@ const AdminDashboard = () => {
                 </CardContent>
               </Card>
 
+              {/* Hero Background Section */}
+              <Card className="border-2 border-[var(--color-primary)]/20">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Palette className="h-5 w-5" />
+                    Homepage Hero Background
+                  </CardTitle>
+                  <p className="text-sm text-gray-500 mt-1">
+                    Customize the background pattern below the welcome message and flags on the homepage.
+                    Serbian-Swedish fusion patterns celebrate both cultural heritages.
+                  </p>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                  {/* Background Selection Grid */}
+                  <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                    {(brandingSettings.heroBackground?.availableBackgrounds || [
+                      {
+                        id: "serbian_swedish_1",
+                        name: "Serbian-Swedish Folk Art Fusion",
+                        url: "https://static.prod-images.emergentagent.com/jobs/912f6a5f-72f1-48e7-83f3-67436c52fa1c/images/55748851d8f8eae040b3b350010e2fd2d49583edf32844dafdb8fa5af6ff5d63.png",
+                        description: "Elegant pattern with Serbian geometric diamonds and Swedish Dala floral elements"
+                      },
+                      {
+                        id: "serbian_swedish_2", 
+                        name: "Cultural Heritage Pattern",
+                        url: "https://static.prod-images.emergentagent.com/jobs/912f6a5f-72f1-48e7-83f3-67436c52fa1c/images/00d305c9d7506067bfb941e1cb48738a1aeff07fdf2586daee6c638dd66097da.png",
+                        description: "Traditional Serbian embroidery meets Swedish folk art"
+                      },
+                      {
+                        id: "serbian_swedish_3",
+                        name: "Minimalist Heritage",
+                        url: "https://static.prod-images.emergentagent.com/jobs/912f6a5f-72f1-48e7-83f3-67436c52fa1c/images/9ee671f18ccb4058f5f72e0edc473fa47f47629fdf06fd9bf22cbfa86372c5bf.png",
+                        description: "Modern interpretation of Balkan and Nordic folk motifs"
+                      },
+                      {
+                        id: "logo_pattern",
+                        name: "Logo Pattern",
+                        url: "/logo.jpg",
+                        description: "Subtle repeating logo pattern"
+                      },
+                      {
+                        id: "solid_gradient",
+                        name: "Solid Gradient",
+                        url: "",
+                        description: "Clean gradient without pattern"
+                      }
+                    ]).map((bg) => (
+                      <div
+                        key={bg.id}
+                        onClick={() => setBrandingSettings({
+                          ...brandingSettings,
+                          heroBackground: {
+                            ...brandingSettings.heroBackground,
+                            type: 'pattern',
+                            selectedId: bg.id
+                          }
+                        })}
+                        className={`relative cursor-pointer rounded-lg border-2 overflow-hidden transition-all ${
+                          brandingSettings.heroBackground?.selectedId === bg.id
+                            ? 'border-[var(--color-primary)] ring-2 ring-[var(--color-primary)]/30'
+                            : 'border-gray-200 hover:border-[var(--color-primary)]/50'
+                        }`}
+                      >
+                        <div className="aspect-video bg-gradient-to-br from-blue-50 to-white relative">
+                          {bg.url && (
+                            <div
+                              className="absolute inset-0"
+                              style={{
+                                backgroundImage: `url(${bg.url})`,
+                                backgroundSize: bg.url.includes('logo') ? '40px' : 'cover',
+                                backgroundRepeat: bg.url.includes('logo') ? 'repeat' : 'no-repeat',
+                                backgroundPosition: 'center',
+                                opacity: 0.3
+                              }}
+                            />
+                          )}
+                          {brandingSettings.heroBackground?.selectedId === bg.id && (
+                            <div className="absolute top-2 right-2 bg-[var(--color-primary)] text-white rounded-full p-1">
+                              <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                              </svg>
+                            </div>
+                          )}
+                        </div>
+                        <div className="p-2 bg-white">
+                          <p className="text-sm font-medium truncate">{bg.name}</p>
+                          <p className="text-xs text-gray-500 truncate">{bg.description}</p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Opacity Control */}
+                  <div className="space-y-2">
+                    <label className="block text-sm font-medium">
+                      Background Opacity: {Math.round((brandingSettings.heroBackground?.opacity || 0.15) * 100)}%
+                    </label>
+                    <input
+                      type="range"
+                      min="0.05"
+                      max="0.5"
+                      step="0.05"
+                      value={brandingSettings.heroBackground?.opacity || 0.15}
+                      onChange={(e) => setBrandingSettings({
+                        ...brandingSettings,
+                        heroBackground: {
+                          ...brandingSettings.heroBackground,
+                          opacity: parseFloat(e.target.value)
+                        }
+                      })}
+                      className="w-full"
+                    />
+                    <p className="text-xs text-gray-500">
+                      Adjust how visible the background pattern appears (5% - 50%)
+                    </p>
+                  </div>
+
+                  {/* Live Preview */}
+                  <div className="mt-4 p-4 border rounded-lg">
+                    <p className="text-sm font-medium mb-3">Live Preview:</p>
+                    <div className="relative h-32 bg-gradient-to-br from-blue-50 via-white to-blue-50 rounded-lg overflow-hidden">
+                      {brandingSettings.heroBackground?.selectedId && brandingSettings.heroBackground?.selectedId !== 'solid_gradient' && (
+                        <div
+                          className="absolute inset-0"
+                          style={{
+                            backgroundImage: `url(${
+                              (brandingSettings.heroBackground?.availableBackgrounds || []).find(
+                                b => b.id === brandingSettings.heroBackground?.selectedId
+                              )?.url || ''
+                            })`,
+                            backgroundSize: brandingSettings.heroBackground?.selectedId === 'logo_pattern' ? '60px' : 'cover',
+                            backgroundRepeat: brandingSettings.heroBackground?.selectedId === 'logo_pattern' ? 'repeat' : 'no-repeat',
+                            backgroundPosition: 'center',
+                            opacity: brandingSettings.heroBackground?.opacity || 0.15
+                          }}
+                        />
+                      )}
+                      <div className="absolute inset-0 flex items-center justify-center">
+                        <div className="text-center">
+                          <div className="flex justify-center gap-2 mb-2">
+                            <div className="w-8 h-5 bg-red-600 rounded shadow" title="Serbian flag" />
+                            <div className="w-8 h-5 bg-blue-600 rounded shadow" title="Swedish flag" />
+                          </div>
+                          <p className="text-lg font-bold text-gray-800">Добродошли / Välkommen</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
               {/* Language Settings Section */}
               <Card className="border-2 border-[var(--color-primary)]/20">
                 <CardHeader>
