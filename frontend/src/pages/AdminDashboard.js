@@ -645,6 +645,13 @@ const AdminDashboard = () => {
   // Super Admin - Branding Settings State
   const [brandingSettings, setBrandingSettings] = useState({
     logo: '',
+    heroBackground: {
+      type: 'pattern',
+      selectedId: 'serbian_swedish_2',
+      customUrl: '',
+      opacity: 0.15,
+      availableBackgrounds: []
+    },
     colors: {
       primary: '#C1272D',
       secondary: '#8B1F1F',
