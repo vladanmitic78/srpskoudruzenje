@@ -167,9 +167,9 @@ async def forgot_password(email: str, request: Request):
         {"$set": {"resetToken": reset_token, "resetTokenExpiry": datetime.utcnow() + timedelta(hours=1)}}
     )
     
-    # Send reset email
-    backend_url = os.environ.get('REACT_APP_BACKEND_URL', 'http://localhost:8001')
-    reset_link = f"{backend_url.replace('/api', '')}/reset-password?token={reset_token}"
+    # Send reset email - use FRONTEND_URL for the reset link
+    frontend_url = os.environ.get('FRONTEND_URL', 'https://srpskoudruzenjetaby.se')
+    reset_link = f"{frontend_url}/reset-password?token={reset_token}"
     
     html = f"""
     <html>
