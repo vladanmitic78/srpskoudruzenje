@@ -29,7 +29,7 @@ const ImpersonationBanner = () => {
   };
 
   return (
-    <div className="fixed top-0 left-0 right-0 z-50 bg-purple-600 text-white py-2 px-4 flex items-center justify-between shadow-lg">
+    <div className="fixed top-0 left-0 right-0 z-[100] bg-purple-600 text-white py-2 px-4 flex items-center justify-between shadow-lg" data-testid="impersonation-banner">
       <div className="flex items-center gap-2">
         <span className="text-lg">👤</span>
         <span className="font-medium">
