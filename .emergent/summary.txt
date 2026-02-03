@@ -2,163 +2,316 @@
 The user's initial goal was to fix login issues, remove Google OAuth, and implement a series of features for the Serbian Cultural Association website. This expanded to include a CMS, a gallery, an admin settings page, multi-member invoices, advanced member filtering, a family/group membership system, and performance optimizations.
 
 Recent user requests included:
-1.  Fixing a catastrophic production deployment failure on their Hetzner server.
-2.  Making the email field optional when registering family members under 18.
-3.  Designing and implementing a new, configurable homepage background blending Serbian and Swedish cultural motifs, with a focus on Nemanjić dynasty heraldry.
-4.  Fixing the inability to edit invoices.
-5.  Implementing automatic generation of professional PDF invoices upon creation, including the platform's logo and placeholders for bank details.
+1.  Implementing automatic generation of professional PDF invoices upon creation, including a logo and placeholders for bank details that can be updated by a Super Admin.
+2.  Fixing PDF downloads, which were failing due to authentication issues.
+3.  Fixing font rendering in PDFs to support Serbian Latin characters (š, ž, đ, č, ć).
+4.  Implementing a UI for creating invoices for multiple members at once.
+5.  Implementing advanced member filtering in the admin dashboard.
+6.  Implementing email notifications to users upon invoice creation.
+7.  Fixing incorrect statistics on the admin dashboard.
+8.  Implementing a user impersonation feature for Super Admins.
+9.  Optimizing the entire application and preparing it for deployment on a Hetzner server, with a crucial requirement to preserve all existing production data. This involved setting up a separate test/staging server first.
 
 **User's preferred language**: English
 
 **what currently exists?**
-The application is a full-stack React/FastAPI/MongoDB project. The production server on Hetzner is now stable and running the latest code after a lengthy recovery process. The database has been successfully restored.
+The application is a full-stack React/FastAPI/MongoDB project with all requested features implemented. This includes a complete and tested PDF invoice generation system with manageable bank details, multi-member invoice creation, member filtering, and user impersonation. The system has also been optimized for production with updated Dockerfiles, Nginx configuration, and database indexing.
 
--   **Deployment:** All necessary Docker configuration files (, s, ) are now version-controlled in the repository and configured correctly.
--   **Family Members:** The family member registration form has been updated. The  field is now optional for members under 18, and all notifications are sent to the parent's email address.
--   **Homepage Design:** The homepage features a new, dynamic hero background. It defaults to a design inspired by the Nemanjić dynasty, including the Serbian coat of arms and flag colors. Super Admins can choose from 7 different backgrounds and adjust the opacity via the admin dashboard.
--   **Invoice Editing:** The previously missing backend endpoint to edit invoices has been implemented, and the feature is now functional.
--   **PDF Invoice Generation:** The  library has been added. A new utility  has been created to generate PDF invoices. The backend routes have been updated to auto-generate a PDF when a new invoice is created and to provide a download endpoint for it.
+A full set of deployment configurations and scripts for a new test/staging environment (, , etc.) and for production () have been created. **Crucially, these new deployment files exist locally in the agent's workspace but have NOT been committed to the user's GitHub repository.** The user is currently in the process of manually setting up a new test server using commands provided by the agent.
 
 **Last working item**:
--   **Last item agent was working:** Implementing the automatic generation of PDF invoices. The agent installed , created the PDF generator utility, and updated the  file to trigger the generation on invoice creation and to add an endpoint for downloading the generated PDF.
--   **Status:** IN PROGRESS
--   **Agent Testing Done:** N
--   **Which testing method agent to use?** Both. First, the backend agent should test by creating an invoice and then using  to try and download the generated PDF from the new endpoint. After backend validation, the frontend testing agent should be used to verify that the View and Download buttons function correctly for these new auto-generated invoices in the admin dashboard.
--   **User Testing Done:** N
+-   **Last item agent was working:** Assisting the user with the manual setup of a new test server (IP: ). The process is currently stuck.
+-   **Status:** BLOCKED
+-   **Agent Testing Done:** N/A (Deployment in progress)
+-   **Which testing method agent to use?** Manual command-line execution by the user, guided by the agent.
+-   **User Testing Done:** N/A (Deployment in progress)
 
 **All Pending/In progress Issue list**:
--   Issue 1: Finalize and Test Automatic PDF Invoice Generation (P0)
--   Issue 2: Incorrect statistics on the admin dashboard (P2)
+-   Issue 1: Complete the Test Server Deployment (P0)
 
 **Issues Detail:**
--   **Issue 1: Finalize and Test Automatic PDF Invoice Generation**
-    -   **Description:** The backend has been set up to automatically generate a PDF when an admin creates a new invoice. This functionality needs to be tested end-to-end to ensure PDFs are created, stored, and downloadable correctly. The PDF template itself needs to be verified for a professional look with correct logo placement and placeholders for bank details.
+-   **Issue 1: Complete the Test Server Deployment**
+    -   **Description:** The user is setting up a new test server at . The  command is failing for the frontend service. The root cause is that the user's repository (cloned onto the server) is outdated and missing necessary files and configurations that the agent created.
     -   **Attempted fixes:**
-        -    was installed.
-        -    was created to define the PDF structure.
-        -    was updated to call the generator on  and to add a  endpoint.
+        1.  The agent provided  commands to manually create  and  on the test server.
+        2.  The build then failed because  was missing, which is required by the .
+        3.  The agent's last action was to provide new content for  that uses  instead of yarn install v1.22.22
+[1/4] Resolving packages...
+success Already up-to-date.
+Done in 0.19s. to bypass the  requirement. The user has not yet applied this fix.
     -   **Next debug checklist:**
-        1.  Create a new invoice via the admin dashboard.
-        2.  Verify a PDF file is created in the  directory inside the  container.
-        3.  Check the corresponding invoice document in the  collection in MongoDB to ensure  and  are correctly populated.
-        4.  Use  to test the  endpoint and confirm it serves the PDF file.
-        5.  Verify the View and Download buttons appear and work correctly in the frontend UI () for the newly created invoice.
-        6.  Review the generated PDF to ensure the layout is professional, the logo is present, and the bank detail placeholders are correctly positioned.
-    -   **Why fix this issue and what will be achieved with the fix?** To fulfill the user's request for professional, automated invoicing, reducing manual work for admins.
-    -   **Status:** IN PROGRESS
-    -   **Is recurring issue?** N
-    -   **Should Test frontend/backend/both after fix?** Both.
-    -   **Blocked on other issue:** None. This is the highest priority.
+        1.  Instruct the user to run the  command to overwrite  with the npm <command>
 
--   **Issue 2: Incorrect Admin Statistics**
-    -   **Attempted fixes:** None.
-    -   **Next debug checklist:**
-        1.  Analyze the aggregation logic in the  endpoint in .
-        2.  Compare the endpoint's output with manual queries against the database to find the discrepancy.
-    -   **Why fix this issue and what will be achieved with the fix?** To provide administrators with accurate dashboard data.
-    -   **Status:** NOT STARTED
-    -   **Is recurring issue?** Y
-    -   **Should Test frontend/backend/both after fix?** Backend.
-    -   **Blocked on other issue:** Issue 1 (Finalize and Test Automatic PDF Invoice Generation).
+Usage:
+
+npm install        install all the dependencies in your project
+npm install <foo>  add the <foo> dependency to your project
+npm test           run this project's tests
+npm run <foo>      run the script named <foo>
+npm <command> -h   quick help on <command>
+npm -l             display usage info for all commands
+npm help <term>    search for help on <term>
+npm help npm       more involved overview
+
+All commands:
+
+    access, adduser, audit, bugs, cache, ci, completion,
+    config, dedupe, deprecate, diff, dist-tag, docs, doctor,
+    edit, exec, explain, explore, find-dupes, fund, get, help,
+    help-search, hook, init, install, install-ci-test,
+    install-test, link, ll, login, logout, ls, org, outdated,
+    owner, pack, ping, pkg, prefix, profile, prune, publish,
+    query, rebuild, repo, restart, root, run-script, sbom,
+    search, set, shrinkwrap, star, stars, start, stop, team,
+    test, token, uninstall, unpublish, unstar, update, version,
+    view, whoami
+
+Specify configs in the ini-formatted file:
+    /root/.npmrc
+or on the command line via: npm <command> --key=value
+
+More configuration info: npm help config
+Configuration fields: npm help 7 config
+
+npm@10.8.2 /usr/lib/node_modules/npm-based version provided in the last step.
+        2.  Instruct the user to run  again.
+        3.  If the build succeeds, instruct them to run .
+        4.  Verify the containers are running with .
+        5.  Guide the user through the process of restoring the production database backup onto the test server.
+        6.  **HIGHLY RECOMMEND:** After the test server is working, guide the user to commit all the new deployment configurations (, , , updated s) to their GitHub repository to avoid this manual setup for production.
+    -   **Why fix this issue and what will be achieved with the fix?** To create a stable staging environment for final testing before deploying to production, which is the user's primary goal.
+    -   **Status:** BLOCKED
+    -   **Is recurring issue?** N
+    -   **Should Test frontend/backend/both after fix?** Both. The entire application needs to be tested on the new server.
+    -   **Blocked on other issue:** None. This is the main blocker.
 
 **In progress Task List**:
--   None.
+-   **Task 1: Refactor **
+    -   **Where to resume:** The agent has created several modular component files (, , , , , ) inside . However, the main  file has not yet been updated to import and use these new components. The next step is to replace the corresponding JSX and logic in the massive  file with these new, smaller components.
+    -   **What will be achieved with this?** Improved code maintainability and reduced complexity of a 5000+ line file.
+    -   **Status:** IN PROGRESS
+    -   **Should Test frontend/backend/both after fix?** Frontend.
+    -   **Blocked on something:** Issue 1 (Complete the Test Server Deployment).
 
 **Upcoming and Future Tasks**
 -   **Upcoming Tasks:**
-    -   **Add Bank Details to PDF (P1):** Once the user provides their bank account information, update the placeholders in .
-    -   **Implement Frontend for Multi-Member Invoices and Member Filtering (P1):** The backend is ready. The frontend in  needs UI controls for creating invoices for multiple members and filtering the member list.
-    -   **Refactor  (P1):** This large file (4000+ lines) is a source of technical debt and should be broken into smaller components.
+    -   **Production Deployment (P0):** Once the test server is fully tested and verified by the user, proceed with deploying the application to the production server () using the prepared scripts ([0;31m=======================================[0m
+[0;31mPRODUCTION DEPLOYMENT[0m
+[0;31m=======================================[0m
+[1;33mThis will update the production server[0m
+[1;33mYour database data will be PRESERVED[0m
+
+[0;31mHave you tested on the test server first? (yes/no)[0m), ensuring the live database is backed up and preserved.
 -   **Future Tasks:**
-    -   **User Impersonation (P2):** An optional feature for Super Admins to log in as any user to troubleshoot issues.
+    -   **User Impersonation Auditing (P2):** As an enhancement, add a logging feature for Super Admins to see a history of who impersonated whom and when.
 
 **Completed work in this session**
--   **Critical Fix: Production Server Restoration:** Successfully resolved a catastrophic deployment failure on the user's Hetzner server. This involved fixing Dockerfiles, regenerating SSL certs, correcting the database name in the configuration, and restoring user images and data.
--   **Feature: Optional Email for Family Members:** Updated the backend () and frontend (, ) to make email optional for children under 18.
--   **Feature: Dynamic Homepage Hero Background:** Designed and implemented a new configurable hero background. This included creating multiple Serbian/Swedish/Nemanjić-themed image assets, adding backend APIs (, ) to manage them, and updating the frontend (, ) to display the background and provide an admin interface for customization.
--   **Bug Fix: Invoice Editing:** Implemented the missing backend  endpoint and corresponding frontend API call in  to enable invoice editing.
--   **UX Improvement: Invoice Management UI:** Enhanced the admin invoice table with View and Details buttons, and replaced text-based action buttons with compact icons and tooltips.
+-   **PDF Invoice Auto-Generation:** Implemented end-to-end PDF generation on invoice creation.
+-   **Bank Details Management:** Added backend APIs and a frontend UI for Super Admins to manage bank details for invoices.
+-   **Fixed PDF Download:** Resolved authentication issue by implementing a client-side download handler that sends the JWT token.
+-   **Fixed PDF Font Rendering:** Fixed Serbian Latin character display issues by embedding the  font in generated PDFs.
+-   **Fixed PDF Layout:** Corrected the layout of the Total Due section in the invoice.
+-   **Multi-Member Invoices & Member Filtering:** Implemented frontend UI to create invoices for multiple members at once and to filter the member list by various criteria.
+-   **Invoice Email Notifications:** Implemented automatic email notifications to users upon invoice creation.
+-   **Fixed Admin Statistics:** Verified and confirmed the admin dashboard statistics are now calculating and displaying correctly.
+-   **User Impersonation:** Implemented a feature for Super Admins to log in as other users.
+-   **System Optimization & Deployment Prep:** Optimized Dockerfiles, Nginx config, and backend performance. Created a full suite of scripts and configuration files for test and production deployments.
 
 **Earlier issues found/mentioned but not fixed**
--   None that aren't already listed in the pending issues.
+-   None.
 
 **Known issue recurrence from previous fork**
 -   **Incorrect Admin Statistics:**
     -   **Recurrence count:** 3
-    -   **Status:** NOT STARTED
+    -   **Status:** RESOLVED (The issue appears to be fixed, as verified by API and frontend checks in this session).
 
 **Code Architecture**
 
 
 **Key Technical Concepts**
--   **PDF Generation:** Using the  library in Python to create dynamic PDF documents.
--   **Docker Deployment:** Managing a multi-container application (React, FastAPI, Nginx, MongoDB) with Docker Compose, including persistent data volumes for the database and user uploads.
--   **Live Server Debugging:** Diagnosing and fixing issues directly on a production server via SSH, including Docker container management, log inspection, and file manipulation.
+-   **Manual Server Deployment & Troubleshooting:** Guiding a user through SSH, Docker, Git, and file manipulation commands to set up a server from scratch.
+-   **PDF Generation ():** Advanced usage including embedding Unicode fonts () and complex table layouts to fix rendering and formatting issues.
+-   **Authenticated File Downloads:** Bypassing browser limitations for downloading files from protected API endpoints by using  with an  header and creating a blob URL.
+-   **Docker Production Optimization:** Using multi-stage builds, health checks, and resource limits to create lean and robust production environments.
+-   **Nginx Production Configuration:** Implementing caching, gzip compression, and security headers.
+-   **User Impersonation:** Generating and swapping JWT tokens to allow a privileged user (Super Admin) to temporarily assume the identity of another user.
 
 **key DB schema**
--   **invoices**:  and  fields are now used to store paths to auto-generated PDF invoices.
--   **users**: No new changes in this session.
--   **settings**: A  object is stored in the  document to manage the homepage design.
+-   **platform_settings:** Now stores a  object.
+-   **invoices:**  (list of strings) is used instead of .
 
 **changes in tech stack**
--   Added  to .
+-    and  added to  for performance.
 
 **All files of reference**
--   **/app/backend/utils/invoice_generator.py**: New file for creating PDF invoices.
--   **/app/backend/routes/invoices.py**: Updated to handle PDF generation, editing, and file serving.
--   **/app/backend/routes/admin.py**: Updated to manage hero background settings.
--   **/app/frontend/src/pages/Home.js**: Updated to display the dynamic hero background.
--   **/app/frontend/src/pages/AdminDashboard.js**: Updated with UI for hero background settings and improved invoice actions.
--   **/app/docker-compose.yml**: Key file for deployment, updated to use the correct database name ().
+-   **/app/frontend/pages/AdminDashboard.js**: Heavily modified for multiple features; target for refactoring.
+-   **/app/backend/utils/invoice_generator.py**: Heavily modified to fix font and layout issues.
+-   **/app/backend/routes/invoices.py**: Updated for multi-user creation and email notifications.
+-   **/app/backend/routes/admin.py**: Updated for bank details and user impersonation.
+-   **/app/docker-compose.test.yml**: New file for the test server (not yet in git).
+-   **/app/scripts/**: New directory with deployment scripts (not yet in git).
+-   **/app/frontend/Dockerfile**: Content changed to use npm <command>
+
+Usage:
+
+npm install        install all the dependencies in your project
+npm install <foo>  add the <foo> dependency to your project
+npm test           run this project's tests
+npm run <foo>      run the script named <foo>
+npm <command> -h   quick help on <command>
+npm -l             display usage info for all commands
+npm help <term>    search for help on <term>
+npm help npm       more involved overview
+
+All commands:
+
+    access, adduser, audit, bugs, cache, ci, completion,
+    config, dedupe, deprecate, diff, dist-tag, docs, doctor,
+    edit, exec, explain, explore, find-dupes, fund, get, help,
+    help-search, hook, init, install, install-ci-test,
+    install-test, link, ll, login, logout, ls, org, outdated,
+    owner, pack, ping, pkg, prefix, profile, prune, publish,
+    query, rebuild, repo, restart, root, run-script, sbom,
+    search, set, shrinkwrap, star, stars, start, stop, team,
+    test, token, uninstall, unpublish, unstar, update, version,
+    view, whoami
+
+Specify configs in the ini-formatted file:
+    /root/.npmrc
+or on the command line via: npm <command> --key=value
+
+More configuration info: npm help config
+Configuration fields: npm help 7 config
+
+npm@10.8.2 /usr/lib/node_modules/npm instead of yarn install v1.22.22
+[1/4] Resolving packages...
+success Already up-to-date.
+Done in 0.02s..
 
 **Areas that need refactoring**:
--   **/app/frontend/src/pages/AdminDashboard.js**: This file remains extremely large and complex. Breaking it down into smaller, more manageable components is highly recommended to improve maintainability.
+-   **/app/frontend/src/pages/AdminDashboard.js**: This is a top priority. The file is over 5,300 lines long. The agent has already created new component files in , and the next step is to integrate them.
 
 **key api endpoints**
--   : (Updated) Now automatically generates a PDF invoice and saves its path.
--   : (New) Serves the generated or uploaded invoice file.
--   : (New) Endpoint to update invoice details.
--   : (New) Public endpoint for the homepage to fetch background settings.
--   : (Updated) Endpoint for admins to update branding, now includes .
+-   : (Updated) Now handles an array of  and triggers email notifications.
+-   : (New) Serves generated PDF files; requires authentication.
+-   : (New) Fetches bank details for invoices.
+-   : (New) Updates bank details.
+-   : (New) Generates a JWT token for the specified user.
+-   : (New) Backend health check endpoint.
 
 **Critical Info for New Agent**
--   The user's production server is now stable, and the database has been recovered. The highest priority is to complete and test the PDF invoice generation feature.
--   The user is now comfortable with a Git-based deployment workflow. Before prompting the user to deploy, ensure all new features are fully tested and all code (including configuration files like ) is committed to the  branch.
--   The user has requested placeholder for Bank Account details in the invoice. This should be implemented as a placeholder for now, to be filled in later.
+-   **The user is in the middle of a manual deployment on their test server (). You must resume from where they are stuck.** The immediate problem is a Docker build failure.
+-   **The deployment configuration files (, new s, etc.) that you need are NOT in the user's GitHub repository.** You will likely need to continue providing them via  commands or guide the user to commit them. The most robust solution is to get these files into version control.
+-   The user's primary concern is **preserving production data** from . The plan involves backing up this data and restoring it to the test server.
 
 **documents and test reports created in this job**
+-   [0;32m=======================================[0m
+[0;32mSKUD Täby - Test Server Setup[0m
+[0;32m=======================================[0m
+[1;33mEnter your test server IP address:[0m
+-   [0;32m=======================================[0m
+[0;32mDatabase Restore from Production[0m
+[0;32m=======================================[0m
+[1;33mProduction Server: 116.203.136.99[0m
+[1;33mDatabase: skud_taby[0m
+
+[1;33mStep 1: Creating backup from production server...[0m
+[0;31mThis requires SSH access to production server[0m
+
+[1;33mTesting connection to production server...[0m
+[0;31mCannot connect to production server via SSH[0m
+[1;33mAlternative: Manual backup method[0m
+
+[1;33mRun these commands manually:[0m
+1. SSH to production: [0;32mssh root@116.203.136.99[0m
+2. Create backup: [0;32mdocker exec skud_mongodb mongodump --db skud_taby --out /data/backup[0m
+3. Copy backup using SCP or other method to this server at: [0;32m/opt/skud-taby/backups[0m
+
+Once backup is in /opt/skud-taby/backups, run this script again with --restore-only flag
+-   [0;31m=======================================[0m
+[0;31mPRODUCTION DEPLOYMENT[0m
+[0;31m=======================================[0m
+[1;33mThis will update the production server[0m
+[1;33mYour database data will be PRESERVED[0m
+
+[0;31mHave you tested on the test server first? (yes/no)[0m
+-   [0;31mUsage: ./restore-backup.sh <backup_folder>[0m
+Example: ./restore-backup.sh ./backups/pre_deploy_20260203_120000
+-   
+-   
+-   
+-   
+-   
+-   
 -   
 
 **Last 10 User Messages and any pending HUMAN messages**
-1.  **User:** Asks for a professional PDF invoice template with logo and placeholders for bank details. (IN PROGRESS)
-2.  **User:** States they don't have bank details yet and asks the agent to proceed with a visual template. (Acknowledged)
-3.  **User:** Asks to see/download invoices. (Implemented)
-4.  **User:** Reports not seeing the download option and asks for shorter button names. (Fixed)
-5.  **User:** Likes Option B for the Nemanjić-themed homepage background. (Implemented)
-6.  **User:** Asks for the background to be lighter or for the area around the flags to be black. (Implemented)
-7.  **User:** Asks to see all three Nemanjić background options. (Completed)
-8.  **User:** Dislikes the first flag design and requests one based on the Nemanjić dynasty. (Implemented)
-9.  **User:** Asks to add the Serbian flag to the background design. (Implemented)
-10. **User:** Asks for a search for a new background design mixing Serbian and Swedish traditions. (Implemented)
+1.  **User:** Provides test server IP:  (IN PROGRESS)
+2.  **User:** Provides GitHub repo URL. (Acknowledged)
+3.  **User:** Asks why the production server is asking for a password, thinking it was SSH key only. (Agent provided troubleshooting steps)
+4.  **User:** Posts terminal output showing successful backup creation on production but failure to  due to password prompt. (Agent clarified the user was already on the production server)
+5.  **User:** Posts terminal output showing  from production to test server. (Agent provided next steps)
+6.  **User:** Posts terminal output showing command not found and no such container on the test server. (Agent identified user was pasting comments, not just commands)
+7.  **User:** Posts  and  output showing no containers and no  file. (Agent identified the repo was not cloned correctly or was outdated)
+8.  **User:** Posts total 296
+drwxr-xr-x 15 root root  4096 Feb  3 13:56 .
+drwxr-xr-x  1 root root  4096 Feb  3 13:56 ..
+drwxr-xr-x  2 root root  4096 Nov 24 12:18 .emergent
+drwxr-xr-x  8 root root  4096 Feb  3 13:52 .git
+-rw-r--r--  1 root root    61 Feb  3 13:52 .gitconfig
+drwxr-xr-x  3 root root  4096 Jan 31 19:57 .github
+-rw-r--r--  1 root root  1003 Feb  3 13:52 .gitignore
+drwxr-xr-x  5 root root  4096 Jan 31 22:43 .ruff_cache
+drwxr-xr-x  2 root root  4096 Feb  3 12:12 .screenshots
+-rw-r--r--  1 root root  7151 Feb  3 13:28 DEPLOYMENT.md
+-rw-r--r--  1 root root  5589 Dec  2 13:22 EVENT_REMINDERS_DOCUMENTATION.md
+-rw-r--r--  1 root root  5472 Dec  5 09:04 MEDIA_OPTIMIZATION.md
+-rw-r--r--  1 root root  4382 Jan 31 19:42 PERFORMANCE_OPTIMIZATION.md
+-rw-r--r--  1 root root 10069 Feb  3 13:56 PHASE1_COMPLETE.md
+-rw-r--r--  1 root root  8139 Nov 29 15:31 PHASE_3_COMPLETION_REPORT.md
+-rw-r--r--  1 root root 11514 Nov 29 16:23 PHASE_4_COMPLETION_REPORT.md
+-rw-r--r--  1 root root    29 Jun 18  2025 README.md
+-rw-r--r--  1 root root  4010 Nov 24 13:04 auth_testing.md
+drwxr-xr-x  9 root root  4096 Feb  3 13:56 backend
+-rw-r--r--  1 root root 45163 Feb  3 13:56 backend_test.py
+-rw-r--r--  1 root root 10301 Nov 22 22:48 contracts.md
+-rw-r--r--  1 root root  3382 Feb  3 13:26 docker-compose.prod.yml
+-rw-r--r--  1 root root  2648 Feb  3 13:29 docker-compose.test.yml
+-rw-r--r--  1 root root  2912 Feb  3 12:54 docker-compose.yml
+drwxr-xr-x  6 root root  4096 Feb  3 13:56 frontend
+drwxr-xr-x  2 root root  4096 Jan 31 18:56 memory
+-rw-r--r--  1 root root  5653 Feb  3 12:54 nginx.conf
+-rw-r--r--  1 root root  2689 Feb  3 13:25 nginx.test.conf
+drwxr-xr-x  2 root root  4096 Feb  3 13:56 node_modules
+-rw-r--r--  1 root root    82 Feb  3 13:56 package-lock.json
+-rw-r--r--  1 root root 12877 Feb  3 13:56 password_reset_test.py
+drwxr-xr-x  2 root root  4096 Feb  3 13:29 scripts
+drwxr-xr-x  3 root root  4096 Feb  3 12:36 test_reports
+-rw-r--r--  1 root root 49026 Dec  3 17:39 test_result.md
+drwxr-xr-x  2 root root  4096 Jun 18  2025 tests
+drwxr-xr-x  7 root root  4096 Feb  1 12:48 uploads
+-rw-r--r--  1 root root    86 Jun 18  2025 yarn.lock output, confirming the test configuration files are missing. (Agent provided  commands to create them)
+9.  **User:** Posts  output showing failure due to missing . (PENDING, agent provided a fix)
+10. **User:** (Last seen) Pasted the full error log from the  failure. (PENDING)
 
 **Project Health Check:**
--   **Broken:** None.
--   **Mocked:** Bank account details on the PDF invoice template are placeholders.
+-   **Broken:** The deployment on the new test server is broken and blocked.
+-   **Mocked:** None.
 
 **3rd Party Integrations**
--   **reportlab:** Used for PDF generation in the backend.
+-   **reportlab:** For PDF generation.
+-   **Hetzner:** For server hosting (manual deployment).
 
 **Testing status**
--   **Testing agent used after significant changes:** NO
+-   **Testing agent used after significant changes:** YES (for features before deployment prep)
 -   **Troubleshoot agent used after agent stuck in loop:** NO
 -   **Test files created:** []
 -   **Known regressions:** None.
 
 **Credentials to test flow:**
 -   **Super Admin:**  / 
--   **Moderator:**  / 
--   **User (Test Account):**  / 
+-   **Production Server IP:** 
+-   **Test Server IP:** 
 
 **What agent forgot to execute**
--   The agent initially struggled with ensuring changes made directly on the server (like editing  with ) were persisted in the Git repository, leading to rework. This was eventually resolved by committing the correct file. This highlights the need to always sync manual server fixes back to Git.
--   The agent has not yet added the generated PDF download endpoint to . It added the upload endpoint but missed the download one. This will be a key part of the Finalize and Test Automatic PDF Invoice Generation task.</analysis>
+-   The agent created numerous critical deployment configuration files and scripts but did not instruct the user to commit them to their Git repository. This oversight is the direct cause of the current manual, error-prone deployment process the user is struggling with.</analysis>
