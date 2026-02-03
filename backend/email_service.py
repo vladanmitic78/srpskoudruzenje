@@ -752,7 +752,7 @@ def get_admin_invitation_template(name: str, email: str, role: str, temporary_pa
                     <p><strong>⚠️ Važno:</strong> Molimo promenite lozinku nakon prvog prijavljivanja.</p>
                 </div>
                 
-                <a href="http://localhost:3000/login" class="button">Prijavite se</a>
+                <a href="{FRONTEND_URL}/login" class="button">Prijavite se</a>
                 
                 <hr style="margin: 30px 0;">
                 
@@ -770,7 +770,7 @@ def get_admin_invitation_template(name: str, email: str, role: str, temporary_pa
                     <p><strong>⚠️ Viktigt:</strong> Vänligen ändra ditt lösenord efter första inloggningen.</p>
                 </div>
                 
-                <a href="http://localhost:3000/login" class="button">Logga in</a>
+                <a href="{FRONTEND_URL}/login" class="button">Logga in</a>
             </div>
             
             <div class="footer">
@@ -802,7 +802,7 @@ def get_admin_invitation_template(name: str, email: str, role: str, temporary_pa
     
     ⚠️ VAŽNO: Molimo promenite lozinku nakon prvog prijavljivanja.
     
-    Prijavite se na: http://localhost:3000/login
+    Prijavite se na: {FRONTEND_URL}/login
     
     ---
     
@@ -817,7 +817,7 @@ def get_admin_invitation_template(name: str, email: str, role: str, temporary_pa
     
     ⚠️ VIKTIGT: Vänligen ändra ditt lösenord efter första inloggningen.
     
-    Logga in på: http://localhost:3000/login
+    Logga in på: {FRONTEND_URL}/login
     
     ---
     """
