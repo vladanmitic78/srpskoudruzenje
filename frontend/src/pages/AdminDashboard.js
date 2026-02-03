@@ -962,6 +962,46 @@ const AdminDashboard = () => {
     }
   };
 
+  // User Impersonation Handler (Super Admin only)
+  const handleImpersonateUser = async (userId) => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch(
+        `${process.env.REACT_APP_BACKEND_URL}/api/admin/impersonate/${userId}`,
+        {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        }
+      );
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.detail || 'Impersonation failed');
+      }
+
+      const data = await response.json();
+      
+      // Store original admin token for later restoration
+      localStorage.setItem('original_admin_token', token);
+      localStorage.setItem('is_impersonating', 'true');
+      localStorage.setItem('impersonated_user', JSON.stringify(data.user));
+      
+      // Set the new impersonation token
+      localStorage.setItem('token', data.token);
+      
+      toast.success(data.message);
+      
+      // Redirect to home page as the impersonated user
+      window.location.href = '/';
+    } catch (error) {
+      toast.error(error.message || 'Failed to impersonate user');
+      console.error(error);
+    }
+  };
+
 
   const getUserName = (userId) => {
     const user = users.find(u => u.id === userId);
