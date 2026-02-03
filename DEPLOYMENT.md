@@ -1,212 +1,281 @@
-# SKUD Täby - Hetzner Deployment Guide
+# SKUD Täby - Safe Deployment Guide
 
-## Prerequisites
+## Overview
 
-1. **Hetzner Cloud Server**
-   - Recommended: CX21 or higher (2 vCPU, 4GB RAM)
-   - Ubuntu 22.04 LTS
-   - Docker and Docker Compose installed
+This guide ensures your **production data is NEVER lost** during deployment.
 
-2. **Domain Configuration**
-   - Domain: srpskoudruzenjetaby.se
-   - DNS A record pointing to server IP
-   - DNS CNAME for www subdomain
+**Current Production Server:** 116.203.136.99  
+**Domain:** srpskoudruzenjetaby.se
 
-## Deployment Steps
+## Deployment Strategy
 
-### 1. Server Setup
+```
+┌─────────────────┐         ┌─────────────────┐
+│   TEST SERVER   │         │ PRODUCTION      │
+│   (New VPS)     │  ───►   │ (116.203.136.99)│
+│                 │  After   │                 │
+│ - Copy of data  │  testing │ - Real users    │
+│ - No SSL       │         │ - SSL enabled   │
+│ - Safe to break│         │ - Data preserved│
+└─────────────────┘         └─────────────────┘
+```
+
+---
+
+## PART 1: Test Server Setup
+
+### Step 1: Create New VPS on Hetzner
+
+1. Go to Hetzner Cloud Console
+2. Create new server:
+   - **Location:** Same as production (eu-central)
+   - **Image:** Ubuntu 22.04
+   - **Type:** CX21 (2 vCPU, 4GB RAM) or similar
+   - **SSH Key:** Add your SSH key
+3. Note the IP address: `YOUR_TEST_IP`
+
+### Step 2: Initial Server Setup
+
+SSH into your new test server:
+
+```bash
+ssh root@YOUR_TEST_IP
+```
+
+Install Docker:
 
 ```bash
 # Update system
-sudo apt update && sudo apt upgrade -y
+apt update && apt upgrade -y
 
 # Install Docker
 curl -fsSL https://get.docker.com -o get-docker.sh
-sudo sh get-docker.sh
-sudo usermod -aG docker $USER
+sh get-docker.sh
 
 # Install Docker Compose
-sudo curl -L "https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
-sudo chmod +x /usr/local/bin/docker-compose
+curl -L "https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+chmod +x /usr/local/bin/docker-compose
 
 # Create app directory
-sudo mkdir -p /opt/skud-taby
-sudo chown $USER:$USER /opt/skud-taby
+mkdir -p /opt/skud-taby
+cd /opt/skud-taby
 ```
 
-### 2. Clone Repository
+### Step 3: Clone Repository
 
 ```bash
 cd /opt/skud-taby
-git clone https://github.com/your-repo/skud-member-portal.git .
+git clone https://github.com/YOUR_REPO/skud-member-portal.git .
 ```
 
-### 3. Configure Environment
+### Step 4: Configure Environment
 
 ```bash
-# Copy and edit production environment
-cp backend/.env.production.example backend/.env
-nano backend/.env
-
-# Update these values:
-# - JWT_SECRET (generate with: openssl rand -hex 32)
-# - SMTP_PASSWORD
+# Create .env file
+cat > .env << EOF
+FRONTEND_URL=http://YOUR_TEST_IP
+SMTP_PASSWORD=sssstaby2025
+JWT_SECRET_KEY=$(openssl rand -hex 32)
+EOF
 ```
 
-### 4. SSL Certificate Setup
+### Step 5: Build and Start Test Environment
 
 ```bash
-# Create certbot directories
-mkdir -p certbot/conf certbot/www
+# Build containers
+docker-compose -f docker-compose.test.yml build
 
-# Get initial SSL certificate (stop nginx first if running)
-docker run -it --rm -v ./certbot/conf:/etc/letsencrypt -v ./certbot/www:/var/www/certbot certbot/certbot certonly --standalone -d srpskoudruzenjetaby.se -d www.srpskoudruzenjetaby.se
-```
-
-### 5. Build and Deploy
-
-```bash
-# Build and start all services
-docker-compose up -d --build
+# Start services
+docker-compose -f docker-compose.test.yml up -d
 
 # Check status
-docker-compose ps
-docker-compose logs -f
+docker-compose -f docker-compose.test.yml ps
+
+# View logs
+docker-compose -f docker-compose.test.yml logs -f
 ```
 
-### 6. Verify Deployment
+### Step 6: Copy Production Database to Test
+
+**Option A: If you have SSH access to production:**
 
 ```bash
-# Check health endpoints
-curl http://localhost/health
-curl http://localhost/api/health
+# On TEST server, run:
+mkdir -p backups
 
-# Check HTTPS
-curl -I https://srpskoudruzenjetaby.se
+# SSH to production and create backup
+ssh root@116.203.136.99 "docker exec skud_mongodb mongodump --db skud_taby --out /data/backup_test"
+
+# Copy backup to test server
+scp -r root@116.203.136.99:/data/backup_test ./backups/
+
+# Restore to test MongoDB
+docker cp ./backups/backup_test/skud_taby skud_mongodb_test:/tmp/restore_db
+docker exec skud_mongodb_test mongorestore --db skud_taby /tmp/restore_db
+docker exec skud_mongodb_test rm -rf /tmp/restore_db
+
+# Restart backend
+docker-compose -f docker-compose.test.yml restart backend
 ```
 
-## Maintenance Commands
+**Option B: Manual backup (if no SSH access):**
 
-### View Logs
+1. On PRODUCTION server:
 ```bash
-# All services
-docker-compose logs -f
-
-# Specific service
-docker-compose logs -f backend
-docker-compose logs -f nginx
+docker exec skud_mongodb mongodump --db skud_taby --archive=/data/skud_backup.archive
+docker cp skud_mongodb:/data/skud_backup.archive ./skud_backup.archive
 ```
 
-### Restart Services
+2. Transfer `skud_backup.archive` to test server (via SCP, SFTP, etc.)
+
+3. On TEST server:
 ```bash
-# Restart all
-docker-compose restart
-
-# Restart specific service
-docker-compose restart backend
+docker cp skud_backup.archive skud_mongodb_test:/tmp/
+docker exec skud_mongodb_test mongorestore --archive=/tmp/skud_backup.archive
 ```
 
-### Update Deployment
+### Step 7: Test Everything
+
+Access your test site: `http://YOUR_TEST_IP`
+
+**Test checklist:**
+- [ ] Login works (try with existing user)
+- [ ] Members list shows all users
+- [ ] Invoices display correctly
+- [ ] PDF invoices download
+- [ ] Create new invoice → email sent
+- [ ] Events display
+- [ ] Gallery works
+- [ ] Admin dashboard statistics correct
+
+---
+
+## PART 2: Production Deployment (After Testing)
+
+### ⚠️ IMPORTANT: Only proceed after successful testing!
+
+### Step 1: Create Production Backup
+
+SSH to production server:
+
 ```bash
-# Pull latest code
-git pull origin main
+ssh root@116.203.136.99
+cd /opt/skud-taby
 
-# Rebuild and restart
-docker-compose up -d --build
+# Create backup BEFORE any changes
+BACKUP_DATE=$(date +%Y%m%d_%H%M%S)
+docker exec skud_mongodb mongodump --db skud_taby --out /data/backup_${BACKUP_DATE}
+mkdir -p backups
+docker cp skud_mongodb:/data/backup_${BACKUP_DATE} ./backups/
+
+echo "Backup saved to: ./backups/backup_${BACKUP_DATE}"
 ```
 
-### Database Backup
+### Step 2: Pull Latest Code
+
 ```bash
-# Create backup
-docker exec skud_mongodb mongodump --db skud_taby --out /data/backup/$(date +%Y%m%d)
-
-# Restore backup
-docker exec skud_mongodb mongorestore --db skud_taby /data/backup/YYYYMMDD/skud_taby
+cd /opt/skud-taby
+git fetch origin main
+git reset --hard origin/main
 ```
 
-### SSL Certificate Renewal
+### Step 3: Verify Environment File
+
 ```bash
-# Manual renewal (automatic via certbot container)
-docker-compose run --rm certbot renew
-docker-compose exec nginx nginx -s reload
+# Check .env exists with correct values
+cat .env
+
+# If missing, create it:
+cat > .env << EOF
+SMTP_PASSWORD=your_smtp_password
+JWT_SECRET_KEY=your_existing_jwt_key
+EOF
 ```
 
-## Performance Monitoring
+### Step 4: Deploy (Data Preserved)
 
-### Check Resource Usage
 ```bash
-# Docker stats
-docker stats
+# Build new containers
+docker-compose -f docker-compose.prod.yml build
 
-# System resources
-htop
+# Restart with new code (volumes/data preserved!)
+docker-compose -f docker-compose.prod.yml up -d
+
+# Watch logs
+docker-compose -f docker-compose.prod.yml logs -f
 ```
 
-### Check Service Health
+### Step 5: Verify Deployment
+
 ```bash
-# Health endpoints
-curl http://localhost/api/health
+# Check health
+curl -s http://localhost/api/health
 
-# Container health
-docker inspect --format='{{.State.Health.Status}}' skud_backend
+# Verify user count (should match before deployment)
+docker exec skud_mongodb mongosh --quiet --eval "db.getSiblingDB('skud_taby').users.countDocuments()"
 ```
 
-## Troubleshooting
+---
 
-### Common Issues
+## Emergency: Restore from Backup
 
-1. **SSL Certificate Issues**
-   ```bash
-   # Check certificate
-   docker-compose logs certbot
-   
-   # Renew manually
-   docker-compose run --rm certbot certonly --webroot -w /var/www/certbot -d srpskoudruzenjetaby.se
-   ```
+If something goes wrong:
 
-2. **Database Connection Issues**
-   ```bash
-   # Check MongoDB
-   docker-compose logs mongodb
-   docker exec skud_mongodb mongosh --eval "db.adminCommand('ping')"
-   ```
+```bash
+cd /opt/skud-taby
 
-3. **Backend Not Starting**
-   ```bash
-   # Check logs
-   docker-compose logs backend
-   
-   # Check if port is in use
-   sudo lsof -i :8001
-   ```
+# Stop backend
+docker-compose -f docker-compose.prod.yml stop backend
 
-4. **Frontend Build Issues**
-   ```bash
-   # Rebuild frontend
-   docker-compose build --no-cache frontend
-   docker-compose up -d frontend
-   ```
+# Restore from backup
+docker cp ./backups/backup_YYYYMMDD_HHMMSS/skud_taby skud_mongodb:/tmp/restore
+docker exec skud_mongodb mongosh --eval "db.getSiblingDB('skud_taby').dropDatabase()"
+docker exec skud_mongodb mongorestore --db skud_taby /tmp/restore
+docker exec skud_mongodb rm -rf /tmp/restore
 
-## Security Checklist
+# Restart
+docker-compose -f docker-compose.prod.yml up -d
+```
 
-- [ ] Change JWT_SECRET from default
-- [ ] Use strong SMTP password
-- [ ] Enable firewall (UFW)
-- [ ] Set up fail2ban
-- [ ] Regular security updates
-- [ ] Enable automatic SSL renewal
-- [ ] Regular database backups
+---
 
-## Resource Limits
+## File Structure
 
-The docker-compose.yml includes resource limits:
-- MongoDB: 1GB max memory
-- Backend: 1GB max memory
-- Frontend: 256MB max memory
-- Nginx: 128MB max memory
+```
+/opt/skud-taby/
+├── docker-compose.test.yml    # Test environment (no SSL)
+├── docker-compose.prod.yml    # Production (with SSL)
+├── nginx.test.conf            # Nginx for test (HTTP only)
+├── nginx.conf                 # Nginx for production (HTTPS)
+├── .env                       # Environment variables
+├── scripts/
+│   ├── setup-test-server.sh
+│   ├── restore-db-from-production.sh
+│   ├── deploy-production.sh
+│   └── restore-backup.sh
+├── backups/                   # Database backups
+├── backend/
+├── frontend/
+└── certbot/                   # SSL certificates (production only)
+```
 
-Adjust these based on your server capacity.
+---
 
-## Contact
+## Quick Reference
 
-For deployment issues, contact the development team.
+| Command | Description |
+|---------|-------------|
+| `docker-compose -f docker-compose.test.yml up -d` | Start test server |
+| `docker-compose -f docker-compose.prod.yml up -d` | Start production |
+| `docker-compose logs -f backend` | View backend logs |
+| `docker exec skud_mongodb mongodump --db skud_taby --out /data/backup` | Create backup |
+| `docker-compose restart backend` | Restart backend only |
+
+---
+
+## Support
+
+If you encounter issues:
+1. Check logs: `docker-compose logs -f`
+2. Verify database: `docker exec skud_mongodb mongosh --eval "db.getSiblingDB('skud_taby').stats()"`
+3. Check health: `curl http://localhost/api/health`
