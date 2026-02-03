@@ -6,13 +6,16 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-# Email configuration - HARDCODED FALLBACK (working setup)
-DEFAULT_SMTP_HOST = "mailcluster.loopia.se"
-DEFAULT_SMTP_PORT = 465  # SSL/TLS
-DEFAULT_SMTP_USER = "info@srpskoudruzenjetaby.se"
-DEFAULT_SMTP_PASSWORD = "sssstaby2025"
-DEFAULT_FROM_EMAIL = "info@srpskoudruzenjetaby.se"
-DEFAULT_FROM_NAME = "SKUD Täby"
+# Email configuration - Use environment variables with fallbacks
+DEFAULT_SMTP_HOST = os.environ.get('SMTP_HOST', 'mailcluster.loopia.se')
+DEFAULT_SMTP_PORT = int(os.environ.get('SMTP_PORT', '465'))
+DEFAULT_SMTP_USER = os.environ.get('SMTP_USER', 'info@srpskoudruzenjetaby.se')
+DEFAULT_SMTP_PASSWORD = os.environ.get('SMTP_PASSWORD', '')
+DEFAULT_FROM_EMAIL = os.environ.get('SMTP_FROM_EMAIL', 'info@srpskoudruzenjetaby.se')
+DEFAULT_FROM_NAME = os.environ.get('SMTP_FROM_NAME', 'SKUD Täby')
+
+# Frontend URL for email links
+FRONTEND_URL = os.environ.get('FRONTEND_URL', 'https://srpskoudruzenjetaby.se')
 
 async def get_smtp_config(db):
     """
