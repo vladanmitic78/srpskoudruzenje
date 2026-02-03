@@ -13,9 +13,48 @@ Build and maintain a comprehensive membership management platform for the Serbia
 
 ## What's Been Implemented
 
+### February 2026
+
+#### PDF Invoice Auto-Generation (COMPLETED - Feb 2, 2026)
+- **Feature**: Automatic PDF invoice generation when admin creates an invoice
+- **Serbian Character Support**: Uses DejaVu Sans fonts for š, ž, đ, č, ć
+- **Bank Details Management**: Super Admins can configure bank details via Platform Settings
+- **Files**:
+  - `/app/backend/utils/invoice_generator.py` - PDF template with reportlab
+  - `/app/backend/routes/invoices.py` - Invoice creation & file serving
+  - `/app/backend/routes/admin.py` - Bank details API endpoints
+- **API Endpoints**:
+  - `POST /api/invoices/` - Creates invoice with auto-generated PDF
+  - `GET /api/invoices/files/{filename}` - Serves PDF files
+  - `GET /api/admin/bank-details` - Returns bank details
+  - `PUT /api/admin/bank-details` - Updates bank details (Super Admin only)
+
+#### Multi-Member Invoice Creation (COMPLETED - Feb 3, 2026)
+- **Feature**: Create invoices for multiple members at once
+- **UI**: Checkbox-based member selection with search
+- **Quick Select**: "Select All" and "Select Without Unpaid" buttons
+- **Files**:
+  - `/app/frontend/src/components/admin/CreateInvoiceDialog.jsx` - Reusable component
+  - `/app/frontend/src/pages/AdminDashboard.js` - Updated dialog
+
+#### Advanced Member Filtering (COMPLETED - Feb 3, 2026)
+- **Filters**: Invoice status (Paid/Unpaid/None), Family status (Has Family/Individual)
+- **CSV Download**: Download filtered member list with all relevant data
+- **Files**:
+  - `/app/frontend/src/components/admin/MemberFilters.jsx` - Reusable component
+  - `/app/frontend/src/pages/AdminDashboard.js` - Integrated filters
+
+#### AdminDashboard Refactoring (IN PROGRESS)
+- **Created**: `/app/frontend/src/components/admin/` folder structure
+- **Extracted Components**:
+  - `CreateInvoiceDialog.jsx` - Invoice creation modal
+  - `MemberFilters.jsx` - Member filtering with CSV export
+  - `index.js` - Central export point
+- **Remaining**: Extract more components (InvoiceTable, EventManagement, etc.)
+
 ### December 2025 - January 2026
 
-#### Family/Group Membership System (NEW - Jan 31, 2026)
+#### Family/Group Membership System (COMPLETED)
 - Adults (18+) can add family members (children, spouse, friends)
 - Each family member gets their own login credentials
 - Automatic email with temporary password sent to new members
@@ -25,29 +64,16 @@ Build and maintain a comprehensive membership management platform for the Serbia
 - Backend: `/app/backend/routes/family.py`
 - Frontend User: `/app/frontend/src/components/FamilyMembersSection.jsx`
 - Frontend Admin: `/app/frontend/src/components/AdminFamilyManagement.jsx`
-- API Endpoints:
-  - `POST /api/family/members` - Add family member
-  - `GET /api/family/members` - List family members
-  - `PUT /api/family/members/{id}` - Update family member
-  - `DELETE /api/family/members/{id}` - Remove family member
-  - `GET /api/family/admin/all` - Admin: Get all families
-  - `POST /api/family/admin/members/{user_id}` - Admin: Add member to user
 
 #### Admin Settings Visibility (VERIFIED WORKING)
 - Checkboxes in Admin/Settings control field visibility on public pages
 - Visibility settings stored in `platform_settings` collection
 - Footer respects visibility flags for all fields
-- Fields: address, email, phone, social media links, org details
 
 #### Media Optimization System
 - Automatic image compression on upload (Pillow library)
 - Optimized all existing images via script
 - Documentation: `/app/MEDIA_OPTIMIZATION.md`
-
-#### Multi-Member Invoices (Backend Complete)
-- Invoice model updated: `userIds: List[str]`
-- New endpoint: `POST /api/admin/export/members/filtered`
-- Frontend UI pending
 
 #### UI/UX Improvements
 - Serbian Story: 3x2 grid with pagination, video link support
