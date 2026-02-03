@@ -5,33 +5,68 @@ WORKDIR /app
 # Copy package files
 COPY package.json yarn.lock ./
 
-# Install dependencies
-RUN yarn install --frozen-lockfile
+# Install dependencies with clean cache
+RUN yarn install --frozen-lockfile --network-timeout 100000 && \
+    yarn cache clean
 
 # Copy source code
 COPY . .
 
 # Set the backend URL for production build
-ENV REACT_APP_BACKEND_URL=https://srpskoudruzenjetaby.se
+ARG REACT_APP_BACKEND_URL=https://srpskoudruzenjetaby.se
+ENV REACT_APP_BACKEND_URL=${REACT_APP_BACKEND_URL}
 
-# Build the app
+# Build with production optimizations
+ENV NODE_ENV=production \
+    GENERATE_SOURCEMAP=false \
+    INLINE_RUNTIME_CHUNK=false
+
 RUN yarn build
 
-# Production stage
+# Production stage - minimal nginx image
 FROM nginx:alpine
 
 # Copy built files
 COPY --from=build /app/build /usr/share/nginx/html
 
-# Create nginx config for SPA routing
-RUN echo 'server { \
-    listen 80; \
-    root /usr/share/nginx/html; \
-    index index.html; \
-    location / { \
-        try_files $uri $uri/ /index.html; \
-    } \
-}' > /etc/nginx/conf.d/default.conf
+# Copy custom nginx config for SPA routing with caching
+RUN cat > /etc/nginx/conf.d/default.conf << 'EOF'
+server {
+    listen 80;
+    root /usr/share/nginx/html;
+    index index.html;
+
+    # Gzip compression
+    gzip on;
+    gzip_vary on;
+    gzip_min_length 1024;
+    gzip_types text/plain text/css text/xml text/javascript application/javascript application/json application/xml image/svg+xml;
+
+    # Cache static assets aggressively
+    location ~* \.(js|css|png|jpg|jpeg|gif|ico|svg|woff|woff2|ttf|eot)$ {
+        expires 1y;
+        add_header Cache-Control "public, immutable";
+        access_log off;
+    }
+
+    # Don't cache HTML
+    location ~* \.html$ {
+        expires -1;
+        add_header Cache-Control "no-store, no-cache, must-revalidate";
+    }
+
+    # SPA fallback
+    location / {
+        try_files $uri $uri/ /index.html;
+        add_header Cache-Control "no-cache";
+    }
+
+    # Security headers
+    add_header X-Frame-Options "SAMEORIGIN" always;
+    add_header X-Content-Type-Options "nosniff" always;
+    add_header X-XSS-Protection "1; mode=block" always;
+}
+EOF
 
 EXPOSE 80
 
