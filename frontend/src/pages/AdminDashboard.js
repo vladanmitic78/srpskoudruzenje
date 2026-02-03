@@ -481,11 +481,21 @@ const AdminDashboard = () => {
   const [viewingInvoice, setViewingInvoice] = useState(null);
   const [editingInvoice, setEditingInvoice] = useState(null);
   const [newInvoice, setNewInvoice] = useState({
-    userId: '',
+    userIds: [],
     amount: '',
     dueDate: '',
     description: ''
   });
+  const [invoiceMemberSearch, setInvoiceMemberSearch] = useState('');
+  
+  // Member filtering state
+  const [memberFilters, setMemberFilters] = useState({
+    invoiceStatus: 'all', // all, paid, unpaid, none
+    membershipType: 'all', // all, active, expired
+    trainingGroup: 'all',
+    hasFamily: 'all' // all, yes, no
+  });
+  
   const [createEventOpen, setCreateEventOpen] = useState(false);
   const [editEventOpen, setEditEventOpen] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState(null);
