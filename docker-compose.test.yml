@@ -33,7 +33,7 @@ services:
     environment:
       - MONGO_URL=mongodb://mongodb:27017
       - DB_NAME=skud_taby
-      - FRONTEND_URL=${FRONTEND_URL:-http://YOUR_TEST_SERVER_IP}
+      - FRONTEND_URL=${FRONTEND_URL:-http://89.167.2.215}
       - SMTP_HOST=mailcluster.loopia.se
       - SMTP_PORT=465
       - SMTP_USER=info@srpskoudruzenjetaby.se
@@ -60,7 +60,7 @@ services:
       context: ./frontend
       dockerfile: Dockerfile.test
       args:
-        - REACT_APP_BACKEND_URL=${FRONTEND_URL:-http://YOUR_TEST_SERVER_IP}
+        - REACT_APP_BACKEND_URL=${FRONTEND_URL:-http://89.167.2.215}
     container_name: skud_frontend_test
     restart: always
     depends_on:
