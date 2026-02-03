@@ -3652,25 +3652,108 @@ const AdminDashboard = () => {
 
         {/* Create Invoice Dialog */}
         <Dialog open={createInvoiceOpen} onOpenChange={setCreateInvoiceOpen}>
-          <DialogContent className="max-w-md">
+          <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
             <DialogHeader>
               <DialogTitle>Create New Invoice</DialogTitle>
+              <p className="text-sm text-gray-500">Select one or more members to create invoices</p>
             </DialogHeader>
             <div className="space-y-4">
+              {/* Member Selection */}
               <div>
-                <label className="block text-sm font-medium mb-2">Select Member</label>
-                <select
-                  value={newInvoice.userId}
-                  onChange={(e) => setNewInvoice({...newInvoice, userId: e.target.value})}
-                  className="w-full p-2 border rounded dark:bg-gray-800 dark:border-gray-600"
-                >
-                  <option value="">Choose a member...</option>
-                  {users.filter(u => u.role === 'user').map(user => (
-                    <option key={user.id} value={user.id}>
-                      {user.fullName} ({user.email})
-                    </option>
-                  ))}
-                </select>
+                <label className="block text-sm font-medium mb-2">Select Members</label>
+                
+                {/* Search box for members */}
+                <Input
+                  type="text"
+                  placeholder="Search members by name or email..."
+                  value={invoiceMemberSearch}
+                  onChange={(e) => setInvoiceMemberSearch(e.target.value)}
+                  className="mb-2"
+                />
+                
+                {/* Selected count */}
+                {newInvoice.userIds.length > 0 && (
+                  <div className="mb-2 p-2 bg-blue-50 dark:bg-blue-900/20 rounded-lg flex items-center justify-between">
+                    <span className="text-sm text-blue-700 dark:text-blue-300">
+                      {newInvoice.userIds.length} member(s) selected
+                    </span>
+                    <button
+                      onClick={() => setNewInvoice({...newInvoice, userIds: []})}
+                      className="text-xs text-blue-600 hover:text-blue-800"
+                    >
+                      Clear all
+                    </button>
+                  </div>
+                )}
+                
+                {/* Member checkboxes */}
+                <div className="max-h-48 overflow-y-auto border rounded-lg p-2 space-y-1">
+                  {users
+                    .filter(u => u.role === 'user')
+                    .filter(u => {
+                      if (!invoiceMemberSearch) return true;
+                      const search = invoiceMemberSearch.toLowerCase();
+                      return u.fullName?.toLowerCase().includes(search) || 
+                             u.email?.toLowerCase().includes(search);
+                    })
+                    .map(user => (
+                      <label 
+                        key={user.id} 
+                        className="flex items-center gap-2 p-2 hover:bg-gray-50 dark:hover:bg-gray-700 rounded cursor-pointer"
+                      >
+                        <input
+                          type="checkbox"
+                          checked={newInvoice.userIds.includes(user.id)}
+                          onChange={(e) => {
+                            if (e.target.checked) {
+                              setNewInvoice({...newInvoice, userIds: [...newInvoice.userIds, user.id]});
+                            } else {
+                              setNewInvoice({...newInvoice, userIds: newInvoice.userIds.filter(id => id !== user.id)});
+                            }
+                          }}
+                          className="w-4 h-4 rounded border-gray-300"
+                        />
+                        <div className="flex-1">
+                          <span className="font-medium">{user.fullName}</span>
+                          <span className="text-sm text-gray-500 ml-2">({user.email})</span>
+                        </div>
+                      </label>
+                    ))
+                  }
+                  {users.filter(u => u.role === 'user').length === 0 && (
+                    <p className="text-gray-500 text-sm p-2">No members found</p>
+                  )}
+                </div>
+                
+                {/* Quick select buttons */}
+                <div className="flex gap-2 mt-2">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const allUserIds = users.filter(u => u.role === 'user').map(u => u.id);
+                      setNewInvoice({...newInvoice, userIds: allUserIds});
+                    }}
+                    className="text-xs px-2 py-1 bg-gray-100 dark:bg-gray-700 rounded hover:bg-gray-200 dark:hover:bg-gray-600"
+                  >
+                    Select All
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      // Select members without unpaid invoices
+                      const membersWithUnpaid = invoices
+                        .filter(inv => inv.status === 'unpaid')
+                        .map(inv => inv.userId);
+                      const eligibleMembers = users
+                        .filter(u => u.role === 'user' && !membersWithUnpaid.includes(u.id))
+                        .map(u => u.id);
+                      setNewInvoice({...newInvoice, userIds: eligibleMembers});
+                    }}
+                    className="text-xs px-2 py-1 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300 rounded hover:bg-green-200"
+                  >
+                    Select Without Unpaid
+                  </button>
+                </div>
               </div>
 
               <div>
@@ -3679,42 +3762,50 @@ const AdminDashboard = () => {
                   type="text"
                   value={newInvoice.description}
                   onChange={(e) => setNewInvoice({...newInvoice, description: e.target.value})}
-                  placeholder="e.g., Membership Fee - January 2025"
+                  placeholder="e.g., Članarina 2025 / Membership Fee 2025"
                   className="w-full p-2 border rounded dark:bg-gray-800 dark:border-gray-600"
                 />
               </div>
 
-              <div>
-                <label className="block text-sm font-medium mb-2">Amount (SEK)</label>
-                <input
-                  type="number"
-                  value={newInvoice.amount}
-                  onChange={(e) => setNewInvoice({...newInvoice, amount: e.target.value})}
-                  placeholder="500"
-                  className="w-full p-2 border rounded dark:bg-gray-800 dark:border-gray-600"
-                />
-              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium mb-2">Amount (SEK)</label>
+                  <input
+                    type="number"
+                    value={newInvoice.amount}
+                    onChange={(e) => setNewInvoice({...newInvoice, amount: e.target.value})}
+                    placeholder="500"
+                    className="w-full p-2 border rounded dark:bg-gray-800 dark:border-gray-600"
+                  />
+                </div>
 
-              <div>
-                <label className="block text-sm font-medium mb-2">Due Date</label>
-                <input
-                  type="date"
-                  value={newInvoice.dueDate}
-                  onChange={(e) => setNewInvoice({...newInvoice, dueDate: e.target.value})}
-                  className="w-full p-2 border rounded dark:bg-gray-800 dark:border-gray-600"
-                />
+                <div>
+                  <label className="block text-sm font-medium mb-2">Due Date</label>
+                  <input
+                    type="date"
+                    value={newInvoice.dueDate}
+                    onChange={(e) => setNewInvoice({...newInvoice, dueDate: e.target.value})}
+                    className="w-full p-2 border rounded dark:bg-gray-800 dark:border-gray-600"
+                  />
+                </div>
               </div>
 
               <div className="flex gap-2 pt-4">
                 <button
                   onClick={handleCreateInvoice}
-                  disabled={!newInvoice.userId || !newInvoice.amount || !newInvoice.dueDate || !newInvoice.description}
+                  disabled={newInvoice.userIds.length === 0 || !newInvoice.amount || !newInvoice.dueDate || !newInvoice.description}
                   className="flex-1 px-4 py-2 bg-[var(--color-button-primary)] text-white rounded hover:bg-[var(--color-button-hover)] disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  Create Invoice
+                  {newInvoice.userIds.length > 1 
+                    ? `Create ${newInvoice.userIds.length} Invoices` 
+                    : 'Create Invoice'}
                 </button>
                 <button
-                  onClick={() => setCreateInvoiceOpen(false)}
+                  onClick={() => {
+                    setCreateInvoiceOpen(false);
+                    setNewInvoice({ userIds: [], amount: '', dueDate: '', description: '' });
+                    setInvoiceMemberSearch('');
+                  }}
                   className="flex-1 px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700"
                 >
                   Cancel
