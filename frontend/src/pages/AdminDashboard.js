@@ -825,10 +825,32 @@ const AdminDashboard = () => {
 
   const handleCreateInvoice = async () => {
     try {
-      await invoicesAPI.create(newInvoice);
-      toast.success('Invoice created successfully');
+      // Support both single and multi-member invoices
+      const invoiceData = {
+        ...newInvoice,
+        userIds: newInvoice.userIds.length > 0 ? newInvoice.userIds : [newInvoice.userId]
+      };
+      
+      // Create invoice for each selected member
+      if (invoiceData.userIds.length > 1) {
+        // Multi-member: create separate invoices
+        for (const userId of invoiceData.userIds) {
+          await invoicesAPI.create({
+            userIds: [userId],
+            amount: newInvoice.amount,
+            dueDate: newInvoice.dueDate,
+            description: newInvoice.description
+          });
+        }
+        toast.success(`Created ${invoiceData.userIds.length} invoices successfully`);
+      } else {
+        await invoicesAPI.create(invoiceData);
+        toast.success('Invoice created successfully');
+      }
+      
       setCreateInvoiceOpen(false);
-      setNewInvoice({ userId: '', amount: '', dueDate: '', description: '' });
+      setNewInvoice({ userIds: [], amount: '', dueDate: '', description: '' });
+      setInvoiceMemberSearch('');
       // Refresh invoices
       const invoicesData = await invoicesAPI.getAll();
       setInvoices(invoicesData.invoices || []);
