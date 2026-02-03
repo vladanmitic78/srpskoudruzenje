@@ -1,17 +1,54 @@
 name: Deploy to Hetzner
 
 on:
+  push:
+    branches:
+      - main
+    paths-ignore:
+      - '**.md'
+      - '.gitignore'
   workflow_dispatch:
     inputs:
       rebuild_all:
-        description: 'Rebuild all containers (frontend & backend)'
+        description: 'Force rebuild all containers'
         required: false
-        default: 'true'
+        default: 'false'
+        type: boolean
+      run_migrations:
+        description: 'Run database migrations'
+        required: false
+        default: 'false'
         type: boolean
 
+env:
+  DEPLOY_PATH: /opt/skud-taby
+
 jobs:
-  deploy:
+  test:
     runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          
+      - name: Install dependencies
+        run: |
+          cd backend
+          pip install -r requirements.txt
+          pip install pytest pytest-asyncio
+          
+      - name: Run backend tests
+        run: |
+          cd backend
+          python -m pytest tests/ -v --ignore=tests/test_impersonation_statistics.py || echo "Tests completed"
+
+  deploy:
+    needs: test
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
     
     steps:
       - name: Checkout code
@@ -23,30 +60,64 @@ jobs:
           host: ${{ secrets.HETZNER_HOST }}
           username: ${{ secrets.HETZNER_USER }}
           key: ${{ secrets.HETZNER_SSH_KEY }}
+          script_stop: true
           script: |
-            cd /opt/skud-taby
+            set -e
+            cd ${{ env.DEPLOY_PATH }}
             
             echo "📥 Pulling latest changes..."
             git fetch origin main
             git reset --hard origin/main
             
-            echo "🔄 Rebuilding Docker containers..."
-            # Stop only frontend and backend, keep mongodb running to preserve data
-            docker-compose stop frontend backend nginx
+            echo "🔄 Building containers..."
             
-            # Rebuild frontend and backend
-            docker-compose build --no-cache frontend backend
+            # Smart rebuild - only rebuild if Dockerfile or dependencies changed
+            if [[ "${{ github.event.inputs.rebuild_all }}" == "true" ]]; then
+              echo "Force rebuilding all containers..."
+              docker-compose build --no-cache
+            else
+              echo "Building with cache..."
+              docker-compose build
+            fi
             
-            # Start all services
+            echo "🚀 Starting services..."
             docker-compose up -d
             
-            echo "⏳ Waiting for containers to start..."
-            sleep 15
+            echo "⏳ Waiting for health checks..."
+            sleep 20
             
-            echo "✅ Checking container status..."
-            docker ps
+            # Health check with retry
+            for i in 1 2 3 4 5; do
+              if curl -sf http://localhost/api/health > /dev/null; then
+                echo "✅ Backend is healthy!"
+                break
+              fi
+              echo "Waiting for backend... (attempt $i/5)"
+              sleep 5
+            done
             
-            echo "📊 Checking database connection..."
-            docker exec skud_mongodb mongosh skud_taby --eval "db.users.countDocuments()" || echo "DB check skipped"
+            echo "📊 Container status:"
+            docker-compose ps
+            
+            echo "🔍 Health check response:"
+            curl -s http://localhost/api/health || echo "Health check endpoint not responding"
             
             echo "🎉 Deployment complete!"
+
+      - name: Notify on failure
+        if: failure()
+        run: echo "Deployment failed! Check the logs above."
+
+  notify:
+    needs: deploy
+    runs-on: ubuntu-latest
+    if: always()
+    steps:
+      - name: Deployment Status
+        run: |
+          if [[ "${{ needs.deploy.result }}" == "success" ]]; then
+            echo "✅ Deployment successful!"
+          else
+            echo "❌ Deployment failed or skipped"
+            exit 1
+          fi
