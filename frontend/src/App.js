@@ -58,6 +58,7 @@ const ProtectedRoute = ({ children, requireAdmin = false, requireModerator = fal
 const AppContent = () => {
   return (
     <div className="flex flex-col min-h-screen">
+      <ImpersonationBanner />
       <Header />
       <main className="flex-grow">
         <Suspense fallback={<LoadingSpinner />}>
