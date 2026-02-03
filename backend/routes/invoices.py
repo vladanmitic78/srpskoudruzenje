@@ -110,6 +110,38 @@ async def create_invoice(
     
     await db.invoices.insert_one(invoice_dict)
     
+    # Send email notification to the user
+    try:
+        from email_service import send_email, get_invoice_upload_notification
+        
+        user_email = user.get("email")
+        user_name = user.get("fullName", user.get("username", "Member"))
+        
+        if user_email:
+            # Generate download link
+            download_link = f"{os.environ.get('FRONTEND_URL', 'https://srpskoudruzenjetaby.se')}/profile"
+            
+            html, text = get_invoice_upload_notification(
+                user_name=user_name,
+                invoice_description=invoice.description,
+                amount=float(invoice.amount),
+                currency=invoice.currency or "SEK",
+                due_date=invoice.dueDate,
+                download_link=download_link
+            )
+            
+            await send_email(
+                to_email=user_email,
+                subject=f"Nova Faktura / Ny Faktura - {invoice.description}",
+                html_content=html,
+                text_content=text,
+                db=db
+            )
+            print(f"Invoice notification sent to {user_email}")
+    except Exception as e:
+        # Don't fail the invoice creation if email fails
+        print(f"Failed to send invoice notification email: {e}")
+    
     return InvoiceResponse(**{**invoice_dict, "id": invoice_dict["_id"]})
 
 @router.put("/{invoice_id}/mark-paid")
