@@ -19,12 +19,14 @@ Build and maintain a comprehensive membership management platform for the Serbia
 - **Feature**: Automatic PDF invoice generation when admin creates an invoice
 - **Serbian Character Support**: Uses DejaVu Sans fonts for š, ž, đ, č, ć
 - **Bank Details Management**: Super Admins can configure bank details via Platform Settings
+- **Email Notifications**: Automatic email sent to user when invoice is created (bilingual: Serbian/Swedish)
 - **Files**:
   - `/app/backend/utils/invoice_generator.py` - PDF template with reportlab
-  - `/app/backend/routes/invoices.py` - Invoice creation & file serving
+  - `/app/backend/routes/invoices.py` - Invoice creation, file serving, email notification
   - `/app/backend/routes/admin.py` - Bank details API endpoints
+  - `/app/backend/email_service.py` - Email templates including `get_invoice_upload_notification`
 - **API Endpoints**:
-  - `POST /api/invoices/` - Creates invoice with auto-generated PDF
+  - `POST /api/invoices/` - Creates invoice, generates PDF, sends email notification
   - `GET /api/invoices/files/{filename}` - Serves PDF files
   - `GET /api/admin/bank-details` - Returns bank details
   - `PUT /api/admin/bank-details` - Updates bank details (Super Admin only)
