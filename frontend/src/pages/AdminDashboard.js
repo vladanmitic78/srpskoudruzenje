@@ -2718,6 +2718,17 @@ const AdminDashboard = () => {
                                     >
                                       Delete
                                     </button>
+                                    <button
+                                      onClick={() => {
+                                        if (window.confirm(`View site as ${user.fullName || user.email}? This action will be logged.`)) {
+                                          handleImpersonateUser(user.id);
+                                        }
+                                      }}
+                                      className="px-3 py-1 bg-purple-600 text-white text-xs rounded hover:bg-purple-700"
+                                      title="View site as this user"
+                                    >
+                                      👤 View As
+                                    </button>
                                   </>
                                 )}
                               </div>
