@@ -1,169 +1,212 @@
-# SKUD Täby - Deployment Guide
+# SKUD Täby - Hetzner Deployment Guide
 
-## Overview
-This guide explains how to deploy the Serbian Cultural Association website from GitHub to Hetzner server.
+## Prerequisites
 
-## Important: Your Data is Safe
-- **MongoDB data** is stored in a Docker volume (`mongodb_data`)
-- **Uploaded files** are stored in a Docker volume (`uploads_data`)
-- These volumes persist across deployments and container rebuilds
-- **Never run `docker volume rm`** or `docker system prune -a --volumes`
+1. **Hetzner Cloud Server**
+   - Recommended: CX21 or higher (2 vCPU, 4GB RAM)
+   - Ubuntu 22.04 LTS
+   - Docker and Docker Compose installed
 
----
+2. **Domain Configuration**
+   - Domain: srpskoudruzenjetaby.se
+   - DNS A record pointing to server IP
+   - DNS CNAME for www subdomain
 
-## Option 1: Manual Deployment (Recommended for First Time)
+## Deployment Steps
 
-### Step 1: SSH into your server
+### 1. Server Setup
+
 ```bash
-ssh root@116.203.136.99
+# Update system
+sudo apt update && sudo apt upgrade -y
+
+# Install Docker
+curl -fsSL https://get.docker.com -o get-docker.sh
+sudo sh get-docker.sh
+sudo usermod -aG docker $USER
+
+# Install Docker Compose
+sudo curl -L "https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+sudo chmod +x /usr/local/bin/docker-compose
+
+# Create app directory
+sudo mkdir -p /opt/skud-taby
+sudo chown $USER:$USER /opt/skud-taby
 ```
 
-### Step 2: Navigate to the project directory
+### 2. Clone Repository
+
 ```bash
 cd /opt/skud-taby
+git clone https://github.com/your-repo/skud-member-portal.git .
 ```
 
-### Step 3: Pull latest code from GitHub
+### 3. Configure Environment
+
 ```bash
-git fetch origin main
-git reset --hard origin/main
+# Copy and edit production environment
+cp backend/.env.production.example backend/.env
+nano backend/.env
+
+# Update these values:
+# - JWT_SECRET (generate with: openssl rand -hex 32)
+# - SMTP_PASSWORD
 ```
 
-### Step 4: Rebuild and restart containers (preserves data)
+### 4. SSL Certificate Setup
+
 ```bash
-# Stop frontend, backend, nginx (keep mongodb running)
-docker-compose stop frontend backend nginx
+# Create certbot directories
+mkdir -p certbot/conf certbot/www
 
-# Rebuild only frontend and backend
-docker-compose build --no-cache frontend backend
-
-# Start all services
-docker-compose up -d
+# Get initial SSL certificate (stop nginx first if running)
+docker run -it --rm -v ./certbot/conf:/etc/letsencrypt -v ./certbot/www:/var/www/certbot certbot/certbot certonly --standalone -d srpskoudruzenjetaby.se -d www.srpskoudruzenjetaby.se
 ```
 
-### Step 5: Verify deployment
+### 5. Build and Deploy
+
 ```bash
-# Check all containers are running
-docker ps
+# Build and start all services
+docker-compose up -d --build
 
-# Check database has data
-docker exec skud_mongodb mongosh skud_taby --eval "db.users.countDocuments()"
-
-# Check logs if needed
-docker logs skud_backend --tail 20
-docker logs skud_nginx --tail 20
+# Check status
+docker-compose ps
+docker-compose logs -f
 ```
 
----
+### 6. Verify Deployment
 
-## Option 2: GitHub Actions Deployment
+```bash
+# Check health endpoints
+curl http://localhost/health
+curl http://localhost/api/health
 
-### Prerequisites (One-time setup)
-1. Go to your GitHub repository: `https://github.com/vladanmitic78/srpskoudruzenje`
-2. Navigate to **Settings** → **Secrets and variables** → **Actions**
-3. Add these secrets:
-   - `HETZNER_HOST`: `116.203.136.99`
-   - `HETZNER_USER`: `root`
-   - `HETZNER_SSH_KEY`: Your private SSH key (the one you use to SSH into the server)
+# Check HTTPS
+curl -I https://srpskoudruzenjetaby.se
+```
 
-### To Deploy:
-1. Go to **Actions** tab in your GitHub repository
-2. Select "Deploy to Hetzner" workflow
-3. Click "Run workflow"
-4. Wait for completion
+## Maintenance Commands
 
----
+### View Logs
+```bash
+# All services
+docker-compose logs -f
+
+# Specific service
+docker-compose logs -f backend
+docker-compose logs -f nginx
+```
+
+### Restart Services
+```bash
+# Restart all
+docker-compose restart
+
+# Restart specific service
+docker-compose restart backend
+```
+
+### Update Deployment
+```bash
+# Pull latest code
+git pull origin main
+
+# Rebuild and restart
+docker-compose up -d --build
+```
+
+### Database Backup
+```bash
+# Create backup
+docker exec skud_mongodb mongodump --db skud_taby --out /data/backup/$(date +%Y%m%d)
+
+# Restore backup
+docker exec skud_mongodb mongorestore --db skud_taby /data/backup/YYYYMMDD/skud_taby
+```
+
+### SSL Certificate Renewal
+```bash
+# Manual renewal (automatic via certbot container)
+docker-compose run --rm certbot renew
+docker-compose exec nginx nginx -s reload
+```
+
+## Performance Monitoring
+
+### Check Resource Usage
+```bash
+# Docker stats
+docker stats
+
+# System resources
+htop
+```
+
+### Check Service Health
+```bash
+# Health endpoints
+curl http://localhost/api/health
+
+# Container health
+docker inspect --format='{{.State.Health.Status}}' skud_backend
+```
 
 ## Troubleshooting
 
-### If website shows 404:
-```bash
-docker-compose restart nginx
-```
+### Common Issues
 
-### If SSL certificates expired:
-```bash
-docker stop skud_nginx
-docker run -it --rm -p 80:80 \
-  -v /opt/skud-taby/certbot/conf:/etc/letsencrypt \
-  certbot/certbot certonly --standalone \
-  -d srpskoudruzenjetaby.se -d www.srpskoudruzenjetaby.se \
-  --email vladanmitic@gmail.com --agree-tos --no-eff-email
-docker start skud_nginx
-```
+1. **SSL Certificate Issues**
+   ```bash
+   # Check certificate
+   docker-compose logs certbot
+   
+   # Renew manually
+   docker-compose run --rm certbot certonly --webroot -w /var/www/certbot -d srpskoudruzenjetaby.se
+   ```
 
-### If database appears empty:
-Check if using correct database name:
-```bash
-docker exec skud_backend env | grep DB_NAME
-# Should show: DB_NAME=skud_taby
-```
+2. **Database Connection Issues**
+   ```bash
+   # Check MongoDB
+   docker-compose logs mongodb
+   docker exec skud_mongodb mongosh --eval "db.adminCommand('ping')"
+   ```
 
-If it shows `skud_db`, edit docker-compose.yml:
-```bash
-sed -i 's/DB_NAME=skud_db/DB_NAME=skud_taby/g' /opt/skud-taby/docker-compose.yml
-docker-compose up -d --force-recreate backend
-```
+3. **Backend Not Starting**
+   ```bash
+   # Check logs
+   docker-compose logs backend
+   
+   # Check if port is in use
+   sudo lsof -i :8001
+   ```
 
-### To check logs:
-```bash
-docker logs skud_backend --tail 50
-docker logs skud_frontend --tail 50
-docker logs skud_nginx --tail 50
-docker logs skud_mongodb --tail 50
-```
+4. **Frontend Build Issues**
+   ```bash
+   # Rebuild frontend
+   docker-compose build --no-cache frontend
+   docker-compose up -d frontend
+   ```
 
----
+## Security Checklist
 
-## Backup Recommendations
+- [ ] Change JWT_SECRET from default
+- [ ] Use strong SMTP password
+- [ ] Enable firewall (UFW)
+- [ ] Set up fail2ban
+- [ ] Regular security updates
+- [ ] Enable automatic SSL renewal
+- [ ] Regular database backups
 
-### Backup MongoDB data:
-```bash
-docker exec skud_mongodb mongodump --db skud_taby --out /data/db/backup
-docker cp skud_mongodb:/data/db/backup ./mongodb_backup_$(date +%Y%m%d)
-```
+## Resource Limits
 
-### Backup uploaded files:
-```bash
-docker cp skud_backend:/app/uploads ./uploads_backup_$(date +%Y%m%d)
-```
+The docker-compose.yml includes resource limits:
+- MongoDB: 1GB max memory
+- Backend: 1GB max memory
+- Frontend: 256MB max memory
+- Nginx: 128MB max memory
 
----
+Adjust these based on your server capacity.
 
-## File Structure
-```
-/opt/skud-taby/
-├── backend/
-│   ├── Dockerfile
-│   ├── requirements.txt
-│   ├── server.py
-│   └── routes/
-├── frontend/
-│   ├── Dockerfile
-│   ├── package.json
-│   └── src/
-├── docker-compose.yml
-├── nginx.conf
-├── certbot/
-│   └── conf/          # SSL certificates
-└── DEPLOYMENT.md      # This file
-```
+## Contact
 
-## Docker Volumes (DATA - DO NOT DELETE)
-- `skud-taby_mongodb_data` - All database data (users, news, events, etc.)
-- `skud-taby_uploads_data` - All uploaded images and files
-
----
-
-## Quick Reference Commands
-
-| Task | Command |
-|------|---------|
-| SSH into server | `ssh root@116.203.136.99` |
-| Go to project | `cd /opt/skud-taby` |
-| Pull updates | `git pull origin main` |
-| Rebuild all | `docker-compose build --no-cache` |
-| Restart all | `docker-compose up -d` |
-| Check status | `docker ps` |
-| View logs | `docker logs <container_name> --tail 50` |
-| Check users | `docker exec skud_mongodb mongosh skud_taby --eval "db.users.countDocuments()"` |
+For deployment issues, contact the development team.
