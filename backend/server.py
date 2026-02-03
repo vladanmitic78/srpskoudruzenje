@@ -198,6 +198,42 @@ async def startup_event():
         })
         logger.info("Default settings created")
     
+    # Create database indexes for optimal query performance
+    try:
+        # Users collection indexes
+        await db.users.create_index("email", unique=True, sparse=True)
+        await db.users.create_index("username", unique=True, sparse=True)
+        await db.users.create_index("role")
+        await db.users.create_index("createdAt")
+        
+        # Invoices collection indexes
+        await db.invoices.create_index("userId")
+        await db.invoices.create_index("status")
+        await db.invoices.create_index("createdAt")
+        await db.invoices.create_index([("userId", 1), ("status", 1)])
+        
+        # Events collection indexes
+        await db.events.create_index("date")
+        await db.events.create_index("status")
+        await db.events.create_index("createdAt")
+        
+        # News collection indexes
+        await db.news.create_index("createdAt")
+        await db.news.create_index("category")
+        
+        # Gallery collection indexes
+        await db.gallery.create_index("createdAt")
+        await db.gallery.create_index("type")
+        
+        # Activity logs indexes (for impersonation logs, etc.)
+        await db.activity_logs.create_index("timestamp")
+        await db.activity_logs.create_index("action")
+        await db.activity_logs.create_index([("action", 1), ("timestamp", -1)])
+        
+        logger.info("Database indexes created/verified")
+    except Exception as e:
+        logger.warning(f"Index creation warning (may already exist): {e}")
+    
     # Start the background scheduler for automated tasks
     start_scheduler(db)
     logger.info("Background scheduler initialized")
