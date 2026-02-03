@@ -49,10 +49,30 @@ Build and maintain a comprehensive membership management platform for the Serbia
 #### AdminDashboard Refactoring (IN PROGRESS)
 - **Created**: `/app/frontend/src/components/admin/` folder structure
 - **Extracted Components**:
-  - `CreateInvoiceDialog.jsx` - Invoice creation modal
+  - `CreateInvoiceDialog.jsx` - Invoice creation modal with multi-select
   - `MemberFilters.jsx` - Member filtering with CSV export
+  - `StatisticsCards.jsx` - Dashboard statistics display
+  - `InvoiceDetailsModal.jsx` - Invoice details popup
+  - `UserImpersonation.jsx` - User impersonation dialog
   - `index.js` - Central export point
 - **Remaining**: Extract more components (InvoiceTable, EventManagement, etc.)
+
+#### User Impersonation (COMPLETED - Feb 3, 2026)
+- **Feature**: Super Admins can view the site as any non-superadmin user
+- **Security**: Impersonation actions logged in `activity_logs` collection
+- **UI Components**:
+  - "👤 View As" button in User Management tab (Users & Roles)
+  - Purple impersonation banner at top of page when active
+  - "Exit Impersonation" button to restore admin session
+- **Files**:
+  - `/app/backend/routes/admin.py` - POST /api/admin/impersonate/{user_id}
+  - `/app/frontend/src/components/ImpersonationBanner.jsx` - Banner component
+  - `/app/frontend/src/pages/AdminDashboard.js` - handleImpersonateUser function
+- **Testing**: 100% pass rate (8 backend, 6 frontend tests)
+
+#### Admin Dashboard Statistics (VERIFIED WORKING - Feb 3, 2026)
+- Statistics correctly display: totalMembers, paidInvoices, unpaidInvoices, totalRevenue
+- Recurring issue marked as RESOLVED
 
 ### December 2025 - January 2026
 
