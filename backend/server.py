@@ -85,6 +85,25 @@ from utils.cache import cache, branding_key, CACHE_TTL
 async def root():
     return {"message": "SKUD Täby API v2.0 - Backend Running", "status": "ok"}
 
+@api_router.get("/health")
+async def health_check():
+    """Health check endpoint for container orchestration"""
+    try:
+        # Check database connection
+        await db.command("ping")
+        return {
+            "status": "healthy",
+            "database": "connected",
+            "timestamp": datetime.utcnow().isoformat()
+        }
+    except Exception as e:
+        return {
+            "status": "unhealthy",
+            "database": "disconnected",
+            "error": str(e),
+            "timestamp": datetime.utcnow().isoformat()
+        }
+
 # Public branding endpoint (no auth required) - with caching
 @api_router.get("/public/branding")
 async def get_public_branding():
