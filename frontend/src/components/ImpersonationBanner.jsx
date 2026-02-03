@@ -42,6 +42,7 @@ const ImpersonationBanner = () => {
       <button
         onClick={handleExitImpersonation}
         className="px-4 py-1 bg-white text-purple-600 rounded-lg font-semibold hover:bg-purple-50 transition-colors text-sm"
+        data-testid="exit-impersonation-button"
       >
         ✕ Exit Impersonation
       </button>
