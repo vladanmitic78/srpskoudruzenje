@@ -114,6 +114,68 @@ async def delete_user(
     
     return {"success": True, "message": "User and related data deleted successfully"}
 
+
+@router.post("/impersonate/{user_id}")
+async def impersonate_user(
+    user_id: str,
+    superadmin: dict = Depends(get_superadmin_user),
+    request: Request = None
+):
+    """
+    Impersonate a user (Super Admin only)
+    Returns a token that allows the super admin to act as the target user
+    """
+    from auth_utils import create_access_token
+    
+    db = request.app.state.db
+    
+    # Find target user
+    target_user = await db.users.find_one({"_id": user_id})
+    if not target_user:
+        target_user = await db.users.find_one({"id": user_id})
+    
+    if not target_user:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    # Don't allow impersonating another superadmin
+    if target_user.get("role") == "superadmin":
+        raise HTTPException(status_code=403, detail="Cannot impersonate another super admin")
+    
+    # Create impersonation token with special flag
+    token_data = {
+        "sub": target_user.get("email") or target_user.get("username"),
+        "user_id": str(target_user.get("_id", target_user.get("id"))),
+        "role": target_user.get("role", "user"),
+        "impersonated_by": superadmin.get("_id") or superadmin.get("id"),
+        "is_impersonation": True
+    }
+    
+    impersonation_token = create_access_token(token_data)
+    
+    # Log the impersonation action
+    await db.activity_logs.insert_one({
+        "action": "user_impersonation",
+        "superadmin_id": superadmin.get("_id") or superadmin.get("id"),
+        "superadmin_email": superadmin.get("email"),
+        "target_user_id": user_id,
+        "target_user_email": target_user.get("email"),
+        "timestamp": datetime.utcnow()
+    })
+    
+    return {
+        "success": True,
+        "token": impersonation_token,
+        "user": {
+            "id": str(target_user.get("_id", target_user.get("id"))),
+            "email": target_user.get("email"),
+            "fullName": target_user.get("fullName"),
+            "role": target_user.get("role"),
+            "username": target_user.get("username")
+        },
+        "message": f"Now impersonating {target_user.get('fullName') or target_user.get('email')}"
+    }
+
+
 @router.get("/export/members/pdf")
 async def export_members_pdf(admin: dict = Depends(get_admin_user), request: Request = None):
     """Export members to PDF"""
