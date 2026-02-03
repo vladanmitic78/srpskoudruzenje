@@ -1298,8 +1298,9 @@ const AdminDashboard = () => {
                 </div>
               </CardHeader>
               <CardContent>
-                {/* Search Field */}
-                <div className="mb-6">
+                {/* Search and Filter Section */}
+                <div className="mb-6 space-y-4">
+                  {/* Search Field */}
                   <Input
                     type="text"
                     placeholder={t('admin.searchMembers') || 'Search members by name, email, or username...'}
