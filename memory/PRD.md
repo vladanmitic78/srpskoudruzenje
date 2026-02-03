@@ -5,15 +5,48 @@ Build and maintain a comprehensive membership management platform for the Serbia
 
 ## Current Application Architecture
 - **Frontend:** React with TailwindCSS, Shadcn UI components
-- **Backend:** FastAPI (Python) with GZip compression
+- **Backend:** FastAPI (Python) with GZip compression, uvloop, httptools
 - **Database:** MongoDB with optimized indexes
-- **Email:** SMTP via Loopia (dynamic settings from database)
+- **Email:** SMTP via Loopia (environment-based configuration)
 - **Caching:** In-memory cache for frequently accessed data
 - **Performance:** Code splitting, lazy loading, virtual lists
+- **Deployment:** Docker Compose with health checks, Nginx reverse proxy with SSL
+
+## Deployment Infrastructure
+- **Server:** Hetzner Cloud (recommended CX21+)
+- **Domain:** srpskoudruzenjetaby.se
+- **SSL:** Let's Encrypt via Certbot
+- **CI/CD:** GitHub Actions workflow
+- **Documentation:** /app/DEPLOYMENT.md
 
 ## What's Been Implemented
 
 ### February 2026
+
+#### System Optimization & Deployment Prep (COMPLETED - Feb 3, 2026)
+- **Backend Optimizations**:
+  - Added uvloop and httptools for async performance
+  - Database indexes created on startup (users, invoices, events, news, gallery)
+  - Health check endpoint (`/api/health`) for container orchestration
+  - Environment-based SMTP configuration (removed hardcoded credentials)
+- **Docker Configuration**:
+  - Production-ready Dockerfiles with multi-stage builds
+  - Resource limits for all containers
+  - Health checks for MongoDB, backend, frontend, nginx
+  - Certbot container for automatic SSL renewal
+- **Nginx Configuration**:
+  - HTTP/2 support with SSL
+  - Rate limiting (API: 10r/s, Login: 5r/m)
+  - Gzip compression for all content types
+  - Security headers (HSTS, X-Frame-Options, etc.)
+  - Static file caching (1 year for assets)
+- **Files Updated**:
+  - `/app/docker-compose.yml` - Production-ready with health checks
+  - `/app/backend/Dockerfile` - Optimized with uvloop
+  - `/app/frontend/Dockerfile` - Multi-stage build with caching
+  - `/app/nginx.conf` - Full production configuration
+  - `/app/DEPLOYMENT.md` - Comprehensive deployment guide
+  - `/app/.github/workflows/deploy-hetzner.yml` - CI/CD workflow
 
 #### PDF Invoice Auto-Generation (COMPLETED - Feb 2, 2026)
 - **Feature**: Automatic PDF invoice generation when admin creates an invoice
