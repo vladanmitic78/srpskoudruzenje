@@ -1109,59 +1109,59 @@ const AdminDashboard = () => {
         </div>
 
         {/* Statistics Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6 mb-8">
           <Card className="border-2 border-[var(--color-primary)]/20">
-            <CardContent className="p-6">
+            <CardContent className="p-3 sm:p-6">
               <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">{t('admin.stats.totalMembers')}</p>
-                  <p className="text-3xl font-bold text-gray-900 dark:text-white">
+                <div className="min-w-0 flex-1">
+                  <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 truncate">{t('admin.stats.totalMembers')}</p>
+                  <p className="text-xl sm:text-3xl font-bold text-gray-900 dark:text-white">
                     {loading ? '...' : statistics?.totalMembers || 0}
                   </p>
                 </div>
-                <Users className="h-12 w-12 text-[var(--color-primary)]" />
+                <Users className="h-8 w-8 sm:h-12 sm:w-12 text-[var(--color-primary)] flex-shrink-0" />
               </div>
             </CardContent>
           </Card>
 
           <Card className="border-2 border-[var(--color-primary)]/20">
-            <CardContent className="p-6">
+            <CardContent className="p-3 sm:p-6">
               <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">{t('admin.stats.paidInvoices')}</p>
-                  <p className="text-3xl font-bold text-green-600">
+                <div className="min-w-0 flex-1">
+                  <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 truncate">{t('admin.stats.paidInvoices')}</p>
+                  <p className="text-xl sm:text-3xl font-bold text-green-600">
                     {loading ? '...' : statistics?.paidInvoices || 0}
                   </p>
                 </div>
-                <FileText className="h-12 w-12 text-green-600" />
+                <FileText className="h-8 w-8 sm:h-12 sm:w-12 text-green-600 flex-shrink-0" />
               </div>
             </CardContent>
           </Card>
 
           <Card className="border-2 border-[var(--color-primary)]/20">
-            <CardContent className="p-6">
+            <CardContent className="p-3 sm:p-6">
               <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">{t('admin.stats.unpaidInvoices')}</p>
-                  <p className="text-3xl font-bold text-red-600">
+                <div className="min-w-0 flex-1">
+                  <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 truncate">{t('admin.stats.unpaidInvoices')}</p>
+                  <p className="text-xl sm:text-3xl font-bold text-red-600">
                     {loading ? '...' : statistics?.unpaidInvoices || 0}
                   </p>
                 </div>
-                <FileText className="h-12 w-12 text-red-600" />
+                <FileText className="h-8 w-8 sm:h-12 sm:w-12 text-red-600 flex-shrink-0" />
               </div>
             </CardContent>
           </Card>
 
           <Card className="border-2 border-[var(--color-primary)]/20">
-            <CardContent className="p-6">
+            <CardContent className="p-3 sm:p-6">
               <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">{t('admin.stats.totalRevenue')}</p>
-                  <p className="text-3xl font-bold text-[var(--color-primary)]">
+                <div className="min-w-0 flex-1">
+                  <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 truncate">{t('admin.stats.totalRevenue')}</p>
+                  <p className="text-lg sm:text-3xl font-bold text-[var(--color-primary)]">
                     {loading ? '...' : `${statistics?.totalRevenue || 0} SEK`}
                   </p>
                 </div>
-                <BarChart className="h-12 w-12 text-[var(--color-primary)]" />
+                <BarChart className="h-8 w-8 sm:h-12 sm:w-12 text-[var(--color-primary)] flex-shrink-0" />
               </div>
             </CardContent>
           </Card>
