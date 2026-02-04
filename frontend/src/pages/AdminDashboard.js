@@ -1458,7 +1458,7 @@ const AdminDashboard = () => {
                         document.body.removeChild(a);
                         toast.success(`Downloaded ${filteredForDownload.length} members`);
                       }}
-                      className="px-3 py-2 bg-blue-600 text-white rounded-lg text-sm hover:bg-blue-700 flex items-center gap-1"
+                      className="w-full sm:w-auto px-3 py-2 bg-blue-600 text-white rounded-lg text-sm hover:bg-blue-700 flex items-center justify-center gap-1"
                     >
                       📥 Download List
                     </button>
