@@ -1353,14 +1353,14 @@ const AdminDashboard = () => {
                   />
                   
                   {/* Advanced Filters */}
-                  <div className="flex flex-wrap gap-3 items-center">
+                  <div className="flex flex-col sm:flex-row flex-wrap gap-2 sm:gap-3 items-stretch sm:items-center">
                     <select
                       value={memberFilters.invoiceStatus}
                       onChange={(e) => {
                         setMemberFilters({...memberFilters, invoiceStatus: e.target.value});
                         setCurrentPage(1);
                       }}
-                      className="px-3 py-2 border rounded-lg text-sm dark:bg-gray-800 dark:border-gray-600"
+                      className="w-full sm:w-auto px-3 py-2 border rounded-lg text-sm dark:bg-gray-800 dark:border-gray-600"
                     >
                       <option value="all">All Invoice Status</option>
                       <option value="paid">✅ Paid</option>
@@ -1374,7 +1374,7 @@ const AdminDashboard = () => {
                         setMemberFilters({...memberFilters, hasFamily: e.target.value});
                         setCurrentPage(1);
                       }}
-                      className="px-3 py-2 border rounded-lg text-sm dark:bg-gray-800 dark:border-gray-600"
+                      className="w-full sm:w-auto px-3 py-2 border rounded-lg text-sm dark:bg-gray-800 dark:border-gray-600"
                     >
                       <option value="all">All Members</option>
                       <option value="yes">👨‍👩‍👧 Has Family</option>
