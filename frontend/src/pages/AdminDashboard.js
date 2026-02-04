@@ -1569,11 +1569,11 @@ const AdminDashboard = () => {
 
                         {/* Pagination Controls */}
                         {totalPages > 1 && (
-                          <div className="flex items-center justify-between mt-6 pt-4 border-t">
-                            <div className="text-sm text-gray-600 dark:text-gray-400">
+                          <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mt-6 pt-4 border-t">
+                            <div className="text-sm text-gray-600 dark:text-gray-400 text-center sm:text-left">
                               Showing {indexOfFirstMember + 1} to {Math.min(indexOfLastMember, filteredUsers.length)} of {filteredUsers.length} members
                             </div>
-                            <div className="flex gap-2">
+                            <div className="flex gap-2 flex-wrap justify-center">
                               <Button
                                 onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
                                 disabled={currentPage === 1}
