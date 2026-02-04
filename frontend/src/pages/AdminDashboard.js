@@ -1101,9 +1101,9 @@ const AdminDashboard = () => {
 
   return (
     <div className="min-h-screen py-16 bg-gray-50 dark:bg-gray-900">
-      <div className="container mx-auto px-4">
-        <div className="flex items-center justify-between mb-8">
-          <h1 className="text-4xl font-bold text-[var(--color-secondary)] dark:text-[var(--color-primary)]">
+      <div className="container mx-auto px-3 sm:px-4">
+        <div className="flex items-center justify-between mb-6 sm:mb-8">
+          <h1 className="text-2xl sm:text-4xl font-bold text-[var(--color-secondary)] dark:text-[var(--color-primary)]">
             {isSuperAdmin ? 'Super Admin Dashboard' : 'Admin Dashboard'}
           </h1>
         </div>
