@@ -1349,7 +1349,7 @@ const AdminDashboard = () => {
                       setSearchQuery(e.target.value);
                       setCurrentPage(1); // Reset to first page when searching
                     }}
-                    className="max-w-md"
+                    className="w-full sm:max-w-md"
                   />
                   
                   {/* Advanced Filters */}
