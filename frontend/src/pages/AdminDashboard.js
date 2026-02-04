@@ -1522,14 +1522,14 @@ const AdminDashboard = () => {
                       <>
                         {/* Member List */}
                         {currentMembers.map((user) => (
-                      <div key={user.id} className="p-4 border-2 border-gray-200 dark:border-gray-700 rounded-lg">
-                        <div className="flex items-center justify-between">
-                          <div className="flex-1">
-                            <p className="font-semibold text-gray-900 dark:text-white">{user.fullName}</p>
-                            <p className="text-sm text-gray-600 dark:text-gray-400">{user.email}</p>
+                      <div key={user.id} className="p-3 sm:p-4 border-2 border-gray-200 dark:border-gray-700 rounded-lg">
+                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                          <div className="flex-1 min-w-0">
+                            <p className="font-semibold text-gray-900 dark:text-white truncate">{user.fullName}</p>
+                            <p className="text-sm text-gray-600 dark:text-gray-400 truncate">{user.email}</p>
                             <p className="text-xs text-gray-500 dark:text-gray-400">{user.phone || 'No phone'}</p>
                           </div>
-                          <div className="flex gap-2">
+                          <div className="flex gap-2 w-full sm:w-auto">
                             <button
                               onClick={async () => {
                                 try {
@@ -1540,7 +1540,7 @@ const AdminDashboard = () => {
                                   toast.error('Failed to load user details');
                                 }
                               }}
-                              className="px-3 py-1 bg-blue-600 text-white text-sm rounded hover:bg-blue-700"
+                              className="flex-1 sm:flex-none px-3 py-2 sm:py-1 bg-blue-600 text-white text-xs sm:text-sm rounded hover:bg-blue-700 text-center"
                             >
                               {t('admin.actions.viewDetails')}
                             </button>
@@ -1558,7 +1558,7 @@ const AdminDashboard = () => {
                                   }
                                 }
                               }}
-                              className="px-3 py-1 bg-red-600 text-white text-sm rounded hover:bg-red-700"
+                              className="flex-1 sm:flex-none px-3 py-2 sm:py-1 bg-red-600 text-white text-xs sm:text-sm rounded hover:bg-red-700 text-center"
                             >
                               {t('admin.actions.delete')}
                             </button>
