@@ -1272,9 +1272,9 @@ const AdminDashboard = () => {
           {permissions?.viewMembers && (
             <TabsContent value="members">
             <Card className="border-2 border-[var(--color-primary)]/20">
-              <CardHeader className="flex flex-row items-center justify-between">
+              <CardHeader className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                 <CardTitle>{t('admin.membersManagement')}</CardTitle>
-                <div className="flex gap-2">
+                <div className="flex flex-wrap gap-2 w-full sm:w-auto">
                   <button
                     onClick={async () => {
                       try {
@@ -1291,7 +1291,7 @@ const AdminDashboard = () => {
                         toast.error('Failed to export PDF');
                       }
                     }}
-                    className="px-4 py-2 bg-[var(--color-button-primary)] text-white rounded hover:bg-[var(--color-button-hover)] text-sm"
+                    className="flex-1 sm:flex-none px-3 py-2 bg-[var(--color-button-primary)] text-white rounded hover:bg-[var(--color-button-hover)] text-xs sm:text-sm"
                   >
                     {t('admin.actions.exportPDF')}
                   </button>
@@ -1311,7 +1311,7 @@ const AdminDashboard = () => {
                         toast.error('Failed to export Excel');
                       }
                     }}
-                    className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 text-sm"
+                    className="flex-1 sm:flex-none px-3 py-2 bg-green-600 text-white rounded hover:bg-green-700 text-xs sm:text-sm"
                   >
                     {t('admin.actions.exportExcel')}
                   </button>
@@ -1331,7 +1331,7 @@ const AdminDashboard = () => {
                         toast.error('Failed to export XML');
                       }
                     }}
-                    className="px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700 text-sm"
+                    className="flex-1 sm:flex-none px-3 py-2 bg-gray-600 text-white rounded hover:bg-gray-700 text-xs sm:text-sm"
                   >
                     {t('admin.actions.exportXML')}
                   </button>
