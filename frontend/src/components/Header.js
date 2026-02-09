@@ -43,7 +43,6 @@ const Header = () => {
 
   const navLinks = [
     { path: '/', label: t('nav.home') },
-    { path: '/news', label: t('nav.news') || 'News' },
     { path: '/gallery', label: t('nav.gallery') },
     { path: '/about', label: t('nav.about') },
     { path: '/serbian-story', label: t('nav.serbianStory') },
