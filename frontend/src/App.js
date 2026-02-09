@@ -20,7 +20,6 @@ const LoadingSpinner = () => (
 // Lazy load pages for code splitting
 const Home = lazy(() => import('./pages/Home'));
 const Gallery = lazy(() => import('./pages/Gallery'));
-const News = lazy(() => import('./pages/News'));
 const About = lazy(() => import('./pages/About'));
 const SerbianStory = lazy(() => import('./pages/SerbianStory'));
 const Contact = lazy(() => import('./pages/Contact'));
