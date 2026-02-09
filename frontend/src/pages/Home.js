@@ -11,7 +11,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '../components/ui/dialog';
-import { Calendar, MapPin, ChevronRight, X } from 'lucide-react';
+import { Calendar, MapPin, ChevronRight, ChevronLeft, X } from 'lucide-react';
 import { newsAPI, eventsAPI } from '../services/api';
 
 const Home = () => {
@@ -22,6 +22,8 @@ const Home = () => {
   const [loading, setLoading] = useState(true);
   const [selectedNews, setSelectedNews] = useState(null);
   const [isNewsDialogOpen, setIsNewsDialogOpen] = useState(false);
+  const [newsPage, setNewsPage] = useState(1);
+  const newsPerPage = 6;
   const [heroBackground, setHeroBackground] = useState({
     backgroundUrl: '',
     opacity: 0.15
