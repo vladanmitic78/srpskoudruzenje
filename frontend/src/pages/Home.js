@@ -192,14 +192,6 @@ const Home = () => {
             <h2 className="text-3xl md:text-4xl font-bold text-[var(--color-secondary)] dark:text-[var(--color-primary)]">
               {t('home.news')}
             </h2>
-            {news.length > 6 && (
-              <Button asChild variant="ghost" className="text-[var(--color-primary)] hover:bg-[var(--color-button-primary)]/10">
-                <Link to="/news">
-                  {t('home.viewAllNews') || 'View All News'}
-                  <ChevronRight className="ml-2 h-4 w-4" />
-                </Link>
-              </Button>
-            )}
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
