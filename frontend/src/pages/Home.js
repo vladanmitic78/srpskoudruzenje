@@ -232,6 +232,53 @@ const Home = () => {
               </Card>
             ))}
           </div>
+
+          {/* News Pagination */}
+          {totalNewsPages > 1 && (
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mt-8">
+              <div className="text-sm text-gray-600 dark:text-gray-400">
+                {t('news.showing') || 'Showing'} {indexOfFirstNews + 1}-{Math.min(indexOfLastNews, news.length)} {t('news.of') || 'of'} {news.length} {t('news.articles') || 'articles'}
+              </div>
+              
+              <div className="flex items-center gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setNewsPage(prev => Math.max(prev - 1, 1))}
+                  disabled={newsPage === 1}
+                  className="flex items-center gap-1"
+                >
+                  <ChevronLeft className="h-4 w-4" />
+                  {t('common.previous') || 'Previous'}
+                </Button>
+                
+                <div className="flex gap-1">
+                  {Array.from({ length: totalNewsPages }, (_, i) => i + 1).map((page) => (
+                    <Button
+                      key={page}
+                      variant={newsPage === page ? "default" : "outline"}
+                      size="sm"
+                      onClick={() => setNewsPage(page)}
+                      className={newsPage === page ? "bg-[var(--color-button-primary)]" : ""}
+                    >
+                      {page}
+                    </Button>
+                  ))}
+                </div>
+                
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setNewsPage(prev => Math.min(prev + 1, totalNewsPages))}
+                  disabled={newsPage === totalNewsPages}
+                  className="flex items-center gap-1"
+                >
+                  {t('common.next') || 'Next'}
+                  <ChevronRight className="h-4 w-4" />
+                </Button>
+              </div>
+            </div>
+          )}
         </div>
       </section>
 
