@@ -78,8 +78,11 @@ const Home = () => {
     fetchData();
   }, []);
 
-  // Always show only first 6 news items on home page
-  const displayedNews = news.slice(0, 6);
+  // Pagination for news
+  const totalNewsPages = Math.ceil(news.length / newsPerPage);
+  const indexOfLastNews = newsPage * newsPerPage;
+  const indexOfFirstNews = indexOfLastNews - newsPerPage;
+  const displayedNews = news.slice(indexOfFirstNews, indexOfLastNews);
 
   return (
     <div className="min-h-screen">
