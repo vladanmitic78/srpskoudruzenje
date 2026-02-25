@@ -1,13 +1,13 @@
-FROM node:20-alpine as build
+FROM node:20-alpine AS build
 
 WORKDIR /app
 
-# Copy package files
-COPY package.json yarn.lock ./
+# Copy package.json only
+COPY package.json ./
 
-# Install dependencies with clean cache
-RUN yarn install --frozen-lockfile --network-timeout 100000 && \
-    yarn cache clean
+# Install dependencies with npm
+RUN npm install --legacy-peer-deps && \
+    npm install ajv@8 ajv-keywords@5 --legacy-peer-deps
 
 # Copy source code
 COPY . .
@@ -21,7 +21,7 @@ ENV NODE_ENV=production \
     GENERATE_SOURCEMAP=false \
     INLINE_RUNTIME_CHUNK=false
 
-RUN yarn build
+RUN npm run build
 
 # Production stage - minimal nginx image
 FROM nginx:alpine
