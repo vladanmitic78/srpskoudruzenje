@@ -177,6 +177,10 @@ Build and maintain a comprehensive membership management platform for the Serbia
 
 ### Invoice Credit Note System (COMPLETED - Mar 5, 2026)
 - **New Feature**: Admin/Super Admin can now credit any invoice to issue refunds
+- **VAT Support**: Configurable VAT rate in Settings → Platform → Bank Details
+  - VAT percentage field in Bank Details section
+  - Invoices automatically calculate and display: Subtotal, VAT amount, Total
+  - Credit Notes also show VAT breakdown
 - **Workflow**:
   1. Admin clicks 💳 button on invoice row
   2. Popup dialog requires reason for credit note
@@ -185,11 +189,12 @@ Build and maintain a comprehensive membership management platform for the Serbia
   5. Email notification sent to member with credit note details
   6. Both documents archived for records
 - **Files Created/Updated**:
-  - `/app/backend/utils/credit_note_generator.py` - PDF generation for credit notes
+  - `/app/backend/utils/credit_note_generator.py` - PDF generation for credit notes with VAT
+  - `/app/backend/utils/invoice_generator.py` - Updated with VAT calculation
   - `/app/backend/routes/invoices.py` - Added credit endpoints
   - `/app/backend/models.py` - CreditNote models
   - `/app/frontend/src/services/api.js` - Credit note API methods
-  - `/app/frontend/src/pages/AdminDashboard.js` - Credit dialog and UI
+  - `/app/frontend/src/pages/AdminDashboard.js` - Credit dialog, VAT field in bank details
   - `/app/frontend/src/pages/Dashboard.js` - Credit notes display for users
 - **New API Endpoints**:
   - `POST /api/invoices/{id}/credit` - Create credit note

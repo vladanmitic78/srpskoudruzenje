@@ -3232,6 +3232,21 @@ const AdminDashboard = () => {
                         onChange={(e) => setBankDetails({...bankDetails, swish: e.target.value})}
                       />
                     </div>
+                    <div>
+                      <Label className="text-sm font-medium">VAT Rate / Moms (%)</Label>
+                      <Input
+                        type="number"
+                        placeholder="e.g., 25"
+                        min="0"
+                        max="100"
+                        step="0.1"
+                        value={bankDetails.vatRate || ''}
+                        onChange={(e) => setBankDetails({...bankDetails, vatRate: parseFloat(e.target.value) || 0})}
+                      />
+                      <p className="text-xs text-gray-500 mt-1">
+                        VAT percentage to apply on invoices (0 for no VAT)
+                      </p>
+                    </div>
                   </div>
                   <div className="flex justify-end">
                     <button

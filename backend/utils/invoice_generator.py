@@ -85,19 +85,34 @@ def generate_invoice_pdf(
     logo_path: str = None,
     status: str = "unpaid",
     payment_date: str = None,
-    bank_details: dict = None
+    bank_details: dict = None,
+    vat_rate: float = 0.0
 ) -> str:
     """
     Generate a professional PDF invoice
     
     Args:
-        bank_details: Dict with bankName, accountHolder, iban, bicSwift, bankgiro, orgNumber, swish
+        bank_details: Dict with bankName, accountHolder, iban, bicSwift, bankgiro, orgNumber, swish, vatRate
+        vat_rate: VAT percentage (e.g., 25 for 25%)
     
     Returns: Path to generated PDF file
     """
     
     # Use provided bank details or defaults
     bd = bank_details or DEFAULT_BANK_DETAILS
+    
+    # Get VAT rate from bank_details if not provided directly
+    if vat_rate == 0.0 and bd.get('vatRate'):
+        vat_rate = float(bd.get('vatRate', 0))
+    
+    # Calculate VAT amounts
+    if vat_rate > 0:
+        # Amount is inclusive of VAT, calculate backwards
+        subtotal = amount / (1 + vat_rate / 100)
+        vat_amount = amount - subtotal
+    else:
+        subtotal = amount
+        vat_amount = 0
     
     # Create the PDF document
     doc = SimpleDocTemplate(
@@ -274,7 +289,7 @@ def generate_invoice_pdf(
     
     items_data = [
         ['Beskrivning / Description', 'Belopp / Amount'],
-        [description, f"{amount:,.2f} {currency}"]
+        [description, f"{subtotal:,.2f} {currency}"]
     ]
     
     items_table = Table(items_data, colWidths=[120*mm, 50*mm])
@@ -303,33 +318,67 @@ def generate_invoice_pdf(
     content.append(items_table)
     content.append(Spacer(1, 5*mm))
     
-    # ===== TOTAL AMOUNT =====
-    total_data = [
-        ['TOTALT ATT BETALA:', f"{amount:,.2f} {currency}"],
-        ['TOTAL DUE:', '']
-    ]
+    # ===== VAT AND TOTAL SECTION =====
+    if vat_rate > 0:
+        # Show subtotal, VAT, and total
+        totals_data = [
+            ['Delsumma / Subtotal:', f"{subtotal:,.2f} {currency}"],
+            [f'Moms / VAT ({vat_rate:.1f}%):', f"{vat_amount:,.2f} {currency}"],
+            ['TOTALT ATT BETALA / TOTAL DUE:', f"{amount:,.2f} {currency}"],
+        ]
+        
+        totals_table = Table(totals_data, colWidths=[100*mm, 70*mm])
+        totals_table.setStyle(TableStyle([
+            ('ALIGN', (0, 0), (0, -1), 'RIGHT'),
+            ('ALIGN', (1, 0), (1, -1), 'RIGHT'),
+            ('FONTNAME', (0, 0), (-1, -1), FONT_NORMAL),
+            ('FONTSIZE', (0, 0), (-1, -1), 10),
+            # Subtotal row
+            ('BOTTOMPADDING', (0, 0), (-1, 0), 5),
+            ('TOPPADDING', (0, 0), (-1, 0), 5),
+            # VAT row  
+            ('BOTTOMPADDING', (0, 1), (-1, 1), 5),
+            ('TOPPADDING', (0, 1), (-1, 1), 5),
+            ('TEXTCOLOR', (0, 1), (-1, 1), colors.HexColor('#666666')),
+            # Total row - highlighted
+            ('FONTNAME', (0, 2), (-1, 2), FONT_BOLD),
+            ('FONTSIZE', (0, 2), (0, 2), 11),
+            ('FONTSIZE', (1, 2), (1, 2), 14),
+            ('TEXTCOLOR', (1, 2), (1, 2), PRIMARY_COLOR),
+            ('BACKGROUND', (0, 2), (-1, 2), colors.HexColor('#FFF3CD')),
+            ('BOTTOMPADDING', (0, 2), (-1, 2), 10),
+            ('TOPPADDING', (0, 2), (-1, 2), 10),
+            ('BOX', (0, 2), (-1, 2), 1, GOLD_COLOR),
+        ]))
+        content.append(totals_table)
+    else:
+        # No VAT - show simple total
+        total_data = [
+            ['TOTALT ATT BETALA:', f"{amount:,.2f} {currency}"],
+            ['TOTAL DUE:', '']
+        ]
+        
+        total_table = Table(total_data, colWidths=[100*mm, 70*mm])
+        total_table.setStyle(TableStyle([
+            ('ALIGN', (0, 0), (0, -1), 'RIGHT'),
+            ('ALIGN', (1, 0), (1, -1), 'RIGHT'),
+            ('FONTNAME', (0, 0), (-1, -1), FONT_BOLD),
+            ('FONTSIZE', (0, 0), (0, 0), 11),
+            ('FONTSIZE', (0, 1), (0, 1), 9),
+            ('FONTSIZE', (1, 0), (1, 0), 16),
+            ('TEXTCOLOR', (1, 0), (1, 0), PRIMARY_COLOR),
+            ('TEXTCOLOR', (0, 1), (0, 1), colors.grey),
+            ('BACKGROUND', (0, 0), (-1, -1), colors.HexColor('#FFF3CD')),
+            ('BOTTOMPADDING', (0, 0), (-1, 0), 5),
+            ('TOPPADDING', (0, 0), (-1, 0), 10),
+            ('BOTTOMPADDING', (0, 1), (-1, 1), 10),
+            ('TOPPADDING', (0, 1), (-1, 1), 0),
+            ('BOX', (0, 0), (-1, -1), 1, GOLD_COLOR),
+            ('SPAN', (1, 0), (1, 1)),
+            ('VALIGN', (1, 0), (1, 0), 'MIDDLE'),
+        ]))
+        content.append(total_table)
     
-    total_table = Table(total_data, colWidths=[100*mm, 70*mm])
-    total_table.setStyle(TableStyle([
-        ('ALIGN', (0, 0), (0, -1), 'RIGHT'),
-        ('ALIGN', (1, 0), (1, -1), 'RIGHT'),
-        ('FONTNAME', (0, 0), (-1, -1), FONT_BOLD),
-        ('FONTSIZE', (0, 0), (0, 0), 11),
-        ('FONTSIZE', (0, 1), (0, 1), 9),
-        ('FONTSIZE', (1, 0), (1, 0), 16),
-        ('TEXTCOLOR', (1, 0), (1, 0), PRIMARY_COLOR),
-        ('TEXTCOLOR', (0, 1), (0, 1), colors.grey),
-        ('BACKGROUND', (0, 0), (-1, -1), colors.HexColor('#FFF3CD')),
-        ('BOTTOMPADDING', (0, 0), (-1, 0), 5),
-        ('TOPPADDING', (0, 0), (-1, 0), 10),
-        ('BOTTOMPADDING', (0, 1), (-1, 1), 10),
-        ('TOPPADDING', (0, 1), (-1, 1), 0),
-        ('BOX', (0, 0), (-1, -1), 1, GOLD_COLOR),
-        ('SPAN', (1, 0), (1, 1)),
-        ('VALIGN', (1, 0), (1, 0), 'MIDDLE'),
-    ]))
-    
-    content.append(total_table)
     content.append(Spacer(1, 12*mm))
     
     # ===== PAYMENT INFORMATION =====

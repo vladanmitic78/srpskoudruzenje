@@ -54,13 +54,29 @@ def generate_credit_note_pdf(
     created_at: str,
     created_by: str,
     output_path: str,
-    bank_details: dict = None
+    bank_details: dict = None,
+    vat_rate: float = 0.0
 ) -> str:
     """
     Generate a professional PDF credit note
     
+    Args:
+        vat_rate: VAT percentage (e.g., 25 for 25%)
+    
     Returns: Path to generated PDF file
     """
+    
+    # Get VAT rate from bank_details if not provided directly
+    if vat_rate == 0.0 and bank_details and bank_details.get('vatRate'):
+        vat_rate = float(bank_details.get('vatRate', 0))
+    
+    # Calculate VAT amounts (original_amount is inclusive of VAT)
+    if vat_rate > 0:
+        subtotal = original_amount / (1 + vat_rate / 100)
+        vat_amount = original_amount - subtotal
+    else:
+        subtotal = original_amount
+        vat_amount = 0
     
     doc = SimpleDocTemplate(
         output_path,
@@ -176,7 +192,7 @@ def generate_credit_note_pdf(
         [Paragraph("<b>Opis / Description</b>", bold_style), 
          Paragraph("<b>Iznos / Amount</b>", bold_style)],
         [Paragraph(f"Kredit za: {original_description}", normal_style), 
-         Paragraph(f"<b>-{original_amount:.2f} {currency}</b>", bold_style)],
+         Paragraph(f"<b>-{subtotal:.2f} {currency}</b>", bold_style)],
     ]
     
     details_table = Table(credit_details, colWidths=[12*cm, 4*cm])
@@ -194,22 +210,53 @@ def generate_credit_note_pdf(
     
     elements.append(Spacer(1, 5*mm))
     
-    # Total Credit
-    total_data = [
-        [Paragraph("<b>UKUPNO ODOBRENJE / TOTAL CREDIT:</b>", bold_style), 
-         Paragraph(f"<b>-{original_amount:.2f} {currency}</b>", 
-                   ParagraphStyle('TotalAmount', parent=bold_style, fontSize=14, textColor=CREDIT_COLOR))],
-    ]
-    
-    total_table = Table(total_data, colWidths=[12*cm, 4*cm])
-    total_table.setStyle(TableStyle([
-        ('BACKGROUND', (0, 0), (-1, -1), colors.HexColor('#d4edda')),
-        ('BOX', (0, 0), (-1, -1), 2, CREDIT_COLOR),
-        ('PADDING', (0, 0), (-1, -1), 10),
-        ('ALIGN', (-1, 0), (-1, -1), 'RIGHT'),
-        ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
-    ]))
-    elements.append(total_table)
+    # VAT and Total Credit Section
+    if vat_rate > 0:
+        # Show subtotal, VAT, and total
+        totals_data = [
+            [Paragraph("Delsumma / Subtotal:", normal_style), 
+             Paragraph(f"-{subtotal:.2f} {currency}", normal_style)],
+            [Paragraph(f"Moms / VAT ({vat_rate:.1f}%):", normal_style), 
+             Paragraph(f"-{vat_amount:.2f} {currency}", normal_style)],
+            [Paragraph("<b>UKUPNO ODOBRENJE / TOTAL CREDIT:</b>", bold_style), 
+             Paragraph(f"<b>-{original_amount:.2f} {currency}</b>", 
+                       ParagraphStyle('TotalAmount', parent=bold_style, fontSize=14, textColor=CREDIT_COLOR))],
+        ]
+        
+        totals_table = Table(totals_data, colWidths=[12*cm, 4*cm])
+        totals_table.setStyle(TableStyle([
+            ('ALIGN', (-1, 0), (-1, -1), 'RIGHT'),
+            ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
+            ('PADDING', (0, 0), (-1, -1), 6),
+            # Subtotal row
+            ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor('#f8f9fa')),
+            # VAT row
+            ('BACKGROUND', (0, 1), (-1, 1), colors.HexColor('#f8f9fa')),
+            ('TEXTCOLOR', (0, 1), (-1, 1), colors.HexColor('#666666')),
+            # Total row - highlighted
+            ('BACKGROUND', (0, 2), (-1, 2), colors.HexColor('#d4edda')),
+            ('PADDING', (0, 2), (-1, 2), 10),
+            ('BOX', (0, 0), (-1, -1), 1, CREDIT_COLOR),
+            ('BOX', (0, 2), (-1, 2), 2, CREDIT_COLOR),
+        ]))
+        elements.append(totals_table)
+    else:
+        # No VAT - show simple total
+        total_data = [
+            [Paragraph("<b>UKUPNO ODOBRENJE / TOTAL CREDIT:</b>", bold_style), 
+             Paragraph(f"<b>-{original_amount:.2f} {currency}</b>", 
+                       ParagraphStyle('TotalAmount', parent=bold_style, fontSize=14, textColor=CREDIT_COLOR))],
+        ]
+        
+        total_table = Table(total_data, colWidths=[12*cm, 4*cm])
+        total_table.setStyle(TableStyle([
+            ('BACKGROUND', (0, 0), (-1, -1), colors.HexColor('#d4edda')),
+            ('BOX', (0, 0), (-1, -1), 2, CREDIT_COLOR),
+            ('PADDING', (0, 0), (-1, -1), 10),
+            ('ALIGN', (-1, 0), (-1, -1), 'RIGHT'),
+            ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
+        ]))
+        elements.append(total_table)
     
     elements.append(Spacer(1, 8*mm))
     
