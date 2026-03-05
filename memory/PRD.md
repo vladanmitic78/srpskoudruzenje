@@ -164,18 +164,37 @@ Build and maintain a comprehensive membership management platform for the Serbia
 - None currently
 
 ### P1 - High Priority
-- Frontend UI for Multi-Member Invoices (select multiple users)
-- Member filtering UI (by invoice status, training group)
-- Download filtered member list button
 - Refactor `AdminDashboard.js` (4000+ lines → smaller components)
 
 ### P2 - Medium Priority
-- Fix incorrect admin dashboard statistics
-- User impersonation for Super Admins
+- User impersonation auditing
 
 ### P3 - Future Enhancements
 - Enhanced reporting and analytics
 - Bulk operations for member management
+
+## Recent Updates (March 2026)
+
+### Email Verification Fix (COMPLETED - Mar 5, 2026)
+- **Root Cause**: `docker-compose.yml` was not passing SMTP environment variables to the backend container
+- **Files Updated**:
+  - `/app/docker-compose.yml` - Added SMTP_*, FRONTEND_URL, JWT_SECRET_KEY environment variables
+  - `/app/backend/Dockerfile` - Added curl for healthchecks
+  - `/app/backend/email_service.py` - Enhanced error logging for SMTP issues
+  - `/app/backend/routes/admin.py` - Added `/api/admin/test-email` endpoint for Super Admins
+  - `/app/.env.example` - Template for production environment
+- **Production Setup Required**: Create `.env` file in project root with `SMTP_PASSWORD`
+
+### GitHub Actions Auto-Deployment Fix (COMPLETED - Mar 5, 2026)
+- **Issue**: `script_stop` parameter was removed in appleboy/ssh-action v1.0.0+
+- **Fix**: Updated to `appleboy/ssh-action@v1.2.0`, removed `script_stop`, using `set -e` for error handling
+- **Data Safety**: 
+  - Added explicit comments in docker-compose.yml warning against `docker-compose down -v`
+  - Deployment uses `docker-compose up -d` which preserves all volumes (database, uploads)
+  - Named volumes (mongodb_data, uploads_data) persist across deployments
+- **Files Updated**:
+  - `/app/.github/workflows/deploy-hetzner.yml` - Fixed SSH action, improved health checks
+  - `/app/docker-compose.yml` - Added data safety comments
 
 ## Recent Updates (Feb 2, 2026)
 

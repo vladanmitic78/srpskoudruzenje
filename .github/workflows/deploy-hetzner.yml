@@ -55,24 +55,26 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Deploy via SSH
-        uses: appleboy/ssh-action@master
+        uses: appleboy/ssh-action@v1.2.0
         with:
           host: ${{ secrets.HETZNER_HOST }}
           username: ${{ secrets.HETZNER_USER }}
           key: ${{ secrets.HETZNER_SSH_KEY }}
-          script_stop: true
+          envs: DEPLOY_PATH
           script: |
             set -e
-            cd ${{ env.DEPLOY_PATH }}
+            
+            cd /opt/skud-taby
             
             echo "📥 Pulling latest changes..."
             git fetch origin main
             git reset --hard origin/main
             
-            echo "🔄 Building containers..."
+            echo "🔄 Building containers (DATA IS PRESERVED)..."
             
             # Smart rebuild - only rebuild if Dockerfile or dependencies changed
-            if [[ "${{ github.event.inputs.rebuild_all }}" == "true" ]]; then
+            REBUILD_ALL="${{ github.event.inputs.rebuild_all }}"
+            if [ "$REBUILD_ALL" = "true" ]; then
               echo "Force rebuilding all containers..."
               docker-compose build --no-cache
             else
@@ -80,29 +82,38 @@ jobs:
               docker-compose build
             fi
             
-            echo "🚀 Starting services..."
+            echo "🚀 Starting services (volumes preserved - NO data loss)..."
+            # IMPORTANT: Using 'up -d' preserves all volumes (database, uploads)
+            # NEVER use 'down -v' as it deletes volumes!
             docker-compose up -d
             
-            echo "⏳ Waiting for health checks..."
-            sleep 20
+            echo "⏳ Waiting for services to start..."
+            sleep 30
             
             # Health check with retry
-            for i in 1 2 3 4 5; do
-              if curl -sf http://localhost/api/health > /dev/null; then
+            HEALTHY=false
+            for i in 1 2 3 4 5 6; do
+              if curl -sf http://localhost/api/health > /dev/null 2>&1; then
                 echo "✅ Backend is healthy!"
+                HEALTHY=true
                 break
               fi
-              echo "Waiting for backend... (attempt $i/5)"
-              sleep 5
+              echo "Waiting for backend... (attempt $i/6)"
+              sleep 10
             done
             
             echo "📊 Container status:"
             docker-compose ps
             
             echo "🔍 Health check response:"
-            curl -s http://localhost/api/health || echo "Health check endpoint not responding"
+            curl -s http://localhost/api/health || echo "Health check endpoint not responding yet"
             
-            echo "🎉 Deployment complete!"
+            if [ "$HEALTHY" = "true" ]; then
+              echo "🎉 Deployment complete and verified!"
+            else
+              echo "⚠️ Deployment complete but health check not responding. Check container logs."
+              docker-compose logs --tail=20 backend
+            fi
 
       - name: Notify on failure
         if: failure()

@@ -1,12 +1,21 @@
 version: '3.8'
 
+# ⚠️ DATA SAFETY: Named volumes (mongodb_data, uploads_data) persist data across deployments
+# NEVER run 'docker-compose down -v' as it DELETES ALL DATA including database and uploads!
+# Safe commands:
+#   - docker-compose up -d        (starts/restarts services, keeps data)
+#   - docker-compose down         (stops services, keeps data)
+#   - docker-compose build        (rebuilds images, keeps data)
+# Dangerous (DATA LOSS):
+#   - docker-compose down -v      (DELETES ALL VOLUMES!)
+
 services:
   mongodb:
     image: mongo:6
     container_name: skud_mongodb
     restart: always
     volumes:
-      - mongodb_data:/data/db
+      - mongodb_data:/data/db  # Persistent database storage
     networks:
       - skud_network
     healthcheck:
@@ -42,7 +51,7 @@ services:
       - SMTP_FROM_NAME=${SMTP_FROM_NAME:-SKUD Täby}
       - JWT_SECRET_KEY=${JWT_SECRET_KEY:-your-production-secret-key-change-this}
     volumes:
-      - uploads_data:/app/uploads
+      - uploads_data:/app/uploads  # Persistent file storage (pictures, invoices, etc.)
     depends_on:
       mongodb:
         condition: service_healthy
