@@ -1,5 +1,3 @@
-version: '3.8'
-
 # ⚠️ DATA SAFETY: Named volumes (mongodb_data, uploads_data) persist data across deployments
 # NEVER run 'docker-compose down -v' as it DELETES ALL DATA including database and uploads!
 # Safe commands:
@@ -83,10 +81,11 @@ services:
     networks:
       - skud_network
     healthcheck:
-      test: ["CMD", "wget", "-q", "--spider", "http://localhost:80"]
+      test: ["CMD-SHELL", "curl -sf http://localhost:80/ || exit 1"]
       interval: 30s
       timeout: 10s
       retries: 3
+      start_period: 15s
     deploy:
       resources:
         limits:
@@ -107,17 +106,16 @@ services:
       - ./certbot/www:/var/www/certbot:ro
       - nginx_logs:/var/log/nginx
     depends_on:
-      backend:
-        condition: service_healthy
-      frontend:
-        condition: service_healthy
+      - backend
+      - frontend
     networks:
       - skud_network
     healthcheck:
-      test: ["CMD", "wget", "-q", "--spider", "http://localhost:80/health"]
+      test: ["CMD-SHELL", "wget -q --spider http://localhost:80/health || wget -q --spider http://localhost:80/ || exit 1"]
       interval: 30s
       timeout: 10s
-      retries: 3
+      retries: 5
+      start_period: 30s
     deploy:
       resources:
         limits:
