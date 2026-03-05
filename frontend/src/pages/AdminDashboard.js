@@ -1762,7 +1762,21 @@ const AdminDashboard = () => {
                                    t('admin.status.unpaid')}
                                 </span>
                                 {invoice.creditNoteNumber && (
-                                  <p className="text-xs text-yellow-600 mt-1">CN: {invoice.creditNoteNumber}</p>
+                                  <div className="mt-2 p-2 bg-yellow-50 dark:bg-yellow-900/30 rounded border border-yellow-200 dark:border-yellow-800">
+                                    <p className="text-xs font-semibold text-yellow-700 dark:text-yellow-300">
+                                      CN: {invoice.creditNoteNumber}
+                                    </p>
+                                    {invoice.creditedBy && (
+                                      <p className="text-xs text-yellow-600 dark:text-yellow-400 mt-1">
+                                        By: {invoice.creditedBy}
+                                      </p>
+                                    )}
+                                    {invoice.creditReason && (
+                                      <p className="text-xs text-gray-600 dark:text-gray-400 mt-1 italic">
+                                        "{invoice.creditReason.length > 50 ? invoice.creditReason.substring(0, 50) + '...' : invoice.creditReason}"
+                                      </p>
+                                    )}
+                                  </div>
                                 )}
                               </td>
                               <td className="p-3">
