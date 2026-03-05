@@ -175,6 +175,28 @@ Build and maintain a comprehensive membership management platform for the Serbia
 
 ## Recent Updates (March 2026)
 
+### Invoice Credit Note System (COMPLETED - Mar 5, 2026)
+- **New Feature**: Admin/Super Admin can now credit any invoice to issue refunds
+- **Workflow**:
+  1. Admin clicks 💳 button on invoice row
+  2. Popup dialog requires reason for credit note
+  3. System generates Credit Note PDF with unique number (CN-YYYYMMDD-XXX)
+  4. Invoice status changes to "Credited"
+  5. Email notification sent to member with credit note details
+  6. Both documents archived for records
+- **Files Created/Updated**:
+  - `/app/backend/utils/credit_note_generator.py` - PDF generation for credit notes
+  - `/app/backend/routes/invoices.py` - Added credit endpoints
+  - `/app/backend/models.py` - CreditNote models
+  - `/app/frontend/src/services/api.js` - Credit note API methods
+  - `/app/frontend/src/pages/AdminDashboard.js` - Credit dialog and UI
+  - `/app/frontend/src/pages/Dashboard.js` - Credit notes display for users
+- **New API Endpoints**:
+  - `POST /api/invoices/{id}/credit` - Create credit note
+  - `GET /api/invoices/credit-notes/` - All credit notes (admin)
+  - `GET /api/invoices/credit-notes/my` - User's credit notes
+  - `GET /api/invoices/credit-notes/files/{filename}` - Download credit note PDF
+
 ### Email Verification Fix (COMPLETED - Mar 5, 2026)
 - **Root Cause**: `docker-compose.yml` was not passing SMTP environment variables to the backend container
 - **Files Updated**:
@@ -194,7 +216,12 @@ Build and maintain a comprehensive membership management platform for the Serbia
   - Named volumes (mongodb_data, uploads_data) persist across deployments
 - **Files Updated**:
   - `/app/.github/workflows/deploy-hetzner.yml` - Fixed SSH action, improved health checks
-  - `/app/docker-compose.yml` - Added data safety comments
+  - `/app/docker-compose.yml` - Added data safety comments, fixed healthchecks
+
+### Open Graph / Social Sharing Fix (COMPLETED - Mar 5, 2026)
+- Updated `/app/frontend/public/index.html` with proper meta tags
+- Added og:image with Serbian eagle logo
+- Title changed from "Emergent | Fullstack App" to "Srpsko Kulturno Udruženje Täby"
 
 ## Recent Updates (Feb 2, 2026)
 

@@ -488,9 +488,15 @@ const AdminDashboard = () => {
   });
   const [invoiceMemberSearch, setInvoiceMemberSearch] = useState('');
   
+  // Credit Note state
+  const [creditDialogOpen, setCreditDialogOpen] = useState(false);
+  const [creditingInvoice, setCreditingInvoice] = useState(null);
+  const [creditReason, setCreditReason] = useState('');
+  const [creditNotes, setCreditNotes] = useState([]);
+  
   // Member filtering state
   const [memberFilters, setMemberFilters] = useState({
-    invoiceStatus: 'all', // all, paid, unpaid, none
+    invoiceStatus: 'all', // all, paid, unpaid, none, credited
     membershipType: 'all', // all, active, expired
     trainingGroup: 'all',
     hasFamily: 'all' // all, yes, no
@@ -737,6 +743,15 @@ const AdminDashboard = () => {
         setNews(newsData.news || []);
         setStories(storiesData.stories || []);
         setAlbums(galleryData.items || []);
+        
+        // Load credit notes
+        try {
+          const creditNotesData = await invoicesAPI.getAllCreditNotes();
+          setCreditNotes(creditNotesData.creditNotes || []);
+        } catch (e) {
+          console.log('Credit notes fetch failed', e);
+        }
+        
         if (settingsData) {
           // Ensure visibility field exists with defaults
           setSettings({
@@ -869,6 +884,51 @@ const AdminDashboard = () => {
       setInvoices(invoicesData.invoices || []);
     } catch (error) {
       toast.error('Failed to update invoice');
+    }
+  };
+
+  // Credit invoice handler
+  const handleOpenCreditDialog = (invoice) => {
+    setCreditingInvoice(invoice);
+    setCreditReason('');
+    setCreditDialogOpen(true);
+  };
+
+  const handleCreditInvoice = async () => {
+    if (!creditingInvoice || !creditReason.trim()) {
+      toast.error('Please enter a reason for the credit note');
+      return;
+    }
+
+    try {
+      await invoicesAPI.credit(creditingInvoice.id || creditingInvoice._id, creditReason);
+      toast.success('Credit note created successfully');
+      setCreditDialogOpen(false);
+      setCreditingInvoice(null);
+      setCreditReason('');
+      
+      // Refresh invoices and credit notes
+      const invoicesData = await invoicesAPI.getAll();
+      setInvoices(invoicesData.invoices || []);
+      
+      try {
+        const creditNotesData = await invoicesAPI.getAllCreditNotes();
+        setCreditNotes(creditNotesData.creditNotes || []);
+      } catch (e) {
+        console.log('Credit notes fetch failed', e);
+      }
+    } catch (error) {
+      toast.error(error.response?.data?.detail || 'Failed to create credit note');
+    }
+  };
+
+  // Fetch credit notes on load
+  const fetchCreditNotes = async () => {
+    try {
+      const creditNotesData = await invoicesAPI.getAllCreditNotes();
+      setCreditNotes(creditNotesData.creditNotes || []);
+    } catch (error) {
+      console.log('Credit notes fetch failed', error);
     }
   };
 
@@ -1693,10 +1753,17 @@ const AdminDashboard = () => {
                                 <span className={`px-3 py-1 rounded-full text-xs font-semibold ${
                                   invoice.status === 'paid' 
                                     ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' 
+                                    : invoice.status === 'credited'
+                                    ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200'
                                     : 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200'
                                 }`}>
-                                  {invoice.status === 'paid' ? t('admin.status.paid') : t('admin.status.unpaid')}
+                                  {invoice.status === 'paid' ? t('admin.status.paid') : 
+                                   invoice.status === 'credited' ? 'Credited' : 
+                                   t('admin.status.unpaid')}
                                 </span>
+                                {invoice.creditNoteNumber && (
+                                  <p className="text-xs text-yellow-600 mt-1">CN: {invoice.creditNoteNumber}</p>
+                                )}
                               </td>
                               <td className="p-3">
                                 <div className="flex flex-col gap-1">
@@ -1764,6 +1831,15 @@ const AdminDashboard = () => {
                                       title="Mark as paid"
                                     >
                                       ✅
+                                    </button>
+                                  )}
+                                  {invoice.status !== 'credited' && (
+                                    <button
+                                      onClick={() => handleOpenCreditDialog(invoice)}
+                                      className="px-2 py-1 bg-yellow-600 text-white text-xs rounded hover:bg-yellow-700"
+                                      title="Credit Invoice (Refund)"
+                                    >
+                                      💳
                                     </button>
                                   )}
                                   <button
@@ -4231,6 +4307,80 @@ const AdminDashboard = () => {
                     className="flex-1 px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700"
                   >
                     Close
+                  </button>
+                </div>
+              </div>
+            )}
+          </DialogContent>
+        </Dialog>
+
+        {/* Credit Invoice Dialog */}
+        <Dialog open={creditDialogOpen} onOpenChange={setCreditDialogOpen}>
+          <DialogContent className="max-w-lg">
+            <DialogHeader>
+              <DialogTitle className="text-yellow-600">
+                💳 Create Credit Note / Knjižno Odobrenje
+              </DialogTitle>
+            </DialogHeader>
+            {creditingInvoice && (
+              <div className="space-y-4">
+                <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg p-4">
+                  <p className="text-sm text-yellow-800 dark:text-yellow-200 mb-2">
+                    You are about to create a credit note for this invoice. This action will:
+                  </p>
+                  <ul className="text-sm text-yellow-700 dark:text-yellow-300 list-disc list-inside space-y-1">
+                    <li>Mark the invoice as "Credited"</li>
+                    <li>Generate a Credit Note document</li>
+                    <li>Notify the member via email</li>
+                    <li>Archive both documents for records</li>
+                  </ul>
+                </div>
+                
+                <div className="bg-gray-50 dark:bg-gray-800 p-4 rounded-lg">
+                  <h4 className="font-semibold mb-2">Invoice Details</h4>
+                  <div className="grid grid-cols-2 gap-2 text-sm">
+                    <p className="text-gray-500">Invoice #:</p>
+                    <p className="font-mono">{creditingInvoice.id?.slice(-8).toUpperCase()}</p>
+                    <p className="text-gray-500">Member:</p>
+                    <p>{getUserName(creditingInvoice.userId)}</p>
+                    <p className="text-gray-500">Amount:</p>
+                    <p className="font-bold text-red-600">-{creditingInvoice.amount} {creditingInvoice.currency || 'SEK'}</p>
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium mb-2">
+                    Reason for Credit Note <span className="text-red-500">*</span>
+                  </label>
+                  <textarea
+                    value={creditReason}
+                    onChange={(e) => setCreditReason(e.target.value)}
+                    placeholder="Enter the reason for creating this credit note (e.g., Membership cancellation, Duplicate payment, Refund request...)"
+                    className="w-full p-3 border rounded-lg dark:bg-gray-800 dark:border-gray-700 min-h-[100px]"
+                    required
+                  />
+                  <p className="text-xs text-gray-500 mt-1">
+                    This reason will appear on the credit note document and be sent to the member.
+                  </p>
+                </div>
+
+                <div className="flex gap-3 pt-4 border-t">
+                  <button
+                    onClick={() => {
+                      setCreditDialogOpen(false);
+                      setCreditingInvoice(null);
+                      setCreditReason('');
+                    }}
+                    className="flex-1 px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={handleCreditInvoice}
+                    disabled={!creditReason.trim()}
+                    className="flex-1 px-4 py-2 bg-yellow-600 text-white rounded hover:bg-yellow-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    💳 Create Credit Note
                   </button>
                 </div>
               </div>

@@ -185,6 +185,24 @@ class InvoiceResponse(InvoiceBase):
 class InvoiceMarkPaid(BaseModel):
     paymentDate: str
 
+# Credit Note Models
+class CreditNoteCreate(BaseModel):
+    reason: str  # Reason for crediting the invoice
+
+class CreditNoteResponse(BaseModel):
+    id: str
+    invoiceId: str
+    creditNoteNumber: str
+    originalAmount: float
+    currency: str
+    reason: str
+    createdAt: datetime
+    createdBy: str
+    memberName: str
+    memberEmail: str
+    fileUrl: Optional[str] = None
+    fileName: Optional[str] = None
+
 # Gallery Models
 class GalleryBase(BaseModel):
     date: str

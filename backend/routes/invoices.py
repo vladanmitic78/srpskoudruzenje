@@ -4,15 +4,18 @@ import shutil
 import os
 from pathlib import Path
 
-from models import InvoiceCreate, InvoiceResponse, InvoiceMarkPaid
+from models import InvoiceCreate, InvoiceResponse, InvoiceMarkPaid, CreditNoteCreate, CreditNoteResponse
 from dependencies import get_admin_user, get_current_user
 from utils.invoice_generator import generate_invoice_pdf
+from utils.credit_note_generator import generate_credit_note_pdf
 
 router = APIRouter()
 
-# Ensure invoices directory exists
+# Ensure directories exist
 INVOICES_DIR = Path("/app/uploads/invoices")
 INVOICES_DIR.mkdir(parents=True, exist_ok=True)
+CREDIT_NOTES_DIR = Path("/app/uploads/credit_notes")
+CREDIT_NOTES_DIR.mkdir(parents=True, exist_ok=True)
 
 @router.get("/my")
 async def get_my_invoices(current_user: dict = Depends(get_current_user), request: Request = None):
@@ -223,6 +226,219 @@ async def delete_invoice(
         raise HTTPException(status_code=404, detail="Invoice not found")
     
     return {"success": True, "message": "Invoice deleted"}
+
+
+@router.post("/{invoice_id}/credit", response_model=CreditNoteResponse)
+async def credit_invoice(
+    invoice_id: str,
+    credit_data: CreditNoteCreate,
+    admin: dict = Depends(get_admin_user),
+    request: Request = None
+):
+    """
+    Create a credit note for an invoice (Admin/SuperAdmin only)
+    This cancels/refunds the invoice and creates an archive record
+    """
+    db = request.app.state.db
+    
+    # Get the invoice
+    invoice = await db.invoices.find_one({"_id": invoice_id})
+    if not invoice:
+        raise HTTPException(status_code=404, detail="Invoice not found")
+    
+    # Check if already credited
+    if invoice.get("status") == "credited":
+        raise HTTPException(status_code=400, detail="Invoice has already been credited")
+    
+    # Get user details
+    user_id = invoice.get("userId") or (invoice.get("userIds", [None])[0])
+    user = await db.users.find_one({"_id": user_id})
+    if not user:
+        user = await db.users.find_one({"id": user_id})
+    
+    member_name = user.get("fullName", "Unknown") if user else "Unknown"
+    member_email = user.get("email", "") if user else ""
+    
+    # Generate credit note number (CN-YYYYMMDD-XXX format)
+    today = datetime.utcnow().strftime("%Y%m%d")
+    count = await db.credit_notes.count_documents({"creditNoteNumber": {"$regex": f"^CN-{today}"}})
+    credit_note_number = f"CN-{today}-{count + 1:03d}"
+    
+    credit_note_id = f"cn_{int(datetime.utcnow().timestamp() * 1000)}"
+    created_at = datetime.utcnow()
+    
+    # Generate credit note PDF
+    pdf_filename = f"{credit_note_id}.pdf"
+    pdf_path = CREDIT_NOTES_DIR / pdf_filename
+    
+    try:
+        # Get bank details for reference
+        bank_details_doc = await db.settings.find_one({"_id": "bank_details"})
+        bank_details = None
+        if bank_details_doc:
+            bank_details_doc.pop("_id", None)
+            bank_details = bank_details_doc
+        
+        generate_credit_note_pdf(
+            credit_note_id=credit_note_id,
+            credit_note_number=credit_note_number,
+            original_invoice_id=invoice_id,
+            member_name=member_name,
+            member_email=member_email,
+            original_description=invoice.get("description", ""),
+            original_amount=float(invoice.get("amount", 0)),
+            currency=invoice.get("currency", "SEK"),
+            reason=credit_data.reason,
+            created_at=created_at.isoformat(),
+            created_by=admin.get("fullName", admin.get("username", "Admin")),
+            output_path=str(pdf_path),
+            bank_details=bank_details
+        )
+        
+        file_url = f"/api/invoices/credit-notes/files/{pdf_filename}"
+        pdf_generated = True
+    except Exception as e:
+        print(f"Failed to generate credit note PDF: {e}")
+        file_url = None
+        pdf_generated = False
+    
+    # Create credit note record
+    credit_note = {
+        "_id": credit_note_id,
+        "invoiceId": invoice_id,
+        "creditNoteNumber": credit_note_number,
+        "originalAmount": float(invoice.get("amount", 0)),
+        "currency": invoice.get("currency", "SEK"),
+        "reason": credit_data.reason,
+        "createdAt": created_at,
+        "createdBy": admin.get("fullName", admin.get("username", "Admin")),
+        "createdById": admin.get("_id"),
+        "memberName": member_name,
+        "memberEmail": member_email,
+        "userId": user_id,
+        "fileUrl": file_url,
+        "fileName": pdf_filename if pdf_generated else None,
+        "pdfGenerated": pdf_generated
+    }
+    
+    await db.credit_notes.insert_one(credit_note)
+    
+    # Update invoice status to credited
+    await db.invoices.update_one(
+        {"_id": invoice_id},
+        {"$set": {
+            "status": "credited",
+            "creditNoteId": credit_note_id,
+            "creditNoteNumber": credit_note_number,
+            "creditedAt": created_at,
+            "creditedBy": admin.get("fullName", admin.get("username", "Admin")),
+            "creditReason": credit_data.reason
+        }}
+    )
+    
+    # Send email notification to user
+    try:
+        from email_service import send_email
+        
+        if member_email:
+            html_content = f"""
+            <html>
+            <body style="font-family: Arial, sans-serif; padding: 20px;">
+                <div style="max-width: 600px; margin: 0 auto;">
+                    <h2 style="color: #28a745;">Knjižno Odobrenje / Kreditfaktura / Credit Note</h2>
+                    
+                    <p><strong>Poštovani/a {member_name},</strong></p>
+                    <p>Obaveštavamo Vas da je kreiran knjižno odobrenje (credit note) za Vašu fakturu.</p>
+                    
+                    <div style="background: #d4edda; padding: 15px; border-radius: 5px; margin: 20px 0;">
+                        <p><strong>Broj odobrenja / Credit Note #:</strong> {credit_note_number}</p>
+                        <p><strong>Originalna faktura / Original Invoice:</strong> {invoice_id}</p>
+                        <p><strong>Iznos / Amount:</strong> -{invoice.get('amount', 0):.2f} {invoice.get('currency', 'SEK')}</p>
+                        <p><strong>Razlog / Reason:</strong> {credit_data.reason}</p>
+                    </div>
+                    
+                    <p>Možete pregledati dokument u Vašem profilu na našoj web stranici.</p>
+                    
+                    <hr style="margin: 30px 0;">
+                    
+                    <p><strong>Hej {member_name},</strong></p>
+                    <p>Vi informeras om att en kreditfaktura har skapats för din faktura.</p>
+                    
+                    <p>Du kan se dokumentet i din profil på vår webbplats.</p>
+                    
+                    <p style="color: #666; font-size: 12px; margin-top: 30px;">
+                        Srpsko Kulturno Udruženje Täby<br>
+                        info@srpskoudruzenjetaby.se
+                    </p>
+                </div>
+            </body>
+            </html>
+            """
+            
+            await send_email(
+                to_email=member_email,
+                subject=f"Knjižno Odobrenje / Kreditfaktura - {credit_note_number}",
+                html_content=html_content,
+                db=db
+            )
+    except Exception as e:
+        print(f"Failed to send credit note notification email: {e}")
+    
+    return CreditNoteResponse(
+        id=credit_note_id,
+        invoiceId=invoice_id,
+        creditNoteNumber=credit_note_number,
+        originalAmount=float(invoice.get("amount", 0)),
+        currency=invoice.get("currency", "SEK"),
+        reason=credit_data.reason,
+        createdAt=created_at,
+        createdBy=admin.get("fullName", admin.get("username", "Admin")),
+        memberName=member_name,
+        memberEmail=member_email,
+        fileUrl=file_url,
+        fileName=pdf_filename if pdf_generated else None
+    )
+
+
+@router.get("/credit-notes/files/{filename}")
+async def get_credit_note_file(filename: str, request: Request):
+    """Serve credit note PDF files"""
+    from fastapi.responses import FileResponse
+    
+    file_path = CREDIT_NOTES_DIR / filename
+    
+    if not file_path.exists():
+        raise HTTPException(status_code=404, detail="Credit note file not found")
+    
+    return FileResponse(
+        path=str(file_path),
+        media_type="application/pdf",
+        filename=filename
+    )
+
+
+@router.get("/credit-notes/my")
+async def get_my_credit_notes(current_user: dict = Depends(get_current_user), request: Request = None):
+    """Get current user's credit notes"""
+    db = request.app.state.db
+    cursor = db.credit_notes.find({"userId": current_user["_id"]}).sort("createdAt", -1)
+    credit_notes_list = await cursor.to_list(length=100)
+    
+    return {
+        "creditNotes": [{**item, "id": str(item["_id"])} for item in credit_notes_list]
+    }
+
+
+@router.get("/credit-notes/")
+async def get_all_credit_notes(admin: dict = Depends(get_admin_user), request: Request = None):
+    """Get all credit notes (Admin only)"""
+    db = request.app.state.db
+    cursor = db.credit_notes.find().sort("createdAt", -1)
+    credit_notes_list = await cursor.to_list(length=1000)
+    
+    return {
+        "creditNotes": [{**item, "id": str(item["_id"])} for item in credit_notes_list]
+    }
 
 
 @router.post("/{invoice_id}/upload")

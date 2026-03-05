@@ -201,6 +201,22 @@ export const invoicesAPI = {
     const response = await api.put(`/invoices/${id}`, invoiceData);
     return response.data;
   },
+  
+  // Credit Note APIs
+  credit: async (id, reason) => {
+    const response = await api.post(`/invoices/${id}/credit`, { reason });
+    return response.data;
+  },
+  
+  getMyCreditNotes: async () => {
+    const response = await api.get('/invoices/credit-notes/my');
+    return response.data;
+  },
+  
+  getAllCreditNotes: async () => {
+    const response = await api.get('/invoices/credit-notes/');
+    return response.data;
+  },
 };
 
 // ==================== Gallery APIs ====================

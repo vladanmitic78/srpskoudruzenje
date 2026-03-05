@@ -113,6 +113,7 @@ const Dashboard = () => {
   const { user, setUser } = useAuth();
   const [userData, setUserData] = useState({});
   const [invoices, setInvoices] = useState([]);
+  const [creditNotes, setCreditNotes] = useState([]);
   const [events, setEvents] = useState([]);
   const [confirmedEvents, setConfirmedEvents] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -138,6 +139,14 @@ const Dashboard = () => {
           })
         ]);
         setInvoices(invoicesData.invoices || []);
+        
+        // Load credit notes
+        try {
+          const creditNotesData = await invoicesAPI.getMyCreditNotes();
+          setCreditNotes(creditNotesData.creditNotes || []);
+        } catch (e) {
+          console.log('Credit notes fetch failed', e);
+        }
         
         const allEvents = eventsData.events || [];
         setEvents(allEvents);
@@ -522,6 +531,8 @@ const Dashboard = () => {
                       className={`p-4 border-2 rounded-lg ${
                         invoice.status === 'paid' 
                           ? 'border-green-200 bg-green-50 dark:bg-green-900/20' 
+                          : invoice.status === 'credited'
+                          ? 'border-yellow-200 bg-yellow-50 dark:bg-yellow-900/20'
                           : isOverdue(invoice.dueDate)
                           ? 'border-red-200 bg-red-50 dark:bg-red-900/20'
                           : 'border-yellow-200 bg-yellow-50 dark:bg-yellow-900/20'
@@ -540,6 +551,11 @@ const Dashboard = () => {
                               Paid: {invoice.paymentDate}
                             </p>
                           )}
+                          {invoice.creditNoteNumber && (
+                            <p className="text-sm text-yellow-600 dark:text-yellow-400">
+                              Credit Note: {invoice.creditNoteNumber}
+                            </p>
+                          )}
                           {invoice.fileUrl && (
                             <a
                               href={`${process.env.REACT_APP_BACKEND_URL}${invoice.fileUrl}`}
@@ -551,14 +567,20 @@ const Dashboard = () => {
                           )}
                         </div>
                         <div className="text-right">
-                          <p className="text-xl font-bold text-gray-900 dark:text-white">
+                          <p className={`text-xl font-bold ${invoice.status === 'credited' ? 'text-yellow-600 line-through' : 'text-gray-900 dark:text-white'}`}>
                             {invoice.amount} {invoice.currency}
                           </p>
                           <Badge 
                             variant={invoice.status === 'paid' ? 'default' : 'destructive'}
-                            className={invoice.status === 'paid' ? 'bg-green-600' : isOverdue(invoice.dueDate) ? 'bg-red-600' : 'bg-yellow-600'}
+                            className={
+                              invoice.status === 'paid' ? 'bg-green-600' : 
+                              invoice.status === 'credited' ? 'bg-yellow-600' :
+                              isOverdue(invoice.dueDate) ? 'bg-red-600' : 'bg-yellow-600'
+                            }
                           >
-                            {invoice.status === 'paid' ? t('dashboard.paid') : isOverdue(invoice.dueDate) ? t('dashboard.overdue') : t('dashboard.unpaid')}
+                            {invoice.status === 'paid' ? t('dashboard.paid') : 
+                             invoice.status === 'credited' ? 'Credited' :
+                             isOverdue(invoice.dueDate) ? t('dashboard.overdue') : t('dashboard.unpaid')}
                           </Badge>
                         </div>
                       </div>
@@ -567,6 +589,59 @@ const Dashboard = () => {
                 </div>
               </CardContent>
             </Card>
+
+            {/* Credit Notes Section */}
+            {creditNotes.length > 0 && (
+              <Card className="border-2 border-yellow-500/20 mt-6">
+                <CardHeader>
+                  <CardTitle className="text-yellow-600">💳 Credit Notes / Knjižna Odobrenja</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-4">
+                    {creditNotes.map((cn) => (
+                      <div 
+                        key={cn.id || cn._id} 
+                        className="p-4 border-2 border-yellow-200 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg"
+                      >
+                        <div className="flex items-start justify-between">
+                          <div className="flex-1">
+                            <p className="font-semibold text-gray-900 dark:text-white">
+                              Credit Note #{cn.creditNoteNumber}
+                            </p>
+                            <p className="text-sm text-gray-600 dark:text-gray-300">
+                              For Invoice: {cn.invoiceId}
+                            </p>
+                            <p className="text-sm text-gray-600 dark:text-gray-300">
+                              Reason: {cn.reason}
+                            </p>
+                            <p className="text-sm text-gray-600 dark:text-gray-300">
+                              Date: {new Date(cn.createdAt).toLocaleDateString()}
+                            </p>
+                            {cn.fileUrl && (
+                              <a
+                                href={`${process.env.REACT_APP_BACKEND_URL}${cn.fileUrl}`}
+                                download
+                                className="inline-block mt-2 px-3 py-1 bg-yellow-600 text-white text-sm rounded hover:bg-yellow-700"
+                              >
+                                📄 Download Credit Note
+                              </a>
+                            )}
+                          </div>
+                          <div className="text-right">
+                            <p className="text-xl font-bold text-green-600">
+                              -{cn.originalAmount} {cn.currency}
+                            </p>
+                            <Badge className="bg-yellow-600">
+                              Credited
+                            </Badge>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            )}
           </TabsContent>
 
           {/* Trainings Tab */}
