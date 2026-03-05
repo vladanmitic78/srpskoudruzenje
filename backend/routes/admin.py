@@ -673,10 +673,14 @@ async def get_bank_details(
             "bicSwift": "",
             "bankgiro": "",
             "orgNumber": "",
-            "swish": ""
+            "swish": "",
+            "vatRate": 0
         }
     
     settings.pop("_id", None)
+    # Ensure vatRate is included with default 0
+    if "vatRate" not in settings:
+        settings["vatRate"] = 0
     return settings
 
 
@@ -690,7 +694,7 @@ async def update_bank_details(
     db = request.app.state.db
     
     # Only allow specific fields
-    allowed_fields = ["bankName", "accountHolder", "iban", "bicSwift", "bankgiro", "orgNumber", "swish"]
+    allowed_fields = ["bankName", "accountHolder", "iban", "bicSwift", "bankgiro", "orgNumber", "swish", "vatRate"]
     update_data = {k: v for k, v in bank_data.items() if k in allowed_fields}
     
     await db.settings.update_one(
