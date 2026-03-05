@@ -1,312 +1,157 @@
 <analysis>**original_problem_statement:**
-The user's initial goal was to fix login issues, remove Google OAuth, and implement a series of features for the Serbian Cultural Association website. This expanded to include a CMS, a gallery, an admin settings page, multi-member invoices, advanced member filtering, a family/group membership system, and performance optimizations.
+The user's primary goal is to deploy the latest application updates to their production server (). The key requirement is that no production data (database, user uploads) is lost during the process.
 
-Recent user requests included:
-1.  Implementing automatic generation of professional PDF invoices upon creation, including a logo and placeholders for bank details that can be updated by a Super Admin.
-2.  Fixing PDF downloads, which were failing due to authentication issues.
-3.  Fixing font rendering in PDFs to support Serbian Latin characters (š, ž, đ, č, ć).
-4.  Implementing a UI for creating invoices for multiple members at once.
-5.  Implementing advanced member filtering in the admin dashboard.
-6.  Implementing email notifications to users upon invoice creation.
-7.  Fixing incorrect statistics on the admin dashboard.
-8.  Implementing a user impersonation feature for Super Admins.
-9.  Optimizing the entire application and preparing it for deployment on a Hetzner server, with a crucial requirement to preserve all existing production data. This involved setting up a separate test/staging server first.
+Recent user requests that have been implemented and are ready for deployment include:
+1.  Fixing mobile responsiveness issues on the Admin and Super Admin dashboards.
+2.  Changing the homepage's News section to show 6 items per page with inline pagination, instead of linking to a separate news page.
+
+The user also raised two new critical issues:
+1.  They received a security vulnerability warning from their hosting provider, Hetzner.
+2.  They reported that user verification emails are not working on the live server.
+3.  Requested a backup of the production data to be restored in the agent's test environment.
 
 **User's preferred language**: English
 
 **what currently exists?**
-The application is a full-stack React/FastAPI/MongoDB project with all requested features implemented. This includes a complete and tested PDF invoice generation system with manageable bank details, multi-member invoice creation, member filtering, and user impersonation. The system has also been optimized for production with updated Dockerfiles, Nginx configuration, and database indexing.
+The application is a full-stack React/FastAPI/MongoDB project. The agent has implemented fixes for mobile responsiveness and updated the news section pagination. These changes exist in the agent's local workspace and have been pushed to the user's GitHub repository.
 
-A full set of deployment configurations and scripts for a new test/staging environment (, , etc.) and for production () have been created. **Crucially, these new deployment files exist locally in the agent's workspace but have NOT been committed to the user's GitHub repository.** The user is currently in the process of manually setting up a new test server using commands provided by the agent.
+The agent has also addressed the security warning by guiding the user to install and configure a UFW firewall on the production server and remove the exposed MongoDB port from the test server's configuration.
+
+The agent successfully copied the production database and file uploads into the local Emergent environment for testing purposes.
+
+The production deployment itself is in an unstable state after a series of failed attempts.
 
 **Last working item**:
--   **Last item agent was working:** Assisting the user with the manual setup of a new test server (IP: ). The process is currently stuck.
+-   **Last item agent was working:** Troubleshooting a failed deployment on the production server (). The agent last removed all healthchecks from  to get the containers running. Immediately after, the user reported that verification emails are not working.
 -   **Status:** BLOCKED
--   **Agent Testing Done:** N/A (Deployment in progress)
--   **Which testing method agent to use?** Manual command-line execution by the user, guided by the agent.
--   **User Testing Done:** N/A (Deployment in progress)
+-   **Agent Testing Done:** N
+-   **Which testing method agent to use?** Manual  and log checks. The agent must investigate the email issue by checking backend logs and SMTP environment variables on the production server.
+-   **User Testing Done:** N
 
 **All Pending/In progress Issue list**:
--   Issue 1: Complete the Test Server Deployment (P0)
+-   Issue 1: Stabilize Production Deployment (P0)
+-   Issue 2: Fix Email Verification Failure (P0)
 
 **Issues Detail:**
--   **Issue 1: Complete the Test Server Deployment**
-    -   **Description:** The user is setting up a new test server at . The  command is failing for the frontend service. The root cause is that the user's repository (cloned onto the server) is outdated and missing necessary files and configurations that the agent created.
+-   **Issue 1: Stabilize Production Deployment**
+    -   **Description:** The production deployment is unstable. Previous attempts failed due to missing SSL certificates and incorrect Docker healthchecks. The agent's last action was to remove all healthchecks from  to force the containers to start. This is a temporary workaround, not a stable solution. The Nginx container was also observed to be in a restart loop due to the missing SSL certs.
     -   **Attempted fixes:**
-        1.  The agent provided  commands to manually create  and  on the test server.
-        2.  The build then failed because  was missing, which is required by the .
-        3.  The agent's last action was to provide new content for  that uses  instead of yarn install v1.22.22
-[1/4] Resolving packages...
-success Already up-to-date.
-Done in 0.19s. to bypass the  requirement. The user has not yet applied this fix.
+        1.  Regenerated SSL certificates using Certbot after they were found to be missing.
+        2.  Attempted to fix faulty healthchecks with , but this failed due to syntax issues.
+        3.  Removed healthchecks entirely from .
     -   **Next debug checklist:**
-        1.  Instruct the user to run the  command to overwrite  with the npm <command>
+        1.  Verify all containers (, , , ) are running without errors using  and .
+        2.  Review  and  to ensure the SSL certificate volumes () are correctly and persistently mounted so they are not lost on .
+        3.  Implement reliable, simple healthchecks. For the , a Python script is better than  (which isn't installed). For the  (which is just an Nginx server), a simple  or  to  should suffice.
+    -   **Why fix this issue and what will be achieved with the fix?** To ensure the production environment is stable, reliable, and correctly reports the health of its services.
+    -   **Status:** IN PROGRESS
+    -   **Is recurring issue?** Y
+    -   **Should Test frontend/backend/both after fix?** Both.
+    -   **Blocked on other issue:** None.
 
-Usage:
-
-npm install        install all the dependencies in your project
-npm install <foo>  add the <foo> dependency to your project
-npm test           run this project's tests
-npm run <foo>      run the script named <foo>
-npm <command> -h   quick help on <command>
-npm -l             display usage info for all commands
-npm help <term>    search for help on <term>
-npm help npm       more involved overview
-
-All commands:
-
-    access, adduser, audit, bugs, cache, ci, completion,
-    config, dedupe, deprecate, diff, dist-tag, docs, doctor,
-    edit, exec, explain, explore, find-dupes, fund, get, help,
-    help-search, hook, init, install, install-ci-test,
-    install-test, link, ll, login, logout, ls, org, outdated,
-    owner, pack, ping, pkg, prefix, profile, prune, publish,
-    query, rebuild, repo, restart, root, run-script, sbom,
-    search, set, shrinkwrap, star, stars, start, stop, team,
-    test, token, uninstall, unpublish, unstar, update, version,
-    view, whoami
-
-Specify configs in the ini-formatted file:
-    /root/.npmrc
-or on the command line via: npm <command> --key=value
-
-More configuration info: npm help config
-Configuration fields: npm help 7 config
-
-npm@10.8.2 /usr/lib/node_modules/npm-based version provided in the last step.
-        2.  Instruct the user to run  again.
-        3.  If the build succeeds, instruct them to run .
-        4.  Verify the containers are running with .
-        5.  Guide the user through the process of restoring the production database backup onto the test server.
-        6.  **HIGHLY RECOMMEND:** After the test server is working, guide the user to commit all the new deployment configurations (, , , updated s) to their GitHub repository to avoid this manual setup for production.
-    -   **Why fix this issue and what will be achieved with the fix?** To create a stable staging environment for final testing before deploying to production, which is the user's primary goal.
-    -   **Status:** BLOCKED
+-   **Issue 2: Fix Email Verification Failure**
+    -   **Description:** The user reported that verification emails are not working on the live server. This is a critical function for new user registration.
+    -   **Attempted fixes:** None yet. The agent acknowledged the issue and was about to investigate.
+    -   **Next debug checklist:**
+        1.  On the production server, execute  and search for any errors related to SMTP, email, or connection refused.
+        2.  Verify the SMTP environment variables are correctly loaded into the container: .
+        3.  Attempt to trigger an email (e.g., via a test registration or a password reset) and monitor the backend logs in real-time with .
+    -   **Why fix this issue and what will be achieved with this?** New users will be able to join the platform.
+    -   **Status:** NOT STARTED
     -   **Is recurring issue?** N
-    -   **Should Test frontend/backend/both after fix?** Both. The entire application needs to be tested on the new server.
-    -   **Blocked on other issue:** None. This is the main blocker.
+    -   **Should Test frontend/backend/both after fix?** Backend.
+    -   **Blocked on other issue:** None, but should be addressed alongside the deployment stabilization.
 
 **In progress Task List**:
--   **Task 1: Refactor **
-    -   **Where to resume:** The agent has created several modular component files (, , , , , ) inside . However, the main  file has not yet been updated to import and use these new components. The next step is to replace the corresponding JSX and logic in the massive  file with these new, smaller components.
-    -   **What will be achieved with this?** Improved code maintainability and reduced complexity of a 5000+ line file.
-    -   **Status:** IN PROGRESS
-    -   **Should Test frontend/backend/both after fix?** Frontend.
-    -   **Blocked on something:** Issue 1 (Complete the Test Server Deployment).
+-   None.
 
 **Upcoming and Future Tasks**
 -   **Upcoming Tasks:**
-    -   **Production Deployment (P0):** Once the test server is fully tested and verified by the user, proceed with deploying the application to the production server () using the prepared scripts ([0;31m=======================================[0m
-[0;31mPRODUCTION DEPLOYMENT[0m
-[0;31m=======================================[0m
-[1;33mThis will update the production server[0m
-[1;33mYour database data will be PRESERVED[0m
-
-[0;31mHave you tested on the test server first? (yes/no)[0m), ensuring the live database is backed up and preserved.
+    -   **Fix GitHub Actions for Auto-Deployment (P1):** The user wants to set up automated deployments. The existing  file is failing due to an  error and a build failure related to a missing . The agent fixed the  locally but the workflow file itself needs to be corrected and tested.
+    -   **Refactor  (P2):** This task from the previous handoff is still pending. The large  file needs to be broken down by integrating the smaller components already created in .
 -   **Future Tasks:**
-    -   **User Impersonation Auditing (P2):** As an enhancement, add a logging feature for Super Admins to see a history of who impersonated whom and when.
+    -   **User Impersonation Auditing (P2):** Log when a Super Admin impersonates another user.
 
 **Completed work in this session**
--   **PDF Invoice Auto-Generation:** Implemented end-to-end PDF generation on invoice creation.
--   **Bank Details Management:** Added backend APIs and a frontend UI for Super Admins to manage bank details for invoices.
--   **Fixed PDF Download:** Resolved authentication issue by implementing a client-side download handler that sends the JWT token.
--   **Fixed PDF Font Rendering:** Fixed Serbian Latin character display issues by embedding the  font in generated PDFs.
--   **Fixed PDF Layout:** Corrected the layout of the Total Due section in the invoice.
--   **Multi-Member Invoices & Member Filtering:** Implemented frontend UI to create invoices for multiple members at once and to filter the member list by various criteria.
--   **Invoice Email Notifications:** Implemented automatic email notifications to users upon invoice creation.
--   **Fixed Admin Statistics:** Verified and confirmed the admin dashboard statistics are now calculating and displaying correctly.
--   **User Impersonation:** Implemented a feature for Super Admins to log in as other users.
--   **System Optimization & Deployment Prep:** Optimized Dockerfiles, Nginx config, and backend performance. Created a full suite of scripts and configuration files for test and production deployments.
+-   **Production Server Security Hardening:** Guided the user to install and configure a UFW firewall on the production server, allowing only SSH (22), HTTP (80), and HTTPS (443) traffic. Verified that the MongoDB port is not publicly exposed.
+-   **Mobile Responsiveness UI Fixes:** Fixed layout issues on the Admin Dashboard for mobile view, including cramped member cards, overlapping buttons, and squashed filter/export sections, by editing .
+-   **News Section Pagination:** Updated the homepage () to show 6 news articles with inline pagination controls, replacing the previous View All link.
+-   **Production Data Sync:** Successfully guided the user to create backups of the production database and uploads, transfer them to the agent, and restore them in the agent's local environment for accurate testing.
+-   **Test Server Deployment:** Guided the user through a complex and error-prone manual setup of a test server, resolving multiple Docker build failures.
 
 **Earlier issues found/mentioned but not fixed**
 -   None.
 
 **Known issue recurrence from previous fork**
--   **Incorrect Admin Statistics:**
-    -   **Recurrence count:** 3
-    -   **Status:** RESOLVED (The issue appears to be fixed, as verified by API and frontend checks in this session).
+-   None.
 
 **Code Architecture**
 
 
 **Key Technical Concepts**
--   **Manual Server Deployment & Troubleshooting:** Guiding a user through SSH, Docker, Git, and file manipulation commands to set up a server from scratch.
--   **PDF Generation ():** Advanced usage including embedding Unicode fonts () and complex table layouts to fix rendering and formatting issues.
--   **Authenticated File Downloads:** Bypassing browser limitations for downloading files from protected API endpoints by using  with an  header and creating a blob URL.
--   **Docker Production Optimization:** Using multi-stage builds, health checks, and resource limits to create lean and robust production environments.
--   **Nginx Production Configuration:** Implementing caching, gzip compression, and security headers.
--   **User Impersonation:** Generating and swapping JWT tokens to allow a privileged user (Super Admin) to temporarily assume the identity of another user.
+-   **Remote Server Administration:** Extensive troubleshooting with a user on a live production server via SSH, dealing with Docker, , UFW firewall, , , and user-related CLI errors.
+-   **Docker Deployment Debugging:** Diagnosed and resolved multiple container startup failures related to missing SSL certificates, incorrect volume mounts, and faulty  commands in .
+-   **Server Security:** Identified and mitigated a critical vulnerability (exposed database port). Hardened the server by installing and configuring the UFW firewall.
+-   **Live Data Backup/Restore:** Orchestrated a full backup of a live MongoDB database and associated file uploads, transferred the data, and restored it in a different environment.
 
 **key DB schema**
--   **platform_settings:** Now stores a  object.
--   **invoices:**  (list of strings) is used instead of .
+-   No changes made to the database schema.
 
 **changes in tech stack**
--    and  added to  for performance.
+-   None.
 
 **All files of reference**
--   **/app/frontend/pages/AdminDashboard.js**: Heavily modified for multiple features; target for refactoring.
--   **/app/backend/utils/invoice_generator.py**: Heavily modified to fix font and layout issues.
--   **/app/backend/routes/invoices.py**: Updated for multi-user creation and email notifications.
--   **/app/backend/routes/admin.py**: Updated for bank details and user impersonation.
--   **/app/docker-compose.test.yml**: New file for the test server (not yet in git).
--   **/app/scripts/**: New directory with deployment scripts (not yet in git).
--   **/app/frontend/Dockerfile**: Content changed to use npm <command>
-
-Usage:
-
-npm install        install all the dependencies in your project
-npm install <foo>  add the <foo> dependency to your project
-npm test           run this project's tests
-npm run <foo>      run the script named <foo>
-npm <command> -h   quick help on <command>
-npm -l             display usage info for all commands
-npm help <term>    search for help on <term>
-npm help npm       more involved overview
-
-All commands:
-
-    access, adduser, audit, bugs, cache, ci, completion,
-    config, dedupe, deprecate, diff, dist-tag, docs, doctor,
-    edit, exec, explain, explore, find-dupes, fund, get, help,
-    help-search, hook, init, install, install-ci-test,
-    install-test, link, ll, login, logout, ls, org, outdated,
-    owner, pack, ping, pkg, prefix, profile, prune, publish,
-    query, rebuild, repo, restart, root, run-script, sbom,
-    search, set, shrinkwrap, star, stars, start, stop, team,
-    test, token, uninstall, unpublish, unstar, update, version,
-    view, whoami
-
-Specify configs in the ini-formatted file:
-    /root/.npmrc
-or on the command line via: npm <command> --key=value
-
-More configuration info: npm help config
-Configuration fields: npm help 7 config
-
-npm@10.8.2 /usr/lib/node_modules/npm instead of yarn install v1.22.22
-[1/4] Resolving packages...
-success Already up-to-date.
-Done in 0.02s..
+-   **/app/docker-compose.yml**: Repeatedly modified to troubleshoot deployment. The current version has healthchecks removed, which is not ideal for production.
+-   **/app/frontend/Dockerfile**: Modified to use  to resolve build failures caused by a missing .
+-   **/app/frontend/src/pages/AdminDashboard.js**: Modified with Tailwind CSS classes to improve mobile responsiveness.
+-   **/app/frontend/src/pages/Home.js**: Modified to implement inline pagination for the news section.
 
 **Areas that need refactoring**:
--   **/app/frontend/src/pages/AdminDashboard.js**: This is a top priority. The file is over 5,300 lines long. The agent has already created new component files in , and the next step is to integrate them.
+-   **/app/docker-compose.yml**: Healthchecks were removed to get the services running. They should be restored with reliable commands to ensure proper container health monitoring in production.
+-   **/app/frontend/src/pages/AdminDashboard.js**: Still over 5000 lines long and urgently needs to be refactored into smaller components.
 
 **key api endpoints**
--   : (Updated) Now handles an array of  and triggers email notifications.
--   : (New) Serves generated PDF files; requires authentication.
--   : (New) Fetches bank details for invoices.
--   : (New) Updates bank details.
--   : (New) Generates a JWT token for the specified user.
--   : (New) Backend health check endpoint.
+-   No new API endpoints were created.
 
 **Critical Info for New Agent**
--   **The user is in the middle of a manual deployment on their test server (). You must resume from where they are stuck.** The immediate problem is a Docker build failure.
--   **The deployment configuration files (, new s, etc.) that you need are NOT in the user's GitHub repository.** You will likely need to continue providing them via  commands or guide the user to commit them. The most robust solution is to get these files into version control.
--   The user's primary concern is **preserving production data** from . The plan involves backing up this data and restoring it to the test server.
+-   **Production is the priority and is in a fragile state.** The immediate goal is to stabilize the deployment at . Do not assume it's working just because the containers are up.
+-   **The user is extremely anxious about data loss.** Reassure them and be explicit about every command's purpose, especially distinguishing between data-safe () and data-destructive () commands.
+-   **User struggles with the command line.** Expect typos, incorrect copy-pasting, and confusion between different server environments. Provide clear, simple, one-line commands. Be patient and prepared to guide them through basic CLI operations.
+-   **The email verification system is reported as broken.** This is a top-priority bug to investigate once the server is stable.
+-   **The  file is the main source of recent problems.** The SSL volume mounts and healthchecks have been problematic. A thorough review and cleanup of this file is necessary.
 
 **documents and test reports created in this job**
--   [0;32m=======================================[0m
-[0;32mSKUD Täby - Test Server Setup[0m
-[0;32m=======================================[0m
-[1;33mEnter your test server IP address:[0m
--   [0;32m=======================================[0m
-[0;32mDatabase Restore from Production[0m
-[0;32m=======================================[0m
-[1;33mProduction Server: 116.203.136.99[0m
-[1;33mDatabase: skud_taby[0m
-
-[1;33mStep 1: Creating backup from production server...[0m
-[0;31mThis requires SSH access to production server[0m
-
-[1;33mTesting connection to production server...[0m
-[0;31mCannot connect to production server via SSH[0m
-[1;33mAlternative: Manual backup method[0m
-
-[1;33mRun these commands manually:[0m
-1. SSH to production: [0;32mssh root@116.203.136.99[0m
-2. Create backup: [0;32mdocker exec skud_mongodb mongodump --db skud_taby --out /data/backup[0m
-3. Copy backup using SCP or other method to this server at: [0;32m/opt/skud-taby/backups[0m
-
-Once backup is in /opt/skud-taby/backups, run this script again with --restore-only flag
--   [0;31m=======================================[0m
-[0;31mPRODUCTION DEPLOYMENT[0m
-[0;31m=======================================[0m
-[1;33mThis will update the production server[0m
-[1;33mYour database data will be PRESERVED[0m
-
-[0;31mHave you tested on the test server first? (yes/no)[0m
--   [0;31mUsage: ./restore-backup.sh <backup_folder>[0m
-Example: ./restore-backup.sh ./backups/pre_deploy_20260203_120000
--   
--   
--   
--   
--   
--   
--   
+-   The agent now has local copies of the production data:  and .
 
 **Last 10 User Messages and any pending HUMAN messages**
-1.  **User:** Provides test server IP:  (IN PROGRESS)
-2.  **User:** Provides GitHub repo URL. (Acknowledged)
-3.  **User:** Asks why the production server is asking for a password, thinking it was SSH key only. (Agent provided troubleshooting steps)
-4.  **User:** Posts terminal output showing successful backup creation on production but failure to  due to password prompt. (Agent clarified the user was already on the production server)
-5.  **User:** Posts terminal output showing  from production to test server. (Agent provided next steps)
-6.  **User:** Posts terminal output showing command not found and no such container on the test server. (Agent identified user was pasting comments, not just commands)
-7.  **User:** Posts  and  output showing no containers and no  file. (Agent identified the repo was not cloned correctly or was outdated)
-8.  **User:** Posts total 296
-drwxr-xr-x 15 root root  4096 Feb  3 13:56 .
-drwxr-xr-x  1 root root  4096 Feb  3 13:56 ..
-drwxr-xr-x  2 root root  4096 Nov 24 12:18 .emergent
-drwxr-xr-x  8 root root  4096 Feb  3 13:52 .git
--rw-r--r--  1 root root    61 Feb  3 13:52 .gitconfig
-drwxr-xr-x  3 root root  4096 Jan 31 19:57 .github
--rw-r--r--  1 root root  1003 Feb  3 13:52 .gitignore
-drwxr-xr-x  5 root root  4096 Jan 31 22:43 .ruff_cache
-drwxr-xr-x  2 root root  4096 Feb  3 12:12 .screenshots
--rw-r--r--  1 root root  7151 Feb  3 13:28 DEPLOYMENT.md
--rw-r--r--  1 root root  5589 Dec  2 13:22 EVENT_REMINDERS_DOCUMENTATION.md
--rw-r--r--  1 root root  5472 Dec  5 09:04 MEDIA_OPTIMIZATION.md
--rw-r--r--  1 root root  4382 Jan 31 19:42 PERFORMANCE_OPTIMIZATION.md
--rw-r--r--  1 root root 10069 Feb  3 13:56 PHASE1_COMPLETE.md
--rw-r--r--  1 root root  8139 Nov 29 15:31 PHASE_3_COMPLETION_REPORT.md
--rw-r--r--  1 root root 11514 Nov 29 16:23 PHASE_4_COMPLETION_REPORT.md
--rw-r--r--  1 root root    29 Jun 18  2025 README.md
--rw-r--r--  1 root root  4010 Nov 24 13:04 auth_testing.md
-drwxr-xr-x  9 root root  4096 Feb  3 13:56 backend
--rw-r--r--  1 root root 45163 Feb  3 13:56 backend_test.py
--rw-r--r--  1 root root 10301 Nov 22 22:48 contracts.md
--rw-r--r--  1 root root  3382 Feb  3 13:26 docker-compose.prod.yml
--rw-r--r--  1 root root  2648 Feb  3 13:29 docker-compose.test.yml
--rw-r--r--  1 root root  2912 Feb  3 12:54 docker-compose.yml
-drwxr-xr-x  6 root root  4096 Feb  3 13:56 frontend
-drwxr-xr-x  2 root root  4096 Jan 31 18:56 memory
--rw-r--r--  1 root root  5653 Feb  3 12:54 nginx.conf
--rw-r--r--  1 root root  2689 Feb  3 13:25 nginx.test.conf
-drwxr-xr-x  2 root root  4096 Feb  3 13:56 node_modules
--rw-r--r--  1 root root    82 Feb  3 13:56 package-lock.json
--rw-r--r--  1 root root 12877 Feb  3 13:56 password_reset_test.py
-drwxr-xr-x  2 root root  4096 Feb  3 13:29 scripts
-drwxr-xr-x  3 root root  4096 Feb  3 12:36 test_reports
--rw-r--r--  1 root root 49026 Dec  3 17:39 test_result.md
-drwxr-xr-x  2 root root  4096 Jun 18  2025 tests
-drwxr-xr-x  7 root root  4096 Feb  1 12:48 uploads
--rw-r--r--  1 root root    86 Jun 18  2025 yarn.lock output, confirming the test configuration files are missing. (Agent provided  commands to create them)
-9.  **User:** Posts  output showing failure due to missing . (PENDING, agent provided a fix)
-10. **User:** (Last seen) Pasted the full error log from the  failure. (PENDING)
+1.  **User:** Asks about the verification email not working on the live site. (PENDING - P0 Bug)
+2.  **User:** Requests to have the production data copied to the agent's environment. (COMPLETED)
+3.  **User:** Raises concern about a security warning from Hetzner. (COMPLETED - Server Secured)
+4.  **User:** Confirms they want to proceed with production deployment, emphasizing that data must be preserved. (IN PROGRESS)
+5.  **User:** Agrees to save the code to GitHub as a backup. (COMPLETED)
+6.  **User:** Confirms the local data restoration is complete and asks what's next. (Acknowledged)
+7.  **User:** Reports the test server data and pictures disappeared. (Acknowledged)
+8.  **User:** Clarifies they want news pagination on the home page, not a separate page. (COMPLETED)
+9.  **User:** Sent a screenshot of the admin dashboard on mobile and asked for responsiveness fixes. (COMPLETED)
+10. **User:** Reports they are able to log in to the test server after a few tries. (Acknowledged)
 
 **Project Health Check:**
--   **Broken:** The deployment on the new test server is broken and blocked.
+-   **Broken:** The production deployment is unstable. Containers are running, but only after removing healthchecks. Key functionality like email verification is reported as broken.
 -   **Mocked:** None.
 
 **3rd Party Integrations**
--   **reportlab:** For PDF generation.
--   **Hetzner:** For server hosting (manual deployment).
+-   Hetzner (Server Hosting)
+-   Certbot (SSL Certificates)
+-    (PDF Generation)
 
 **Testing status**
--   **Testing agent used after significant changes:** YES (for features before deployment prep)
+-   **Testing agent used after significant changes:** NO
 -   **Troubleshoot agent used after agent stuck in loop:** NO
--   **Test files created:** []
--   **Known regressions:** None.
+-   **Test files created:** None.
+-   **Known regressions:**
+    -   Production deployment is unstable.
+    -   SSL certificates were lost and had to be regenerated. The root cause (volume persistence) may not be fixed.
+    -   Email verification is reportedly broken post-deployment attempts.
 
 **Credentials to test flow:**
 -   **Super Admin:**  / 
@@ -314,4 +159,5 @@ drwxr-xr-x  7 root root  4096 Feb  1 12:48 uploads
 -   **Test Server IP:** 
 
 **What agent forgot to execute**
--   The agent created numerous critical deployment configuration files and scripts but did not instruct the user to commit them to their Git repository. This oversight is the direct cause of the current manual, error-prone deployment process the user is struggling with.</analysis>
+-   The agent removed healthchecks from the production  as a quick fix instead of implementing reliable ones. This leaves the deployment in a fragile state without proper health monitoring.
+-   The root cause of the SSL certificates disappearing was not fully investigated. While they were regenerated, the volume configuration in  that may have caused the loss was not confirmed to be fixed, posing a risk for recurrence.</analysis>

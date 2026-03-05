@@ -2,11 +2,12 @@ FROM python:3.11-slim
 
 WORKDIR /app
 
-# Install system dependencies including fonts for PDF generation
+# Install system dependencies including fonts for PDF generation and curl for healthchecks
 RUN apt-get update && apt-get install -y --no-install-recommends \
     gcc \
     libpq-dev \
     fonts-dejavu-core \
+    curl \
     && rm -rf /var/lib/apt/lists/* \
     && apt-get clean
 

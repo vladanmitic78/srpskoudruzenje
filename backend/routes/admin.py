@@ -2,10 +2,67 @@ from fastapi import APIRouter, Depends, HTTPException, Request, Response, Upload
 from fastapi.responses import StreamingResponse
 from datetime import datetime
 from export_utils import generate_members_pdf, generate_members_xml, generate_members_excel
+from email_service import send_email
+import os
+import logging
 
 from dependencies import get_admin_user, get_superadmin_user
 
+logger = logging.getLogger(__name__)
 router = APIRouter()
+
+@router.post("/test-email")
+async def test_email_configuration(request: Request, admin: dict = Depends(get_superadmin_user)):
+    """Test email configuration by sending a test email to the admin (Super Admin only)"""
+    db = request.app.state.db
+    admin_email = admin.get("email", "info@srpskoudruzenjetaby.se")
+    
+    html_content = """
+    <html>
+    <body style="font-family: Arial, sans-serif; padding: 20px;">
+        <h2 style="color: #C1272D;">SKUD Täby - Email Test</h2>
+        <p>This is a test email to verify that the email configuration is working correctly.</p>
+        <p>If you receive this email, your SMTP settings are properly configured.</p>
+        <hr>
+        <p><strong>Environment:</strong></p>
+        <ul>
+            <li>SMTP_HOST: """ + os.environ.get('SMTP_HOST', 'not set') + """</li>
+            <li>SMTP_PORT: """ + os.environ.get('SMTP_PORT', 'not set') + """</li>
+            <li>SMTP_USER: """ + os.environ.get('SMTP_USER', 'not set') + """</li>
+        </ul>
+        <p style="color: #666; font-size: 12px;">Sent from SKUD Täby System</p>
+    </body>
+    </html>
+    """
+    
+    text_content = f"""
+    SKUD Täby - Email Test
+    
+    This is a test email to verify that the email configuration is working correctly.
+    If you receive this email, your SMTP settings are properly configured.
+    
+    Environment:
+    - SMTP_HOST: {os.environ.get('SMTP_HOST', 'not set')}
+    - SMTP_PORT: {os.environ.get('SMTP_PORT', 'not set')}
+    - SMTP_USER: {os.environ.get('SMTP_USER', 'not set')}
+    """
+    
+    try:
+        result = await send_email(
+            admin_email,
+            "SKUD Täby - Email Test / Test av e-post",
+            html_content,
+            text_content,
+            db=db
+        )
+        
+        if result:
+            return {"success": True, "message": f"Test email sent to {admin_email}. Please check your inbox."}
+        else:
+            return {"success": False, "message": "Failed to send test email. Check backend logs for details."}
+    except Exception as e:
+        logger.error(f"Email test failed: {str(e)}")
+        return {"success": False, "message": f"Email test failed: {str(e)}"}
 
 @router.get("/users")
 async def get_all_users(admin: dict = Depends(get_admin_user), request: Request = None):

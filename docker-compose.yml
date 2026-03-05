@@ -33,6 +33,14 @@ services:
       - DB_NAME=skud_taby
       - PYTHONDONTWRITEBYTECODE=1
       - PYTHONUNBUFFERED=1
+      - FRONTEND_URL=https://srpskoudruzenjetaby.se
+      - SMTP_HOST=${SMTP_HOST:-mailcluster.loopia.se}
+      - SMTP_PORT=${SMTP_PORT:-465}
+      - SMTP_USER=${SMTP_USER:-info@srpskoudruzenjetaby.se}
+      - SMTP_PASSWORD=${SMTP_PASSWORD}
+      - SMTP_FROM_EMAIL=${SMTP_FROM_EMAIL:-info@srpskoudruzenjetaby.se}
+      - SMTP_FROM_NAME=${SMTP_FROM_NAME:-SKUD Täby}
+      - JWT_SECRET_KEY=${JWT_SECRET_KEY:-your-production-secret-key-change-this}
     volumes:
       - uploads_data:/app/uploads
     depends_on:

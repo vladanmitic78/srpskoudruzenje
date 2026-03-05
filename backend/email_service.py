@@ -105,6 +105,9 @@ async def send_email(to_email: str, subject: str, html_content: str, text_conten
         # Get SMTP configuration (from database or defaults)
         smtp_config = await get_smtp_config(db)
         
+        # Log SMTP config being used (without password for security)
+        logger.info(f"Attempting to send email to {to_email} via {smtp_config['host']}:{smtp_config['port']} (user: {smtp_config['user']}, password_length: {len(smtp_config.get('password', ''))})")
+        
         message = MIMEMultipart('alternative')
         
         # Headers - using simple format that Loopia accepts (plain email address only)
@@ -146,8 +149,14 @@ async def send_email(to_email: str, subject: str, html_content: str, text_conten
         )
         logger.info(f"Email sent successfully to {to_email} via {smtp_config['host']}:{smtp_config['port']}")
         return True
+    except aiosmtplib.SMTPAuthenticationError as e:
+        logger.error(f"SMTP Authentication failed for {to_email}: {str(e)} - Check SMTP_USER and SMTP_PASSWORD environment variables")
+        return False
+    except aiosmtplib.SMTPConnectError as e:
+        logger.error(f"SMTP Connection failed for {to_email}: {str(e)} - Check SMTP_HOST and SMTP_PORT")
+        return False
     except Exception as e:
-        logger.error(f"Failed to send email to {to_email}: {str(e)}")
+        logger.error(f"Failed to send email to {to_email}: {type(e).__name__}: {str(e)}")
         return False
 
 def get_verification_email_template(name: str, verification_link: str):

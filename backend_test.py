@@ -12,7 +12,7 @@ from datetime import datetime, timedelta
 import sys
 
 # Get backend URL from environment
-BACKEND_URL = "https://cultural-cms-1.preview.emergentagent.com/api"
+BACKEND_URL = "https://docker-health-check.preview.emergentagent.com/api"
 
 class EventsAPITester:
     def __init__(self):
