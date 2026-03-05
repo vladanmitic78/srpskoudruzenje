@@ -1776,6 +1776,17 @@ const AdminDashboard = () => {
                                         "{invoice.creditReason.length > 50 ? invoice.creditReason.substring(0, 50) + '...' : invoice.creditReason}"
                                       </p>
                                     )}
+                                    {invoice.creditNoteId && (
+                                      <button
+                                        onClick={() => {
+                                          const url = `${process.env.REACT_APP_BACKEND_URL}/api/invoices/credit-notes/files/${invoice.creditNoteId}.pdf`;
+                                          window.open(url, '_blank');
+                                        }}
+                                        className="mt-2 px-2 py-1 bg-yellow-600 text-white text-xs rounded hover:bg-yellow-700 w-full text-center"
+                                      >
+                                        📄 Download CN
+                                      </button>
+                                    )}
                                   </div>
                                 )}
                               </td>

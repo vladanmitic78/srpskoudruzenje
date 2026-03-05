@@ -121,8 +121,9 @@ async def create_invoice(
         user_name = user.get("fullName", user.get("username", "Member"))
         
         if user_email:
-            # Generate download link
-            download_link = f"{os.environ.get('FRONTEND_URL', 'https://srpskoudruzenjetaby.se')}/profile"
+            # Generate direct PDF download link
+            frontend_url = os.environ.get('FRONTEND_URL', 'https://srpskoudruzenjetaby.se')
+            download_link = f"{frontend_url}/api/invoices/files/{pdf_filename}"
             
             html, text = get_invoice_upload_notification(
                 user_name=user_name,
@@ -341,35 +342,47 @@ async def credit_invoice(
         from email_service import send_email
         
         if member_email:
+            # Generate direct PDF download link
+            frontend_url = os.environ.get('FRONTEND_URL', 'https://srpskoudruzenjetaby.se')
+            cn_download_link = f"{frontend_url}/api/invoices/credit-notes/files/{pdf_filename}" if pdf_generated else f"{frontend_url}/profile"
+            
             html_content = f"""
             <html>
             <body style="font-family: Arial, sans-serif; padding: 20px;">
                 <div style="max-width: 600px; margin: 0 auto;">
-                    <h2 style="color: #28a745;">Knjižno Odobrenje / Kreditfaktura / Credit Note</h2>
-                    
-                    <p><strong>Poštovani/a {member_name},</strong></p>
-                    <p>Obaveštavamo Vas da je kreiran knjižno odobrenje (credit note) za Vašu fakturu.</p>
-                    
-                    <div style="background: #d4edda; padding: 15px; border-radius: 5px; margin: 20px 0;">
-                        <p><strong>Broj odobrenja / Credit Note #:</strong> {credit_note_number}</p>
-                        <p><strong>Originalna faktura / Original Invoice:</strong> {invoice_id}</p>
-                        <p><strong>Iznos / Amount:</strong> -{invoice.get('amount', 0):.2f} {invoice.get('currency', 'SEK')}</p>
-                        <p><strong>Razlog / Reason:</strong> {credit_data.reason}</p>
+                    <div style="background-color: #28a745; color: white; padding: 20px; text-align: center; border-radius: 5px 5px 0 0;">
+                        <h2 style="margin: 0;">💳 Knjižno Odobrenje / Kreditfaktura</h2>
                     </div>
                     
-                    <p>Možete pregledati dokument u Vašem profilu na našoj web stranici.</p>
-                    
-                    <hr style="margin: 30px 0;">
-                    
-                    <p><strong>Hej {member_name},</strong></p>
-                    <p>Vi informeras om att en kreditfaktura har skapats för din faktura.</p>
-                    
-                    <p>Du kan se dokumentet i din profil på vår webbplats.</p>
-                    
-                    <p style="color: #666; font-size: 12px; margin-top: 30px;">
-                        Srpsko Kulturno Udruženje Täby<br>
-                        info@srpskoudruzenjetaby.se
-                    </p>
+                    <div style="background: white; padding: 30px; border: 1px solid #ddd; border-radius: 0 0 5px 5px;">
+                        <p><strong>Poštovani/a {member_name},</strong></p>
+                        <p>Obaveštavamo Vas da je kreirano knjižno odobrenje (credit note) za Vašu fakturu.</p>
+                        
+                        <div style="background: #d4edda; padding: 15px; border-radius: 5px; margin: 20px 0; border-left: 4px solid #28a745;">
+                            <p style="margin: 5px 0;"><strong>Broj odobrenja / Credit Note #:</strong> {credit_note_number}</p>
+                            <p style="margin: 5px 0;"><strong>Originalna faktura / Original Invoice:</strong> {invoice_id[-8:].upper()}</p>
+                            <p style="margin: 5px 0;"><strong>Iznos / Amount:</strong> <span style="color: #28a745; font-size: 18px; font-weight: bold;">-{invoice.get('amount', 0):.2f} {invoice.get('currency', 'SEK')}</span></p>
+                            <p style="margin: 5px 0;"><strong>Razlog / Reason:</strong> {credit_data.reason}</p>
+                        </div>
+                        
+                        <center>
+                            <a href="{cn_download_link}" style="display: inline-block; padding: 12px 30px; background-color: #28a745; color: white; text-decoration: none; border-radius: 5px; margin: 20px 0;">📥 Preuzmite Dokument / Download Document</a>
+                        </center>
+                        
+                        <hr style="margin: 30px 0; border: none; border-top: 1px solid #ddd;">
+                        
+                        <p><strong>Hej {member_name},</strong></p>
+                        <p>Vi informeras om att en kreditfaktura har skapats för din faktura.</p>
+                        
+                        <center>
+                            <a href="{cn_download_link}" style="display: inline-block; padding: 12px 30px; background-color: #28a745; color: white; text-decoration: none; border-radius: 5px; margin: 20px 0;">📥 Ladda Ner Dokument</a>
+                        </center>
+                        
+                        <p style="color: #666; font-size: 12px; margin-top: 30px; text-align: center;">
+                            Srpsko Kulturno Udruženje Täby<br>
+                            info@srpskoudruzenjetaby.se
+                        </p>
+                    </div>
                 </div>
             </body>
             </html>
@@ -570,36 +583,23 @@ async def download_invoice_file(
 @router.get("/files/{filename}")
 async def serve_invoice_file(
     filename: str,
-    current_user: dict = Depends(get_current_user),
     request: Request = None
 ):
-    """Serve invoice PDF files (auto-generated or uploaded)"""
+    """Serve invoice PDF files (auto-generated or uploaded) - public access with filename"""
     from fastapi.responses import FileResponse
-    db = request.app.state.db
-    
-    # Find invoice by filename
-    invoice = await db.invoices.find_one({"fileName": filename})
-    if not invoice:
-        raise HTTPException(status_code=404, detail="Invoice not found")
-    
-    # Check if user has access (own invoice or admin)
-    is_admin = current_user.get("role") in ["admin", "superadmin", "moderator"]
-    is_owner = invoice["userId"] == current_user.get("_id")
-    
-    if not is_admin and not is_owner:
-        raise HTTPException(status_code=403, detail="Access denied")
     
     # Get file path
     file_path = Path("/app/uploads/invoices") / filename
     
     if not file_path.exists():
-        raise HTTPException(status_code=404, detail="Invoice file not found on server")
+        raise HTTPException(status_code=404, detail="Invoice file not found")
     
     # Return file as PDF
     return FileResponse(
         path=str(file_path),
+        media_type="application/pdf",
         filename=filename,
-        media_type="application/pdf"
+        headers={"Content-Disposition": f"inline; filename={filename}"}
     )
 
 
