@@ -11,12 +11,15 @@ export { default as StatisticsCards } from './StatisticsCards';
 export { default as InvoiceDetailsModal } from './InvoiceDetailsModal';
 export { default as UserImpersonation } from './UserImpersonation';
 
-// Future components to be extracted from AdminDashboard.js:
-// - InvoiceTable
-// - MemberCard
-// - BankDetailsForm
-// - EventManagement
-// - NewsManagement
-// - GalleryManagement
-// - PlatformSettings
-// - BrandingSettings
+// New tab components - extracted from AdminDashboard.js
+export { default as BrandingTab } from './BrandingTab';
+export { default as EventsTab } from './EventsTab';
+
+// Future components to be extracted:
+// - MembersTab
+// - InvoicesTab
+// - ContentTab
+// - SettingsTab
+// - UserManagementTab
+// - PlatformSettingsTab
+

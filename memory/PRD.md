@@ -90,16 +90,25 @@ Build and maintain a comprehensive membership management platform for the Serbia
   - `/app/frontend/src/components/admin/MemberFilters.jsx` - Reusable component
   - `/app/frontend/src/pages/AdminDashboard.js` - Integrated filters
 
-#### AdminDashboard Refactoring (IN PROGRESS)
-- **Created**: `/app/frontend/src/components/admin/` folder structure
+#### AdminDashboard Refactoring (IN PROGRESS - Mar 6, 2026)
+- **Progress**: Reduced from 5681 lines to 4970 lines (~12.5% reduction)
 - **Extracted Components**:
+  - `BrandingTab.jsx` - Logo upload, color customization, hero background, website texts (~400 lines)
+  - `EventsTab.jsx` - Event listing, attendance buttons, edit/cancel/delete (~150 lines)
+- **Previously Extracted**:
   - `CreateInvoiceDialog.jsx` - Invoice creation modal with multi-select
   - `MemberFilters.jsx` - Member filtering with CSV export
   - `StatisticsCards.jsx` - Dashboard statistics display
   - `InvoiceDetailsModal.jsx` - Invoice details popup
   - `UserImpersonation.jsx` - User impersonation dialog
-  - `index.js` - Central export point
-- **Remaining**: Extract more components (InvoiceTable, EventManagement, etc.)
+- **Remaining to Extract**:
+  - MembersTab (~360 lines)
+  - InvoicesTab (~200 lines)
+  - ContentTab (~250 lines)
+  - SettingsTab (~310 lines)
+  - UserManagementTab (~270 lines)
+  - PlatformSettingsTab (~485 lines)
+- **Component Location**: `/app/frontend/src/components/admin/`
 
 #### User Impersonation (COMPLETED - Feb 3, 2026)
 - **Feature**: Super Admins can view the site as any non-superadmin user
