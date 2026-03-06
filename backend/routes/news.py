@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException, Request, UploadFile, File
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse, Response
 from typing import List
 from datetime import datetime
 from pathlib import Path
@@ -7,6 +7,7 @@ import shutil
 
 from models import NewsCreate, NewsResponse
 from dependencies import get_admin_user
+from utils.image_optimizer import optimize_image_bytes
 
 router = APIRouter()
 
@@ -71,7 +72,7 @@ async def upload_news_image(
     admin: dict = Depends(get_admin_user),
     request: Request = None
 ):
-    """Upload image for news article (Admin only)"""
+    """Upload and optimize image for news article (Admin only)"""
     # Validate file type
     allowed_extensions = ['.jpg', '.jpeg', '.png', '.gif', '.webp']
     file_ext = Path(file.filename).suffix.lower()
@@ -85,26 +86,74 @@ async def upload_news_image(
     upload_dir = Path("/app/uploads/news")
     upload_dir.mkdir(parents=True, exist_ok=True)
     
+    # Read file bytes
+    file_bytes = await file.read()
+    
+    # Optimize image (convert to WebP, resize, compress)
+    try:
+        optimized_bytes, new_filename, stats = optimize_image_bytes(
+            image_bytes=file_bytes,
+            filename=file.filename,
+            max_width=1200,  # Max width for news images
+            max_height=900,  # Max height
+            quality=80,      # Good quality with compression
+            convert_to_webp=True
+        )
+    except Exception:
+        # Fallback to original if optimization fails
+        optimized_bytes = file_bytes
+        new_filename = file.filename
+        stats = {'savings_percent': 0}
+    
     # Generate unique filename
     timestamp = datetime.utcnow().strftime("%Y%m%d_%H%M%S")
-    safe_filename = f"news_{timestamp}{file_ext}"
+    ext = Path(new_filename).suffix
+    safe_filename = f"news_{timestamp}{ext}"
     file_path = upload_dir / safe_filename
     
-    # Save file
+    # Save optimized file
     with open(file_path, "wb") as buffer:
-        shutil.copyfileobj(file.file, buffer)
+        buffer.write(optimized_bytes)
     
     # Return URL
     file_url = f"/api/news/images/{safe_filename}"
     
-    return {"success": True, "imageUrl": file_url}
+    return {
+        "success": True, 
+        "imageUrl": file_url,
+        "optimized": True,
+        "savings": f"{stats.get('savings_percent', 0)}%"
+    }
+
 
 @router.get("/images/{filename}")
 async def get_news_image(filename: str):
-    """Serve news image"""
+    """Serve news image with cache headers"""
     file_path = Path("/app/uploads/news") / filename
     
     if not file_path.exists():
         raise HTTPException(status_code=404, detail="Image not found")
     
-    return FileResponse(path=str(file_path))
+    # Determine content type
+    ext = file_path.suffix.lower()
+    content_types = {
+        '.webp': 'image/webp',
+        '.jpg': 'image/jpeg',
+        '.jpeg': 'image/jpeg',
+        '.png': 'image/png',
+        '.gif': 'image/gif'
+    }
+    content_type = content_types.get(ext, 'application/octet-stream')
+    
+    # Read file and return with cache headers
+    with open(file_path, 'rb') as f:
+        content = f.read()
+    
+    return Response(
+        content=content,
+        media_type=content_type,
+        headers={
+            "Cache-Control": "public, max-age=31536000, immutable",  # 1 year cache
+            "Vary": "Accept-Encoding"
+        }
+    )

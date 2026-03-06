@@ -111,7 +111,7 @@ const About = () => {
             <CardContent className="p-8">
               <div className="flex justify-center mb-8">
                 <img 
-                  src="/logo.jpg" 
+                  src="/logo.webp" 
                   alt="SKUD Täby Logo" 
                   className="h-32 w-32 object-contain rounded-full border-4 border-[var(--color-primary)]"
                 />

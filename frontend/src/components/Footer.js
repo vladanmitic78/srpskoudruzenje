@@ -37,7 +37,7 @@ const Footer = () => {
           {/* Logo and Description */}
           <div className="space-y-4">
             <img 
-              src="/logo.jpg" 
+              src="/logo.webp" 
               alt="SKUD Täby Logo" 
               className="h-20 w-20 object-contain rounded-full border-2 border-white"
             />

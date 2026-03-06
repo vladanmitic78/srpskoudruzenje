@@ -51,7 +51,7 @@ const VerifyEmail = () => {
         <CardHeader className="space-y-1">
           <div className="flex justify-center mb-4">
             <img 
-              src="/logo.jpg" 
+              src="/logo.webp" 
               alt="SKUD Täby Logo" 
               className="h-20 w-20 object-contain rounded-full border-2 border-[#C1272D]"
             />

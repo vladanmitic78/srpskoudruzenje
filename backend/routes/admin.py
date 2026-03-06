@@ -619,29 +619,55 @@ async def upload_logo(
     superadmin: dict = Depends(get_superadmin_user),
     request: Request = None
 ):
-    """Upload logo image (Super Admin only)"""
+    """Upload and optimize logo image (Super Admin only)"""
     from pathlib import Path
-    import shutil
+    from utils.image_optimizer import optimize_image_bytes
     
     # Validate file type
-    allowed_types = ["image/png", "image/jpeg", "image/jpg", "image/svg+xml"]
+    allowed_types = ["image/png", "image/jpeg", "image/jpg", "image/svg+xml", "image/webp"]
     if file.content_type not in allowed_types:
-        raise HTTPException(status_code=400, detail="Invalid file type. Only PNG, JPG, and SVG are allowed.")
+        raise HTTPException(status_code=400, detail="Invalid file type. Only PNG, JPG, SVG, and WebP are allowed.")
     
     # Create branding upload directory
     upload_dir = Path("/app/backend/uploads/branding")
     upload_dir.mkdir(parents=True, exist_ok=True)
     
-    # Save file with a fixed name (logo with extension)
-    file_extension = file.filename.split(".")[-1]
-    file_path = upload_dir / f"logo.{file_extension}"
+    # Read file bytes
+    file_bytes = await file.read()
     
-    with open(file_path, "wb") as buffer:
-        shutil.copyfileobj(file.file, buffer)
+    # Skip optimization for SVG files
+    if file.content_type == "image/svg+xml":
+        file_path = upload_dir / "logo.svg"
+        with open(file_path, "wb") as buffer:
+            buffer.write(file_bytes)
+        logo_url = "/uploads/branding/logo.svg"
+    else:
+        # Optimize image (resize to max 300x300, convert to WebP)
+        try:
+            optimized_bytes, new_filename, stats = optimize_image_bytes(
+                image_bytes=file_bytes,
+                filename=file.filename,
+                max_width=300,
+                max_height=300,
+                quality=85,
+                convert_to_webp=True
+            )
+            file_path = upload_dir / "logo.webp"
+            with open(file_path, "wb") as buffer:
+                buffer.write(optimized_bytes)
+            logger.info(f"Logo optimized: {stats.get('savings_percent', 0)}% size reduction")
+            logo_url = "/uploads/branding/logo.webp"
+        except Exception as e:
+            # Fallback to original
+            logger.error(f"Logo optimization failed: {e}")
+            file_extension = file.filename.split(".")[-1]
+            file_path = upload_dir / f"logo.{file_extension}"
+            with open(file_path, "wb") as buffer:
+                buffer.write(file_bytes)
+            logo_url = f"/uploads/branding/logo.{file_extension}"
     
     # Update branding settings with logo path
     db = request.app.state.db
-    logo_url = f"/uploads/branding/logo.{file_extension}"
     
     await db.branding_settings.update_one(
         {"_id": "branding"},

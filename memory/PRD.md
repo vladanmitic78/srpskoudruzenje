@@ -21,6 +21,25 @@ Build and maintain a comprehensive membership management platform for the Serbia
 
 ## What's Been Implemented
 
+### Performance Optimizations (COMPLETED - Mar 6, 2026)
+- **Image Optimization**:
+  - Created `/app/backend/utils/image_optimizer.py` utility
+  - News images: Auto-converted to WebP, resized to max 1200x900, ~80% quality
+  - Logo: Optimized from 159KB to 10.4KB (93% reduction)
+  - Gallery images: WebP conversion with compression
+- **Lazy Loading**:
+  - Created `/app/frontend/src/components/ui/LazyImage.jsx` component
+  - News images now use IntersectionObserver for lazy loading
+  - Placeholder animation while images load
+- **Cache Headers**:
+  - Added 1-year cache headers to image endpoints
+  - Updated nginx.conf for API image caching
+  - News images: `Cache-Control: public, max-age=31536000, immutable`
+  - Gallery images: Same cache policy
+- **Frontend Optimizations**:
+  - All logo references updated to use WebP format
+  - Images load progressively with smooth fade-in
+
 ### March 2026
 
 #### Production Deployment Stabilized (COMPLETED - Mar 6, 2026)

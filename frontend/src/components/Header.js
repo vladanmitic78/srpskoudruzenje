@@ -58,7 +58,7 @@ const Header = () => {
           {/* Logo */}
           <Link to="/" className="flex items-center space-x-3 group">
             <img 
-              src="/logo.jpg" 
+              src="/logo.webp" 
               alt="SKUD Täby Logo" 
               className="h-16 w-16 object-contain rounded-full border-2 border-[var(--color-primary)] group-hover:scale-105 transition-transform duration-300"
             />

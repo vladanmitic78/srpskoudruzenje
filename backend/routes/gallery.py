@@ -137,13 +137,37 @@ async def delete_gallery_image(
 
 @router.get("/images/{filename}")
 async def get_gallery_image(filename: str):
-    """Serve gallery image"""
+    """Serve gallery image with cache headers"""
+    from fastapi.responses import Response
+    
     file_path = Path("/app/uploads/gallery") / filename
     
     if not file_path.exists():
         raise HTTPException(status_code=404, detail="Image not found")
     
-    return FileResponse(path=str(file_path))
+    # Determine content type
+    ext = file_path.suffix.lower()
+    content_types = {
+        '.webp': 'image/webp',
+        '.jpg': 'image/jpeg',
+        '.jpeg': 'image/jpeg',
+        '.png': 'image/png',
+        '.gif': 'image/gif'
+    }
+    content_type = content_types.get(ext, 'application/octet-stream')
+    
+    # Read file and return with cache headers
+    with open(file_path, 'rb') as f:
+        content = f.read()
+    
+    return Response(
+        content=content,
+        media_type=content_type,
+        headers={
+            "Cache-Control": "public, max-age=31536000, immutable",
+            "Vary": "Accept-Encoding"
+        }
+    )
 
 @router.delete("/{gallery_id}")
 async def delete_gallery_item(

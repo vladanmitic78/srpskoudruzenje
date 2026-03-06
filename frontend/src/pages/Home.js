@@ -13,6 +13,7 @@ import {
 } from '../components/ui/dialog';
 import { Calendar, MapPin, ChevronRight, ChevronLeft, X } from 'lucide-react';
 import { newsAPI, eventsAPI } from '../services/api';
+import LazyImage from '../components/ui/LazyImage';
 
 const Home = () => {
   const { language, setLanguage, t } = useLanguage();
@@ -112,7 +113,7 @@ const Home = () => {
         {!heroBackground.backgroundUrl && (
           <div className="absolute inset-0 opacity-5">
             <div className="absolute inset-0" style={{
-              backgroundImage: `url(/logo.jpg)`,
+              backgroundImage: `url(/logo.webp)`,
               backgroundSize: '200px',
               backgroundRepeat: 'repeat',
               backgroundPosition: 'center'
@@ -198,12 +199,13 @@ const Home = () => {
             {displayedNews.map((item) => (
               <Card key={item.id} className="group hover:shadow-xl transition-all duration-300 overflow-hidden border-2 border-transparent hover:border-[var(--color-primary)]/20 flex flex-col">
                 <div className="relative h-48 overflow-hidden bg-gray-100 dark:bg-gray-800">
-                  <img
+                  <LazyImage
                     src={item.image}
                     alt={item.title[language]}
                     className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500"
+                    wrapperClassName="w-full h-full"
                   />
-                  <div className="absolute top-4 right-4 bg-[var(--color-button-primary)] text-white px-3 py-1 rounded-full text-sm font-semibold shadow-lg">
+                  <div className="absolute top-4 right-4 bg-[var(--color-button-primary)] text-white px-3 py-1 rounded-full text-sm font-semibold shadow-lg z-10">
                     {item.date}
                   </div>
                 </div>
