@@ -206,15 +206,37 @@ Build and maintain a comprehensive membership management platform for the Serbia
 - **Report Modal Features**:
   - Date range filters (From/To)
   - Training group filter
+  - **Per-event report option** - Generate report for single event
   - Live preview with statistics (Events, RSVPs, Present, Absent, Walk-in, Avg Rate)
   - Visual attendance rate bar
   - Download as PDF or Excel
+- **Serbian Character Support**: DejaVu fonts embedded for š, đ, ž, č, ć characters
 - **Files Updated**:
-  - `/app/backend/routes/events.py` - Route ordering fixed, report endpoints now at lines 43-225
+  - `/app/backend/routes/events.py` - Route ordering fixed, per-event support added
+  - `/app/frontend/src/components/AttendanceReportGenerator.jsx` - Per-event UI added
+  - `/app/frontend/src/services/api.js` - event_id parameter support
+  - `/app/frontend/src/utils/translations.js` - Attendance button translations
 - **API Endpoints** (route order is critical):
-  - `GET /api/events/reports/attendance` - Generate PDF or Excel report (format param)
+  - `GET /api/events/reports/attendance` - Generate PDF or Excel report (format, event_id params)
   - `GET /api/events/reports/attendance/data` - Get report data as JSON for preview
-- **Testing**: Backend API tested with curl (PDF: 4843 bytes, Excel: 6923 bytes), Frontend modal verified
+- **Testing**: Backend API tested with curl, PDF generation with embedded fonts verified
+
+### Deleted User Cleanup (COMPLETED - Mar 6, 2026)
+- **Issue**: Marking attendance for deleted users caused "User not found" errors
+- **Fix**: Backend now gracefully handles deleted users:
+  - Returns success with message "User no longer exists - removed from participants"
+  - Automatically removes deleted users from event participant lists
+  - GET attendance endpoint also cleans up deleted users from events
+- **Files Updated**:
+  - `/app/backend/routes/events.py` - mark_attendance and get_attendance endpoints
+
+### Button Translation (COMPLETED - Mar 6, 2026)
+- **Prisustvo button** now uses translation key `admin.events.attendance`
+- Added translations for all 4 languages:
+  - Serbian Latin: "Prisustvo / Attendance"
+  - Serbian Cyrillic: "Присуство / Attendance"
+  - English: "Attendance"
+  - Swedish: "Närvaro / Attendance"
 
 ### Invoice Credit Note System (COMPLETED - Mar 5, 2026)
 - **New Feature**: Admin/Super Admin can now credit any invoice to issue refunds

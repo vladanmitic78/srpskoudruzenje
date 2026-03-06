@@ -9,11 +9,18 @@ import { toast } from 'sonner';
 /**
  * AttendanceReportGenerator - Component for generating attendance reports
  * Available for Admin/SuperAdmin/Moderator
+ * Props:
+ *   - open: boolean
+ *   - onClose: function
+ *   - selectedEvent: optional event object for single-event report
  */
-const AttendanceReportGenerator = ({ open, onClose }) => {
+const AttendanceReportGenerator = ({ open, onClose, selectedEvent = null }) => {
   const [loading, setLoading] = useState(false);
   const [reportData, setReportData] = useState(null);
   const [trainingGroups, setTrainingGroups] = useState([]);
+  const [events, setEvents] = useState([]);
+  const [reportMode, setReportMode] = useState(selectedEvent ? 'single' : 'range');
+  const [selectedEventId, setSelectedEventId] = useState(selectedEvent?.id || selectedEvent?._id || '');
   
   // Report filters
   const [filters, setFilters] = useState({
@@ -24,18 +31,46 @@ const AttendanceReportGenerator = ({ open, onClose }) => {
 
   useEffect(() => {
     if (open) {
+      loadEvents();
       loadReportPreview();
     }
-  }, [open, filters]);
+  }, [open]);
+
+  useEffect(() => {
+    if (open) {
+      loadReportPreview();
+    }
+  }, [filters, reportMode, selectedEventId]);
+
+  useEffect(() => {
+    if (selectedEvent) {
+      setReportMode('single');
+      setSelectedEventId(selectedEvent.id || selectedEvent._id);
+    }
+  }, [selectedEvent]);
+
+  const loadEvents = async () => {
+    try {
+      const data = await eventsAPI.getAll();
+      setEvents(data.events || []);
+    } catch (error) {
+      console.error('Failed to load events:', error);
+    }
+  };
 
   const loadReportPreview = async () => {
     try {
       setLoading(true);
-      const data = await eventsAPI.getAttendanceReportData(
-        filters.startDate,
-        filters.endDate,
-        filters.trainingGroup === 'all' ? null : filters.trainingGroup
-      );
+      let data;
+      if (reportMode === 'single' && selectedEventId) {
+        data = await eventsAPI.getAttendanceReportData(null, null, null, selectedEventId);
+      } else {
+        data = await eventsAPI.getAttendanceReportData(
+          filters.startDate,
+          filters.endDate,
+          filters.trainingGroup === 'all' ? null : filters.trainingGroup
+        );
+      }
       setReportData(data);
       setTrainingGroups(data.training_groups || []);
     } catch (error) {
@@ -49,12 +84,17 @@ const AttendanceReportGenerator = ({ open, onClose }) => {
   const handleDownload = async (format) => {
     try {
       const token = localStorage.getItem('token');
-      const url = eventsAPI.downloadAttendanceReport(
-        filters.startDate,
-        filters.endDate,
-        filters.trainingGroup === 'all' ? null : filters.trainingGroup,
-        format
-      );
+      let url;
+      if (reportMode === 'single' && selectedEventId) {
+        url = eventsAPI.downloadAttendanceReport(null, null, null, format, selectedEventId);
+      } else {
+        url = eventsAPI.downloadAttendanceReport(
+          filters.startDate,
+          filters.endDate,
+          filters.trainingGroup === 'all' ? null : filters.trainingGroup,
+          format
+        );
+      }
       
       // Fetch with auth header
       const response = await fetch(url, {
@@ -95,45 +135,92 @@ const AttendanceReportGenerator = ({ open, onClose }) => {
         </DialogHeader>
 
         <div className="space-y-6">
+          {/* Report Mode Toggle */}
+          <div className="bg-gray-50 dark:bg-gray-800 p-4 rounded-lg space-y-4">
+            <h3 className="font-semibold text-sm text-gray-600 dark:text-gray-400 uppercase">
+              Tip izveštaja / Report Type
+            </h3>
+            <div className="flex gap-2">
+              <button
+                onClick={() => setReportMode('range')}
+                className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+                  reportMode === 'range'
+                    ? 'bg-[#C1272D] text-white'
+                    : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600'
+                }`}
+              >
+                📅 Po datumu / By Date Range
+              </button>
+              <button
+                onClick={() => setReportMode('single')}
+                className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+                  reportMode === 'single'
+                    ? 'bg-[#C1272D] text-white'
+                    : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600'
+                }`}
+              >
+                🎯 Po događaju / By Event
+              </button>
+            </div>
+          </div>
+
           {/* Filters */}
           <div className="bg-gray-50 dark:bg-gray-800 p-4 rounded-lg space-y-4">
             <h3 className="font-semibold text-sm text-gray-600 dark:text-gray-400 uppercase">
               Filteri / Filters
             </h3>
             
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {reportMode === 'single' ? (
               <div>
-                <Label className="text-sm">Od datuma / From Date</Label>
-                <Input
-                  type="date"
-                  value={filters.startDate}
-                  onChange={(e) => setFilters({ ...filters, startDate: e.target.value })}
-                />
-              </div>
-              
-              <div>
-                <Label className="text-sm">Do datuma / To Date</Label>
-                <Input
-                  type="date"
-                  value={filters.endDate}
-                  onChange={(e) => setFilters({ ...filters, endDate: e.target.value })}
-                />
-              </div>
-              
-              <div>
-                <Label className="text-sm">Grupa / Group</Label>
+                <Label className="text-sm">Događaj / Event</Label>
                 <select
-                  value={filters.trainingGroup}
-                  onChange={(e) => setFilters({ ...filters, trainingGroup: e.target.value })}
+                  value={selectedEventId}
+                  onChange={(e) => setSelectedEventId(e.target.value)}
                   className="w-full p-2 border rounded-md dark:bg-gray-700 dark:border-gray-600"
                 >
-                  <option value="all">Sve grupe / All groups</option>
-                  {trainingGroups.map(group => (
-                    <option key={group} value={group}>{group}</option>
+                  <option value="">Izaberi događaj / Select event</option>
+                  {events.map(event => (
+                    <option key={event.id || event._id} value={event.id || event._id}>
+                      {event.date} - {event.title?.['sr-latin'] || event.title?.en || 'Event'}
+                    </option>
                   ))}
                 </select>
               </div>
-            </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                  <Label className="text-sm">Od datuma / From Date</Label>
+                  <Input
+                    type="date"
+                    value={filters.startDate}
+                    onChange={(e) => setFilters({ ...filters, startDate: e.target.value })}
+                  />
+                </div>
+                
+                <div>
+                  <Label className="text-sm">Do datuma / To Date</Label>
+                  <Input
+                    type="date"
+                    value={filters.endDate}
+                    onChange={(e) => setFilters({ ...filters, endDate: e.target.value })}
+                  />
+                </div>
+                
+                <div>
+                  <Label className="text-sm">Grupa / Group</Label>
+                  <select
+                    value={filters.trainingGroup}
+                    onChange={(e) => setFilters({ ...filters, trainingGroup: e.target.value })}
+                    className="w-full p-2 border rounded-md dark:bg-gray-700 dark:border-gray-600"
+                  >
+                    <option value="all">Sve grupe / All groups</option>
+                    {trainingGroups.map(group => (
+                      <option key={group} value={group}>{group}</option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Preview Stats */}

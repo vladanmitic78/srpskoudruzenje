@@ -184,20 +184,28 @@ export const eventsAPI = {
   },
   
   // Attendance Reports APIs
-  getAttendanceReportData: async (startDate, endDate, trainingGroup) => {
+  getAttendanceReportData: async (startDate, endDate, trainingGroup, eventId = null) => {
     const params = new URLSearchParams();
-    if (startDate) params.append('start_date', startDate);
-    if (endDate) params.append('end_date', endDate);
-    if (trainingGroup) params.append('training_group', trainingGroup);
+    if (eventId) {
+      params.append('event_id', eventId);
+    } else {
+      if (startDate) params.append('start_date', startDate);
+      if (endDate) params.append('end_date', endDate);
+      if (trainingGroup) params.append('training_group', trainingGroup);
+    }
     const response = await api.get(`/events/reports/attendance/data?${params.toString()}`);
     return response.data;
   },
   
-  downloadAttendanceReport: (startDate, endDate, trainingGroup, format = 'pdf') => {
+  downloadAttendanceReport: (startDate, endDate, trainingGroup, format = 'pdf', eventId = null) => {
     const params = new URLSearchParams();
-    if (startDate) params.append('start_date', startDate);
-    if (endDate) params.append('end_date', endDate);
-    if (trainingGroup) params.append('training_group', trainingGroup);
+    if (eventId) {
+      params.append('event_id', eventId);
+    } else {
+      if (startDate) params.append('start_date', startDate);
+      if (endDate) params.append('end_date', endDate);
+      if (trainingGroup) params.append('training_group', trainingGroup);
+    }
     params.append('format', format);
     
     // Return the URL for download

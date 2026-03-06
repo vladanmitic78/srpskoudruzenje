@@ -46,6 +46,7 @@ async def generate_attendance_report(
     start_date: str = None,
     end_date: str = None,
     training_group: str = None,
+    event_id: str = None,
     format: str = "pdf",
     admin: dict = Depends(get_admin_user)
 ):
@@ -56,6 +57,7 @@ async def generate_attendance_report(
         - start_date: Start date (YYYY-MM-DD), defaults to 30 days ago
         - end_date: End date (YYYY-MM-DD), defaults to today
         - training_group: Filter by training group (optional)
+        - event_id: Generate report for specific event (optional)
         - format: 'pdf' or 'excel'
     """
     from fastapi.responses import Response
@@ -64,22 +66,31 @@ async def generate_attendance_report(
     
     db = request.app.state.db
     
-    # Default date range: last 30 days
-    if not end_date:
-        end_date = datetime.utcnow().strftime('%Y-%m-%d')
-    if not start_date:
-        start_date = (datetime.utcnow() - timedelta(days=30)).strftime('%Y-%m-%d')
-    
-    # Build query
-    query = {
-        "date": {"$gte": start_date, "$lte": end_date}
-    }
-    if training_group and training_group != "all":
-        query["trainingGroup"] = training_group
-    
-    # Fetch events
-    events_cursor = db.events.find(query).sort("date", 1)
-    events = await events_cursor.to_list(length=500)
+    # If event_id is provided, generate single-event report
+    if event_id:
+        event = await db.events.find_one({"_id": event_id})
+        if not event:
+            raise HTTPException(status_code=404, detail="Event not found")
+        events = [event]
+        start_date = event.get("date", datetime.utcnow().strftime('%Y-%m-%d'))
+        end_date = start_date
+    else:
+        # Default date range: last 30 days
+        if not end_date:
+            end_date = datetime.utcnow().strftime('%Y-%m-%d')
+        if not start_date:
+            start_date = (datetime.utcnow() - timedelta(days=30)).strftime('%Y-%m-%d')
+        
+        # Build query
+        query = {
+            "date": {"$gte": start_date, "$lte": end_date}
+        }
+        if training_group and training_group != "all":
+            query["trainingGroup"] = training_group
+        
+        # Fetch events
+        events_cursor = db.events.find(query).sort("date", 1)
+        events = await events_cursor.to_list(length=500)
     
     # Fetch all users for member lookup
     users_cursor = db.users.find()
@@ -229,6 +240,7 @@ async def get_attendance_report_data(
     start_date: str = None,
     end_date: str = None,
     training_group: str = None,
+    event_id: str = None,
     admin: dict = Depends(get_admin_user)
 ):
     """
@@ -238,22 +250,31 @@ async def get_attendance_report_data(
     
     db = request.app.state.db
     
-    # Default date range: last 30 days
-    if not end_date:
-        end_date = datetime.utcnow().strftime('%Y-%m-%d')
-    if not start_date:
-        start_date = (datetime.utcnow() - timedelta(days=30)).strftime('%Y-%m-%d')
-    
-    # Build query
-    query = {
-        "date": {"$gte": start_date, "$lte": end_date}
-    }
-    if training_group and training_group != "all":
-        query["trainingGroup"] = training_group
-    
-    # Fetch events
-    events_cursor = db.events.find(query).sort("date", 1)
-    events = await events_cursor.to_list(length=500)
+    # If event_id is provided, get single event data
+    if event_id:
+        event = await db.events.find_one({"_id": event_id})
+        if not event:
+            raise HTTPException(status_code=404, detail="Event not found")
+        events = [event]
+        start_date = event.get("date", datetime.utcnow().strftime('%Y-%m-%d'))
+        end_date = start_date
+    else:
+        # Default date range: last 30 days
+        if not end_date:
+            end_date = datetime.utcnow().strftime('%Y-%m-%d')
+        if not start_date:
+            start_date = (datetime.utcnow() - timedelta(days=30)).strftime('%Y-%m-%d')
+        
+        # Build query
+        query = {
+            "date": {"$gte": start_date, "$lte": end_date}
+        }
+        if training_group and training_group != "all":
+            query["trainingGroup"] = training_group
+        
+        # Fetch events
+        events_cursor = db.events.find(query).sort("date", 1)
+        events = await events_cursor.to_list(length=500)
     
     # Fetch all users
     users_cursor = db.users.find()
@@ -543,10 +564,22 @@ async def mark_attendance(
     if not event:
         raise HTTPException(status_code=404, detail="Event not found")
     
-    # Verify user exists
+    # Verify user exists - if not, remove from participants and return success
     user = await db.users.find_one({"_id": user_id})
     if not user:
-        raise HTTPException(status_code=404, detail="User not found")
+        # User was deleted - clean up the participant list
+        if user_id in event.get("participants", []):
+            await db.events.update_one(
+                {"_id": event_id},
+                {"$pull": {"participants": user_id}}
+            )
+            logger.info(f"Removed deleted user {user_id} from event {event_id} participants")
+        return {
+            "success": True,
+            "userId": user_id,
+            "attended": None,
+            "message": "User no longer exists - removed from participants"
+        }
     
     # Mark attendance
     attendance_record = {
@@ -637,9 +670,16 @@ async def get_attendance(
     
     attendance_list = []
     stats = {"confirmed": 0, "attended": 0, "noShow": 0, "walkIn": 0, "pending": 0}
+    deleted_user_ids = []
     
     for user_id in all_user_ids:
-        user = users_dict.get(user_id, {})
+        user = users_dict.get(user_id)
+        
+        # Track deleted users for cleanup
+        if not user:
+            deleted_user_ids.append(user_id)
+            continue  # Skip deleted users
+            
         confirmed = user_id in participant_ids
         att = attendance_data.get(user_id, {})
         attended = att.get("attended")
@@ -674,6 +714,14 @@ async def get_attendance(
             "markedAt": att.get("markedAt"),
             "markedBy": att.get("markedBy")
         })
+    
+    # Clean up deleted users from participants list
+    if deleted_user_ids:
+        await db.events.update_one(
+            {"_id": event_id},
+            {"$pull": {"participants": {"$in": deleted_user_ids}}}
+        )
+        logger.info(f"Cleaned up {len(deleted_user_ids)} deleted users from event {event_id}")
     
     return {
         "eventId": event_id,

@@ -1989,7 +1989,7 @@ const AdminDashboard = () => {
                                 className="px-3 py-1 bg-green-600 text-white text-sm rounded hover:bg-green-700 transition-colors"
                                 title="Mark attendance"
                               >
-                                📋 Prisustvo
+                                📋 {t('admin.events.attendance') || 'Prisustvo / Attendance'}
                               </button>
                             )}
                             <button
