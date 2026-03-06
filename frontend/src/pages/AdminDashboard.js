@@ -14,6 +14,7 @@ import { Input } from '../components/ui/input';
 import { Label } from '../components/ui/label';
 import AdminFamilyManagement from '../components/AdminFamilyManagement';
 import AttendanceManager from '../components/AttendanceManager';
+import AttendanceReportGenerator from '../components/AttendanceReportGenerator';
 
 // Admin Password Change Component
 const AdminPasswordChangeForm = ({ t }) => {
@@ -467,6 +468,7 @@ const AdminDashboard = () => {
   const [users, setUsers] = useState([]);
   const [events, setEvents] = useState([]);
   const [attendanceEvent, setAttendanceEvent] = useState(null);  // For attendance tracking modal
+  const [showAttendanceReport, setShowAttendanceReport] = useState(false);  // For report modal
   const [loading, setLoading] = useState(true);
   const [selectedUser, setSelectedUser] = useState(null);
   const [userDetailsOpen, setUserDetailsOpen] = useState(false);
@@ -1922,6 +1924,12 @@ const AdminDashboard = () => {
                   className="px-4 py-2 bg-[var(--color-button-primary)] text-white rounded hover:bg-[var(--color-button-hover)] transition-colors"
                 >
                   {t('admin.events.addEvent')}
+                </button>
+                <button
+                  onClick={() => setShowAttendanceReport(true)}
+                  className="px-4 py-2 bg-purple-600 text-white rounded hover:bg-purple-700 transition-colors flex items-center gap-2"
+                >
+                  📊 Izveštaj / Report
                 </button>
               </CardHeader>
               <CardContent>
@@ -5659,6 +5667,12 @@ const AdminDashboard = () => {
             }}
           />
         )}
+
+        {/* Attendance Report Modal */}
+        <AttendanceReportGenerator
+          open={showAttendanceReport}
+          onClose={() => setShowAttendanceReport(false)}
+        />
       </div>
     </div>
   );

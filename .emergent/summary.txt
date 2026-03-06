@@ -1,157 +1,170 @@
 <analysis>**original_problem_statement:**
-The user's primary goal is to deploy the latest application updates to their production server (). The key requirement is that no production data (database, user uploads) is lost during the process.
+The user's initial goal was to stabilize the production deployment at , fix critical bugs like failing email verifications, and secure the server.
 
-Recent user requests that have been implemented and are ready for deployment include:
-1.  Fixing mobile responsiveness issues on the Admin and Super Admin dashboards.
-2.  Changing the homepage's News section to show 6 items per page with inline pagination, instead of linking to a separate news page.
-
-The user also raised two new critical issues:
-1.  They received a security vulnerability warning from their hosting provider, Hetzner.
-2.  They reported that user verification emails are not working on the live server.
-3.  Requested a backup of the production data to be restored in the agent's test environment.
+Throughout the session, the user expanded the scope to include a comprehensive set of new features and fixes:
+- **PRODUCT REQUIREMENTS:**
+    1.  **Deployment & Stability:**
+        -   Fix the failing GitHub Actions auto-deployment workflow to be data-safe.
+        -   Stabilize the production Docker environment by fixing faulty healthchecks.
+    2.  **Bug Fixes & UX:**
+        -   Fix user verification emails not being sent from the live server.
+        -   Fix social media link previews (Open Graph tags) to show the correct title and a custom image.
+    3.  **Invoicing System:**
+        -   Implement a system for Admins to create Credit Notes for existing invoices, including a reason.
+        -   Add a global VAT percentage setting that is automatically calculated and applied to all new invoices and credit notes.
+        -   Ensure PDFs support Serbian Latin characters (š, đ, ž, č, ć).
+        -   Display who created a credit note and the reason in the Admin dashboard.
+        -   Add a download button for Credit Note PDFs.
+        -   Ensure PDF download links sent via email are accessible without requiring the user to log in.
+    4.  **Attendance Tracking System:**
+        -   Implement a feature for Admins/Moderators to track physical attendance for events (marking users as 'present', 'absent', etc.).
+        -   Send email notifications to the event's group moderator when a user confirms or cancels their participation.
+        -   Generate downloadable PDF and Excel reports with attendance statistics for events.
 
 **User's preferred language**: English
 
 **what currently exists?**
-The application is a full-stack React/FastAPI/MongoDB project. The agent has implemented fixes for mobile responsiveness and updated the news section pagination. These changes exist in the agent's local workspace and have been pushed to the user's GitHub repository.
-
-The agent has also addressed the security warning by guiding the user to install and configure a UFW firewall on the production server and remove the exposed MongoDB port from the test server's configuration.
-
-The agent successfully copied the production database and file uploads into the local Emergent environment for testing purposes.
-
-The production deployment itself is in an unstable state after a series of failed attempts.
+The application is a full-stack React/FastAPI/MongoDB project. The agent has successfully implemented a wide range of features and fixes in the local workspace. This includes a complete credit note and VAT system for invoices, a full attendance tracking and reporting system for events, and fixes for email delivery, social media previews, and PDF character encoding. The Docker configuration and CI/CD workflow have been updated to address previous deployment failures, but these have not been re-deployed or validated on the production server.
 
 **Last working item**:
--   **Last item agent was working:** Troubleshooting a failed deployment on the production server (). The agent last removed all healthchecks from  to get the containers running. Immediately after, the user reported that verification emails are not working.
--   **Status:** BLOCKED
--   **Agent Testing Done:** N
--   **Which testing method agent to use?** Manual  and log checks. The agent must investigate the email issue by checking backend logs and SMTP environment variables on the production server.
+-   **Last item agent was working:** Debugging the attendance report generation feature. The API endpoint was returning a 404 error. The agent identified that a dynamic FastAPI route () was incorrectly matching before the static report route ().
+-   **Status:** IN PROGRESS
+-   **Agent Testing Done:** N (The agent implemented the fix by reordering the routes in  but did not test the endpoint again to confirm the fix).
+-   **Which testing method agent to use?** Manual testing by curl. First, the agent should use  to test the report generation endpoints ( and ) to confirm they return a valid file. Then, use the screenshot tool to verify the end-to-end flow from the frontend.
 -   **User Testing Done:** N
 
 **All Pending/In progress Issue list**:
--   Issue 1: Stabilize Production Deployment (P0)
--   Issue 2: Fix Email Verification Failure (P0)
+-   Issue 1: Test and Finalize Attendance Reporting Feature (P0)
+-   Issue 2: Stabilize Production Deployment via GitHub Actions (P1)
 
 **Issues Detail:**
--   **Issue 1: Stabilize Production Deployment**
-    -   **Description:** The production deployment is unstable. Previous attempts failed due to missing SSL certificates and incorrect Docker healthchecks. The agent's last action was to remove all healthchecks from  to force the containers to start. This is a temporary workaround, not a stable solution. The Nginx container was also observed to be in a restart loop due to the missing SSL certs.
-    -   **Attempted fixes:**
-        1.  Regenerated SSL certificates using Certbot after they were found to be missing.
-        2.  Attempted to fix faulty healthchecks with , but this failed due to syntax issues.
-        3.  Removed healthchecks entirely from .
+-   **Issue 1: Test and Finalize Attendance Reporting Feature**
+    -   **Attempted fixes:** The agent identified a route ordering issue in FastAPI and moved the static  route before the dynamic  route in .
     -   **Next debug checklist:**
-        1.  Verify all containers (, , , ) are running without errors using  and .
-        2.  Review  and  to ensure the SSL certificate volumes () are correctly and persistently mounted so they are not lost on .
-        3.  Implement reliable, simple healthchecks. For the , a Python script is better than  (which isn't installed). For the  (which is just an Nginx server), a simple  or  to  should suffice.
-    -   **Why fix this issue and what will be achieved with the fix?** To ensure the production environment is stable, reliable, and correctly reports the health of its services.
+        1.  Use  with authentication to hit the backend endpoints and verify that they now return valid PDF and Excel files instead of a 404 error.
+            -   
+            -   
+        2.  If the backend works, use the screenshot tool to test the frontend UI in the Admin Dashboard, ensuring the Generate Report modal works and triggers a file download.
+    -   **Why fix this issue and what will be achieved with the fix?** To complete the last remaining piece of the user-requested attendance tracking feature.
     -   **Status:** IN PROGRESS
-    -   **Is recurring issue?** Y
+    -   **Is recurring issue?** N
     -   **Should Test frontend/backend/both after fix?** Both.
     -   **Blocked on other issue:** None.
 
--   **Issue 2: Fix Email Verification Failure**
-    -   **Description:** The user reported that verification emails are not working on the live server. This is a critical function for new user registration.
-    -   **Attempted fixes:** None yet. The agent acknowledged the issue and was about to investigate.
+-   **Issue 2: Stabilize Production Deployment via GitHub Actions**
+    -   **Description:** The last production deployment attempt failed due to unhealthy containers. The agent has since implemented several fixes to  and the frontend  to create more resilient healthchecks.
+    -   **Attempted fixes:**
+        1.  Updated  to use  for healthchecks.
+        2.  Added  to the frontend .
+        3.  Made  container dependencies less strict to prevent cascading failures.
     -   **Next debug checklist:**
-        1.  On the production server, execute  and search for any errors related to SMTP, email, or connection refused.
-        2.  Verify the SMTP environment variables are correctly loaded into the container: .
-        3.  Attempt to trigger an email (e.g., via a test registration or a password reset) and monitor the backend logs in real-time with .
-    -   **Why fix this issue and what will be achieved with this?** New users will be able to join the platform.
-    -   **Status:** NOT STARTED
-    -   **Is recurring issue?** N
-    -   **Should Test frontend/backend/both after fix?** Backend.
-    -   **Blocked on other issue:** None, but should be addressed alongside the deployment stabilization.
+        1.  After completing the Attendance Reporting feature, guide the user to trigger a new deployment via GitHub Actions.
+        2.  Ask the user to provide the logs from the GitHub Actions run to analyze any potential failures.
+        3.  Pay close attention to the healthcheck status of all containers in the logs.
+    -   **Why fix this issue and what will be achieved with the fix?** To provide a stable and reliable automated deployment process for all the new features.
+    -   **Status:** IN PROGRESS
+    -   **Is recurring issue?** Y
+    -   **Should Test frontend/backend/both after fix?** Both (on the production server).
+    -   **Blocked on other issue:** None.
 
 **In progress Task List**:
 -   None.
 
 **Upcoming and Future Tasks**
 -   **Upcoming Tasks:**
-    -   **Fix GitHub Actions for Auto-Deployment (P1):** The user wants to set up automated deployments. The existing  file is failing due to an  error and a build failure related to a missing . The agent fixed the  locally but the workflow file itself needs to be corrected and tested.
-    -   **Refactor  (P2):** This task from the previous handoff is still pending. The large  file needs to be broken down by integrating the smaller components already created in .
+    -   **Refactor  (P2):** This large (5000+ lines) file has accumulated more features and urgently needs to be broken down into smaller, maintainable components.
 -   **Future Tasks:**
     -   **User Impersonation Auditing (P2):** Log when a Super Admin impersonates another user.
+    -   **Prepare for PWA (P2):** The user expressed interest in a Progressive Web App. This would involve creating a service worker and a web app manifest.
 
 **Completed work in this session**
--   **Production Server Security Hardening:** Guided the user to install and configure a UFW firewall on the production server, allowing only SSH (22), HTTP (80), and HTTPS (443) traffic. Verified that the MongoDB port is not publicly exposed.
--   **Mobile Responsiveness UI Fixes:** Fixed layout issues on the Admin Dashboard for mobile view, including cramped member cards, overlapping buttons, and squashed filter/export sections, by editing .
--   **News Section Pagination:** Updated the homepage () to show 6 news articles with inline pagination controls, replacing the previous View All link.
--   **Production Data Sync:** Successfully guided the user to create backups of the production database and uploads, transfer them to the agent, and restore them in the agent's local environment for accurate testing.
--   **Test Server Deployment:** Guided the user through a complex and error-prone manual setup of a test server, resolving multiple Docker build failures.
+-   **Credit Note & VAT System:** A full-featured invoicing update was completed, including creating credit notes, applying a global VAT rate, and generating updated PDFs.
+-   **Attendance Tracking System:** A complete system for tracking and managing event attendance was built, including a new UI for admins and email notifications for moderators.
+-   **Email Delivery Fix:** Resolved the critical bug where SMTP credentials were not passed to the backend container, fixing email delivery on production.
+-   **CI/CD & Healthcheck Fixes:** The GitHub Actions workflow and  file were significantly improved to make deployments safer and more reliable.
+-   **Social Media Preview Fix:** Correct Open Graph (OG) meta tags were added to , and a custom  was created and included in the project to ensure correct link previews on social media.
+-   **PDF Enhancements:** Added support for Serbian characters in all generated PDFs and made download links in emails public for easy access.
 
 **Earlier issues found/mentioned but not fixed**
 -   None.
 
 **Known issue recurrence from previous fork**
--   None.
+-   **Production Deployment Instability:** This was a known issue that recurred during this session. The agent has implemented more robust fixes for healthchecks and the CI/CD pipeline, but these have not yet been validated on the live server. The status is IN PROGRESS.
 
 **Code Architecture**
 
 
 **Key Technical Concepts**
--   **Remote Server Administration:** Extensive troubleshooting with a user on a live production server via SSH, dealing with Docker, , UFW firewall, , , and user-related CLI errors.
--   **Docker Deployment Debugging:** Diagnosed and resolved multiple container startup failures related to missing SSL certificates, incorrect volume mounts, and faulty  commands in .
--   **Server Security:** Identified and mitigated a critical vulnerability (exposed database port). Hardened the server by installing and configuring the UFW firewall.
--   **Live Data Backup/Restore:** Orchestrated a full backup of a live MongoDB database and associated file uploads, transferred the data, and restored it in a different environment.
+-   **FastAPI Route Precedence:** Understanding that FastAPI matches routes in the order they are defined, which is critical when mixing static and dynamic URL paths.
+-   **Docker Environment Configuration:** Differentiating between environment variables injected via  (which override) and those in a  file copied into the image.
+-   **Full-Stack Feature Development:** Implementing features end-to-end, from the React frontend components and API calls to the FastAPI backend logic and MongoDB schema changes.
+-   **PDF/Excel Generation:** Using  and  libraries on the backend to generate and serve downloadable files.
+-   **Social Media Optimization:** Using Open Graph (OG) meta tags to control how links are previewed on platforms like Viber and WhatsApp.
 
 **key DB schema**
--   No changes made to the database schema.
+-   **invoices:** Added fields for , , and VAT details.
+-   **credit_notes:** New collection to store credit note details, linked to the original invoice.
+-   **events:** The  array was enhanced to include an  field.
+-   **bank_details:** The settings object was updated to include a .
 
 **changes in tech stack**
--   None.
+-   Added  to backend dependencies for Excel file generation.
 
 **All files of reference**
--   **/app/docker-compose.yml**: Repeatedly modified to troubleshoot deployment. The current version has healthchecks removed, which is not ideal for production.
--   **/app/frontend/Dockerfile**: Modified to use  to resolve build failures caused by a missing .
--   **/app/frontend/src/pages/AdminDashboard.js**: Modified with Tailwind CSS classes to improve mobile responsiveness.
--   **/app/frontend/src/pages/Home.js**: Modified to implement inline pagination for the news section.
+-   **/app/backend/routes/events.py**: Location of the last bug fix. The route order is critical.
+-   **/app/frontend/src/pages/AdminDashboard.js**: The main hub for all admin-facing features. It is very large and complex.
+-   **/app/docker-compose.yml**: Contains critical configuration for environment variables and service healthchecks.
+-   **/app/.github/workflows/deploy-hetzner.yml**: Defines the production deployment process.
+-   **/app/frontend/public/index.html**: Contains the fix for social media link previews.
 
 **Areas that need refactoring**:
--   **/app/docker-compose.yml**: Healthchecks were removed to get the services running. They should be restored with reliable commands to ensure proper container health monitoring in production.
--   **/app/frontend/src/pages/AdminDashboard.js**: Still over 5000 lines long and urgently needs to be refactored into smaller components.
+-   **/app/frontend/src/pages/AdminDashboard.js**: This is a high-priority refactoring candidate. The file is over 5000 lines and handles logic for members, invoices, events, attendance, and reporting, making it difficult to maintain.
+-   **Public PDF Download Endpoints**: The invoice and credit note download endpoints were made public to work in emails. For enhanced security, a future iteration should consider using signed, time-limited URLs instead.
 
 **key api endpoints**
--   No new API endpoints were created.
+-   : Creates a credit note.
+-   : Marks attendance for event participants.
+-   : Generates an attendance report (PDF/Excel).
+-   : Public endpoint to download an invoice PDF.
+-   : Public endpoint to download a credit note PDF.
 
 **Critical Info for New Agent**
--   **Production is the priority and is in a fragile state.** The immediate goal is to stabilize the deployment at . Do not assume it's working just because the containers are up.
--   **The user is extremely anxious about data loss.** Reassure them and be explicit about every command's purpose, especially distinguishing between data-safe () and data-destructive () commands.
--   **User struggles with the command line.** Expect typos, incorrect copy-pasting, and confusion between different server environments. Provide clear, simple, one-line commands. Be patient and prepared to guide them through basic CLI operations.
--   **The email verification system is reported as broken.** This is a top-priority bug to investigate once the server is stable.
--   **The  file is the main source of recent problems.** The SSL volume mounts and healthchecks have been problematic. A thorough review and cleanup of this file is necessary.
+-   **The immediate next step is to test the attendance report fix.** The backend route was reordered, but the end-to-end flow from the frontend has not been verified.
+-   **Production deployment is the next major task.** The CI/CD workflow and Docker healthchecks have been fixed locally, but they need to be validated with a real deployment, which has been a recurring point of failure.
+-   ** is a fragile God Component.** Exercise extreme caution when editing this file. It is the source of most frontend functionality and is a high-priority candidate for refactoring.
+-   **FastAPI route order is important.** Remember that static routes must be defined before dynamic routes with similar path structures to avoid being overshadowed.
 
 **documents and test reports created in this job**
--   The agent now has local copies of the production data:  and .
+-   
+-   
 
 **Last 10 User Messages and any pending HUMAN messages**
-1.  **User:** Asks about the verification email not working on the live site. (PENDING - P0 Bug)
-2.  **User:** Requests to have the production data copied to the agent's environment. (COMPLETED)
-3.  **User:** Raises concern about a security warning from Hetzner. (COMPLETED - Server Secured)
-4.  **User:** Confirms they want to proceed with production deployment, emphasizing that data must be preserved. (IN PROGRESS)
-5.  **User:** Agrees to save the code to GitHub as a backup. (COMPLETED)
-6.  **User:** Confirms the local data restoration is complete and asks what's next. (Acknowledged)
-7.  **User:** Reports the test server data and pictures disappeared. (Acknowledged)
-8.  **User:** Clarifies they want news pagination on the home page, not a separate page. (COMPLETED)
-9.  **User:** Sent a screenshot of the admin dashboard on mobile and asked for responsiveness fixes. (COMPLETED)
-10. **User:** Reports they are able to log in to the test server after a few tries. (Acknowledged)
+1.  **User:** Asks to develop PDF/Excel reports for attendance statistics. (IN PROGRESS)
+2.  **User:** Asks to implement a system for tracking physical attendance at trainings/events. (COMPLETED)
+3.  **User:** Points out that they can't see who created a credit note or why. (COMPLETED)
+4.  **User:** Reports they can't download the credit note document and that email links might not work for downloads. (COMPLETED)
+5.  **User:** Asks for Serbian letters (š, đ, ž, etc.) to be supported on invoices. (COMPLETED)
+6.  **User:** Reports that VAT is not appearing on a newly created invoice. (COMPLETED - Bug fixed)
+7.  **User:** Proposes adding a VAT percentage field in the settings to be applied to all invoices and credit notes. (COMPLETED)
+8.  **User:** Asks to implement a credit note system for invoices. (COMPLETED)
+9.  **User:** Reports that the OG image is correct on Viber but not on WhatsApp after deployment. (INVESTIGATED - Caching issue)
+10. **User:** Reports that the OG image is not correct after the first fix. (COMPLETED)
 
 **Project Health Check:**
--   **Broken:** The production deployment is unstable. Containers are running, but only after removing healthchecks. Key functionality like email verification is reported as broken.
+-   **Broken:** The automated production deployment pipeline is in a broken state. Although fixes have been implemented in the codebase, they have not been proven successful in a live deployment, which previously failed.
 -   **Mocked:** None.
 
 **3rd Party Integrations**
 -   Hetzner (Server Hosting)
 -   Certbot (SSL Certificates)
 -    (PDF Generation)
+-    (Excel Generation)
 
 **Testing status**
 -   **Testing agent used after significant changes:** NO
 -   **Troubleshoot agent used after agent stuck in loop:** NO
--   **Test files created:** None.
--   **Known regressions:**
-    -   Production deployment is unstable.
-    -   SSL certificates were lost and had to be regenerated. The root cause (volume persistence) may not be fixed.
-    -   Email verification is reportedly broken post-deployment attempts.
+-   **Test files created:** None
+-   **Known regressions:** The automated deployment via GitHub Actions failed during this session and is pending re-testing.
 
 **Credentials to test flow:**
 -   **Super Admin:**  / 
@@ -159,5 +172,4 @@ The production deployment itself is in an unstable state after a series of faile
 -   **Test Server IP:** 
 
 **What agent forgot to execute**
--   The agent removed healthchecks from the production  as a quick fix instead of implementing reliable ones. This leaves the deployment in a fragile state without proper health monitoring.
--   The root cause of the SSL certificates disappearing was not fully investigated. While they were regenerated, the volume configuration in  that may have caused the loss was not confirmed to be fixed, posing a risk for recurrence.</analysis>
+-   The agent fixed the  route but did not run a final test ( or frontend screenshot) to confirm the fix was successful before moving on. This is the immediate pending action.</analysis>

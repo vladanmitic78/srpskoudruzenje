@@ -182,6 +182,27 @@ export const eventsAPI = {
     const response = await api.post(`/events/${eventId}/attendance/walkin/${userId}`);
     return response.data;
   },
+  
+  // Attendance Reports APIs
+  getAttendanceReportData: async (startDate, endDate, trainingGroup) => {
+    const params = new URLSearchParams();
+    if (startDate) params.append('start_date', startDate);
+    if (endDate) params.append('end_date', endDate);
+    if (trainingGroup) params.append('training_group', trainingGroup);
+    const response = await api.get(`/events/reports/attendance/data?${params.toString()}`);
+    return response.data;
+  },
+  
+  downloadAttendanceReport: (startDate, endDate, trainingGroup, format = 'pdf') => {
+    const params = new URLSearchParams();
+    if (startDate) params.append('start_date', startDate);
+    if (endDate) params.append('end_date', endDate);
+    if (trainingGroup) params.append('training_group', trainingGroup);
+    params.append('format', format);
+    
+    // Return the URL for download
+    return `${process.env.REACT_APP_BACKEND_URL}/api/events/reports/attendance?${params.toString()}`;
+  },
 };
 
 // ==================== Invoices APIs ====================

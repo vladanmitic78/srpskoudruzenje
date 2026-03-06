@@ -35,6 +35,281 @@ async def create_event(event: EventCreate, admin: dict = Depends(get_admin_user)
     
     return EventResponse(**{**event_dict, "id": event_dict["_id"]})
 
+
+# ==================== ATTENDANCE REPORTS ====================
+# NOTE: These routes MUST be defined BEFORE any /{event_id} routes
+# to prevent FastAPI from matching "reports" as an event_id
+
+@router.get("/reports/attendance")
+async def generate_attendance_report(
+    request: Request,
+    start_date: str = None,
+    end_date: str = None,
+    training_group: str = None,
+    format: str = "pdf",
+    admin: dict = Depends(get_admin_user)
+):
+    """
+    Generate attendance report in PDF or Excel format
+    
+    Query params:
+        - start_date: Start date (YYYY-MM-DD), defaults to 30 days ago
+        - end_date: End date (YYYY-MM-DD), defaults to today
+        - training_group: Filter by training group (optional)
+        - format: 'pdf' or 'excel'
+    """
+    from fastapi.responses import Response
+    from utils.attendance_report_generator import generate_attendance_pdf_report, generate_attendance_excel_report
+    from datetime import timedelta
+    
+    db = request.app.state.db
+    
+    # Default date range: last 30 days
+    if not end_date:
+        end_date = datetime.utcnow().strftime('%Y-%m-%d')
+    if not start_date:
+        start_date = (datetime.utcnow() - timedelta(days=30)).strftime('%Y-%m-%d')
+    
+    # Build query
+    query = {
+        "date": {"$gte": start_date, "$lte": end_date}
+    }
+    if training_group and training_group != "all":
+        query["trainingGroup"] = training_group
+    
+    # Fetch events
+    events_cursor = db.events.find(query).sort("date", 1)
+    events = await events_cursor.to_list(length=500)
+    
+    # Fetch all users for member lookup
+    users_cursor = db.users.find()
+    users = await users_cursor.to_list(length=1000)
+    users_dict = {u["_id"]: u for u in users}
+    
+    # Process events data
+    events_data = []
+    member_stats = {}  # userId -> stats
+    
+    total_present = 0
+    total_absent = 0
+    total_walkins = 0
+    
+    for event in events:
+        participants = event.get("participants", [])
+        attendance = event.get("attendance", {})
+        
+        present_count = 0
+        absent_count = 0
+        walkin_count = 0
+        
+        # Count attendance
+        for user_id in participants:
+            att = attendance.get(user_id, {})
+            attended = att.get("attended")
+            
+            # Initialize member stats
+            if user_id not in member_stats:
+                user = users_dict.get(user_id, {})
+                member_stats[user_id] = {
+                    "name": user.get("fullName", "Unknown"),
+                    "email": user.get("email", ""),
+                    "training_group": user.get("trainingGroup", "-"),
+                    "total_rsvps": 0,
+                    "total_present": 0,
+                    "total_absent": 0,
+                    "attendance_rate": 0
+                }
+            
+            member_stats[user_id]["total_rsvps"] += 1
+            
+            if attended is True:
+                present_count += 1
+                member_stats[user_id]["total_present"] += 1
+            elif attended is False:
+                absent_count += 1
+                member_stats[user_id]["total_absent"] += 1
+        
+        # Count walk-ins (attended but not in participants)
+        for user_id, att in attendance.items():
+            if user_id not in participants and att.get("attended"):
+                walkin_count += 1
+                if user_id not in member_stats:
+                    user = users_dict.get(user_id, {})
+                    member_stats[user_id] = {
+                        "name": user.get("fullName", "Unknown"),
+                        "email": user.get("email", ""),
+                        "training_group": user.get("trainingGroup", "-"),
+                        "total_rsvps": 0,
+                        "total_present": 1,
+                        "total_absent": 0,
+                        "attendance_rate": 100
+                    }
+                else:
+                    member_stats[user_id]["total_present"] += 1
+        
+        total_present += present_count + walkin_count
+        total_absent += absent_count
+        total_walkins += walkin_count
+        
+        events_data.append({
+            "date": event.get("date", "N/A"),
+            "title": event.get("title", {}).get("sr", event.get("title", {}).get("en", "Event")),
+            "training_group": event.get("trainingGroup", "-"),
+            "confirmed": len(participants),
+            "present": present_count,
+            "absent": absent_count,
+            "walkin": walkin_count
+        })
+    
+    # Calculate member attendance rates
+    members_data = []
+    for user_id, stats in member_stats.items():
+        if stats["total_rsvps"] > 0:
+            stats["attendance_rate"] = (stats["total_present"] / stats["total_rsvps"]) * 100
+        members_data.append(stats)
+    
+    # Calculate overall stats
+    total_confirmed = sum(e.get("confirmed", 0) for e in events_data)
+    avg_attendance = 0
+    if total_confirmed > 0:
+        avg_attendance = (total_present / total_confirmed) * 100
+    
+    report_data = {
+        "summary": {
+            "total_events": len(events_data),
+            "total_members": len(members_data),
+            "average_attendance_rate": avg_attendance,
+            "total_present": total_present,
+            "total_absent": total_absent,
+            "total_walkins": total_walkins
+        },
+        "events": events_data,
+        "members": members_data,
+        "date_range": {
+            "start": start_date,
+            "end": end_date
+        },
+        "training_group": training_group or "Sve grupe / All groups",
+        "generated_at": datetime.utcnow().isoformat(),
+        "generated_by": admin.get("fullName", admin.get("username", "Admin"))
+    }
+    
+    # Generate report in requested format
+    if format.lower() == "excel":
+        try:
+            excel_bytes = generate_attendance_excel_report(report_data)
+            filename = f"attendance_report_{start_date}_{end_date}.xlsx"
+            
+            return Response(
+                content=excel_bytes,
+                media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                headers={"Content-Disposition": f"attachment; filename={filename}"}
+            )
+        except Exception as e:
+            logger.error(f"Failed to generate Excel report: {e}")
+            raise HTTPException(status_code=500, detail=f"Failed to generate Excel report: {str(e)}")
+    else:
+        try:
+            pdf_bytes = generate_attendance_pdf_report(report_data)
+            filename = f"attendance_report_{start_date}_{end_date}.pdf"
+            
+            return Response(
+                content=pdf_bytes,
+                media_type="application/pdf",
+                headers={"Content-Disposition": f"inline; filename={filename}"}
+            )
+        except Exception as e:
+            logger.error(f"Failed to generate PDF report: {e}")
+            raise HTTPException(status_code=500, detail=f"Failed to generate PDF report: {str(e)}")
+
+
+@router.get("/reports/attendance/data")
+async def get_attendance_report_data(
+    request: Request,
+    start_date: str = None,
+    end_date: str = None,
+    training_group: str = None,
+    admin: dict = Depends(get_admin_user)
+):
+    """
+    Get attendance report data as JSON (for preview before download)
+    """
+    from datetime import timedelta
+    
+    db = request.app.state.db
+    
+    # Default date range: last 30 days
+    if not end_date:
+        end_date = datetime.utcnow().strftime('%Y-%m-%d')
+    if not start_date:
+        start_date = (datetime.utcnow() - timedelta(days=30)).strftime('%Y-%m-%d')
+    
+    # Build query
+    query = {
+        "date": {"$gte": start_date, "$lte": end_date}
+    }
+    if training_group and training_group != "all":
+        query["trainingGroup"] = training_group
+    
+    # Fetch events
+    events_cursor = db.events.find(query).sort("date", 1)
+    events = await events_cursor.to_list(length=500)
+    
+    # Fetch all users
+    users_cursor = db.users.find()
+    users = await users_cursor.to_list(length=1000)
+    users_dict = {u["_id"]: u for u in users}
+    
+    # Get unique training groups
+    training_groups = await db.events.distinct("trainingGroup")
+    training_groups = [g for g in training_groups if g]
+    
+    # Process stats
+    total_present = 0
+    total_absent = 0
+    total_walkins = 0
+    total_confirmed = 0
+    
+    for event in events:
+        participants = event.get("participants", [])
+        attendance = event.get("attendance", {})
+        total_confirmed += len(participants)
+        
+        for user_id in participants:
+            att = attendance.get(user_id, {})
+            if att.get("attended") is True:
+                total_present += 1
+            elif att.get("attended") is False:
+                total_absent += 1
+        
+        for user_id, att in attendance.items():
+            if user_id not in participants and att.get("attended"):
+                total_walkins += 1
+                total_present += 1
+    
+    avg_attendance = 0
+    if total_confirmed > 0:
+        avg_attendance = (total_present / total_confirmed) * 100
+    
+    return {
+        "summary": {
+            "total_events": len(events),
+            "total_confirmed": total_confirmed,
+            "total_present": total_present,
+            "total_absent": total_absent,
+            "total_walkins": total_walkins,
+            "average_attendance_rate": round(avg_attendance, 1)
+        },
+        "date_range": {
+            "start": start_date,
+            "end": end_date
+        },
+        "training_groups": training_groups
+    }
+
+
+# ==================== EVENT CRUD ====================
+
 @router.put("/{event_id}")
 async def update_event(
     event_id: str,

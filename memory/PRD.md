@@ -199,6 +199,23 @@ Build and maintain a comprehensive membership management platform for the Serbia
   - `POST /api/events/{id}/attendance/bulk` - Bulk attendance update
   - `POST /api/events/{id}/attendance/walkin/{userId}` - Add walk-in
 
+### Attendance Report Generation (COMPLETED - Mar 6, 2026)
+- **Feature**: Generate downloadable PDF and Excel attendance reports with statistics
+- **Bug Fixed**: Route ordering issue - `/reports/attendance` was being matched by `/{event_id}` pattern
+- **Resolution**: Moved static report routes BEFORE dynamic event routes in `events.py`
+- **Report Modal Features**:
+  - Date range filters (From/To)
+  - Training group filter
+  - Live preview with statistics (Events, RSVPs, Present, Absent, Walk-in, Avg Rate)
+  - Visual attendance rate bar
+  - Download as PDF or Excel
+- **Files Updated**:
+  - `/app/backend/routes/events.py` - Route ordering fixed, report endpoints now at lines 43-225
+- **API Endpoints** (route order is critical):
+  - `GET /api/events/reports/attendance` - Generate PDF or Excel report (format param)
+  - `GET /api/events/reports/attendance/data` - Get report data as JSON for preview
+- **Testing**: Backend API tested with curl (PDF: 4843 bytes, Excel: 6923 bytes), Frontend modal verified
+
 ### Invoice Credit Note System (COMPLETED - Mar 5, 2026)
 - **New Feature**: Admin/Super Admin can now credit any invoice to issue refunds
 - **VAT Support**: Configurable VAT rate in Settings → Platform → Bank Details
