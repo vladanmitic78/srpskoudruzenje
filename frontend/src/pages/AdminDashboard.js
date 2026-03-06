@@ -13,6 +13,7 @@ import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
 import { Label } from '../components/ui/label';
 import AdminFamilyManagement from '../components/AdminFamilyManagement';
+import AttendanceManager from '../components/AttendanceManager';
 
 // Admin Password Change Component
 const AdminPasswordChangeForm = ({ t }) => {
@@ -465,6 +466,7 @@ const AdminDashboard = () => {
   const [statistics, setStatistics] = useState(null);
   const [users, setUsers] = useState([]);
   const [events, setEvents] = useState([]);
+  const [attendanceEvent, setAttendanceEvent] = useState(null);  // For attendance tracking modal
   const [loading, setLoading] = useState(true);
   const [selectedUser, setSelectedUser] = useState(null);
   const [userDetailsOpen, setUserDetailsOpen] = useState(false);
@@ -1964,10 +1966,24 @@ const AdminDashboard = () => {
                             {event.participants && (
                               <p className="text-sm text-gray-500 dark:text-gray-400 mt-2">
                                 👥 {event.participants.length} {t('admin.events.participantsConfirmed')}
+                                {event.attendance && Object.keys(event.attendance).length > 0 && (
+                                  <span className="ml-2 text-green-600">
+                                    (✓ {Object.values(event.attendance).filter(a => a.attended).length} prisutnih)
+                                  </span>
+                                )}
                               </p>
                             )}
                           </div>
-                          <div className="flex gap-2 ml-4">
+                          <div className="flex flex-wrap gap-2 ml-4">
+                            {event.status === 'active' && (
+                              <button
+                                onClick={() => setAttendanceEvent(event)}
+                                className="px-3 py-1 bg-green-600 text-white text-sm rounded hover:bg-green-700 transition-colors"
+                                title="Mark attendance"
+                              >
+                                📋 Prisustvo
+                              </button>
+                            )}
                             <button
                               onClick={() => {
                                 setSelectedEvent(event);
@@ -5629,6 +5645,19 @@ const AdminDashboard = () => {
               </div>
             </DialogContent>
           </Dialog>
+        )}
+
+        {/* Attendance Manager Modal */}
+        {attendanceEvent && (
+          <AttendanceManager
+            event={attendanceEvent}
+            onClose={() => setAttendanceEvent(null)}
+            onUpdate={async () => {
+              // Refresh events data
+              const eventsData = await eventsAPI.getAll();
+              setEvents(eventsData.events || []);
+            }}
+          />
         )}
       </div>
     </div>

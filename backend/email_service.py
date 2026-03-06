@@ -508,12 +508,13 @@ def get_admin_new_user_notification_template(user_name: str, user_email: str, re
     return html, text
 
 
-def get_admin_event_participation_notification(user_name: str, user_email: str, event_title: str, event_date: str, event_time: str, action: str, reason: str = None):
+def get_admin_event_participation_notification(user_name: str, user_email: str, event_title: str, event_date: str, event_time: str, action: str, reason: str = None, training_group: str = None):
     """Generate admin notification for user event participation (confirm/cancel)
     
     Args:
         action: 'confirmed' or 'cancelled'
         reason: Only for cancelled actions
+        training_group: Optional training group name
     """
     action_sr = "potvrdio učešće" if action == "confirmed" else "otkazao učešće"
     action_sv = "bekräftat deltagande" if action == "confirmed" else "avbokad deltagande"
@@ -528,6 +529,12 @@ def get_admin_event_participation_notification(user_name: str, user_email: str, 
         </div>
         """
         reason_text = f"\n\nRazlog / Anledning:\n{reason}\n"
+    
+    group_html = ""
+    group_text = ""
+    if training_group:
+        group_html = f'<p><strong>Grupa / Grupp:</strong> {training_group}</p>'
+        group_text = f"\nGrupa / Grupp: {training_group}"
     
     html = f"""
     <!DOCTYPE html>
@@ -558,6 +565,7 @@ def get_admin_event_participation_notification(user_name: str, user_email: str, 
                     <p><strong>Email:</strong> {user_email}</p>
                     <p><strong>Događaj:</strong> {event_title}</p>
                     <p><strong>Datum:</strong> {event_date} u {event_time}</p>
+                    {group_html}
                 </div>
                 {reason_html}
 
@@ -571,10 +579,11 @@ def get_admin_event_participation_notification(user_name: str, user_email: str, 
                     <p><strong>E-post:</strong> {user_email}</p>
                     <p><strong>Evenemang:</strong> {event_title}</p>
                     <p><strong>Datum:</strong> {event_date} kl {event_time}</p>
+                    {group_html}
                 </div>
             </div>
             <div class="footer">
-                <p>Detta är ett automatiskt meddelande från Srpsko Kulturno Društvo Täby</p>
+                <p>Detta är ett automatiskt meddelande från Srpsko Kulturno Udruženje Täby</p>
             </div>
         </div>
     </body>
@@ -590,7 +599,7 @@ def get_admin_event_participation_notification(user_name: str, user_email: str, 
     Korisnik: {user_name}
     Email: {user_email}
     Događaj: {event_title}
-    Datum: {event_date} u {event_time}
+    Datum: {event_date} u {event_time}{group_text}
     {reason_text}
     
     ---

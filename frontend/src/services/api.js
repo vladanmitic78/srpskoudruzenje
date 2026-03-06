@@ -159,6 +159,29 @@ export const eventsAPI = {
     const response = await api.get('/events/stats/my');
     return response.data;
   },
+  
+  // Attendance Tracking APIs
+  getAttendance: async (id) => {
+    const response = await api.get(`/events/${id}/attendance`);
+    return response.data;
+  },
+  
+  markAttendance: async (eventId, userId, attended) => {
+    const response = await api.post(`/events/${eventId}/attendance/${userId}?attended=${attended}`);
+    return response.data;
+  },
+  
+  markBulkAttendance: async (eventId, attendanceData) => {
+    const response = await api.post(`/events/${eventId}/attendance/bulk`, {
+      attendance: attendanceData
+    });
+    return response.data;
+  },
+  
+  markWalkIn: async (eventId, userId) => {
+    const response = await api.post(`/events/${eventId}/attendance/walkin/${userId}`);
+    return response.data;
+  },
 };
 
 // ==================== Invoices APIs ====================

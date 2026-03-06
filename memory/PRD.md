@@ -175,6 +175,30 @@ Build and maintain a comprehensive membership management platform for the Serbia
 
 ## Recent Updates (March 2026)
 
+### Attendance Tracking System (COMPLETED - Mar 6, 2026)
+- **Admin Features**:
+  - Mark physical attendance (Present/Absent) for each confirmed participant
+  - "Mark All Present" button for quick bulk update
+  - Add walk-in attendees (members who showed up without RSVP)
+  - Real-time statistics: Confirmed, Present, No-show, Walk-in, Pending
+  - Full attendance history with who marked and when
+- **User Features**:
+  - Confirm participation for trainings/events
+  - Cancel participation with optional reason
+  - Email notification sent to training group moderator on status change
+- **PWA-Ready**: Mobile-responsive design, ready for future PWA implementation
+- **Files Created/Updated**:
+  - `/app/frontend/src/components/AttendanceManager.jsx` (NEW) - Attendance tracking UI
+  - `/app/backend/routes/events.py` - New attendance endpoints
+  - `/app/backend/email_service.py` - Updated notification template with training group
+  - `/app/frontend/src/services/api.js` - New attendance API methods
+  - `/app/frontend/src/pages/AdminDashboard.js` - Added "Prisustvo" button
+- **New API Endpoints**:
+  - `GET /api/events/{id}/attendance` - Get full attendance data
+  - `POST /api/events/{id}/attendance/{userId}` - Mark single attendance
+  - `POST /api/events/{id}/attendance/bulk` - Bulk attendance update
+  - `POST /api/events/{id}/attendance/walkin/{userId}` - Add walk-in
+
 ### Invoice Credit Note System (COMPLETED - Mar 5, 2026)
 - **New Feature**: Admin/Super Admin can now credit any invoice to issue refunds
 - **VAT Support**: Configurable VAT rate in Settings → Platform → Bank Details

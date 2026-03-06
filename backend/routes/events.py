@@ -27,7 +27,8 @@ async def create_event(event: EventCreate, admin: dict = Depends(get_admin_user)
     db = request.app.state.db
     event_dict = event.dict()
     event_dict["_id"] = f"event_{int(datetime.utcnow().timestamp() * 1000)}"
-    event_dict["participants"] = []
+    event_dict["participants"] = []  # Users who confirmed attendance (RSVP)
+    event_dict["attendance"] = {}    # Actual attendance: {userId: {attended: bool, markedAt: datetime, markedBy: str}}
     event_dict["createdAt"] = datetime.utcnow()
     
     await db.events.insert_one(event_dict)
@@ -100,10 +101,22 @@ async def confirm_participation(
         {"$addToSet": {"participants": current_user["_id"]}}
     )
     
-    # Send admin notification email
+    # Find moderator for this training group
     from email_service import send_email, get_admin_event_participation_notification
-    admin_email = "info@srpskoudruzenjetaby.se"
     
+    training_group = event.get("trainingGroup")
+    notify_emails = ["info@srpskoudruzenjetaby.se"]  # Default admin
+    
+    if training_group:
+        # Find moderators assigned to this training group
+        moderators = await db.users.find({
+            "role": {"$in": ["moderator", "admin", "superadmin"]},
+            "trainingGroups": training_group
+        }).to_list(length=10)
+        
+        if moderators:
+            notify_emails = [m.get("email") for m in moderators if m.get("email")]
+        
     try:
         admin_html, admin_text = get_admin_event_participation_notification(
             user_name=current_user.get("fullName", current_user.get("email")),
@@ -111,17 +124,20 @@ async def confirm_participation(
             event_title=event["title"].get("en", "Event"),
             event_date=event["date"],
             event_time=event["time"],
-            action="confirmed"
+            action="confirmed",
+            training_group=training_group
         )
-        await send_email(
-            admin_email,
-            "✓ Potvrđeno Učešće / Bekräftat Deltagande - SKUD Täby",
-            admin_html,
-            admin_text,
-            db=db
-        )
+        
+        for email in notify_emails:
+            await send_email(
+                email,
+                "✓ Potvrđeno Učešće / Bekräftat Deltagande - SKUD Täby",
+                admin_html,
+                admin_text,
+                db=db
+            )
     except Exception as e:
-        logger.error(f"Failed to send admin participation notification: {str(e)}")
+        logger.error(f"Failed to send participation notification: {str(e)}")
     
     return {"success": True, "confirmed": True}
 
@@ -155,9 +171,21 @@ async def cancel_participation(
         }
     )
     
-    # Send admin notification email
+    # Find moderator for this training group
     from email_service import send_email, get_admin_event_participation_notification
-    admin_email = "info@srpskoudruzenjetaby.se"
+    
+    training_group = event.get("trainingGroup")
+    notify_emails = ["info@srpskoudruzenjetaby.se"]  # Default admin
+    
+    if training_group:
+        # Find moderators assigned to this training group
+        moderators = await db.users.find({
+            "role": {"$in": ["moderator", "admin", "superadmin"]},
+            "trainingGroups": training_group
+        }).to_list(length=10)
+        
+        if moderators:
+            notify_emails = [m.get("email") for m in moderators if m.get("email")]
     
     try:
         admin_html, admin_text = get_admin_event_participation_notification(
@@ -167,17 +195,20 @@ async def cancel_participation(
             event_date=event["date"],
             event_time=event["time"],
             action="cancelled",
-            reason=reason
+            reason=reason,
+            training_group=training_group
         )
-        await send_email(
-            admin_email,
-            "✗ Otkazano Učešće / Avbokad Deltagande - SKUD Täby",
-            admin_html,
-            admin_text,
-            db=db
-        )
+        
+        for email in notify_emails:
+            await send_email(
+                email,
+                "✗ Otkazano Učešće / Avbokad Deltagande - SKUD Täby",
+                admin_html,
+                admin_text,
+                db=db
+            )
     except Exception as e:
-        logger.error(f"Failed to send admin cancellation notification: {str(e)}")
+        logger.error(f"Failed to send cancellation notification: {str(e)}")
     
     return {"success": True, "confirmed": False}
 
@@ -187,7 +218,7 @@ async def get_participants(
     admin: dict = Depends(get_admin_user),
     request: Request = None
 ):
-    """Get list of confirmed participants (Admin only)"""
+    """Get list of confirmed participants with attendance status (Admin only)"""
     db = request.app.state.db
     
     event = await db.events.find_one({"_id": event_id})
@@ -195,6 +226,7 @@ async def get_participants(
         raise HTTPException(status_code=404, detail="Event not found")
     
     participant_ids = event.get("participants", [])
+    attendance_data = event.get("attendance", {})
     participants = await db.users.find({"_id": {"$in": participant_ids}}).to_list(length=None)
     
     return {
@@ -202,10 +234,219 @@ async def get_participants(
             {
                 "id": p["_id"],
                 "fullName": p.get("fullName"),
-                "email": p.get("email")
+                "email": p.get("email"),
+                "confirmed": True,  # They're in participants list
+                "attended": attendance_data.get(p["_id"], {}).get("attended"),
+                "attendanceMarkedAt": attendance_data.get(p["_id"], {}).get("markedAt"),
+                "attendanceMarkedBy": attendance_data.get(p["_id"], {}).get("markedBy")
             }
             for p in participants
-        ]
+        ],
+        "eventDate": event.get("date"),
+        "eventTime": event.get("time"),
+        "eventTitle": event.get("title", {}).get("en", "Event")
+    }
+
+
+# ==================== ATTENDANCE TRACKING ====================
+
+@router.post("/{event_id}/attendance/{user_id}")
+async def mark_attendance(
+    event_id: str,
+    user_id: str,
+    attended: bool = True,
+    admin: dict = Depends(get_admin_user),
+    request: Request = None
+):
+    """
+    Mark whether a user actually attended the training/event
+    Admin/SuperAdmin/Moderator only
+    """
+    db = request.app.state.db
+    
+    event = await db.events.find_one({"_id": event_id})
+    if not event:
+        raise HTTPException(status_code=404, detail="Event not found")
+    
+    # Verify user exists
+    user = await db.users.find_one({"_id": user_id})
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    # Mark attendance
+    attendance_record = {
+        "attended": attended,
+        "markedAt": datetime.utcnow().isoformat(),
+        "markedBy": admin.get("fullName", admin.get("username", "Admin"))
+    }
+    
+    await db.events.update_one(
+        {"_id": event_id},
+        {"$set": {f"attendance.{user_id}": attendance_record}}
+    )
+    
+    return {
+        "success": True,
+        "userId": user_id,
+        "attended": attended,
+        "message": f"Attendance marked: {'Present' if attended else 'Absent'}"
+    }
+
+
+@router.post("/{event_id}/attendance/bulk")
+async def mark_bulk_attendance(
+    event_id: str,
+    request: Request,
+    admin: dict = Depends(get_admin_user)
+):
+    """
+    Mark attendance for multiple users at once
+    Body: { "attendance": { "userId1": true, "userId2": false, ... } }
+    """
+    db = request.app.state.db
+    body = await request.json()
+    
+    event = await db.events.find_one({"_id": event_id})
+    if not event:
+        raise HTTPException(status_code=404, detail="Event not found")
+    
+    attendance_updates = body.get("attendance", {})
+    marked_by = admin.get("fullName", admin.get("username", "Admin"))
+    marked_at = datetime.utcnow().isoformat()
+    
+    update_dict = {}
+    for user_id, attended in attendance_updates.items():
+        update_dict[f"attendance.{user_id}"] = {
+            "attended": attended,
+            "markedAt": marked_at,
+            "markedBy": marked_by
+        }
+    
+    if update_dict:
+        await db.events.update_one(
+            {"_id": event_id},
+            {"$set": update_dict}
+        )
+    
+    return {
+        "success": True,
+        "marked": len(update_dict),
+        "message": f"Attendance updated for {len(update_dict)} users"
+    }
+
+
+@router.get("/{event_id}/attendance")
+async def get_attendance(
+    event_id: str,
+    admin: dict = Depends(get_admin_user),
+    request: Request = None
+):
+    """
+    Get full attendance data for an event including:
+    - Users who confirmed (RSVP) and their actual attendance
+    - Walk-ins (attended but didn't confirm)
+    """
+    db = request.app.state.db
+    
+    event = await db.events.find_one({"_id": event_id})
+    if not event:
+        raise HTTPException(status_code=404, detail="Event not found")
+    
+    participant_ids = event.get("participants", [])
+    attendance_data = event.get("attendance", {})
+    
+    # Get all users who either confirmed or have attendance marked
+    all_user_ids = list(set(participant_ids + list(attendance_data.keys())))
+    users = await db.users.find({"_id": {"$in": all_user_ids}}).to_list(length=None)
+    users_dict = {u["_id"]: u for u in users}
+    
+    attendance_list = []
+    stats = {"confirmed": 0, "attended": 0, "noShow": 0, "walkIn": 0, "pending": 0}
+    
+    for user_id in all_user_ids:
+        user = users_dict.get(user_id, {})
+        confirmed = user_id in participant_ids
+        att = attendance_data.get(user_id, {})
+        attended = att.get("attended")
+        
+        # Calculate status
+        if confirmed and attended is True:
+            status = "attended"
+            stats["attended"] += 1
+            stats["confirmed"] += 1
+        elif confirmed and attended is False:
+            status = "noShow"
+            stats["noShow"] += 1
+            stats["confirmed"] += 1
+        elif confirmed and attended is None:
+            status = "pending"
+            stats["pending"] += 1
+            stats["confirmed"] += 1
+        elif not confirmed and attended is True:
+            status = "walkIn"
+            stats["walkIn"] += 1
+            stats["attended"] += 1
+        else:
+            continue  # Skip users with no relevant data
+        
+        attendance_list.append({
+            "userId": user_id,
+            "fullName": user.get("fullName", "Unknown"),
+            "email": user.get("email", ""),
+            "confirmed": confirmed,
+            "attended": attended,
+            "status": status,
+            "markedAt": att.get("markedAt"),
+            "markedBy": att.get("markedBy")
+        })
+    
+    return {
+        "eventId": event_id,
+        "eventTitle": event.get("title", {}).get("en", "Event"),
+        "eventDate": event.get("date"),
+        "eventTime": event.get("time"),
+        "attendance": attendance_list,
+        "stats": stats
+    }
+
+
+@router.post("/{event_id}/attendance/walkin/{user_id}")
+async def mark_walkin_attendance(
+    event_id: str,
+    user_id: str,
+    admin: dict = Depends(get_admin_user),
+    request: Request = None
+):
+    """
+    Mark a user as walk-in attendance (didn't RSVP but showed up)
+    """
+    db = request.app.state.db
+    
+    event = await db.events.find_one({"_id": event_id})
+    if not event:
+        raise HTTPException(status_code=404, detail="Event not found")
+    
+    user = await db.users.find_one({"_id": user_id})
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    # Mark as attended (walk-in)
+    attendance_record = {
+        "attended": True,
+        "markedAt": datetime.utcnow().isoformat(),
+        "markedBy": admin.get("fullName", admin.get("username", "Admin")),
+        "walkIn": True
+    }
+    
+    await db.events.update_one(
+        {"_id": event_id},
+        {"$set": {f"attendance.{user_id}": attendance_record}}
+    )
+    
+    return {
+        "success": True,
+        "userId": user_id,
+        "message": f"Walk-in attendance marked for {user.get('fullName')}"
     }
 
 
