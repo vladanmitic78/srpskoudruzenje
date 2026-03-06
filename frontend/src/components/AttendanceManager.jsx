@@ -118,14 +118,16 @@ const AttendanceManager = ({ event, onClose, onUpdate }) => {
       walkIn: 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200'
     };
     const labels = {
-      attended: '✓ Došao/Came',
-      noShow: '✗ Nije došao/No-show',
-      pending: '? Čeka/Pending',
-      walkIn: '+ Walk-in'
+      attended: { icon: '✓', full: 'Došao/Came' },
+      noShow: { icon: '✗', full: 'Nije došao' },
+      pending: { icon: '?', full: 'Čeka' },
+      walkIn: { icon: '+', full: 'Walk-in' }
     };
+    const label = labels[status] || labels.pending;
     return (
-      <span className={`px-2 py-1 rounded-full text-xs font-semibold ${badges[status] || badges.pending}`}>
-        {labels[status] || 'Unknown'}
+      <span className={`inline-flex items-center gap-1 px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-full text-[10px] sm:text-xs font-semibold whitespace-nowrap ${badges[status] || badges.pending}`}>
+        <span>{label.icon}</span>
+        <span className="hidden sm:inline">{label.full}</span>
       </span>
     );
   };
@@ -134,13 +136,13 @@ const AttendanceManager = ({ event, onClose, onUpdate }) => {
 
   return (
     <Dialog open={!!event} onOpenChange={() => onClose()}>
-      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="w-[95vw] max-w-4xl max-h-[90vh] overflow-y-auto p-4 sm:p-6">
         <DialogHeader>
-          <DialogTitle className="text-xl">
+          <DialogTitle className="text-lg sm:text-xl pr-8">
             📋 Evidencija Prisustva / Attendance Tracking
           </DialogTitle>
-          <p className="text-sm text-gray-500">
-            {event.title?.sr || event.title?.en || 'Event'} - {event.date} {event.time}
+          <p className="text-xs sm:text-sm text-gray-500 break-words">
+            {event.title?.['sr-latin'] || event.title?.sr || event.title?.en || 'Event'} - {event.date} {event.time}
           </p>
         </DialogHeader>
 
@@ -149,44 +151,44 @@ const AttendanceManager = ({ event, onClose, onUpdate }) => {
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#C1272D]"></div>
           </div>
         ) : (
-          <div className="space-y-6">
-            {/* Stats Summary */}
-            <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
-              <div className="bg-gray-100 dark:bg-gray-800 p-3 rounded-lg text-center">
-                <p className="text-2xl font-bold">{stats.confirmed || 0}</p>
-                <p className="text-xs text-gray-500">Prijavljeni / Confirmed</p>
+          <div className="space-y-4 sm:space-y-6">
+            {/* Stats Summary - Mobile optimized grid */}
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2 sm:gap-3">
+              <div className="bg-gray-100 dark:bg-gray-800 p-2 sm:p-3 rounded-lg text-center">
+                <p className="text-xl sm:text-2xl font-bold">{stats.confirmed || 0}</p>
+                <p className="text-[10px] sm:text-xs text-gray-500 leading-tight">Prijavljeni / Confirmed</p>
               </div>
-              <div className="bg-green-100 dark:bg-green-900/30 p-3 rounded-lg text-center">
-                <p className="text-2xl font-bold text-green-700 dark:text-green-400">{stats.attended || 0}</p>
-                <p className="text-xs text-gray-500">Prisutni / Present</p>
+              <div className="bg-green-100 dark:bg-green-900/30 p-2 sm:p-3 rounded-lg text-center">
+                <p className="text-xl sm:text-2xl font-bold text-green-700 dark:text-green-400">{stats.attended || 0}</p>
+                <p className="text-[10px] sm:text-xs text-gray-500 leading-tight">Prisutni / Present</p>
               </div>
-              <div className="bg-red-100 dark:bg-red-900/30 p-3 rounded-lg text-center">
-                <p className="text-2xl font-bold text-red-700 dark:text-red-400">{stats.noShow || 0}</p>
-                <p className="text-xs text-gray-500">Nisu došli / No-show</p>
+              <div className="bg-red-100 dark:bg-red-900/30 p-2 sm:p-3 rounded-lg text-center">
+                <p className="text-xl sm:text-2xl font-bold text-red-700 dark:text-red-400">{stats.noShow || 0}</p>
+                <p className="text-[10px] sm:text-xs text-gray-500 leading-tight">Nisu došli / No-show</p>
               </div>
-              <div className="bg-blue-100 dark:bg-blue-900/30 p-3 rounded-lg text-center">
-                <p className="text-2xl font-bold text-blue-700 dark:text-blue-400">{stats.walkIn || 0}</p>
-                <p className="text-xs text-gray-500">Walk-in</p>
+              <div className="bg-blue-100 dark:bg-blue-900/30 p-2 sm:p-3 rounded-lg text-center">
+                <p className="text-xl sm:text-2xl font-bold text-blue-700 dark:text-blue-400">{stats.walkIn || 0}</p>
+                <p className="text-[10px] sm:text-xs text-gray-500 leading-tight">Walk-in</p>
               </div>
-              <div className="bg-yellow-100 dark:bg-yellow-900/30 p-3 rounded-lg text-center">
-                <p className="text-2xl font-bold text-yellow-700 dark:text-yellow-400">{stats.pending || 0}</p>
-                <p className="text-xs text-gray-500">Čekaju / Pending</p>
+              <div className="bg-yellow-100 dark:bg-yellow-900/30 p-2 sm:p-3 rounded-lg text-center col-span-2 sm:col-span-1">
+                <p className="text-xl sm:text-2xl font-bold text-yellow-700 dark:text-yellow-400">{stats.pending || 0}</p>
+                <p className="text-[10px] sm:text-xs text-gray-500 leading-tight">Čekaju / Pending</p>
               </div>
             </div>
 
-            {/* Quick Actions */}
-            <div className="flex flex-wrap gap-2">
+            {/* Quick Actions - Stack on mobile */}
+            <div className="flex flex-col sm:flex-row gap-2">
               <Button 
                 onClick={handleMarkAllPresent}
                 disabled={saving || stats.pending === 0}
-                className="bg-green-600 hover:bg-green-700"
+                className="bg-green-600 hover:bg-green-700 text-sm sm:text-base w-full sm:w-auto"
               >
                 ✓ Označi sve prisutne / Mark All Present
               </Button>
               <Button
                 onClick={() => setShowAddWalkIn(!showAddWalkIn)}
                 variant="outline"
-                className="border-blue-500 text-blue-600"
+                className="border-blue-500 text-blue-600 text-sm sm:text-base w-full sm:w-auto"
               >
                 + Dodaj Walk-in / Add Walk-in
               </Button>
@@ -224,48 +226,48 @@ const AttendanceManager = ({ event, onClose, onUpdate }) => {
               </div>
             )}
 
-            {/* Attendance List */}
-            <div className="border rounded-lg overflow-hidden">
-              <table className="w-full">
+            {/* Attendance List - Mobile optimized */}
+            <div className="border rounded-lg overflow-x-auto">
+              <table className="w-full min-w-[320px]">
                 <thead className="bg-gray-100 dark:bg-gray-800">
                   <tr>
-                    <th className="p-3 text-left text-sm font-semibold">Član / Member</th>
-                    <th className="p-3 text-center text-sm font-semibold hidden md:table-cell">RSVP</th>
-                    <th className="p-3 text-center text-sm font-semibold">Status</th>
-                    <th className="p-3 text-center text-sm font-semibold">Akcije / Actions</th>
+                    <th className="p-2 sm:p-3 text-left text-xs sm:text-sm font-semibold">Član / Member</th>
+                    <th className="p-2 sm:p-3 text-center text-xs sm:text-sm font-semibold hidden sm:table-cell">RSVP</th>
+                    <th className="p-2 sm:p-3 text-center text-xs sm:text-sm font-semibold">Status</th>
+                    <th className="p-2 sm:p-3 text-center text-xs sm:text-sm font-semibold w-20 sm:w-auto">Akcije</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y dark:divide-gray-700">
                   {attendance.length === 0 ? (
                     <tr>
-                      <td colSpan={4} className="p-8 text-center text-gray-500">
+                      <td colSpan={4} className="p-8 text-center text-gray-500 text-sm">
                         Nema prijavljenih članova / No confirmed participants
                       </td>
                     </tr>
                   ) : (
                     attendance.map(member => (
                       <tr key={member.userId} className="hover:bg-gray-50 dark:hover:bg-gray-800/50">
-                        <td className="p-3">
-                          <div>
-                            <p className="font-medium">{member.fullName}</p>
-                            <p className="text-xs text-gray-500">{member.email}</p>
+                        <td className="p-2 sm:p-3">
+                          <div className="min-w-0">
+                            <p className="font-medium text-sm truncate">{member.fullName}</p>
+                            <p className="text-[10px] sm:text-xs text-gray-500 truncate">{member.email}</p>
                           </div>
                         </td>
-                        <td className="p-3 text-center hidden md:table-cell">
+                        <td className="p-2 sm:p-3 text-center hidden sm:table-cell">
                           {member.confirmed ? (
-                            <span className="text-green-600">✓ Da/Yes</span>
+                            <span className="text-green-600 text-sm">✓ Da/Yes</span>
                           ) : (
                             <span className="text-gray-400">-</span>
                           )}
                         </td>
-                        <td className="p-3 text-center">
+                        <td className="p-2 sm:p-3 text-center">
                           {getStatusBadge(member.status)}
                         </td>
-                        <td className="p-3">
-                          <div className="flex justify-center gap-1 flex-wrap">
+                        <td className="p-2 sm:p-3">
+                          <div className="flex justify-center gap-1">
                             <button
                               onClick={() => handleMarkAttendance(member.userId, true)}
-                              className={`px-3 py-1 rounded text-sm font-medium transition-colors ${
+                              className={`w-8 h-8 sm:w-auto sm:px-3 sm:py-1 rounded text-sm font-medium transition-colors flex items-center justify-center ${
                                 member.attended === true
                                   ? 'bg-green-600 text-white'
                                   : 'bg-gray-200 dark:bg-gray-700 hover:bg-green-200 dark:hover:bg-green-800'
@@ -276,7 +278,7 @@ const AttendanceManager = ({ event, onClose, onUpdate }) => {
                             </button>
                             <button
                               onClick={() => handleMarkAttendance(member.userId, false)}
-                              className={`px-3 py-1 rounded text-sm font-medium transition-colors ${
+                              className={`w-8 h-8 sm:w-auto sm:px-3 sm:py-1 rounded text-sm font-medium transition-colors flex items-center justify-center ${
                                 member.attended === false
                                   ? 'bg-red-600 text-white'
                                   : 'bg-gray-200 dark:bg-gray-700 hover:bg-red-200 dark:hover:bg-red-800'
@@ -294,19 +296,19 @@ const AttendanceManager = ({ event, onClose, onUpdate }) => {
               </table>
             </div>
 
-            {/* Legend */}
-            <div className="flex flex-wrap gap-4 text-sm text-gray-600 dark:text-gray-400 border-t pt-4">
+            {/* Legend - Mobile optimized */}
+            <div className="grid grid-cols-2 sm:flex sm:flex-wrap gap-2 sm:gap-4 text-xs sm:text-sm text-gray-600 dark:text-gray-400 border-t pt-4">
               <span className="flex items-center gap-1">
-                <span className="w-3 h-3 rounded-full bg-green-500"></span> Prisutan / Present
+                <span className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-green-500 flex-shrink-0"></span> Prisutan
               </span>
               <span className="flex items-center gap-1">
-                <span className="w-3 h-3 rounded-full bg-red-500"></span> Nije došao / No-show
+                <span className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-red-500 flex-shrink-0"></span> Nije došao
               </span>
               <span className="flex items-center gap-1">
-                <span className="w-3 h-3 rounded-full bg-blue-500"></span> Walk-in
+                <span className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-blue-500 flex-shrink-0"></span> Walk-in
               </span>
               <span className="flex items-center gap-1">
-                <span className="w-3 h-3 rounded-full bg-yellow-500"></span> Čeka / Pending
+                <span className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-yellow-500 flex-shrink-0"></span> Čeka
               </span>
             </div>
           </div>
