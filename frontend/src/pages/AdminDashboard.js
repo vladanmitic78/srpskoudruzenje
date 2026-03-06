@@ -1929,7 +1929,7 @@ const AdminDashboard = () => {
                   onClick={() => setShowAttendanceReport(true)}
                   className="px-4 py-2 bg-purple-600 text-white rounded hover:bg-purple-700 transition-colors flex items-center gap-2"
                 >
-                  📊 Izveštaj / Report
+                  📊 {t('admin.events.report')}
                 </button>
               </CardHeader>
               <CardContent>
@@ -1989,7 +1989,7 @@ const AdminDashboard = () => {
                                 className="px-3 py-1 bg-green-600 text-white text-sm rounded hover:bg-green-700 transition-colors"
                                 title="Mark attendance"
                               >
-                                📋 {t('admin.events.attendance') || 'Prisustvo / Attendance'}
+                                📋 {t('admin.events.attendance')}
                               </button>
                             )}
                             <button
