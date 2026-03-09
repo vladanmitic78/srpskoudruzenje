@@ -38,21 +38,31 @@ def generate_members_pdf(members):
     elements.append(date_text)
     elements.append(Spacer(1, 0.3*inch))
     
-    # Table data
-    data = [['Full Name', 'Email', 'Phone', 'Address', 'Year of Birth', 'Verified']]
+    # Table data - now includes Role column
+    data = [['Full Name', 'Email', 'Phone', 'Address', 'Year of Birth', 'Role', 'Verified']]
     
     for member in members:
+        # Format role for display
+        role = member.get('role', 'user')
+        role_display = {
+            'superadmin': 'Super Admin',
+            'admin': 'Admin',
+            'moderator': 'Moderator',
+            'user': 'Member'
+        }.get(role, role.title())
+        
         data.append([
             member.get('fullName', ''),
             member.get('email', ''),
             member.get('phone', ''),
             member.get('address', ''),
             member.get('yearOfBirth', ''),
+            role_display,
             'Yes' if member.get('emailVerified') else 'No'
         ])
     
-    # Create table
-    table = Table(data, colWidths=[1.5*inch, 2*inch, 1.2*inch, 1.8*inch, 0.8*inch, 0.7*inch])
+    # Create table with adjusted column widths
+    table = Table(data, colWidths=[1.4*inch, 1.8*inch, 1.1*inch, 1.5*inch, 0.7*inch, 0.8*inch, 0.6*inch])
     table.setStyle(TableStyle([
         ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor('#C1272D')),
         ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
@@ -83,8 +93,8 @@ def generate_members_excel(members):
     header_fill = PatternFill(start_color="C1272D", end_color="C1272D", fill_type="solid")
     header_font = Font(bold=True, color="FFFFFF", size=12)
     
-    # Headers
-    headers = ['Full Name', 'Email', 'Phone', 'Address', 'Year of Birth', 
+    # Headers - now includes Role column
+    headers = ['Full Name', 'Email', 'Phone', 'Address', 'Year of Birth', 'Role',
                'Parent Name', 'Parent Email', 'Parent Phone', 'Email Verified', 'Member Since']
     ws.append(headers)
     
@@ -96,12 +106,22 @@ def generate_members_excel(members):
     
     # Add data
     for member in members:
+        # Format role for display
+        role = member.get('role', 'user')
+        role_display = {
+            'superadmin': 'Super Admin',
+            'admin': 'Admin',
+            'moderator': 'Moderator',
+            'user': 'Member'
+        }.get(role, role.title())
+        
         ws.append([
             member.get('fullName', ''),
             member.get('email', ''),
             member.get('phone', ''),
             member.get('address', ''),
             member.get('yearOfBirth', ''),
+            role_display,
             member.get('parentName', ''),
             member.get('parentEmail', ''),
             member.get('parentPhone', ''),

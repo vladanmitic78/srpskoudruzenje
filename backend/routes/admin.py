@@ -235,10 +235,11 @@ async def impersonate_user(
 
 @router.get("/export/members/pdf")
 async def export_members_pdf(admin: dict = Depends(get_admin_user), request: Request = None):
-    """Export members to PDF"""
+    """Export all registered members to PDF (includes users, admins, moderators, superadmins)"""
     db = request.app.state.db
     
-    users = await db.users.find({"role": "user"}).to_list(length=10000)
+    # Include all registered users regardless of role
+    users = await db.users.find({}).to_list(length=10000)
     pdf_buffer = generate_members_pdf(users)
     
     return StreamingResponse(
@@ -249,10 +250,11 @@ async def export_members_pdf(admin: dict = Depends(get_admin_user), request: Req
 
 @router.get("/export/members/xml")
 async def export_members_xml(admin: dict = Depends(get_admin_user), request: Request = None):
-    """Export members to XML"""
+    """Export all registered members to XML (includes users, admins, moderators, superadmins)"""
     db = request.app.state.db
     
-    users = await db.users.find({"role": "user"}).to_list(length=10000)
+    # Include all registered users regardless of role
+    users = await db.users.find({}).to_list(length=10000)
     xml_buffer = generate_members_xml(users)
     
     return StreamingResponse(
@@ -263,10 +265,11 @@ async def export_members_xml(admin: dict = Depends(get_admin_user), request: Req
 
 @router.get("/export/members/excel")
 async def export_members_excel(admin: dict = Depends(get_admin_user), request: Request = None):
-    """Export members to Excel"""
+    """Export all registered members to Excel (includes users, admins, moderators, superadmins)"""
     db = request.app.state.db
     
-    users = await db.users.find({"role": "user"}).to_list(length=10000)
+    # Include all registered users regardless of role
+    users = await db.users.find({}).to_list(length=10000)
     excel_buffer = generate_members_excel(users)
     
     return StreamingResponse(
@@ -287,8 +290,8 @@ async def get_filtered_members(
     """Get filtered members based on invoice payment status, training group, etc."""
     db = request.app.state.db
     
-    # Build query
-    query = {"role": "user"}
+    # Build query - include all registered users
+    query = {}
     
     # Filter by training group
     if training_group and training_group != "all":
@@ -337,11 +340,21 @@ async def get_filtered_members(
         import io
         output = io.StringIO()
         if users:
-            fieldnames = ["fullName", "email", "phone", "trainingGroup", "yearOfBirth"]
+            fieldnames = ["fullName", "email", "phone", "trainingGroup", "yearOfBirth", "role"]
             writer = csv.DictWriter(output, fieldnames=fieldnames)
             writer.writeheader()
             for user in users:
-                writer.writerow({k: user.get(k, "") for k in fieldnames})
+                # Format role for display
+                role = user.get('role', 'user')
+                role_display = {
+                    'superadmin': 'Super Admin',
+                    'admin': 'Admin',
+                    'moderator': 'Moderator',
+                    'user': 'Member'
+                }.get(role, role.title())
+                row_data = {k: user.get(k, "") for k in fieldnames if k != 'role'}
+                row_data['role'] = role_display
+                writer.writerow(row_data)
         output.seek(0)
         return StreamingResponse(
             iter([output.getvalue()]),
