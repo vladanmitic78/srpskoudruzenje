@@ -111,7 +111,6 @@ async def add_family_member(
     new_member = {
         "id": member_id,
         "_id": member_id,
-        "email": member_email,  # Can be None for children
         "username": member_email or f"child_{member_id[:8]}",  # Generate username if no email
         "fullName": member_data.fullName,
         "yearOfBirth": member_data.yearOfBirth,
@@ -130,6 +129,10 @@ async def add_family_member(
         "createdAt": datetime.utcnow(),
         "createdBy": user["_id"]
     }
+    
+    # Only include email field if it has a value (to avoid MongoDB unique index conflict on null)
+    if member_email:
+        new_member["email"] = member_email
     
     # Insert the new member
     await db.users.insert_one(new_member)
@@ -535,7 +538,6 @@ async def admin_add_family_member(
     new_member = {
         "id": member_id,
         "_id": member_id,
-        "email": member_email,
         "username": member_email or f"child_{member_id[:8]}",
         "fullName": member_data.fullName,
         "yearOfBirth": member_data.yearOfBirth,
@@ -554,6 +556,10 @@ async def admin_add_family_member(
         "createdAt": datetime.utcnow(),
         "createdBy": admin.get("_id") or admin.get("id")
     }
+    
+    # Only include email field if it has a value (to avoid MongoDB unique index conflict on null)
+    if member_email:
+        new_member["email"] = member_email
     
     # Insert the new member
     await db.users.insert_one(new_member)
