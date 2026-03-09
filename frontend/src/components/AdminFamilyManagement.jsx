@@ -16,9 +16,10 @@ const AdminFamilyManagement = ({ t, users = [] }) => {
   const [selectedUser, setSelectedUser] = useState(null);
   const [expandedFamilies, setExpandedFamilies] = useState({});
   const [searchTerm, setSearchTerm] = useState('');
+  const [submitting, setSubmitting] = useState(false);
   
-  // Form state for adding members
-  const [memberForm, setMemberForm] = useState({
+  // Initial empty member template
+  const emptyMember = {
     fullName: '',
     email: '',
     yearOfBirth: '',
@@ -26,7 +27,10 @@ const AdminFamilyManagement = ({ t, users = [] }) => {
     address: '',
     trainingGroup: '',
     relationship: 'child'
-  });
+  };
+  
+  // Form state for adding multiple members
+  const [members, setMembers] = useState([{ ...emptyMember }]);
   
   // Load all family relationships
   const loadFamilies = async () => {
@@ -57,20 +61,32 @@ const AdminFamilyManagement = ({ t, users = [] }) => {
   
   // Reset form
   const resetForm = () => {
-    setMemberForm({
-      fullName: '',
-      email: '',
-      yearOfBirth: '',
-      phone: '',
-      address: '',
-      trainingGroup: '',
-      relationship: 'child'
-    });
+    setMembers([{ ...emptyMember }]);
     setSelectedUser(null);
+    setSearchTerm('');
   };
   
-  // Handle add family member
-  const handleAddMember = async (e) => {
+  // Add another member row
+  const addMemberRow = () => {
+    setMembers([...members, { ...emptyMember }]);
+  };
+  
+  // Remove a member row
+  const removeMemberRow = (index) => {
+    if (members.length > 1) {
+      setMembers(members.filter((_, i) => i !== index));
+    }
+  };
+  
+  // Update a specific member's field
+  const updateMember = (index, field, value) => {
+    const updated = [...members];
+    updated[index] = { ...updated[index], [field]: value };
+    setMembers(updated);
+  };
+  
+  // Handle add all family members
+  const handleAddMembers = async (e) => {
     e.preventDefault();
     
     if (!selectedUser) {
@@ -78,35 +94,62 @@ const AdminFamilyManagement = ({ t, users = [] }) => {
       return;
     }
     
-    // Calculate member's age
-    const memberAge = memberForm.yearOfBirth 
-      ? new Date().getFullYear() - parseInt(memberForm.yearOfBirth)
-      : 0;
-    
-    if (!memberForm.fullName || !memberForm.yearOfBirth) {
-      toast.error(t('admin.family.requiredFields') || 'Please fill in all required fields');
-      return;
+    // Validate all members
+    for (let i = 0; i < members.length; i++) {
+      const member = members[i];
+      const memberAge = member.yearOfBirth 
+        ? new Date().getFullYear() - parseInt(member.yearOfBirth)
+        : 0;
+      
+      if (!member.fullName || !member.yearOfBirth) {
+        toast.error(`${t('admin.family.requiredFields') || 'Please fill in all required fields'} (Member ${i + 1})`);
+        return;
+      }
+      
+      // Email required only for members 18+
+      if (memberAge >= 18 && !member.email) {
+        toast.error(`${t('admin.family.emailRequiredAdult') || 'Email is required for family members 18 years or older'} (Member ${i + 1})`);
+        return;
+      }
     }
     
-    // Email required only for members 18+
-    if (memberAge >= 18 && !memberForm.email) {
-      toast.error(t('admin.family.emailRequiredAdult') || 'Email is required for family members 18 years or older');
-      return;
-    }
+    setSubmitting(true);
+    const userId = selectedUser.id || selectedUser._id;
+    let successCount = 0;
+    let errorCount = 0;
     
     try {
-      const userId = selectedUser.id || selectedUser._id;
-      await familyAPI.adminAddMember(userId, memberForm);
-      const message = memberAge < 18 && !memberForm.email
-        ? (t('admin.family.addSuccessChild') || 'Family member added successfully! Notifications will be sent to parent\'s email.')
-        : (t('admin.family.addSuccess') || 'Family member added successfully! Login credentials sent to their email.');
-      toast.success(message);
-      setAddModalOpen(false);
-      resetForm();
-      loadFamilies();
+      // Add each member sequentially
+      for (const member of members) {
+        try {
+          await familyAPI.adminAddMember(userId, member);
+          successCount++;
+        } catch (error) {
+          errorCount++;
+          console.error('Failed to add member:', member.fullName, error);
+        }
+      }
+      
+      if (successCount > 0) {
+        const message = successCount === 1
+          ? (t('admin.family.addSuccess') || 'Family member added successfully!')
+          : (t('admin.family.addSuccessMultiple') || `${successCount} family members added successfully!`).replace('{count}', successCount);
+        toast.success(message);
+      }
+      
+      if (errorCount > 0) {
+        toast.error(`${errorCount} member(s) failed to add`);
+      }
+      
+      if (successCount > 0) {
+        setAddModalOpen(false);
+        resetForm();
+        loadFamilies();
+      }
     } catch (error) {
-      const errorMsg = error.response?.data?.detail || t('admin.family.addError') || 'Failed to add family member';
-      toast.error(errorMsg);
+      toast.error(t('admin.family.addError') || 'Failed to add family members');
+    } finally {
+      setSubmitting(false);
     }
   };
   
@@ -291,7 +334,7 @@ const AdminFamilyManagement = ({ t, users = [] }) => {
       
       {/* Add Family Member Modal */}
       <Dialog open={addModalOpen} onOpenChange={setAddModalOpen}>
-        <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
+        <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="flex items-center">
               <UserPlus className="h-5 w-5 mr-2" />
@@ -299,7 +342,7 @@ const AdminFamilyManagement = ({ t, users = [] }) => {
             </DialogTitle>
           </DialogHeader>
           
-          <form onSubmit={handleAddMember} className="space-y-4">
+          <form onSubmit={handleAddMembers} className="space-y-4">
             {/* Select Parent User */}
             <div className="space-y-2">
               <Label>{t('admin.family.selectParent') || 'Select Parent Account'} *</Label>
@@ -314,7 +357,7 @@ const AdminFamilyManagement = ({ t, users = [] }) => {
                 />
               </div>
               
-              {searchTerm && (
+              {searchTerm && !selectedUser && (
                 <div className="max-h-40 overflow-y-auto border rounded-md bg-white dark:bg-gray-900">
                   {eligibleUsers.slice(0, 10).map((user) => (
                     <div
@@ -340,110 +383,156 @@ const AdminFamilyManagement = ({ t, users = [] }) => {
               )}
               
               {selectedUser && (
-                <div className="p-2 bg-green-50 dark:bg-green-900/20 rounded-md border border-green-200">
+                <div className="p-2 bg-green-50 dark:bg-green-900/20 rounded-md border border-green-200 flex justify-between items-center">
                   <span className="text-sm text-green-800 dark:text-green-200">
                     ✓ {t('admin.family.selectedUser') || 'Selected'}: <strong>{selectedUser.fullName}</strong> ({selectedUser.email})
                   </span>
+                  <button
+                    type="button"
+                    onClick={() => { setSelectedUser(null); setSearchTerm(''); }}
+                    className="text-green-600 hover:text-green-800 text-sm underline"
+                  >
+                    Change
+                  </button>
                 </div>
               )}
             </div>
             
             <hr className="my-4" />
             
-            {/* Family Member Details */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label>{t('admin.family.fullName') || 'Full Name'} *</Label>
-                <Input
-                  required
-                  value={memberForm.fullName}
-                  onChange={(e) => setMemberForm({...memberForm, fullName: e.target.value})}
-                  placeholder="Enter full name"
-                />
-              </div>
-              
-              <div className="space-y-2">
-                <Label>{t('admin.family.yearOfBirth') || 'Year of Birth'} *</Label>
-                <Input
-                  type="number"
-                  required
-                  min="1900"
-                  max={new Date().getFullYear()}
-                  value={memberForm.yearOfBirth}
-                  onChange={(e) => setMemberForm({...memberForm, yearOfBirth: e.target.value})}
-                  placeholder="2010"
-                />
-              </div>
-              
-              <div className="space-y-2">
-                <Label>
-                  {t('admin.family.email') || 'Email'}
-                  {memberForm.yearOfBirth && (new Date().getFullYear() - parseInt(memberForm.yearOfBirth)) >= 18 
-                    ? ' *' 
-                    : ` (${t('admin.family.optionalForChildren') || 'optional for children under 18'})`}
+            {/* Family Members Section */}
+            <div className="space-y-4">
+              <div className="flex justify-between items-center">
+                <Label className="text-base font-semibold">
+                  {t('admin.family.membersToAdd') || 'Family Members to Add'} ({members.length})
                 </Label>
-                <Input
-                  type="email"
-                  value={memberForm.email}
-                  onChange={(e) => setMemberForm({...memberForm, email: e.target.value})}
-                  placeholder="member@email.com"
-                />
-              </div>
-              
-              <div className="space-y-2">
-                <Label>{t('admin.family.relationship') || 'Relationship'} *</Label>
-                <select
-                  value={memberForm.relationship}
-                  onChange={(e) => setMemberForm({...memberForm, relationship: e.target.value})}
-                  className="w-full p-2 border rounded-md bg-white dark:bg-gray-800"
+                <Button
+                  type="button"
+                  onClick={addMemberRow}
+                  variant="outline"
+                  size="sm"
+                  className="text-blue-600 border-blue-300 hover:bg-blue-50"
                 >
-                  <option value="child">{t('admin.family.child') || 'Child'}</option>
-                  <option value="spouse">{t('admin.family.spouse') || 'Spouse'}</option>
-                  <option value="friend">{t('admin.family.friend') || 'Friend'}</option>
-                  <option value="other">{t('admin.family.other') || 'Other'}</option>
-                </select>
+                  <UserPlus className="h-4 w-4 mr-1" />
+                  {t('admin.family.addAnother') || 'Add Another'}
+                </Button>
               </div>
               
-              <div className="space-y-2">
-                <Label>{t('admin.family.phone') || 'Phone'}</Label>
-                <Input
-                  type="tel"
-                  value={memberForm.phone}
-                  onChange={(e) => setMemberForm({...memberForm, phone: e.target.value})}
-                  placeholder="+46 XX XXX XX XX"
-                />
-              </div>
-              
-              <div className="space-y-2">
-                <Label>{t('admin.family.trainingGroup') || 'Training Group'}</Label>
-                <select
-                  value={memberForm.trainingGroup}
-                  onChange={(e) => setMemberForm({...memberForm, trainingGroup: e.target.value})}
-                  className="w-full p-2 border rounded-md bg-white dark:bg-gray-800"
+              {/* Member Cards */}
+              {members.map((member, index) => (
+                <div 
+                  key={index} 
+                  className="border-2 border-gray-200 dark:border-gray-700 rounded-lg p-4 space-y-3 bg-gray-50 dark:bg-gray-800/50"
                 >
-                  <option value="">{t('admin.family.selectGroup') || 'Select a group'}</option>
-                  <option value="folklor">Folklor</option>
-                  <option value="kolo">Kolo</option>
-                  <option value="choir">Choir</option>
-                  <option value="kids">Kids</option>
-                </select>
-              </div>
-            </div>
-            
-            <div className="space-y-2">
-              <Label>{t('admin.family.address') || 'Address'}</Label>
-              <Input
-                value={memberForm.address}
-                onChange={(e) => setMemberForm({...memberForm, address: e.target.value})}
-                placeholder="Street, City, Postal Code"
-              />
+                  {/* Member Header */}
+                  <div className="flex justify-between items-center pb-2 border-b border-gray-200 dark:border-gray-700">
+                    <span className="font-medium text-sm text-gray-600 dark:text-gray-400">
+                      {t('admin.family.member') || 'Member'} #{index + 1}
+                    </span>
+                    {members.length > 1 && (
+                      <button
+                        type="button"
+                        onClick={() => removeMemberRow(index)}
+                        className="text-red-500 hover:text-red-700 p-1"
+                        title="Remove member"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </button>
+                    )}
+                  </div>
+                  
+                  {/* Member Fields */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                    <div className="space-y-1">
+                      <Label className="text-xs">{t('admin.family.fullName') || 'Full Name'} *</Label>
+                      <Input
+                        required
+                        value={member.fullName}
+                        onChange={(e) => updateMember(index, 'fullName', e.target.value)}
+                        placeholder="Full name"
+                        className="h-9"
+                      />
+                    </div>
+                    
+                    <div className="space-y-1">
+                      <Label className="text-xs">{t('admin.family.yearOfBirth') || 'Year of Birth'} *</Label>
+                      <Input
+                        type="number"
+                        required
+                        min="1900"
+                        max={new Date().getFullYear()}
+                        value={member.yearOfBirth}
+                        onChange={(e) => updateMember(index, 'yearOfBirth', e.target.value)}
+                        placeholder="2010"
+                        className="h-9"
+                      />
+                    </div>
+                    
+                    <div className="space-y-1">
+                      <Label className="text-xs">{t('admin.family.trainingGroup') || 'Training Group'}</Label>
+                      <select
+                        value={member.trainingGroup}
+                        onChange={(e) => updateMember(index, 'trainingGroup', e.target.value)}
+                        className="w-full h-9 px-2 text-sm border rounded-md bg-white dark:bg-gray-800"
+                      >
+                        <option value="">{t('admin.family.selectGroup') || 'Select group'}</option>
+                        <option value="folklor">Folklor</option>
+                        <option value="kolo">Kolo</option>
+                        <option value="choir">Choir</option>
+                        <option value="kids">Kids</option>
+                      </select>
+                    </div>
+                    
+                    <div className="space-y-1">
+                      <Label className="text-xs">
+                        {t('admin.family.email') || 'Email'}
+                        {member.yearOfBirth && (new Date().getFullYear() - parseInt(member.yearOfBirth)) >= 18 
+                          ? ' *' 
+                          : ''}
+                      </Label>
+                      <Input
+                        type="email"
+                        value={member.email}
+                        onChange={(e) => updateMember(index, 'email', e.target.value)}
+                        placeholder={member.yearOfBirth && (new Date().getFullYear() - parseInt(member.yearOfBirth)) < 18 
+                          ? "Optional for children" 
+                          : "email@example.com"}
+                        className="h-9"
+                      />
+                    </div>
+                    
+                    <div className="space-y-1">
+                      <Label className="text-xs">{t('admin.family.relationship') || 'Relationship'}</Label>
+                      <select
+                        value={member.relationship}
+                        onChange={(e) => updateMember(index, 'relationship', e.target.value)}
+                        className="w-full h-9 px-2 text-sm border rounded-md bg-white dark:bg-gray-800"
+                      >
+                        <option value="child">{t('admin.family.child') || 'Child'}</option>
+                        <option value="spouse">{t('admin.family.spouse') || 'Spouse'}</option>
+                        <option value="friend">{t('admin.family.friend') || 'Friend'}</option>
+                        <option value="other">{t('admin.family.other') || 'Other'}</option>
+                      </select>
+                    </div>
+                    
+                    <div className="space-y-1">
+                      <Label className="text-xs">{t('admin.family.phone') || 'Phone'}</Label>
+                      <Input
+                        type="tel"
+                        value={member.phone}
+                        onChange={(e) => updateMember(index, 'phone', e.target.value)}
+                        placeholder="+46 XX XXX XX XX"
+                        className="h-9"
+                      />
+                    </div>
+                  </div>
+                </div>
+              ))}
             </div>
             
             <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg p-3">
               <p className="text-sm text-yellow-800 dark:text-yellow-200">
-                {memberForm.yearOfBirth && (new Date().getFullYear() - parseInt(memberForm.yearOfBirth)) < 18 && !memberForm.email
-                  ? `📧 ${t('admin.family.childNotice') || "Since this is a child under 18 without email, all notifications will be sent to the parent's email address."}`
-                  : `📧 ${t('admin.family.credentialsNote') || 'Login credentials will be automatically sent to the email address provided.'}`}
+                📧 {t('admin.family.bulkNotice') || "Children under 18 without email will receive notifications via parent's email. Adults will receive login credentials."}
               </p>
             </div>
             
@@ -451,9 +540,13 @@ const AdminFamilyManagement = ({ t, users = [] }) => {
               <Button
                 type="submit"
                 className="flex-1 bg-[var(--color-button-primary)] hover:bg-[var(--color-button-hover)]"
-                disabled={!selectedUser}
+                disabled={!selectedUser || submitting}
               >
-                {t('admin.family.addSubmit') || 'Add Family Member'}
+                {submitting 
+                  ? (t('admin.family.adding') || 'Adding...') 
+                  : members.length === 1 
+                    ? (t('admin.family.addSubmit') || 'Add Family Member')
+                    : (t('admin.family.addAllSubmit') || `Add ${members.length} Members`)}
               </Button>
               <Button
                 type="button"
@@ -463,6 +556,7 @@ const AdminFamilyManagement = ({ t, users = [] }) => {
                 }}
                 variant="outline"
                 className="flex-1"
+                disabled={submitting}
               >
                 {t('admin.family.cancel') || 'Cancel'}
               </Button>
