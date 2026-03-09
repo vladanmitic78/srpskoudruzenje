@@ -116,16 +116,18 @@ const AdminFamilyManagement = ({ t, users = [] }) => {
     setSubmitting(true);
     const userId = selectedUser.id || selectedUser._id;
     let successCount = 0;
-    let errorCount = 0;
+    let errorMessages = [];
     
     try {
       // Add each member sequentially
-      for (const member of members) {
+      for (let i = 0; i < members.length; i++) {
+        const member = members[i];
         try {
           await familyAPI.adminAddMember(userId, member);
           successCount++;
         } catch (error) {
-          errorCount++;
+          const errorDetail = error.response?.data?.detail || 'Unknown error';
+          errorMessages.push(`${member.fullName || `Član ${i+1}`}: ${errorDetail}`);
           console.error('Failed to add member:', member.fullName, error);
         }
       }
@@ -133,12 +135,13 @@ const AdminFamilyManagement = ({ t, users = [] }) => {
       if (successCount > 0) {
         const message = successCount === 1
           ? (t('admin.family.addSuccess') || 'Family member added successfully!')
-          : (t('admin.family.addSuccessMultiple') || `${successCount} family members added successfully!`).replace('{count}', successCount);
+          : `${successCount} ${t('admin.family.membersAddedSuccess') || 'family members added successfully!'}`;
         toast.success(message);
       }
       
-      if (errorCount > 0) {
-        toast.error(`${errorCount} member(s) failed to add`);
+      if (errorMessages.length > 0) {
+        // Show each error
+        errorMessages.forEach(msg => toast.error(msg));
       }
       
       if (successCount > 0) {
@@ -546,7 +549,7 @@ const AdminFamilyManagement = ({ t, users = [] }) => {
                   ? (t('admin.family.adding') || 'Adding...') 
                   : members.length === 1 
                     ? (t('admin.family.addSubmit') || 'Add Family Member')
-                    : (t('admin.family.addAllSubmit') || `Add ${members.length} Members`)}
+                    : `${t('admin.family.addSubmit') || 'Add'} ${members.length} ${t('admin.family.members') || 'Members'}`}
               </Button>
               <Button
                 type="button"
