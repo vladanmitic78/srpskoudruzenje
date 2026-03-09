@@ -21,7 +21,13 @@ Build and maintain a comprehensive membership management platform for the Serbia
 
 ## What's Been Implemented
 
-### Performance Optimizations (COMPLETED - Mar 6, 2026)
+### Performance Optimizations (COMPLETED - Mar 6-9, 2026)
+- **Hero Background Optimization**:
+  - Downloaded and converted hero images to WebP format
+  - Total: **8.3MB → 0.7MB** (91% reduction)
+  - Main hero: **1.3MB → 55KB** (96% reduction!)
+  - New endpoint: `/api/settings/hero-images/{filename}`
+  - Cache headers: 1 year (`max-age=31536000, immutable`)
 - **Image Optimization**:
   - Created `/app/backend/utils/image_optimizer.py` utility
   - News images: Auto-converted to WebP, resized to max 1200x900, ~80% quality
@@ -34,8 +40,7 @@ Build and maintain a comprehensive membership management platform for the Serbia
 - **Cache Headers**:
   - Added 1-year cache headers to image endpoints
   - Updated nginx.conf for API image caching
-  - News images: `Cache-Control: public, max-age=31536000, immutable`
-  - Gallery images: Same cache policy
+  - All images: `Cache-Control: public, max-age=31536000, immutable`
 - **Frontend Optimizations**:
   - All logo references updated to use WebP format
   - Images load progressively with smooth fade-in

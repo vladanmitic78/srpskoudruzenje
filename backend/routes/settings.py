@@ -1,5 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, Request
+from fastapi.responses import Response
 from datetime import datetime
+from pathlib import Path
 
 from models import SettingsBase
 from dependencies import get_admin_user
@@ -8,41 +10,42 @@ from utils.cache import cache, settings_key, CACHE_TTL
 router = APIRouter()
 
 # Default hero backgrounds - Serbian-Swedish fusion patterns
+# Optimized WebP versions stored locally for better performance
 DEFAULT_HERO_BACKGROUNDS = [
     {
         "id": "serbian_nemanjic_1",
         "name": "Nemanjić Dynasty - Elegant Ribbon",
-        "url": "https://static.prod-images.emergentagent.com/jobs/912f6a5f-72f1-48e7-83f3-67436c52fa1c/images/2e2cc22b822d404f49e921fc571d5b5104a4cdfc089588c23bc6af341e34c02d.png",
+        "url": "/api/settings/hero-images/serbian_nemanjic_1.webp",
         "description": "Serbian coat of arms with flag ribbon and golden fleur-de-lys"
     },
     {
         "id": "serbian_nemanjic_2",
         "name": "Nemanjić Dynasty - Royal Frame",
-        "url": "https://static.prod-images.emergentagent.com/jobs/912f6a5f-72f1-48e7-83f3-67436c52fa1c/images/0e43eb7909b6528221309751e09ce2d6d7f7549dc1bfe1590f6a7099fe6b0f4e.png",
+        "url": "/api/settings/hero-images/serbian_nemanjic_2.webp",
         "description": "Royal design with Serbian crosses in corners and golden frame"
     },
     {
         "id": "serbian_nemanjic_3",
         "name": "Nemanjić Dynasty - Watercolor",
-        "url": "https://static.prod-images.emergentagent.com/jobs/912f6a5f-72f1-48e7-83f3-67436c52fa1c/images/3233c779b5663f71e2a62d510b59bdc8a7b37f286fc59b5264cfde66a7c34a8d.png",
+        "url": "/api/settings/hero-images/serbian_nemanjic_3.webp",
         "description": "Watercolor style with ornate golden Nemanjić decorations"
     },
     {
         "id": "serbian_swedish_1",
         "name": "Serbian-Swedish Folk Art Fusion",
-        "url": "https://static.prod-images.emergentagent.com/jobs/912f6a5f-72f1-48e7-83f3-67436c52fa1c/images/55748851d8f8eae040b3b350010e2fd2d49583edf32844dafdb8fa5af6ff5d63.png",
+        "url": "/api/settings/hero-images/serbian_swedish_1.webp",
         "description": "Elegant pattern with Serbian geometric diamonds and Swedish Dala floral elements"
     },
     {
         "id": "serbian_swedish_2", 
         "name": "Cultural Heritage Pattern",
-        "url": "https://static.prod-images.emergentagent.com/jobs/912f6a5f-72f1-48e7-83f3-67436c52fa1c/images/00d305c9d7506067bfb941e1cb48738a1aeff07fdf2586daee6c638dd66097da.png",
+        "url": "/api/settings/hero-images/serbian_swedish_2.webp",
         "description": "Traditional Serbian embroidery meets Swedish folk art with roses and geometric shapes"
     },
     {
         "id": "logo_pattern",
         "name": "Logo Pattern",
-        "url": "/logo.jpg",
+        "url": "/logo.webp",
         "description": "Subtle repeating logo pattern"
     },
     {
@@ -87,6 +90,43 @@ async def get_hero_background(request: Request):
                 break
     
     return hero
+
+
+@router.get("/hero-images/{filename}")
+async def get_hero_image(filename: str):
+    """Serve optimized hero background images with cache headers"""
+    # Validate filename to prevent path traversal
+    if ".." in filename or "/" in filename:
+        raise HTTPException(status_code=400, detail="Invalid filename")
+    
+    file_path = Path("/app/backend/uploads/hero") / filename
+    
+    if not file_path.exists():
+        raise HTTPException(status_code=404, detail="Image not found")
+    
+    # Determine content type
+    ext = file_path.suffix.lower()
+    content_types = {
+        '.webp': 'image/webp',
+        '.jpg': 'image/jpeg',
+        '.jpeg': 'image/jpeg',
+        '.png': 'image/png',
+    }
+    content_type = content_types.get(ext, 'application/octet-stream')
+    
+    # Read file and return with long cache headers
+    with open(file_path, 'rb') as f:
+        content = f.read()
+    
+    return Response(
+        content=content,
+        media_type=content_type,
+        headers={
+            "Cache-Control": "public, max-age=31536000, immutable",
+            "Vary": "Accept-Encoding"
+        }
+    )
+
 
 @router.get("/")
 async def get_settings(request: Request):
