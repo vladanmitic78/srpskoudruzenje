@@ -208,16 +208,27 @@ Build and maintain a comprehensive membership management platform for the Serbia
 - None currently
 
 ### P1 - High Priority
-- Refactor `AdminDashboard.js` (4000+ lines → smaller components)
+- Continue refactoring `AdminDashboard.js` (remaining tabs: Members, Invoices, Content, Settings, UserManagement, PlatformSettings)
 
 ### P2 - Medium Priority
 - User impersonation auditing
+- Image proxy for external hero images (performance optimization)
 
 ### P3 - Future Enhancements
 - Enhanced reporting and analytics
-- Bulk operations for member management
+- Prepare for PWA (service worker, manifest)
+- Enhanced public PDF download security (signed URLs)
 
 ## Recent Updates (March 2026)
+
+### Bulk Family Member Add Bug Fix (COMPLETED - Mar 9, 2026)
+- **Issue**: When adding multiple children without email, only the first one was added successfully
+- **Root Cause**: MongoDB unique sparse index on `email` field was treating `null` as a value, causing duplicate key errors when multiple children had `email: null`
+- **Solution**: Modified backend to NOT include the `email` field at all when it's null/empty, instead of setting it to `null`
+- **Files Updated**:
+  - `/app/backend/routes/family.py` - Lines 133-135 and 560-562: Conditionally include email field only when it has a value
+- **Testing**: 9/9 backend tests passed (100% pass rate)
+- **Test File**: `/app/backend/tests/test_bulk_family_add_fix.py`
 
 ### Attendance Tracking System (COMPLETED - Mar 6, 2026)
 - **Admin Features**:
