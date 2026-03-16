@@ -17,7 +17,10 @@ const translations = {
       required: 'Saglasnost za fotografisanje je obavezna za korisnike mlađe od 18 godina',
       bannerTitle: 'Potrebna saglasnost za fotografisanje',
       bannerText: 'Potrebna nam je saglasnost roditelja/staratelja za fotografisanje i objavljivanje fotografija na našoj web stranici i društvenim mrežama.',
-      grantButton: 'Daj saglasnost'
+      grantButton: 'Daj saglasnost',
+      confirmGrant: 'Da li dajete saglasnost za fotografisanje i objavljivanje fotografija na web sajtu i društvenim mrežama SKUD Täby?',
+      granted: 'Saglasnost za fotografisanje uspešno data',
+      error: 'Greška pri ažuriranju saglasnosti'
     },
     common: {
       learnMore: 'Saznaj više',
@@ -519,7 +522,10 @@ const translations = {
       required: 'Сагласност за фотографисање је обавезна за кориснике млађе од 18 година',
       bannerTitle: 'Потребна сагласност за фотографисање',
       bannerText: 'Потребна нам је сагласност родитеља/старатеља за фотографисање и објављивање фотографија на нашој веб страници и друштвеним мрежама.',
-      grantButton: 'Дај сагласност'
+      grantButton: 'Дај сагласност',
+      confirmGrant: 'Да ли дајете сагласност за фотографисање и објављивање фотографија на веб сајту и друштвеним мрежама СКУД Täby?',
+      granted: 'Сагласност за фотографисање успешно дата',
+      error: 'Грешка при ажурирању сагласности'
     },
     common: {
       learnMore: 'Сазнај више',
@@ -1011,7 +1017,10 @@ const translations = {
       required: 'Photo consent is required for users under 18 years old',
       bannerTitle: 'Photo Consent Required',
       bannerText: 'We need your parent/guardian consent to photograph and publish pictures on our website and social media.',
-      grantButton: 'Provide Consent'
+      grantButton: 'Grant Consent',
+      confirmGrant: 'Do you consent to being photographed and pictures being published on the SKUD Täby website and social media channels?',
+      granted: 'Photo consent granted successfully',
+      error: 'Failed to update consent'
     },
     common: {
       learnMore: 'Learn More',
@@ -1513,7 +1522,10 @@ const translations = {
       required: 'Fotosamtycke krävs för användare under 18 år',
       bannerTitle: 'Fotosamtycke krävs',
       bannerText: 'Vi behöver ditt samtycke från förälder/vårdnadshavare för att fotografera och publicera bilder på vår webbplats och sociala medier.',
-      grantButton: 'Ge samtycke'
+      grantButton: 'Ge samtycke',
+      confirmGrant: 'Samtycker du till att bli fotograferad och att bilder publiceras på SKUD Täbys webbplats och sociala medier?',
+      granted: 'Fotosamtycke har beviljats',
+      error: 'Det gick inte att uppdatera samtycke'
     },
     common: {
       learnMore: 'Läs mer',

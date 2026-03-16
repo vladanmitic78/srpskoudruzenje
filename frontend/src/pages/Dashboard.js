@@ -209,6 +209,30 @@ const Dashboard = () => {
     }
   };
 
+  // Quick consent grant without opening full form
+  const handleQuickConsentGrant = async () => {
+    const confirmed = window.confirm(
+      t('photoConsent.confirmGrant') || 
+      'Do you consent to being photographed and pictures being published on the SKUD Täby website and social media channels?'
+    );
+    
+    if (!confirmed) return;
+    
+    try {
+      const response = await userAPI.updateProfile({ ...user, photoConsent: true });
+      if (response.success) {
+        // Update local user state
+        setUserData({ ...userData, photoConsent: true });
+        // Trigger a refresh of user context
+        window.location.reload();
+        toast.success(t('photoConsent.granted') || 'Photo consent granted successfully');
+      }
+    } catch (error) {
+      console.error('Failed to grant consent:', error);
+      toast.error(t('photoConsent.error') || 'Failed to update consent');
+    }
+  };
+
   // Initialize userData and check age on mount or when user changes
   useEffect(() => {
     if (user && !loading) {
@@ -391,11 +415,11 @@ const Dashboard = () => {
                   {t('photoConsent.bannerText') || 'We need your parent/guardian consent to photograph and publish pictures on our website and social media.'}
                 </p>
                 <button
-                  onClick={() => setShowProfileModal(true)}
+                  onClick={handleQuickConsentGrant}
                   className="px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white font-medium rounded-md transition-colors"
                   data-testid="grant-consent-btn"
                 >
-                  {t('photoConsent.grantButton') || 'Provide Consent'}
+                  {t('photoConsent.grantButton') || 'Grant Consent'}
                 </button>
               </div>
             </div>
