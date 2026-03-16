@@ -211,21 +211,17 @@ const Dashboard = () => {
 
   // Quick consent grant without opening full form
   const handleQuickConsentGrant = async () => {
-    const confirmed = window.confirm(
-      t('photoConsent.confirmGrant') || 
-      'Do you consent to being photographed and pictures being published on the SKUD Täby website and social media channels?'
-    );
-    
-    if (!confirmed) return;
-    
     try {
-      const response = await userAPI.updateProfile({ ...user, photoConsent: true });
-      if (response.success) {
-        // Update local user state
-        setUserData({ ...userData, photoConsent: true });
-        // Trigger a refresh of user context
-        window.location.reload();
+      // Update profile with photoConsent = true
+      const updatedData = { ...user, photoConsent: true };
+      const response = await userAPI.updateProfile(updatedData);
+      
+      if (response.success && response.user) {
+        // Update user in AuthContext (which also updates localStorage)
+        setUser(response.user);
         toast.success(t('photoConsent.granted') || 'Photo consent granted successfully');
+      } else {
+        toast.error(t('photoConsent.error') || 'Failed to update consent');
       }
     } catch (error) {
       console.error('Failed to grant consent:', error);
