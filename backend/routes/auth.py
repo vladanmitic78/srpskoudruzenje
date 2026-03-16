@@ -122,7 +122,8 @@ async def login(login_data: LoginRequest, request: Request):
         createdAt=user["createdAt"],
         parentName=user.get("parentName"),
         parentEmail=user.get("parentEmail"),
-        parentPhone=user.get("parentPhone")
+        parentPhone=user.get("parentPhone"),
+        photoConsent=user.get("photoConsent", False)
     )
     
     return {

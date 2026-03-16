@@ -23,7 +23,8 @@ async def get_current_user_profile(current_user: dict = Depends(get_current_user
         parentPhone=current_user.get("parentPhone"),
         role=current_user["role"],
         emailVerified=current_user.get("emailVerified", False),
-        createdAt=current_user["createdAt"]
+        createdAt=current_user["createdAt"],
+        photoConsent=current_user.get("photoConsent", False)
     )
 
 @router.put("/me")
@@ -59,7 +60,8 @@ async def update_user_profile(
             "yearOfBirth": updated_user.get("yearOfBirth"),
             "parentName": updated_user.get("parentName"),
             "parentEmail": updated_user.get("parentEmail"),
-            "parentPhone": updated_user.get("parentPhone")
+            "parentPhone": updated_user.get("parentPhone"),
+            "photoConsent": updated_user.get("photoConsent", False)
         }
     }
 

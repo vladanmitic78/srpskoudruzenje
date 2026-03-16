@@ -43,6 +43,7 @@ class UserBase(BaseModel):
     trainingGroup: Optional[str] = None  # folklor, kolo, choir, etc.
     primaryAccountId: Optional[str] = None  # If this is a dependent member
     dependentMembers: List[str] = []  # List of dependent member IDs
+    photoConsent: Optional[bool] = False  # Photo consent for minors
 
 class UserCreate(UserBase):
     password: str
@@ -59,6 +60,7 @@ class UserUpdate(BaseModel):
     parentName: Optional[str] = None
     parentEmail: Optional[EmailStr] = None
     parentPhone: Optional[str] = None
+    photoConsent: Optional[bool] = None
 
 class UserInDB(UserBase):
     id: str = Field(alias="_id")
