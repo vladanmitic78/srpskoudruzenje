@@ -11,6 +11,14 @@ const translations = {
       dashboard: 'Kontrolna tabla',
       logout: 'Odjava'
     },
+    photoConsent: {
+      title: 'Saglasnost za fotografisanje',
+      text: 'Dajem saglasnost da se fotografišem i da se moje fotografije objavljuju na web sajtu i društvenim mrežama SKUD Täby.',
+      required: 'Saglasnost za fotografisanje je obavezna za korisnike mlađe od 18 godina',
+      bannerTitle: 'Potrebna saglasnost za fotografisanje',
+      bannerText: 'Potrebna nam je saglasnost roditelja/staratelja za fotografisanje i objavljivanje fotografija na našoj web stranici i društvenim mrežama.',
+      grantButton: 'Daj saglasnost'
+    },
     common: {
       learnMore: 'Saznaj više',
       readMore: 'Pročitaj više...',
@@ -505,6 +513,14 @@ const translations = {
       dashboard: 'Контролна табла',
       logout: 'Одјава'
     },
+    photoConsent: {
+      title: 'Сагласност за фотографисање',
+      text: 'Дајем сагласност да се фотографишем и да се моје фотографије објављују на веб сајту и друштвеним мрежама СКУД Täby.',
+      required: 'Сагласност за фотографисање је обавезна за кориснике млађе од 18 година',
+      bannerTitle: 'Потребна сагласност за фотографисање',
+      bannerText: 'Потребна нам је сагласност родитеља/старатеља за фотографисање и објављивање фотографија на нашој веб страници и друштвеним мрежама.',
+      grantButton: 'Дај сагласност'
+    },
     common: {
       learnMore: 'Сазнај више',
       readMore: 'Прочитај више...',
@@ -988,6 +1004,14 @@ const translations = {
       register: 'Register',
       dashboard: 'Dashboard',
       logout: 'Logout'
+    },
+    photoConsent: {
+      title: 'Photo Consent',
+      text: 'I consent to being photographed and pictures being published on the SKUD Täby website and social media channels.',
+      required: 'Photo consent is required for users under 18 years old',
+      bannerTitle: 'Photo Consent Required',
+      bannerText: 'We need your parent/guardian consent to photograph and publish pictures on our website and social media.',
+      grantButton: 'Provide Consent'
     },
     common: {
       learnMore: 'Learn More',
@@ -1482,6 +1506,14 @@ const translations = {
       register: 'Registrera',
       dashboard: 'Instrumentpanel',
       logout: 'Logga ut'
+    },
+    photoConsent: {
+      title: 'Fotosamtycke',
+      text: 'Jag samtycker till att bli fotograferad och att bilder publiceras på SKUD Täbys webbplats och sociala medier.',
+      required: 'Fotosamtycke krävs för användare under 18 år',
+      bannerTitle: 'Fotosamtycke krävs',
+      bannerText: 'Vi behöver ditt samtycke från förälder/vårdnadshavare för att fotografera och publicera bilder på vår webbplats och sociala medier.',
+      grantButton: 'Ge samtycke'
     },
     common: {
       learnMore: 'Läs mer',

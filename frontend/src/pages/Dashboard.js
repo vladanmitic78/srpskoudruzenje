@@ -287,6 +287,12 @@ const Dashboard = () => {
         toast.error('Parent information is required for users under 18');
         return;
       }
+      
+      // Photo consent required for minors
+      if (age < 18 && !userData.photoConsent) {
+        toast.error(t('photoConsent.required') || 'Photo consent is required for users under 18');
+        return;
+      }
 
       // Save to backend
       const response = await userAPI.updateProfile(userData);
@@ -371,6 +377,30 @@ const Dashboard = () => {
         <h1 className="text-4xl font-bold text-[var(--color-secondary)] dark:text-[var(--color-primary)] mb-8">
           {t('dashboard.title')}
         </h1>
+
+        {/* Photo Consent Required Banner - For logged-in minors without consent */}
+        {user && user.yearOfBirth && calculateAge(user.yearOfBirth) < 18 && !user.photoConsent && (
+          <div className="mb-6 bg-amber-50 dark:bg-amber-900/20 border-2 border-amber-300 dark:border-amber-700 rounded-lg p-4">
+            <div className="flex items-start gap-3">
+              <span className="text-2xl flex-shrink-0">📸</span>
+              <div className="flex-1">
+                <h3 className="font-semibold text-amber-900 dark:text-amber-100 mb-1">
+                  {t('photoConsent.bannerTitle') || 'Photo Consent Required'}
+                </h3>
+                <p className="text-sm text-amber-800 dark:text-amber-200 mb-3">
+                  {t('photoConsent.bannerText') || 'We need your parent/guardian consent to photograph and publish pictures on our website and social media.'}
+                </p>
+                <button
+                  onClick={() => setShowProfileModal(true)}
+                  className="px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white font-medium rounded-md transition-colors"
+                  data-testid="grant-consent-btn"
+                >
+                  {t('photoConsent.grantButton') || 'Provide Consent'}
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
 
         <Tabs defaultValue="invoices" className="space-y-6">
           <TabsList className="grid w-full grid-cols-6 max-w-4xl">
@@ -500,6 +530,27 @@ const Dashboard = () => {
                             onChange={(e) => setUserData({...userData, parentPhone: e.target.value})}
                             placeholder="+46 XX XXX XX XX"
                           />
+                        </div>
+                      </div>
+                      
+                      {/* Photo Consent - For minors */}
+                      <div className="mt-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-3">
+                        <div className="flex items-start gap-3">
+                          <input
+                            type="checkbox"
+                            id="photoConsentEdit"
+                            checked={userData.photoConsent || false}
+                            onChange={(e) => setUserData({...userData, photoConsent: e.target.checked})}
+                            className="mt-1 h-4 w-4 rounded border-gray-300 text-[var(--color-primary)]"
+                          />
+                          <label htmlFor="photoConsentEdit" className="cursor-pointer">
+                            <span className="font-semibold text-blue-900 dark:text-blue-100 block text-sm">
+                              {t('photoConsent.title') || 'Photo Consent'}
+                            </span>
+                            <span className="text-xs text-blue-800 dark:text-blue-200">
+                              {t('photoConsent.text') || 'I consent to being photographed and pictures being published on the SKUD Täby website and social media channels.'}
+                            </span>
+                          </label>
                         </div>
                       </div>
                     </div>
@@ -956,6 +1007,28 @@ const Dashboard = () => {
                           onChange={(e) => setUserData({...userData, parentPhone: e.target.value})}
                           placeholder="+46 XX XXX XX XX"
                         />
+                      </div>
+                    </div>
+                    
+                    {/* Photo Consent - Required for minors */}
+                    <div className="mt-6 bg-blue-50 dark:bg-blue-900/20 border-2 border-blue-200 dark:border-blue-800 rounded-lg p-4">
+                      <div className="flex items-start gap-3">
+                        <input
+                          type="checkbox"
+                          id="photoConsent"
+                          checked={userData.photoConsent || false}
+                          onChange={(e) => setUserData({...userData, photoConsent: e.target.checked})}
+                          className="mt-1 h-5 w-5 rounded border-gray-300 text-[var(--color-primary)] focus:ring-[var(--color-primary)]"
+                          data-testid="photo-consent-checkbox"
+                        />
+                        <label htmlFor="photoConsent" className="cursor-pointer">
+                          <span className="font-semibold text-blue-900 dark:text-blue-100 block">
+                            {t('photoConsent.title') || 'Photo Consent'} *
+                          </span>
+                          <span className="text-sm text-blue-800 dark:text-blue-200">
+                            {t('photoConsent.text') || 'I consent to being photographed and pictures being published on the SKUD Täby website and social media channels.'}
+                          </span>
+                        </label>
                       </div>
                     </div>
                   </div>
