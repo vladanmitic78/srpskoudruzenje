@@ -505,7 +505,8 @@ const AdminDashboard = () => {
     invoiceStatus: 'all', // all, paid, unpaid, none, credited
     membershipType: 'all', // all, active, expired
     trainingGroup: 'all',
-    hasFamily: 'all' // all, yes, no
+    hasFamily: 'all', // all, yes, no
+    photoConsent: 'all' // all, with-consent, without-consent, minors-only, adults-only
   });
   
   const [createEventOpen, setCreateEventOpen] = useState(false);
@@ -1452,15 +1453,31 @@ const AdminDashboard = () => {
                       <option value="no">👤 Individual</option>
                     </select>
                     
+                    <select
+                      value={memberFilters.photoConsent}
+                      onChange={(e) => {
+                        setMemberFilters({...memberFilters, photoConsent: e.target.value});
+                        setCurrentPage(1);
+                      }}
+                      className="w-full sm:w-auto px-3 py-2 border rounded-lg text-sm dark:bg-gray-800 dark:border-gray-600"
+                    >
+                      <option value="all">All (Photo Consent)</option>
+                      <option value="minors-only">👶 Minors Only</option>
+                      <option value="with-consent">✅ With Consent</option>
+                      <option value="without-consent">❌ Without Consent</option>
+                      <option value="adults-only">🧑 Adults Only</option>
+                    </select>
+                    
                     {/* Clear filters button */}
-                    {(memberFilters.invoiceStatus !== 'all' || memberFilters.hasFamily !== 'all' || searchQuery) && (
+                    {(memberFilters.invoiceStatus !== 'all' || memberFilters.hasFamily !== 'all' || memberFilters.photoConsent !== 'all' || searchQuery) && (
                       <button
                         onClick={() => {
                           setMemberFilters({
                             invoiceStatus: 'all',
                             membershipType: 'all',
                             trainingGroup: 'all',
-                            hasFamily: 'all'
+                            hasFamily: 'all',
+                            photoConsent: 'all'
                           });
                           setSearchQuery('');
                           setCurrentPage(1);
@@ -1474,6 +1491,7 @@ const AdminDashboard = () => {
                     {/* Download Filtered List */}
                     <button
                       onClick={() => {
+                        const currentYear = new Date().getFullYear();
                         // Get filtered users based on current filters
                         const filteredForDownload = users.filter(user => {
                           // Search filter
@@ -1498,20 +1516,37 @@ const AdminDashboard = () => {
                             if (memberFilters.hasFamily === 'yes' && !hasFamily) return false;
                             if (memberFilters.hasFamily === 'no' && hasFamily) return false;
                           }
+                          // Photo consent filter
+                          if (memberFilters.photoConsent !== 'all') {
+                            const userAge = user.yearOfBirth ? currentYear - parseInt(user.yearOfBirth) : 99;
+                            const isMinor = userAge < 18;
+                            const hasConsent = user.photoConsent === true;
+                            
+                            if (memberFilters.photoConsent === 'minors-only' && !isMinor) return false;
+                            if (memberFilters.photoConsent === 'adults-only' && isMinor) return false;
+                            if (memberFilters.photoConsent === 'with-consent' && (!isMinor || !hasConsent)) return false;
+                            if (memberFilters.photoConsent === 'without-consent' && (!isMinor || hasConsent)) return false;
+                          }
                           return true;
                         });
                         
-                        // Create CSV
-                        const headers = ['Name', 'Email', 'Phone', 'Invoice Status', 'Family Members'];
+                        // Create CSV with photo consent column
+                        const headers = ['Name', 'Email', 'Phone', 'Year of Birth', 'Age', 'Photo Consent', 'Invoice Status', 'Family Members'];
                         const rows = filteredForDownload.map(user => {
                           const userInvoices = invoices.filter(inv => inv.userId === user.id);
                           const hasUnpaid = userInvoices.some(inv => inv.status === 'unpaid');
                           const invoiceStatus = userInvoices.length === 0 ? 'No invoices' : (hasUnpaid ? 'Has unpaid' : 'All paid');
                           const familyCount = user.familyMembers?.length || 0;
+                          const userAge = user.yearOfBirth ? currentYear - parseInt(user.yearOfBirth) : 'N/A';
+                          const isMinor = typeof userAge === 'number' && userAge < 18;
+                          const consentStatus = !isMinor ? 'N/A (Adult)' : (user.photoConsent === true ? 'Yes' : 'No');
                           return [
                             user.fullName || '',
                             user.email || '',
                             user.phone || '',
+                            user.yearOfBirth || '',
+                            userAge,
+                            consentStatus,
                             invoiceStatus,
                             familyCount
                           ].map(val => `"${String(val).replace(/"/g, '""')}"`).join(',');
@@ -1574,6 +1609,19 @@ const AdminDashboard = () => {
                         if (memberFilters.hasFamily === 'no' && hasFamily) return false;
                       }
                       
+                      // Photo consent filter
+                      if (memberFilters.photoConsent !== 'all') {
+                        const currentYear = new Date().getFullYear();
+                        const userAge = user.yearOfBirth ? currentYear - parseInt(user.yearOfBirth) : 99;
+                        const isMinor = userAge < 18;
+                        const hasConsent = user.photoConsent === true;
+                        
+                        if (memberFilters.photoConsent === 'minors-only' && !isMinor) return false;
+                        if (memberFilters.photoConsent === 'adults-only' && isMinor) return false;
+                        if (memberFilters.photoConsent === 'with-consent' && (!isMinor || !hasConsent)) return false;
+                        if (memberFilters.photoConsent === 'without-consent' && (!isMinor || hasConsent)) return false;
+                      }
+                      
                       return true;
                     });
 
@@ -1592,13 +1640,34 @@ const AdminDashboard = () => {
                     return (
                       <>
                         {/* Member List */}
-                        {currentMembers.map((user) => (
+                        {currentMembers.map((user) => {
+                          const currentYear = new Date().getFullYear();
+                          const userAge = user.yearOfBirth ? currentYear - parseInt(user.yearOfBirth) : null;
+                          const isMinor = userAge !== null && userAge < 18;
+                          const hasConsent = user.photoConsent === true;
+                          
+                          return (
                       <div key={user.id} className="p-3 sm:p-4 border-2 border-gray-200 dark:border-gray-700 rounded-lg">
                         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                           <div className="flex-1 min-w-0">
-                            <p className="font-semibold text-gray-900 dark:text-white truncate">{user.fullName}</p>
+                            <div className="flex items-center gap-2 flex-wrap">
+                              <p className="font-semibold text-gray-900 dark:text-white truncate">{user.fullName}</p>
+                              {isMinor && (
+                                <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${
+                                  hasConsent 
+                                    ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400' 
+                                    : 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400'
+                                }`}>
+                                  {hasConsent ? '📸 ✓' : '📸 ✗'}
+                                </span>
+                              )}
+                            </div>
                             <p className="text-sm text-gray-600 dark:text-gray-400 truncate">{user.email}</p>
-                            <p className="text-xs text-gray-500 dark:text-gray-400">{user.phone || 'No phone'}</p>
+                            <p className="text-xs text-gray-500 dark:text-gray-400">
+                              {user.phone || 'No phone'}
+                              {user.yearOfBirth && ` • Born: ${user.yearOfBirth}`}
+                              {userAge !== null && ` (${userAge} yrs)`}
+                            </p>
                           </div>
                           <div className="flex gap-2 w-full sm:w-auto">
                             <button
@@ -1636,7 +1705,8 @@ const AdminDashboard = () => {
                           </div>
                         </div>
                       </div>
-                    ))}
+                          );
+                        })}
 
                         {/* Pagination Controls */}
                         {totalPages > 1 && (
