@@ -12,8 +12,18 @@ export const useAuth = () => {
 };
 
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
+  const [user, setUserState] = useState(null);
   const [loading, setLoading] = useState(true);
+
+  // Custom setUser that also updates localStorage
+  const setUser = (userData) => {
+    setUserState(userData);
+    if (userData) {
+      localStorage.setItem('user', JSON.stringify(userData));
+    } else {
+      localStorage.removeItem('user');
+    }
+  };
 
   useEffect(() => {
     const checkAuth = () => {
@@ -21,7 +31,7 @@ export const AuthProvider = ({ children }) => {
       const token = localStorage.getItem('token');
       
       if (storedUser && token) {
-        setUser(JSON.parse(storedUser));
+        setUserState(JSON.parse(storedUser));
       }
       
       setLoading(false);
