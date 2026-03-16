@@ -1,7 +1,7 @@
 # Serbian Cultural Association (SKUD Täby) - PRD
 
 ## Original Problem Statement
-Build and maintain a comprehensive membership management platform for the Serbian Cultural Association in Täby, Sweden. The platform includes member registration, invoice management, event management, content management (news, gallery, Serbian stories), and an admin panel with role-based access control.
+Build and maintain a comprehensive membership management platform for the Serbian Cultural Association in Täby, Sweden. The platform includes member registration, invoice management, event management, content management (news, gallery, Serbian stories), document management, and an admin panel with role-based access control.
 
 ## Current Application Architecture
 - **Frontend:** React with TailwindCSS, Shadcn UI components
@@ -20,6 +20,23 @@ Build and maintain a comprehensive membership management platform for the Serbia
 - **Documentation:** /app/DEPLOYMENT.md
 
 ## What's Been Implemented
+
+### Document Management System (COMPLETED - Mar 16, 2026)
+- **Three Document Types:**
+  1. **Public Library** - Generic documents for all members (training schedules, forms, rules)
+  2. **Member Personal Documents** - Private documents for individual members (certificates, contracts)
+  3. **Association Documents** - Official organizational documents (bylaws, reports, minutes)
+- **Features:**
+  - File upload with validation (PDF, Word, Excel, PowerPoint, Images, Text - max 50MB)
+  - Category organization and search
+  - Bulk upload to multiple members
+  - Version history for association documents
+  - Download tracking
+  - Email notifications for personal document assignments
+- **Backend:** `/app/backend/routes/documents.py`
+- **Frontend Admin:** `/app/frontend/src/components/admin/DocumentsTab.jsx`
+- **Frontend User:** `/app/frontend/src/components/UserDocumentsSection.jsx`
+- **API Service:** `/app/frontend/src/services/api.js` (documentsAPI)
 
 ### Performance Optimizations (COMPLETED - Mar 6-9, 2026)
 - **Hero Background Optimization**:
@@ -188,8 +205,11 @@ Build and maintain a comprehensive membership management platform for the Serbia
 - `/app/backend/routes/family.py` - Family membership API
 - `/app/backend/routes/admin.py` - Admin endpoints
 - `/app/backend/routes/settings.py` - Settings API
+- `/app/backend/routes/documents.py` - Document management API (NEW)
 - `/app/backend/models.py` - Data models
 - `/app/frontend/src/components/FamilyMembersSection.jsx` - Family UI
+- `/app/frontend/src/components/UserDocumentsSection.jsx` - User documents UI (NEW)
+- `/app/frontend/src/components/admin/DocumentsTab.jsx` - Admin documents UI (NEW)
 - `/app/frontend/src/pages/AdminDashboard.js` - Admin panel (needs refactoring)
 - `/app/frontend/src/components/Footer.js` - Public footer with visibility
 
@@ -197,6 +217,7 @@ Build and maintain a comprehensive membership management platform for the Serbia
 - `users`: Includes `primaryAccountId`, `dependentMembers[]`, `relationship`
 - `invoices`: Uses `userIds[]` for multi-member support
 - `platform_settings`: Includes `visibility` object
+- `documents`: NEW - `type`, `title`, `description`, `category`, `fileUrl`, `assignedTo[]`, `visibility`, `version`
 
 ## Test Credentials
 - Super Admin: `vladanmitic@gmail.com` / `Admin123!`
@@ -209,6 +230,7 @@ Build and maintain a comprehensive membership management platform for the Serbia
 
 ### P1 - High Priority
 - Continue refactoring `AdminDashboard.js` (remaining tabs: Members, Invoices, Content, Settings, UserManagement, PlatformSettings)
+- Document Approval Workflow System (user requested - sequential approval, PDF uploads, comments, deadlines, reminders, audit trail)
 
 ### P2 - Medium Priority
 - User impersonation auditing

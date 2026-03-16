@@ -8,9 +8,10 @@ import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../components/ui/tabs';
 import { Badge } from '../components/ui/badge';
 import { toast } from 'sonner';
-import { User, FileText, Calendar, AlertCircle, Users } from 'lucide-react';
+import { User, FileText, Calendar, AlertCircle, Users, FolderOpen } from 'lucide-react';
 import { userAPI, invoicesAPI, eventsAPI } from '../services/api';
 import FamilyMembersSection from '../components/FamilyMembersSection';
+import UserDocumentsSection from '../components/UserDocumentsSection';
 
 // Password Change Component
 const PasswordChangeForm = () => {
@@ -372,26 +373,36 @@ const Dashboard = () => {
         </h1>
 
         <Tabs defaultValue="invoices" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-5 max-w-3xl">
+          <TabsList className="grid w-full grid-cols-6 max-w-4xl">
             <TabsTrigger value="invoices">
               <FileText className="h-4 w-4 mr-2" />
-              {t('dashboard.invoices')}
+              <span className="hidden sm:inline">{t('dashboard.invoices')}</span>
+              <span className="sm:hidden">Bills</span>
             </TabsTrigger>
             <TabsTrigger value="trainings">
               <Calendar className="h-4 w-4 mr-2" />
-              {t('dashboard.trainingsTab')}
+              <span className="hidden sm:inline">{t('dashboard.trainingsTab')}</span>
+              <span className="sm:hidden">Events</span>
+            </TabsTrigger>
+            <TabsTrigger value="documents" data-testid="documents-tab">
+              <FolderOpen className="h-4 w-4 mr-2" />
+              <span className="hidden sm:inline">{t('dashboard.documentsTab') || 'Documents'}</span>
+              <span className="sm:hidden">Docs</span>
             </TabsTrigger>
             <TabsTrigger value="family" data-testid="family-tab">
               <Users className="h-4 w-4 mr-2" />
-              {t('dashboard.familyTab') || 'Family'}
+              <span className="hidden sm:inline">{t('dashboard.familyTab') || 'Family'}</span>
+              <span className="sm:hidden">Family</span>
             </TabsTrigger>
             <TabsTrigger value="membership">
               <AlertCircle className="h-4 w-4 mr-2" />
-              {t('dashboard.membership')}
+              <span className="hidden sm:inline">{t('dashboard.membership')}</span>
+              <span className="sm:hidden">Info</span>
             </TabsTrigger>
             <TabsTrigger value="personal">
               <User className="h-4 w-4 mr-2" />
-              {t('dashboard.personalDataTab')}
+              <span className="hidden sm:inline">{t('dashboard.personalDataTab')}</span>
+              <span className="sm:hidden">Profile</span>
             </TabsTrigger>
           </TabsList>
 
@@ -779,6 +790,11 @@ const Dashboard = () => {
           {/* Family Members Tab */}
           <TabsContent value="family">
             <FamilyMembersSection t={t} user={user} />
+          </TabsContent>
+
+          {/* Documents Tab */}
+          <TabsContent value="documents">
+            <UserDocumentsSection t={t} />
           </TabsContent>
 
           {/* Membership Tab */}

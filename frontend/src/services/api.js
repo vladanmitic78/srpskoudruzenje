@@ -530,4 +530,105 @@ export const familyAPI = {
   },
 };
 
+// ==================== Documents APIs ====================
+export const documentsAPI = {
+  // === Public Documents ===
+  getPublicDocuments: async (category = null, search = null) => {
+    const params = new URLSearchParams();
+    if (category) params.append('category', category);
+    if (search) params.append('search', search);
+    const response = await api.get(`/documents/public?${params.toString()}`);
+    return response.data;
+  },
+  
+  uploadPublicDocument: async (formData) => {
+    const response = await api.post('/documents/public', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' }
+    });
+    return response.data;
+  },
+  
+  updatePublicDocument: async (docId, formData) => {
+    const response = await api.put(`/documents/public/${docId}`, formData, {
+      headers: { 'Content-Type': 'multipart/form-data' }
+    });
+    return response.data;
+  },
+  
+  deletePublicDocument: async (docId) => {
+    const response = await api.delete(`/documents/public/${docId}`);
+    return response.data;
+  },
+  
+  // === Personal Documents ===
+  getMyPersonalDocuments: async () => {
+    const response = await api.get('/documents/personal');
+    return response.data;
+  },
+  
+  adminGetPersonalDocuments: async (userId = null) => {
+    const params = userId ? `?user_id=${userId}` : '';
+    const response = await api.get(`/documents/personal/admin${params}`);
+    return response.data;
+  },
+  
+  uploadPersonalDocument: async (formData) => {
+    const response = await api.post('/documents/personal', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' }
+    });
+    return response.data;
+  },
+  
+  bulkUploadPersonalDocument: async (formData) => {
+    const response = await api.post('/documents/personal/bulk', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' }
+    });
+    return response.data;
+  },
+  
+  deletePersonalDocument: async (docId) => {
+    const response = await api.delete(`/documents/personal/${docId}`);
+    return response.data;
+  },
+  
+  // === Association Documents ===
+  getAssociationDocuments: async (visibility = null, category = null) => {
+    const params = new URLSearchParams();
+    if (visibility) params.append('visibility', visibility);
+    if (category) params.append('category', category);
+    const response = await api.get(`/documents/association?${params.toString()}`);
+    return response.data;
+  },
+  
+  uploadAssociationDocument: async (formData) => {
+    const response = await api.post('/documents/association', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' }
+    });
+    return response.data;
+  },
+  
+  updateAssociationDocument: async (docId, formData) => {
+    const response = await api.put(`/documents/association/${docId}`, formData, {
+      headers: { 'Content-Type': 'multipart/form-data' }
+    });
+    return response.data;
+  },
+  
+  deleteAssociationDocument: async (docId) => {
+    const response = await api.delete(`/documents/association/${docId}`);
+    return response.data;
+  },
+  
+  // === Statistics ===
+  getDocumentStats: async () => {
+    const response = await api.get('/documents/stats');
+    return response.data;
+  },
+  
+  // === File Download ===
+  getFileUrl: (fileUrl) => {
+    return `${BACKEND_URL}${fileUrl}`;
+  }
+};
+
 export default api;

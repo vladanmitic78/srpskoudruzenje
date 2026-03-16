@@ -6,7 +6,7 @@ import { Navigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../components/ui/tabs';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '../components/ui/dialog';
-import { Users, FileText, Calendar, Settings, BarChart, Palette, Upload, Mail, BookOpen, Server, UserCog, UsersRound } from 'lucide-react';
+import { Users, FileText, Calendar, Settings, BarChart, Palette, Upload, Mail, BookOpen, Server, UserCog, UsersRound, FolderOpen } from 'lucide-react';
 import { adminAPI, eventsAPI, invoicesAPI, newsAPI, contentAPI, storiesAPI, galleryAPI, settingsAPI, userAPI } from '../services/api';
 import { toast } from 'sonner';
 import { Button } from '../components/ui/button';
@@ -16,6 +16,7 @@ import AdminFamilyManagement from '../components/AdminFamilyManagement';
 import AttendanceManager from '../components/AttendanceManager';
 import AttendanceReportGenerator from '../components/AttendanceReportGenerator';
 import { BrandingTab, EventsTab } from '../components/admin';
+import DocumentsTab from '../components/admin/DocumentsTab';
 
 // Admin Password Change Component
 const AdminPasswordChangeForm = ({ t }) => {
@@ -1331,6 +1332,11 @@ const AdminDashboard = () => {
                 {t('admin.tabs.adminManagement')}
               </TabsTrigger>
             )}
+            {/* Documents tab - Admin and Super Admin */}
+            <TabsTrigger value="documents" data-testid="admin-documents-tab">
+              <FolderOpen className="h-4 w-4 mr-2" />
+              Documents
+            </TabsTrigger>
           </TabsList>
 
           {/* Members Tab */}
@@ -3267,6 +3273,11 @@ const AdminDashboard = () => {
               </Card>
             </TabsContent>
           )}
+
+          {/* Documents Tab */}
+          <TabsContent value="documents" className="space-y-6">
+            <DocumentsTab t={t} />
+          </TabsContent>
 
         </Tabs>
 

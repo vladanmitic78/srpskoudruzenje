@@ -15,7 +15,7 @@ from functools import lru_cache
 import asyncio
 
 # Import routes
-from routes import auth, users, news, events, invoices, gallery, stories, settings, admin, contact, content, family
+from routes import auth, users, news, events, invoices, gallery, stories, settings, admin, contact, content, family, documents
 
 # Import scheduler
 from scheduler import start_scheduler, stop_scheduler
@@ -76,6 +76,7 @@ api_router.include_router(admin.router, prefix="/admin", tags=["Admin"])
 api_router.include_router(contact.router, prefix="/contact", tags=["Contact"])
 api_router.include_router(content.router, prefix="/content", tags=["Content Management"])
 api_router.include_router(family.router, prefix="/family", tags=["Family Members"])
+api_router.include_router(documents.router, prefix="/documents", tags=["Documents"])
 
 # Import cache
 from utils.cache import cache, branding_key, CACHE_TTL
