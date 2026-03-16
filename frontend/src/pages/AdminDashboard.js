@@ -1257,7 +1257,7 @@ const AdminDashboard = () => {
           </div>
 
           {/* Desktop Tabs - Show on large screens */}
-          <TabsList className={`hidden lg:grid w-full gap-y-4 ${
+          <TabsList className={`hidden lg:grid w-full gap-y-1 ${
             isSuperAdmin ? 'grid-cols-9 max-w-7xl' : 
             isModerator ? 'grid-cols-2 max-w-xl' : 
             'grid-cols-6 max-w-4xl'
