@@ -243,6 +243,28 @@ Build and maintain a comprehensive membership management platform for the Serbia
 
 ## Recent Updates (March 2026)
 
+### Photo Consent for Minors (COMPLETED - Mar 16, 2026)
+- **Feature**: Legal compliance requirement for photographing children
+- **Implementation**:
+  - **Backend**: Added `photoConsent` field to user model, validation for minors (<18)
+  - **Admin Form**: Photo consent checkbox appears when adding minors, "Send Consent Reminders" button
+  - **User Form**: Photo consent checkbox appears when adding minors
+  - **Consent Banner**: Users see a notification banner if they have minors without consent
+  - **Mass Notification**: Admin can send email reminders to ALL parents with minors without consent
+- **API Endpoints**:
+  - `POST /api/family/admin/send-consent-reminders` - Send reminders to all parents
+  - `GET /api/family/minors-without-consent` - Get list of minors without consent
+  - `PUT /api/family/members/{id}/photo-consent` - Update consent for a specific minor
+- **Files Updated**:
+  - `/app/backend/routes/family.py` - Photo consent logic and endpoints
+  - `/app/backend/models.py` - Added `photoConsent: bool` field
+  - `/app/frontend/src/components/AdminFamilyManagement.jsx` - Admin form with consent checkbox and reminders button
+  - `/app/frontend/src/components/FamilyMembersSection.jsx` - User form with consent checkbox and banner
+  - `/app/frontend/src/services/api.js` - API functions for consent management
+  - `/app/frontend/src/utils/translations.js` - Translations for EN, SV, SR-Latin, SR-Cyrillic
+- **Testing**: 100% pass rate (8/8 backend tests, all frontend UI verified)
+- **Test File**: `/app/backend/tests/test_photo_consent.py`
+
 ### Bulk Family Member Add Bug Fix (COMPLETED - Mar 9, 2026)
 - **Issue**: When adding multiple children without email, only the first one was added successfully
 - **Root Cause**: MongoDB unique sparse index on `email` field was treating `null` as a value, causing duplicate key errors when multiple children had `email: null`
