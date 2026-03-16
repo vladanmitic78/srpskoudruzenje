@@ -17,8 +17,7 @@ import {
   FileSpreadsheet,
   FileImage,
   File,
-  Clock,
-  Eye
+  Clock
 } from 'lucide-react';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
@@ -99,6 +98,13 @@ const UserDocumentsSection = ({ t }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [categoryFilter, setCategoryFilter] = useState('all');
   const [categories, setCategories] = useState([]);
+  
+  // Helper function to get translation with fallback
+  const getText = (key, fallback) => {
+    if (!t) return fallback;
+    const result = t(`dashboard.documents.${key}`);
+    return result && !result.includes('dashboard.documents.') ? result : fallback;
+  };
 
   useEffect(() => {
     fetchDocuments();
@@ -167,15 +173,15 @@ const UserDocumentsSection = ({ t }) => {
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
           <h2 className="text-2xl font-bold text-gray-900">
-            {t?.documents?.title || 'My Documents'}
+            {getText('title', 'My Documents')}
           </h2>
           <p className="text-gray-500 text-sm mt-1">
-            {t?.documents?.subtitle || 'Access your personal and shared documents'}
+            {getText('subtitle', 'Access your personal and shared documents')}
           </p>
         </div>
         <div className="text-center">
           <p className="font-bold text-lg">{totalDocs}</p>
-          <p className="text-gray-500 text-sm">{t?.documents?.totalDocs || 'Available Docs'}</p>
+          <p className="text-gray-500 text-sm">{getText('totalDocs', 'Available Docs')}</p>
         </div>
       </div>
 
@@ -184,19 +190,19 @@ const UserDocumentsSection = ({ t }) => {
         <TabsList className="grid w-full grid-cols-3">
           <TabsTrigger value="personal" className="flex items-center gap-2">
             <User className="h-4 w-4" />
-            <span className="hidden sm:inline">{t?.documents?.myDocs || 'My Documents'}</span>
+            <span className="hidden sm:inline">{getText('myDocs', 'My Documents')}</span>
             <span className="sm:hidden">Mine</span>
             <Badge variant="secondary" className="ml-1">{personalDocs.length}</Badge>
           </TabsTrigger>
           <TabsTrigger value="public" className="flex items-center gap-2">
             <FolderOpen className="h-4 w-4" />
-            <span className="hidden sm:inline">{t?.documents?.library || 'Library'}</span>
+            <span className="hidden sm:inline">{getText('library', 'Library')}</span>
             <span className="sm:hidden">Library</span>
             <Badge variant="secondary" className="ml-1">{publicDocs.length}</Badge>
           </TabsTrigger>
           <TabsTrigger value="association" className="flex items-center gap-2">
             <Building2 className="h-4 w-4" />
-            <span className="hidden sm:inline">{t?.documents?.association || 'Association'}</span>
+            <span className="hidden sm:inline">{getText('association', 'Association')}</span>
             <span className="sm:hidden">Org</span>
             <Badge variant="secondary" className="ml-1">{associationDocs.length}</Badge>
           </TabsTrigger>
@@ -208,10 +214,10 @@ const UserDocumentsSection = ({ t }) => {
             <CardHeader>
               <CardTitle className="text-lg flex items-center gap-2">
                 <User className="h-5 w-5" />
-                {t?.documents?.personalTitle || 'My Personal Documents'}
+                {getText('personalTitle', 'My Personal Documents')}
               </CardTitle>
               <CardDescription>
-                {t?.documents?.personalDesc || 'Documents specifically assigned to you'}
+                {getText('personalDesc', 'Documents specifically assigned to you')}
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -220,7 +226,7 @@ const UserDocumentsSection = ({ t }) => {
               ) : personalDocs.length === 0 ? (
                 <div className="text-center py-8 text-gray-500">
                   <User className="h-12 w-12 mx-auto mb-2 opacity-50" />
-                  <p>{t?.documents?.noPersonal || 'No personal documents yet'}</p>
+                  <p>{getText('noPersonal', 'No personal documents yet')}</p>
                   <p className="text-xs mt-1">Documents assigned to you by administrators will appear here</p>
                 </div>
               ) : (
@@ -244,10 +250,10 @@ const UserDocumentsSection = ({ t }) => {
             <CardHeader>
               <CardTitle className="text-lg flex items-center gap-2">
                 <FolderOpen className="h-5 w-5" />
-                {t?.documents?.libraryTitle || 'Document Library'}
+                {getText('libraryTitle', 'Document Library')}
               </CardTitle>
               <CardDescription>
-                {t?.documents?.libraryDesc || 'Shared documents available to all members'}
+                {getText('libraryDesc', 'Shared documents available to all members')}
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -256,7 +262,7 @@ const UserDocumentsSection = ({ t }) => {
                 <div className="relative flex-1">
                   <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
                   <Input
-                    placeholder={t?.documents?.search || 'Search documents...'}
+                    placeholder={getText('search', 'Search documents...')}
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     className="pl-9"
@@ -268,7 +274,7 @@ const UserDocumentsSection = ({ t }) => {
                       <SelectValue placeholder="Category" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="all">{t?.documents?.allCategories || 'All Categories'}</SelectItem>
+                      <SelectItem value="all">{getText('allCategories', 'All Categories')}</SelectItem>
                       {categories.map(cat => (
                         <SelectItem key={cat} value={cat}>{cat}</SelectItem>
                       ))}
@@ -282,7 +288,7 @@ const UserDocumentsSection = ({ t }) => {
               ) : filteredPublicDocs.length === 0 ? (
                 <div className="text-center py-8 text-gray-500">
                   <FolderOpen className="h-12 w-12 mx-auto mb-2 opacity-50" />
-                  <p>{searchQuery ? 'No documents match your search' : (t?.documents?.noPublic || 'No public documents available')}</p>
+                  <p>{searchQuery ? 'No documents match your search' : getText('noPublic', 'No public documents available')}</p>
                 </div>
               ) : (
                 <div className="grid gap-3 md:grid-cols-2">
@@ -305,10 +311,10 @@ const UserDocumentsSection = ({ t }) => {
             <CardHeader>
               <CardTitle className="text-lg flex items-center gap-2">
                 <Building2 className="h-5 w-5" />
-                {t?.documents?.associationTitle || 'Association Documents'}
+                {getText('associationTitle', 'Association Documents')}
               </CardTitle>
               <CardDescription>
-                {t?.documents?.associationDesc || 'Official organizational documents and policies'}
+                {getText('associationDesc', 'Official organizational documents and policies')}
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -317,7 +323,7 @@ const UserDocumentsSection = ({ t }) => {
               ) : associationDocs.length === 0 ? (
                 <div className="text-center py-8 text-gray-500">
                   <Building2 className="h-12 w-12 mx-auto mb-2 opacity-50" />
-                  <p>{t?.documents?.noAssociation || 'No association documents available'}</p>
+                  <p>{getText('noAssociation', 'No association documents available')}</p>
                 </div>
               ) : (
                 <div className="grid gap-3 md:grid-cols-2">

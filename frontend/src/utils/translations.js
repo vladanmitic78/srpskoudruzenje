@@ -148,6 +148,38 @@ const translations = {
         passwordTooShort: 'Nova lozinka mora imati najmanje 8 karaktera',
         success: 'Lozinka uspešno promenjena',
         error: 'Greška pri promeni lozinke'
+      },
+      documentsTab: 'Dokumenti',
+      documents: {
+        title: 'Moji dokumenti',
+        subtitle: 'Pristupite ličnim i zajedničkim dokumentima',
+        totalDocs: 'Dostupni dokumenti',
+        myDocs: 'Moji dokumenti',
+        library: 'Biblioteka',
+        association: 'Udruženje',
+        personalTitle: 'Moji lični dokumenti',
+        personalDesc: 'Dokumenti posebno dodeljeni vama',
+        noPersonal: 'Još nema ličnih dokumenata',
+        libraryTitle: 'Biblioteka dokumenata',
+        libraryDesc: 'Zajednički dokumenti dostupni svim članovima',
+        noPublic: 'Nema dostupnih javnih dokumenata',
+        associationTitle: 'Dokumenti udruženja',
+        associationDesc: 'Zvanični dokumenti organizacije i pravilnici',
+        noAssociation: 'Nema dostupnih dokumenata udruženja',
+        search: 'Pretraži dokumente...',
+        allCategories: 'Sve kategorije',
+        download: 'Preuzmi',
+        upload: 'Otpremi',
+        delete: 'Obriši',
+        categories: {
+          general: 'Opšte',
+          forms: 'Obrasci',
+          rules: 'Pravila i politike',
+          schedules: 'Rasporedi',
+          official: 'Zvanični dokumenti',
+          reports: 'Izveštaji',
+          minutes: 'Zapisnici sa sastanaka'
+        }
       }
     },
     admin: {
@@ -542,6 +574,38 @@ const translations = {
         passwordTooShort: 'Нова лозинка мора имати најмање 8 карактера',
         success: 'Лозинка успешно промењена',
         error: 'Грешка при промени лозинке'
+      },
+      documentsTab: 'Документи',
+      documents: {
+        title: 'Моји документи',
+        subtitle: 'Приступите личним и заједничким документима',
+        totalDocs: 'Доступни документи',
+        myDocs: 'Моји документи',
+        library: 'Библиотека',
+        association: 'Удружење',
+        personalTitle: 'Моји лични документи',
+        personalDesc: 'Документи посебно додељени вама',
+        noPersonal: 'Још нема личних докумената',
+        libraryTitle: 'Библиотека докумената',
+        libraryDesc: 'Заједнички документи доступни свим члановима',
+        noPublic: 'Нема доступних јавних докумената',
+        associationTitle: 'Документи удружења',
+        associationDesc: 'Званични документи организације и правилници',
+        noAssociation: 'Нема доступних докумената удружења',
+        search: 'Претражи документе...',
+        allCategories: 'Све категорије',
+        download: 'Преузми',
+        upload: 'Отпреми',
+        delete: 'Обриши',
+        categories: {
+          general: 'Опште',
+          forms: 'Обрасци',
+          rules: 'Правила и политике',
+          schedules: 'Распореди',
+          official: 'Званични документи',
+          reports: 'Извештаји',
+          minutes: 'Записници са састанака'
+        }
       }
     },
     admin: {
@@ -926,6 +990,38 @@ const translations = {
         passwordTooShort: 'New password must be at least 8 characters',
         success: 'Password changed successfully',
         error: 'Error changing password'
+      },
+      documentsTab: 'Documents',
+      documents: {
+        title: 'My Documents',
+        subtitle: 'Access your personal and shared documents',
+        totalDocs: 'Available Docs',
+        myDocs: 'My Documents',
+        library: 'Library',
+        association: 'Association',
+        personalTitle: 'My Personal Documents',
+        personalDesc: 'Documents specifically assigned to you',
+        noPersonal: 'No personal documents yet',
+        libraryTitle: 'Document Library',
+        libraryDesc: 'Shared documents available to all members',
+        noPublic: 'No public documents available',
+        associationTitle: 'Association Documents',
+        associationDesc: 'Official organizational documents and policies',
+        noAssociation: 'No association documents available',
+        search: 'Search documents...',
+        allCategories: 'All Categories',
+        download: 'Download',
+        upload: 'Upload',
+        delete: 'Delete',
+        categories: {
+          general: 'General',
+          forms: 'Forms',
+          rules: 'Rules & Policies',
+          schedules: 'Schedules',
+          official: 'Official Documents',
+          reports: 'Reports',
+          minutes: 'Meeting Minutes'
+        }
       }
     },
     admin: {
@@ -1320,6 +1416,38 @@ const translations = {
         passwordTooShort: 'Nytt lösenord måste vara minst 8 tecken',
         success: 'Lösenordet har ändrats',
         error: 'Fel vid ändring av lösenord'
+      },
+      documentsTab: 'Dokument',
+      documents: {
+        title: 'Mina dokument',
+        subtitle: 'Få tillgång till dina personliga och delade dokument',
+        totalDocs: 'Tillgängliga dokument',
+        myDocs: 'Mina dokument',
+        library: 'Bibliotek',
+        association: 'Förening',
+        personalTitle: 'Mina personliga dokument',
+        personalDesc: 'Dokument specifikt tilldelade till dig',
+        noPersonal: 'Inga personliga dokument ännu',
+        libraryTitle: 'Dokumentbibliotek',
+        libraryDesc: 'Delade dokument tillgängliga för alla medlemmar',
+        noPublic: 'Inga offentliga dokument tillgängliga',
+        associationTitle: 'Föreningsdokument',
+        associationDesc: 'Officiella organisationsdokument och policyer',
+        noAssociation: 'Inga föreningsdokument tillgängliga',
+        search: 'Sök dokument...',
+        allCategories: 'Alla kategorier',
+        download: 'Ladda ner',
+        upload: 'Ladda upp',
+        delete: 'Radera',
+        categories: {
+          general: 'Allmänt',
+          forms: 'Formulär',
+          rules: 'Regler och policyer',
+          schedules: 'Scheman',
+          official: 'Officiella dokument',
+          reports: 'Rapporter',
+          minutes: 'Mötesprotokoll'
+        }
       }
     },
     admin: {
