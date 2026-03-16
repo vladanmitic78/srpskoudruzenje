@@ -535,19 +535,16 @@ const DocumentsTab = ({ t }) => {
             <FolderOpen className="h-4 w-4" />
             <span className="hidden sm:inline">{getText('publicLibrary', 'Public Library')}</span>
             <span className="sm:hidden">Public</span>
-            <Badge variant="secondary" className="ml-1">{stats?.counts.public || 0}</Badge>
           </TabsTrigger>
           <TabsTrigger value="personal" className="flex items-center gap-2">
             <Users className="h-4 w-4" />
             <span className="hidden sm:inline">{getText('memberDocs', 'Member Docs')}</span>
             <span className="sm:hidden">Personal</span>
-            <Badge variant="secondary" className="ml-1">{stats?.counts.personal || 0}</Badge>
           </TabsTrigger>
           <TabsTrigger value="association" className="flex items-center gap-2">
             <Building2 className="h-4 w-4" />
             <span className="hidden sm:inline">{getText('association', 'Association')}</span>
             <span className="sm:hidden">Org</span>
-            <Badge variant="secondary" className="ml-1">{stats?.counts.association || 0}</Badge>
           </TabsTrigger>
         </TabsList>
 
