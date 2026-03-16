@@ -160,6 +160,8 @@ class InvoiceBase(BaseModel):
     description: str
     fileUrl: Optional[str] = None
     trainingGroup: Optional[str] = None  # Optional: link invoice to specific group
+    includeVat: Optional[bool] = False  # Whether to include VAT
+    vatRate: Optional[float] = 0  # VAT rate percentage (e.g., 25 for 25%)
 
 class InvoiceCreate(InvoiceBase):
     pass

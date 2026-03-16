@@ -68,12 +68,22 @@ async def create_invoice(
     invoice_id = f"invoice_{int(datetime.utcnow().timestamp() * 1000)}"
     created_at = datetime.utcnow()
     
+    # Calculate VAT amounts
+    base_amount = float(invoice.amount)
+    vat_rate = float(invoice.vatRate) if invoice.includeVat and invoice.vatRate else 0
+    vat_amount = base_amount * (vat_rate / 100) if vat_rate > 0 else 0
+    total_amount = base_amount + vat_amount
+    
     invoice_dict = invoice.dict()
     invoice_dict["_id"] = invoice_id
     invoice_dict["userId"] = primary_user_id  # Store primary userId for backward compatibility
     invoice_dict["status"] = "unpaid"
     invoice_dict["paymentDate"] = None
     invoice_dict["createdAt"] = created_at
+    invoice_dict["baseAmount"] = base_amount  # Store base amount before VAT
+    invoice_dict["vatAmount"] = vat_amount  # Store VAT amount
+    invoice_dict["totalAmount"] = total_amount  # Store total with VAT
+    invoice_dict["amount"] = total_amount  # Override amount with total for display
     
     # Generate PDF invoice
     try:
@@ -92,13 +102,14 @@ async def create_invoice(
             member_name=user.get("fullName", user.get("username", "Member")),
             member_email=user.get("email", ""),
             description=invoice.description,
-            amount=float(invoice.amount),
+            amount=total_amount,
             currency=invoice.currency or "SEK",
             due_date=invoice.dueDate,
             created_at=created_at.isoformat(),
             output_path=str(pdf_path),
             status="unpaid",
-            bank_details=bank_details
+            bank_details=bank_details,
+            vat_rate=vat_rate
         )
         
         # Store the file URL and filename in the invoice

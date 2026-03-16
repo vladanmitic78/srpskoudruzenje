@@ -490,7 +490,9 @@ const AdminDashboard = () => {
     userIds: [],
     amount: '',
     dueDate: '',
-    description: ''
+    description: '',
+    includeVat: false,
+    vatRate: '25'
   });
   const [invoiceMemberSearch, setInvoiceMemberSearch] = useState('');
   
@@ -861,17 +863,23 @@ const AdminDashboard = () => {
             userIds: [userId],
             amount: newInvoice.amount,
             dueDate: newInvoice.dueDate,
-            description: newInvoice.description
+            description: newInvoice.description,
+            includeVat: newInvoice.includeVat,
+            vatRate: newInvoice.includeVat ? parseFloat(newInvoice.vatRate) : 0
           });
         }
         toast.success(`Created ${invoiceData.userIds.length} invoices successfully`);
       } else {
-        await invoicesAPI.create(invoiceData);
+        await invoicesAPI.create({
+          ...invoiceData,
+          includeVat: newInvoice.includeVat,
+          vatRate: newInvoice.includeVat ? parseFloat(newInvoice.vatRate) : 0
+        });
         toast.success('Invoice created successfully');
       }
       
       setCreateInvoiceOpen(false);
-      setNewInvoice({ userIds: [], amount: '', dueDate: '', description: '' });
+      setNewInvoice({ userIds: [], amount: '', dueDate: '', description: '', includeVat: false, vatRate: '25' });
       setInvoiceMemberSearch('');
       // Refresh invoices
       const invoicesData = await invoicesAPI.getAll();
@@ -3355,18 +3363,18 @@ const AdminDashboard = () => {
         <Dialog open={createInvoiceOpen} onOpenChange={setCreateInvoiceOpen}>
           <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
             <DialogHeader>
-              <DialogTitle>Create New Invoice</DialogTitle>
-              <p className="text-sm text-gray-500">Select one or more members to create invoices</p>
+              <DialogTitle>{t('admin.createInvoice') || 'Create New Invoice'}</DialogTitle>
+              <p className="text-sm text-gray-500">{t('admin.invoice.selectMembers') || 'Select one or more members to create invoices'}</p>
             </DialogHeader>
             <div className="space-y-4">
               {/* Member Selection */}
               <div>
-                <label className="block text-sm font-medium mb-2">Select Members</label>
+                <label className="block text-sm font-medium mb-2">{t('admin.invoice.selectMembers') || 'Select Members'}</label>
                 
                 {/* Search box for members */}
                 <Input
                   type="text"
-                  placeholder="Search members by name or email..."
+                  placeholder={t('admin.invoice.searchMembers') || 'Search members by name or email...'}
                   value={invoiceMemberSearch}
                   onChange={(e) => setInvoiceMemberSearch(e.target.value)}
                   className="mb-2"
@@ -3376,13 +3384,13 @@ const AdminDashboard = () => {
                 {newInvoice.userIds.length > 0 && (
                   <div className="mb-2 p-2 bg-blue-50 dark:bg-blue-900/20 rounded-lg flex items-center justify-between">
                     <span className="text-sm text-blue-700 dark:text-blue-300">
-                      {newInvoice.userIds.length} member(s) selected
+                      {newInvoice.userIds.length} {t('admin.invoice.membersSelected') || 'member(s) selected'}
                     </span>
                     <button
                       onClick={() => setNewInvoice({...newInvoice, userIds: []})}
                       className="text-xs text-blue-600 hover:text-blue-800"
                     >
-                      Clear all
+                      {t('admin.invoice.clearAll') || 'Clear all'}
                     </button>
                   </div>
                 )}
@@ -3436,7 +3444,7 @@ const AdminDashboard = () => {
                     }}
                     className="text-xs px-2 py-1 bg-gray-100 dark:bg-gray-700 rounded hover:bg-gray-200 dark:hover:bg-gray-600"
                   >
-                    Select All
+                    {t('admin.invoice.selectAll') || 'Select All'}
                   </button>
                   <button
                     type="button"
@@ -3452,25 +3460,25 @@ const AdminDashboard = () => {
                     }}
                     className="text-xs px-2 py-1 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300 rounded hover:bg-green-200"
                   >
-                    Select Without Unpaid
+                    {t('admin.invoice.selectWithoutUnpaid') || 'Select Without Unpaid'}
                   </button>
                 </div>
               </div>
 
               <div>
-                <label className="block text-sm font-medium mb-2">Description</label>
+                <label className="block text-sm font-medium mb-2">{t('admin.invoice.description') || 'Description'}</label>
                 <input
                   type="text"
                   value={newInvoice.description}
                   onChange={(e) => setNewInvoice({...newInvoice, description: e.target.value})}
-                  placeholder="e.g., Članarina 2025 / Membership Fee 2025"
+                  placeholder={t('admin.invoice.descriptionPlaceholder') || 'e.g., Membership Fee 2025'}
                   className="w-full p-2 border rounded dark:bg-gray-800 dark:border-gray-600"
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium mb-2">Amount (SEK)</label>
+                  <label className="block text-sm font-medium mb-2">{t('admin.invoice.amount') || 'Amount (SEK)'}</label>
                   <input
                     type="number"
                     value={newInvoice.amount}
@@ -3481,7 +3489,7 @@ const AdminDashboard = () => {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium mb-2">Due Date</label>
+                  <label className="block text-sm font-medium mb-2">{t('admin.invoice.dueDate') || 'Due Date'}</label>
                   <input
                     type="date"
                     value={newInvoice.dueDate}
@@ -3489,6 +3497,43 @@ const AdminDashboard = () => {
                     className="w-full p-2 border rounded dark:bg-gray-800 dark:border-gray-600"
                   />
                 </div>
+              </div>
+              
+              {/* VAT/MOMS Section */}
+              <div className="flex items-center gap-4 p-3 bg-gray-50 dark:bg-gray-800/50 rounded-lg border">
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={newInvoice.includeVat}
+                    onChange={(e) => setNewInvoice({...newInvoice, includeVat: e.target.checked})}
+                    className="w-4 h-4 rounded border-gray-300 text-[var(--color-primary)]"
+                  />
+                  <span className="text-sm font-medium">{t('admin.invoice.includeVat') || 'Include VAT (MOMS)'}</span>
+                </label>
+                
+                {newInvoice.includeVat && (
+                  <div className="flex items-center gap-2">
+                    <label className="text-sm text-gray-600 dark:text-gray-400">{t('admin.invoice.vatRate') || 'VAT Rate'}:</label>
+                    <input
+                      type="number"
+                      value={newInvoice.vatRate}
+                      onChange={(e) => setNewInvoice({...newInvoice, vatRate: e.target.value})}
+                      placeholder="25"
+                      min="0"
+                      max="100"
+                      className="w-20 p-2 border rounded dark:bg-gray-800 dark:border-gray-600 text-center"
+                    />
+                    <span className="text-sm text-gray-600 dark:text-gray-400">%</span>
+                  </div>
+                )}
+                
+                {newInvoice.includeVat && newInvoice.amount && (
+                  <div className="ml-auto text-sm text-gray-600 dark:text-gray-400">
+                    {t('admin.invoice.total') || 'Total'}: <span className="font-semibold text-gray-900 dark:text-white">
+                      {(parseFloat(newInvoice.amount) * (1 + parseFloat(newInvoice.vatRate || 0) / 100)).toFixed(2)} SEK
+                    </span>
+                  </div>
+                )}
               </div>
 
               <div className="flex gap-2 pt-4">
@@ -3498,18 +3543,18 @@ const AdminDashboard = () => {
                   className="flex-1 px-4 py-2 bg-[var(--color-button-primary)] text-white rounded hover:bg-[var(--color-button-hover)] disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {newInvoice.userIds.length > 1 
-                    ? `Create ${newInvoice.userIds.length} Invoices` 
-                    : 'Create Invoice'}
+                    ? (t('admin.invoice.createInvoices') || 'Create {count} Invoices').replace('{count}', newInvoice.userIds.length)
+                    : (t('admin.invoice.createInvoice') || 'Create Invoice')}
                 </button>
                 <button
                   onClick={() => {
                     setCreateInvoiceOpen(false);
-                    setNewInvoice({ userIds: [], amount: '', dueDate: '', description: '' });
+                    setNewInvoice({ userIds: [], amount: '', dueDate: '', description: '', includeVat: false, vatRate: '25' });
                     setInvoiceMemberSearch('');
                   }}
                   className="flex-1 px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700"
                 >
-                  Cancel
+                  {t('admin.invoice.cancel') || 'Cancel'}
                 </button>
               </div>
             </div>
