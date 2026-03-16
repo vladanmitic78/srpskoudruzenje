@@ -311,12 +311,6 @@ const Dashboard = () => {
         toast.error('Parent information is required for users under 18');
         return;
       }
-      
-      // Photo consent required for minors
-      if (age < 18 && !userData.photoConsent) {
-        toast.error(t('photoConsent.required') || 'Photo consent is required for users under 18');
-        return;
-      }
 
       // Save to backend
       const response = await userAPI.updateProfile(userData);
@@ -1034,7 +1028,7 @@ const Dashboard = () => {
                       </div>
                     </div>
                     
-                    {/* Photo Consent - Required for minors */}
+                    {/* Photo Consent - Optional for minors */}
                     <div className="mt-6 bg-blue-50 dark:bg-blue-900/20 border-2 border-blue-200 dark:border-blue-800 rounded-lg p-4">
                       <div className="flex items-start gap-3">
                         <input
@@ -1047,7 +1041,7 @@ const Dashboard = () => {
                         />
                         <label htmlFor="photoConsent" className="cursor-pointer">
                           <span className="font-semibold text-blue-900 dark:text-blue-100 block">
-                            {t('photoConsent.title') || 'Photo Consent'} *
+                            {t('photoConsent.title') || 'Photo Consent'}
                           </span>
                           <span className="text-sm text-blue-800 dark:text-blue-200">
                             {t('photoConsent.text') || 'I consent to being photographed and pictures being published on the SKUD Täby website and social media channels.'}

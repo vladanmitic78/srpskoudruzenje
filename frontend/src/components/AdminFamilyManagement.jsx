@@ -140,12 +140,6 @@ const AdminFamilyManagement = ({ t, users = [] }) => {
         toast.error(`${t('admin.family.emailRequiredAdult') || 'Email is required for family members 18 years or older'} (Member ${i + 1})`);
         return;
       }
-      
-      // Photo consent required for minors
-      if (memberAge < 18 && !member.photoConsent) {
-        toast.error(`${t('admin.family.photoConsentRequired') || 'Photo consent is required for family members under 18 years old'} (Member ${i + 1})`);
-        return;
-      }
     }
     
     setSubmitting(true);
@@ -594,7 +588,7 @@ const AdminFamilyManagement = ({ t, users = [] }) => {
                         />
                         <label htmlFor={`photoConsent-${index}`} className="cursor-pointer">
                           <span className="font-semibold text-blue-900 dark:text-blue-100 block text-sm">
-                            {t('admin.family.photoConsentTitle') || 'Photo Consent'} *
+                            {t('admin.family.photoConsentTitle') || 'Photo Consent'}
                           </span>
                           <span className="text-xs text-blue-800 dark:text-blue-200">
                             {t('admin.family.photoConsentText') || 'I consent to this child being photographed and pictures being published on the SKUD Täby website and social media channels.'}

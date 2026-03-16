@@ -125,12 +125,6 @@ const FamilyMembersSection = ({ t, user }) => {
       return;
     }
     
-    // Photo consent required for minors (under 18)
-    if (memberAge < 18 && !memberForm.photoConsent) {
-      toast.error(getText('family.photoConsentRequired', 'Photo consent is required for family members under 18 years old'));
-      return;
-    }
-    
     try {
       await familyAPI.addMember(memberForm);
       const message = memberAge < 18 && !memberForm.email
@@ -518,7 +512,7 @@ const FamilyMembersSection = ({ t, user }) => {
                   />
                   <label htmlFor="photoConsent" className="cursor-pointer">
                     <span className="font-semibold text-blue-900 dark:text-blue-100 block mb-1">
-                      {getText('family.photoConsentTitle', 'Photo Consent')} *
+                      {getText('family.photoConsentTitle', 'Photo Consent')}
                     </span>
                     <span className="text-sm text-blue-800 dark:text-blue-200">
                       {getText('family.photoConsentText', 'I consent to my child being photographed and pictures being published on the SKUD Täby website and social media channels.')}
