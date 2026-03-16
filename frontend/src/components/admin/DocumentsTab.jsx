@@ -121,7 +121,8 @@ const UploadDialog = ({
   type, 
   onUpload, 
   users = [],
-  existingCategories = []
+  existingCategories = [],
+  getText = (key, fallback) => fallback
 }) => {
   const [file, setFile] = useState(null);
   const [title, setTitle] = useState('');
@@ -193,10 +194,10 @@ const UploadDialog = ({
 
   const getDialogTitle = () => {
     switch(type) {
-      case 'public': return 'Upload Public Document';
-      case 'personal': return 'Upload Personal Document';
-      case 'association': return 'Upload Association Document';
-      default: return 'Upload Document';
+      case 'public': return getText('uploadPublic', 'Upload Public Document');
+      case 'personal': return getText('uploadPersonal', 'Upload Personal Document');
+      case 'association': return getText('uploadAssociation', 'Upload Association Document');
+      default: return getText('upload', 'Upload Document');
     }
   };
 
@@ -213,7 +214,7 @@ const UploadDialog = ({
         <form onSubmit={handleSubmit} className="space-y-4">
           {/* File Upload */}
           <div>
-            <Label>File *</Label>
+            <Label>{getText('selectFile', 'File')} *</Label>
             <Input
               type="file"
               onChange={(e) => setFile(e.target.files[0])}
@@ -221,28 +222,28 @@ const UploadDialog = ({
               className="mt-1"
             />
             <p className="text-xs text-gray-500 mt-1">
-              Allowed: PDF, Word, Excel, PowerPoint, Images, Text (max 50MB)
+              {getText('fileTypes', 'Allowed: PDF, Word, Excel, PowerPoint, Images, Text (max 50MB)')}
             </p>
           </div>
 
           {/* Title */}
           <div>
-            <Label>Title *</Label>
+            <Label>{getText('documentTitle', 'Title')} *</Label>
             <Input
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              placeholder="Document title"
+              placeholder={getText('documentTitle', 'Document title')}
               className="mt-1"
             />
           </div>
 
           {/* Description */}
           <div>
-            <Label>Description</Label>
+            <Label>{getText('description', 'Description')}</Label>
             <Textarea
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              placeholder="Optional description"
+              placeholder={getText('description', 'Optional description')}
               rows={2}
               className="mt-1"
             />
@@ -251,11 +252,11 @@ const UploadDialog = ({
           {/* Category (for public and association) */}
           {(type === 'public' || type === 'association') && (
             <div>
-              <Label>Category</Label>
+              <Label>{getText('category', 'Category')}</Label>
               <div className="flex gap-2 mt-1">
                 <Select value={category} onValueChange={setCategory}>
                   <SelectTrigger className="flex-1">
-                    <SelectValue placeholder="Select category" />
+                    <SelectValue placeholder={getText('category', 'Select category')} />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="general">General</SelectItem>
@@ -283,15 +284,15 @@ const UploadDialog = ({
           {/* Visibility (for association) */}
           {type === 'association' && (
             <div>
-              <Label>Visibility</Label>
+              <Label>{getText('visibility', 'Visibility')}</Label>
               <Select value={visibility} onValueChange={setVisibility}>
                 <SelectTrigger className="mt-1">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="public">Public (visible to everyone)</SelectItem>
-                  <SelectItem value="members_only">Members Only (logged-in users)</SelectItem>
-                  <SelectItem value="internal">Internal (admins only)</SelectItem>
+                  <SelectItem value="public">{getText('visibilityPublic', 'Public (visible to everyone)')}</SelectItem>
+                  <SelectItem value="members_only">{getText('visibilityMembers', 'Members Only (logged-in users)')}</SelectItem>
+                  <SelectItem value="internal">{getText('visibilityInternal', 'Internal (admins only)')}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -312,12 +313,12 @@ const UploadDialog = ({
                   className="rounded"
                 />
                 <Label htmlFor="bulk-upload" className="cursor-pointer">
-                  Assign to multiple members (bulk)
+                  {getText('bulkUpload', 'Assign to multiple members (bulk)')}
                 </Label>
               </div>
               
               <div>
-                <Label>{isBulk ? 'Select Members *' : 'Select Member *'}</Label>
+                <Label>{isBulk ? getText('selectMembers', 'Select Members') + ' *' : getText('selectMember', 'Select Member') + ' *'}</Label>
                 <div className="mt-1 border rounded-md max-h-48 overflow-y-auto">
                   {users.map(user => (
                     <label 
@@ -344,7 +345,7 @@ const UploadDialog = ({
                 </div>
                 {selectedUsers.length > 0 && (
                   <p className="text-xs text-gray-500 mt-1">
-                    {selectedUsers.length} member(s) selected
+                    {selectedUsers.length} {getText('membersSelected', 'member(s) selected')}
                   </p>
                 )}
               </div>
@@ -353,10 +354,10 @@ const UploadDialog = ({
 
           <DialogFooter>
             <Button type="button" variant="outline" onClick={handleClose}>
-              Cancel
+              {getText('cancel', 'Cancel')}
             </Button>
             <Button type="submit" disabled={uploading}>
-              {uploading ? 'Uploading...' : 'Upload'}
+              {uploading ? getText('uploading', 'Uploading...') : getText('upload', 'Upload')}
             </Button>
           </DialogFooter>
         </form>
@@ -379,6 +380,13 @@ const DocumentsTab = ({ t }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [categoryFilter, setCategoryFilter] = useState('all');
   const [categories, setCategories] = useState([]);
+
+  // Helper function to get admin document translations
+  const getText = (key, fallback) => {
+    if (!t) return fallback;
+    const result = t(`admin.documents.${key}`);
+    return result && !result.includes('admin.documents.') ? result : fallback;
+  };
 
   const fetchDocuments = useCallback(async () => {
     setLoading(true);
@@ -501,20 +509,20 @@ const DocumentsTab = ({ t }) => {
       {/* Header with Stats */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h2 className="text-2xl font-bold text-gray-900">Document Management</h2>
+          <h2 className="text-2xl font-bold text-gray-900">{getText('title', 'Document Management')}</h2>
           <p className="text-gray-500 text-sm mt-1">
-            Manage public, personal, and association documents
+            {getText('subtitle', 'Manage public, personal, and association documents')}
           </p>
         </div>
         {stats && (
           <div className="flex gap-4 text-sm">
             <div className="text-center">
               <p className="font-bold text-lg">{stats.counts.total}</p>
-              <p className="text-gray-500">Total Docs</p>
+              <p className="text-gray-500">{getText('totalDocs', 'Total Docs')}</p>
             </div>
             <div className="text-center">
               <p className="font-bold text-lg">{stats.totalDownloads}</p>
-              <p className="text-gray-500">Downloads</p>
+              <p className="text-gray-500">{getText('downloads', 'Downloads')}</p>
             </div>
           </div>
         )}
@@ -525,19 +533,19 @@ const DocumentsTab = ({ t }) => {
         <TabsList className="grid w-full grid-cols-3">
           <TabsTrigger value="public" className="flex items-center gap-2">
             <FolderOpen className="h-4 w-4" />
-            <span className="hidden sm:inline">Public Library</span>
+            <span className="hidden sm:inline">{getText('publicLibrary', 'Public Library')}</span>
             <span className="sm:hidden">Public</span>
             <Badge variant="secondary" className="ml-1">{stats?.counts.public || 0}</Badge>
           </TabsTrigger>
           <TabsTrigger value="personal" className="flex items-center gap-2">
             <Users className="h-4 w-4" />
-            <span className="hidden sm:inline">Member Docs</span>
+            <span className="hidden sm:inline">{getText('memberDocs', 'Member Docs')}</span>
             <span className="sm:hidden">Personal</span>
             <Badge variant="secondary" className="ml-1">{stats?.counts.personal || 0}</Badge>
           </TabsTrigger>
           <TabsTrigger value="association" className="flex items-center gap-2">
             <Building2 className="h-4 w-4" />
-            <span className="hidden sm:inline">Association</span>
+            <span className="hidden sm:inline">{getText('association', 'Association')}</span>
             <span className="sm:hidden">Org</span>
             <Badge variant="secondary" className="ml-1">{stats?.counts.association || 0}</Badge>
           </TabsTrigger>
@@ -548,12 +556,12 @@ const DocumentsTab = ({ t }) => {
           <Card>
             <CardHeader className="flex flex-row items-center justify-between pb-2">
               <div>
-                <CardTitle className="text-lg">Public Document Library</CardTitle>
-                <CardDescription>Documents accessible to all members</CardDescription>
+                <CardTitle className="text-lg">{getText('publicTitle', 'Public Document Library')}</CardTitle>
+                <CardDescription>{getText('publicDesc', 'Documents accessible to all members')}</CardDescription>
               </div>
               <Button onClick={() => openUploadDialog('public')} className="flex items-center gap-2">
                 <Plus className="h-4 w-4" />
-                Upload
+                {getText('upload', 'Upload')}
               </Button>
             </CardHeader>
             <CardContent>
@@ -562,7 +570,7 @@ const DocumentsTab = ({ t }) => {
                 <div className="relative flex-1">
                   <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
                   <Input
-                    placeholder="Search documents..."
+                    placeholder={getText('search', 'Search documents...')}
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     className="pl-9"
@@ -573,7 +581,7 @@ const DocumentsTab = ({ t }) => {
                     <SelectValue placeholder="Category" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="all">All Categories</SelectItem>
+                    <SelectItem value="all">{getText('allCategories', 'All Categories')}</SelectItem>
                     {categories.map(cat => (
                       <SelectItem key={cat} value={cat}>{cat}</SelectItem>
                     ))}
@@ -587,7 +595,7 @@ const DocumentsTab = ({ t }) => {
               ) : publicDocs.length === 0 ? (
                 <div className="text-center py-8 text-gray-500">
                   <FolderOpen className="h-12 w-12 mx-auto mb-2 opacity-50" />
-                  <p>No public documents yet</p>
+                  <p>{getText('noPublic', 'No public documents yet')}</p>
                 </div>
               ) : (
                 <div className="grid gap-3 md:grid-cols-2">
@@ -610,12 +618,12 @@ const DocumentsTab = ({ t }) => {
           <Card>
             <CardHeader className="flex flex-row items-center justify-between pb-2">
               <div>
-                <CardTitle className="text-lg">Member Personal Documents</CardTitle>
-                <CardDescription>Private documents assigned to specific members</CardDescription>
+                <CardTitle className="text-lg">{getText('personalTitle', 'Member Personal Documents')}</CardTitle>
+                <CardDescription>{getText('personalDesc', 'Private documents assigned to specific members')}</CardDescription>
               </div>
               <Button onClick={() => openUploadDialog('personal')} className="flex items-center gap-2">
                 <Plus className="h-4 w-4" />
-                Upload
+                {getText('upload', 'Upload')}
               </Button>
             </CardHeader>
             <CardContent>
@@ -624,7 +632,7 @@ const DocumentsTab = ({ t }) => {
               ) : personalDocs.length === 0 ? (
                 <div className="text-center py-8 text-gray-500">
                   <Users className="h-12 w-12 mx-auto mb-2 opacity-50" />
-                  <p>No personal documents yet</p>
+                  <p>{getText('noPersonal', 'No personal documents yet')}</p>
                 </div>
               ) : (
                 <div className="grid gap-3 md:grid-cols-2">
@@ -648,12 +656,12 @@ const DocumentsTab = ({ t }) => {
           <Card>
             <CardHeader className="flex flex-row items-center justify-between pb-2">
               <div>
-                <CardTitle className="text-lg">Association Documents</CardTitle>
-                <CardDescription>Official organizational documents</CardDescription>
+                <CardTitle className="text-lg">{getText('associationTitle', 'Association Documents')}</CardTitle>
+                <CardDescription>{getText('associationDesc', 'Official organizational documents')}</CardDescription>
               </div>
               <Button onClick={() => openUploadDialog('association')} className="flex items-center gap-2">
                 <Plus className="h-4 w-4" />
-                Upload
+                {getText('upload', 'Upload')}
               </Button>
             </CardHeader>
             <CardContent>
@@ -662,7 +670,7 @@ const DocumentsTab = ({ t }) => {
               ) : associationDocs.length === 0 ? (
                 <div className="text-center py-8 text-gray-500">
                   <Building2 className="h-12 w-12 mx-auto mb-2 opacity-50" />
-                  <p>No association documents yet</p>
+                  <p>{getText('noAssociation', 'No association documents yet')}</p>
                 </div>
               ) : (
                 <div className="grid gap-3 md:grid-cols-2">
@@ -689,6 +697,7 @@ const DocumentsTab = ({ t }) => {
         onUpload={handleUpload}
         users={users}
         existingCategories={categories}
+        getText={getText}
       />
     </div>
   );

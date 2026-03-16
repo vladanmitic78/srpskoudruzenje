@@ -1335,7 +1335,7 @@ const AdminDashboard = () => {
             {/* Documents tab - Admin and Super Admin */}
             <TabsTrigger value="documents" data-testid="admin-documents-tab">
               <FolderOpen className="h-4 w-4 mr-2" />
-              Documents
+              {t('admin.tabs.documents')}
             </TabsTrigger>
           </TabsList>
 
