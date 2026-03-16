@@ -143,9 +143,11 @@ async def add_family_member(
         {"$push": {"dependentMembers": member_id}}
     )
     
-    # Send notification email
+    # Send notification emails
     try:
         from email_service import send_email
+        import logging
+        logger = logging.getLogger(__name__)
         
         # Determine recipient email - parent's email if child has no email
         notification_email = member_email if member_email else parent_email
@@ -182,6 +184,7 @@ async def add_family_member(
             SKUD Täby Team
             """
             
+            logger.info(f"Sending welcome email to new family member: {member_email}")
             await send_email(
                 to_email=member_email,
                 subject="Welcome to SKUD Täby - Your Account Has Been Created",
@@ -189,53 +192,103 @@ async def add_family_member(
                 text_content=text_content,
                 db=db
             )
-        else:
-            # Child has no email - notify parent
-            html_content = f"""
-            <h2>Family Member Added - Srpsko Kulturno Društvo Täby</h2>
-            <p>Dear {user.get('fullName', 'Parent')},</p>
-            <p>You have successfully added <strong>{member_data.fullName}</strong> as a family member to your account.</p>
-            <p>Since {member_data.fullName} is under 18, all platform communications will be sent to your email address.</p>
-            <p><strong>Member Details:</strong></p>
-            <ul>
-                <li>Name: {member_data.fullName}</li>
-                <li>Year of Birth: {member_data.yearOfBirth}</li>
-                <li>Relationship: {member_data.relationship}</li>
-            </ul>
-            <p>You can manage this family member from your dashboard.</p>
-            <br>
-            <p>Best regards,<br>SKUD Täby Team</p>
-            """
-            
-            text_content = f"""
-            Family Member Added - Srpsko Kulturno Društvo Täby
-            
-            Dear {user.get('fullName', 'Parent')},
-            
-            You have successfully added {member_data.fullName} as a family member to your account.
-            
-            Since {member_data.fullName} is under 18, all platform communications will be sent to your email address.
-            
-            Member Details:
-            - Name: {member_data.fullName}
-            - Year of Birth: {member_data.yearOfBirth}
-            - Relationship: {member_data.relationship}
-            
-            You can manage this family member from your dashboard.
-            
-            Best regards,
-            SKUD Täby Team
-            """
-            
-            await send_email(
-                to_email=parent_email,
-                subject=f"Family Member Added: {member_data.fullName}",
-                html_content=html_content,
-                text_content=text_content,
-                db=db
-            )
+        
+        # Always notify parent about the new family member
+        parent_html = f"""
+        <h2>Family Member Added - Srpsko Kulturno Društvo Täby</h2>
+        <p>Dear {user.get('fullName', 'Parent')},</p>
+        <p>You have successfully added <strong>{member_data.fullName}</strong> as a family member to your account.</p>
+        {'<p>Since ' + member_data.fullName + ' is under 18, all platform communications will be sent to your email address.</p>' if not member_email else '<p>Login credentials have been sent to their email address.</p>'}
+        <p><strong>Member Details:</strong></p>
+        <ul>
+            <li>Name: {member_data.fullName}</li>
+            <li>Year of Birth: {member_data.yearOfBirth}</li>
+            <li>Relationship: {member_data.relationship}</li>
+            <li>Training Group: {member_data.trainingGroup or 'Not assigned'}</li>
+        </ul>
+        <p>You can manage this family member from your dashboard.</p>
+        <br>
+        <p>Best regards,<br>SKUD Täby Team</p>
+        """
+        
+        parent_text = f"""
+        Family Member Added - Srpsko Kulturno Društvo Täby
+        
+        Dear {user.get('fullName', 'Parent')},
+        
+        You have successfully added {member_data.fullName} as a family member to your account.
+        
+        Member Details:
+        - Name: {member_data.fullName}
+        - Year of Birth: {member_data.yearOfBirth}
+        - Relationship: {member_data.relationship}
+        - Training Group: {member_data.trainingGroup or 'Not assigned'}
+        
+        You can manage this family member from your dashboard.
+        
+        Best regards,
+        SKUD Täby Team
+        """
+        
+        logger.info(f"Sending confirmation email to parent: {parent_email}")
+        await send_email(
+            to_email=parent_email,
+            subject=f"Family Member Added: {member_data.fullName}",
+            html_content=parent_html,
+            text_content=parent_text,
+            db=db
+        )
+        
+        # Also notify info@srpskoudruzenjetaby.se about new registration
+        admin_html = f"""
+        <h2>New Family Member Registration - SKUD Täby</h2>
+        <p>A new family member has been registered on the platform.</p>
+        <p><strong>Parent Account:</strong></p>
+        <ul>
+            <li>Name: {user.get('fullName', 'Unknown')}</li>
+            <li>Email: {user.get('email', 'Unknown')}</li>
+        </ul>
+        <p><strong>New Family Member:</strong></p>
+        <ul>
+            <li>Name: {member_data.fullName}</li>
+            <li>Year of Birth: {member_data.yearOfBirth}</li>
+            <li>Relationship: {member_data.relationship}</li>
+            <li>Email: {member_email or 'Using parent email'}</li>
+            <li>Training Group: {member_data.trainingGroup or 'Not assigned'}</li>
+        </ul>
+        <p>Registered at: {datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S')} UTC</p>
+        """
+        
+        admin_text = f"""
+        New Family Member Registration - SKUD Täby
+        
+        Parent Account:
+        - Name: {user.get('fullName', 'Unknown')}
+        - Email: {user.get('email', 'Unknown')}
+        
+        New Family Member:
+        - Name: {member_data.fullName}
+        - Year of Birth: {member_data.yearOfBirth}
+        - Relationship: {member_data.relationship}
+        - Email: {member_email or 'Using parent email'}
+        - Training Group: {member_data.trainingGroup or 'Not assigned'}
+        
+        Registered at: {datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S')} UTC
+        """
+        
+        logger.info("Sending notification to info@srpskoudruzenjetaby.se about new family member")
+        await send_email(
+            to_email="info@srpskoudruzenjetaby.se",
+            subject=f"New Family Member Registration: {member_data.fullName}",
+            html_content=admin_html,
+            text_content=admin_text,
+            db=db
+        )
+        
     except Exception as e:
         print(f"Failed to send email: {e}")
+        import traceback
+        traceback.print_exc()
         # Don't fail the request if email fails
     
     # Return the created member (without sensitive data)
@@ -570,11 +623,14 @@ async def admin_add_family_member(
         {"$push": {"dependentMembers": member_id}}
     )
     
-    # Send notification email
+    # Send notification emails
     try:
         from email_service import send_email
+        import logging
+        logger = logging.getLogger(__name__)
         
         if member_email:
+            # Member has own email - send credentials to them
             html_content = f"""
             <h2>Welcome to Srpsko Kulturno Društvo Täby!</h2>
             <p>Dear {member_data.fullName},</p>
@@ -603,6 +659,7 @@ async def admin_add_family_member(
             SKUD Täby Team
             """
             
+            logger.info(f"Sending welcome email to new family member: {member_email}")
             await send_email(
                 to_email=member_email,
                 subject="Welcome to SKUD Täby - Your Account Has Been Created",
@@ -610,26 +667,106 @@ async def admin_add_family_member(
                 text_content=text_content,
                 db=db
             )
-        else:
-            # Notify parent about child added
-            html_content = f"""
-            <h2>Family Member Added - Srpsko Kulturno Društvo Täby</h2>
-            <p>Dear {parent_user.get('fullName', 'Parent')},</p>
-            <p>An administrator has added <strong>{member_data.fullName}</strong> as a family member to your account.</p>
-            <p>Since {member_data.fullName} is under 18, all platform communications will be sent to your email address.</p>
-            <br>
-            <p>Best regards,<br>SKUD Täby Team</p>
-            """
-            
-            await send_email(
-                to_email=parent_email,
-                subject=f"Family Member Added: {member_data.fullName}",
-                html_content=html_content,
-                text_content=f"Family member {member_data.fullName} has been added to your account.",
-                db=db
-            )
+        
+        # Always notify parent about the new family member
+        parent_html = f"""
+        <h2>Family Member Added - Srpsko Kulturno Društvo Täby</h2>
+        <p>Dear {parent_user.get('fullName', 'Parent')},</p>
+        <p>{'An administrator has added' if admin else 'You have successfully added'} <strong>{member_data.fullName}</strong> as a family member to your account.</p>
+        {'<p>Since ' + member_data.fullName + ' is under 18, all platform communications will be sent to your email address.</p>' if not member_email else '<p>Login credentials have been sent to their email address.</p>'}
+        <p><strong>Member Details:</strong></p>
+        <ul>
+            <li>Name: {member_data.fullName}</li>
+            <li>Year of Birth: {member_data.yearOfBirth}</li>
+            <li>Relationship: {member_data.relationship}</li>
+            <li>Training Group: {member_data.trainingGroup or 'Not assigned'}</li>
+        </ul>
+        <p>You can manage this family member from your dashboard.</p>
+        <br>
+        <p>Best regards,<br>SKUD Täby Team</p>
+        """
+        
+        parent_text = f"""
+        Family Member Added - Srpsko Kulturno Društvo Täby
+        
+        Dear {parent_user.get('fullName', 'Parent')},
+        
+        {'An administrator has added' if admin else 'You have successfully added'} {member_data.fullName} as a family member to your account.
+        
+        Member Details:
+        - Name: {member_data.fullName}
+        - Year of Birth: {member_data.yearOfBirth}
+        - Relationship: {member_data.relationship}
+        - Training Group: {member_data.trainingGroup or 'Not assigned'}
+        
+        You can manage this family member from your dashboard.
+        
+        Best regards,
+        SKUD Täby Team
+        """
+        
+        logger.info(f"Sending confirmation email to parent: {parent_email}")
+        await send_email(
+            to_email=parent_email,
+            subject=f"Family Member Added: {member_data.fullName}",
+            html_content=parent_html,
+            text_content=parent_text,
+            db=db
+        )
+        
+        # Also notify info@srpskoudruzenjetaby.se about new registration
+        admin_html = f"""
+        <h2>New Family Member Registration - SKUD Täby</h2>
+        <p>A new family member has been registered on the platform by an administrator.</p>
+        <p><strong>Added By Admin:</strong> {admin.get('fullName', admin.get('email', 'Unknown'))}</p>
+        <p><strong>Parent Account:</strong></p>
+        <ul>
+            <li>Name: {parent_user.get('fullName', 'Unknown')}</li>
+            <li>Email: {parent_user.get('email', 'Unknown')}</li>
+        </ul>
+        <p><strong>New Family Member:</strong></p>
+        <ul>
+            <li>Name: {member_data.fullName}</li>
+            <li>Year of Birth: {member_data.yearOfBirth}</li>
+            <li>Relationship: {member_data.relationship}</li>
+            <li>Email: {member_email or 'Using parent email'}</li>
+            <li>Training Group: {member_data.trainingGroup or 'Not assigned'}</li>
+        </ul>
+        <p>Registered at: {datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S')} UTC</p>
+        """
+        
+        admin_text = f"""
+        New Family Member Registration - SKUD Täby
+        
+        Added By Admin: {admin.get('fullName', admin.get('email', 'Unknown'))}
+        
+        Parent Account:
+        - Name: {parent_user.get('fullName', 'Unknown')}
+        - Email: {parent_user.get('email', 'Unknown')}
+        
+        New Family Member:
+        - Name: {member_data.fullName}
+        - Year of Birth: {member_data.yearOfBirth}
+        - Relationship: {member_data.relationship}
+        - Email: {member_email or 'Using parent email'}
+        - Training Group: {member_data.trainingGroup or 'Not assigned'}
+        
+        Registered at: {datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S')} UTC
+        """
+        
+        logger.info("Sending notification to info@srpskoudruzenjetaby.se about new family member")
+        await send_email(
+            to_email="info@srpskoudruzenjetaby.se",
+            subject=f"New Family Member Registration: {member_data.fullName}",
+            html_content=admin_html,
+            text_content=admin_text,
+            db=db
+        )
+        
     except Exception as e:
         print(f"Failed to send email: {e}")
+        import traceback
+        traceback.print_exc()
     
     if use_parent_email:
         message = f"Family member added successfully. Notifications will be sent to parent's email ({parent_email})"
