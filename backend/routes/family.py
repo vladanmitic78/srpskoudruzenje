@@ -18,6 +18,7 @@ class FamilyMemberCreate(BaseModel):
     address: Optional[str] = None
     trainingGroup: Optional[str] = None
     relationship: str = "child"  # child, friend, spouse, other
+    photoConsent: Optional[bool] = None  # Required for minors - parent allows photos to be published
 
 class FamilyMemberUpdate(BaseModel):
     fullName: Optional[str] = None
@@ -27,6 +28,7 @@ class FamilyMemberUpdate(BaseModel):
     address: Optional[str] = None
     trainingGroup: Optional[str] = None
     relationship: Optional[str] = None
+    photoConsent: Optional[bool] = None  # Photo consent can be updated
 
 class FamilyMemberResponse(BaseModel):
     id: str
@@ -82,6 +84,13 @@ async def add_family_member(
         use_parent_email = not member_email
         if not member_email:
             member_email = None  # No separate email for child
+        
+        # Photo consent is required for minors
+        if member_data.photoConsent is None:
+            raise HTTPException(
+                status_code=400,
+                detail="Photo consent is required for family members under 18 years old"
+            )
     else:
         # Adults must have their own email
         if not member_email:
@@ -129,6 +138,12 @@ async def add_family_member(
         "createdAt": datetime.utcnow(),
         "createdBy": user["_id"]
     }
+    
+    # Add photo consent for minors
+    if member_age < 18:
+        new_member["photoConsent"] = member_data.photoConsent
+        new_member["photoConsentGivenBy"] = user["_id"]
+        new_member["photoConsentGivenAt"] = datetime.utcnow()
     
     # Only include email field if it has a value (to avoid MongoDB unique index conflict on null)
     if member_email:
@@ -563,6 +578,13 @@ async def admin_add_family_member(
         use_parent_email = not member_email
         if not member_email:
             member_email = None
+        
+        # Photo consent is required for minors
+        if member_data.photoConsent is None:
+            raise HTTPException(
+                status_code=400,
+                detail="Photo consent is required for family members under 18 years old"
+            )
     else:
         if not member_email:
             raise HTTPException(
@@ -609,6 +631,12 @@ async def admin_add_family_member(
         "createdAt": datetime.utcnow(),
         "createdBy": admin.get("_id") or admin.get("id")
     }
+    
+    # Add photo consent for minors
+    if member_age < 18:
+        new_member["photoConsent"] = member_data.photoConsent
+        new_member["photoConsentGivenBy"] = admin.get("_id") or admin.get("id")
+        new_member["photoConsentGivenAt"] = datetime.utcnow()
     
     # Only include email field if it has a value (to avoid MongoDB unique index conflict on null)
     if member_email:
@@ -831,3 +859,208 @@ async def admin_remove_family_member(
             {"$unset": {"primaryAccountId": "", "relationship": ""}}
         )
         return {"success": True, "message": "Family relationship removed"}
+
+
+
+# ===========================================
+# PHOTO CONSENT MANAGEMENT
+# ===========================================
+
+@router.put("/members/{member_id}/photo-consent")
+async def update_photo_consent(
+    member_id: str,
+    consent: bool,
+    user: dict = Depends(get_current_user),
+    request: Request = None
+):
+    """
+    Update photo consent for a family member (minor).
+    Only the parent/guardian can update consent for their dependents.
+    """
+    db = request.app.state.db
+    
+    # Find the member
+    member = await db.users.find_one({"$or": [{"_id": member_id}, {"id": member_id}]})
+    if not member:
+        raise HTTPException(status_code=404, detail="Member not found")
+    
+    # Check if current user is the parent/guardian
+    user_id = user.get("_id") or user.get("id")
+    primary_account_id = member.get("primaryAccountId")
+    
+    if primary_account_id != user_id:
+        raise HTTPException(status_code=403, detail="Only the parent/guardian can update photo consent")
+    
+    # Check if member is a minor
+    member_age = calculate_age(member.get("yearOfBirth", ""))
+    if member_age >= 18:
+        raise HTTPException(status_code=400, detail="Photo consent is only applicable for minors (under 18)")
+    
+    # Update photo consent
+    await db.users.update_one(
+        {"$or": [{"_id": member_id}, {"id": member_id}]},
+        {
+            "$set": {
+                "photoConsent": consent,
+                "photoConsentGivenBy": user_id,
+                "photoConsentGivenAt": datetime.utcnow()
+            }
+        }
+    )
+    
+    return {
+        "success": True,
+        "message": f"Photo consent {'granted' if consent else 'revoked'} for {member.get('fullName')}"
+    }
+
+
+@router.get("/minors-without-consent")
+async def get_minors_without_consent(
+    user: dict = Depends(get_current_user),
+    request: Request = None
+):
+    """
+    Get all minors (children) without photo consent for the current user.
+    """
+    db = request.app.state.db
+    
+    user_id = user.get("_id") or user.get("id")
+    current_year = datetime.now().year
+    min_year = str(current_year - 18)  # Born after this year = under 18
+    
+    # Find minors without photo consent that belong to this user
+    minors = await db.users.find({
+        "primaryAccountId": user_id,
+        "yearOfBirth": {"$gt": min_year},
+        "$or": [
+            {"photoConsent": {"$exists": False}},
+            {"photoConsent": None}
+        ]
+    }, {"_id": 0, "id": 1, "fullName": 1, "yearOfBirth": 1}).to_list(length=100)
+    
+    return {
+        "minors": minors,
+        "total": len(minors)
+    }
+
+
+@router.post("/admin/send-consent-reminders")
+async def send_photo_consent_reminders(
+    admin: dict = Depends(get_admin_user),
+    request: Request = None
+):
+    """
+    Send email reminders to all parents who have minors without photo consent.
+    Admin only endpoint.
+    """
+    db = request.app.state.db
+    
+    current_year = datetime.now().year
+    min_year = str(current_year - 18)
+    
+    # Find all minors without photo consent
+    minors_without_consent = await db.users.find({
+        "yearOfBirth": {"$gt": min_year},
+        "primaryAccountId": {"$exists": True, "$ne": None},
+        "$or": [
+            {"photoConsent": {"$exists": False}},
+            {"photoConsent": None}
+        ]
+    }).to_list(length=1000)
+    
+    if not minors_without_consent:
+        return {"success": True, "message": "No minors without consent found", "emails_sent": 0}
+    
+    # Group by parent
+    parents_to_notify = {}
+    for minor in minors_without_consent:
+        parent_id = minor.get("primaryAccountId")
+        if parent_id not in parents_to_notify:
+            parents_to_notify[parent_id] = []
+        parents_to_notify[parent_id].append(minor)
+    
+    # Get parent details and send emails
+    from email_service import send_email
+    emails_sent = 0
+    errors = []
+    
+    for parent_id, children in parents_to_notify.items():
+        parent = await db.users.find_one({"$or": [{"_id": parent_id}, {"id": parent_id}]})
+        if not parent or not parent.get("email"):
+            continue
+        
+        # Build children list for email
+        children_list = "\n".join([f"  - {c.get('fullName')}" for c in children])
+        children_html = "".join([f"<li>{c.get('fullName')}</li>" for c in children])
+        
+        html_content = f"""
+        <h2>Photo Consent Required - SKUD Täby</h2>
+        <p>Dear {parent.get('fullName', 'Parent')},</p>
+        <p>We need your consent to photograph and publish pictures of your registered children on our website and social media.</p>
+        <p><strong>Children requiring consent:</strong></p>
+        <ul>
+            {children_html}
+        </ul>
+        <p>Please log in to your account and provide consent for each child in the Family section of your dashboard.</p>
+        <p><a href="https://srpskoudruzenjetaby.se/dashboard" style="display:inline-block;padding:10px 20px;background-color:#C1272D;color:white;text-decoration:none;border-radius:5px;">Go to Dashboard</a></p>
+        <br>
+        <p>Best regards,<br>SKUD Täby Team</p>
+        <hr>
+        <h2>Saglasnost za fotografisanje - SKUD Täby</h2>
+        <p>Poštovani/a {parent.get('fullName', 'Roditelju')},</p>
+        <p>Potrebna nam je Vaša saglasnost za fotografisanje i objavljivanje fotografija Vaše dece na našoj web stranici i društvenim mrežama.</p>
+        <p><strong>Deca za koju je potrebna saglasnost:</strong></p>
+        <ul>
+            {children_html}
+        </ul>
+        <p>Molimo Vas da se prijavite na svoj nalog i date saglasnost za svako dete u sekciji Porodica na kontrolnoj tabli.</p>
+        """
+        
+        text_content = f"""
+Photo Consent Required - SKUD Täby
+
+Dear {parent.get('fullName', 'Parent')},
+
+We need your consent to photograph and publish pictures of your registered children on our website and social media.
+
+Children requiring consent:
+{children_list}
+
+Please log in to your account and provide consent for each child in the Family section of your dashboard.
+
+---
+
+Saglasnost za fotografisanje - SKUD Täby
+
+Poštovani/a {parent.get('fullName', 'Roditelju')},
+
+Potrebna nam je Vaša saglasnost za fotografisanje i objavljivanje fotografija Vaše dece na našoj web stranici i društvenim mrežama.
+
+Deca za koja je potrebna saglasnost:
+{children_list}
+
+Molimo Vas da se prijavite na svoj nalog i date saglasnost za svako dete u sekciji Porodica na kontrolnoj tabli.
+
+Best regards / Srdačan pozdrav,
+SKUD Täby Team
+        """
+        
+        try:
+            await send_email(
+                to_email=parent.get("email"),
+                subject="Photo Consent Required / Saglasnost za fotografisanje - SKUD Täby",
+                html_content=html_content,
+                text_content=text_content,
+                db=db
+            )
+            emails_sent += 1
+        except Exception as e:
+            errors.append(f"Failed to send to {parent.get('email')}: {str(e)}")
+    
+    return {
+        "success": True,
+        "message": f"Sent {emails_sent} reminder emails",
+        "emails_sent": emails_sent,
+        "parents_notified": len(parents_to_notify),
+        "errors": errors if errors else None
+    }

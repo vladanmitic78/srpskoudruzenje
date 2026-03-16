@@ -15,6 +15,7 @@ const FamilyMembersSection = ({ t, user }) => {
   const [addModalOpen, setAddModalOpen] = useState(false);
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [selectedMember, setSelectedMember] = useState(null);
+  const [minorsWithoutConsent, setMinorsWithoutConsent] = useState([]);
   
   // Helper to get translation with fallback
   const getText = (key, fallback) => {
@@ -31,7 +32,8 @@ const FamilyMembersSection = ({ t, user }) => {
     phone: '',
     address: '',
     trainingGroup: '',
-    relationship: 'child'
+    relationship: 'child',
+    photoConsent: false
   });
   
   // Calculate user's age
@@ -49,11 +51,38 @@ const FamilyMembersSection = ({ t, user }) => {
       setLoading(true);
       const response = await familyAPI.getMembers();
       setFamilyMembers(response.members || []);
+      
+      // Check for minors without consent
+      try {
+        const minorsResponse = await familyAPI.getMinorsWithoutConsent();
+        setMinorsWithoutConsent(minorsResponse.minors || []);
+      } catch (err) {
+        console.log('Could not check minors without consent:', err);
+      }
     } catch (error) {
       console.error('Error loading family members:', error);
       toast.error(getText('family.loadError', 'Failed to load family members'));
     } finally {
       setLoading(false);
+    }
+  };
+  
+  // Handle granting consent for an existing minor
+  const handleGrantConsent = async (memberId, memberName) => {
+    const confirmed = window.confirm(
+      getText('family.grantConsentConfirm', 
+        `Do you consent to ${memberName} being photographed and pictures being published on the SKUD Täby website and social media channels?`)
+    );
+    
+    if (!confirmed) return;
+    
+    try {
+      await familyAPI.updatePhotoConsent(memberId, true);
+      toast.success(getText('family.consentGranted', `Photo consent granted for ${memberName}`));
+      loadFamilyMembers(); // Reload to update the list
+    } catch (error) {
+      console.error('Failed to grant consent:', error);
+      toast.error(getText('family.consentError', 'Failed to update photo consent'));
     }
   };
   
@@ -70,7 +99,8 @@ const FamilyMembersSection = ({ t, user }) => {
       phone: '',
       address: '',
       trainingGroup: '',
-      relationship: 'child'
+      relationship: 'child',
+      photoConsent: false
     });
   };
   
@@ -92,6 +122,12 @@ const FamilyMembersSection = ({ t, user }) => {
     // Email required only for members 18+
     if (memberAge >= 18 && !memberForm.email) {
       toast.error(getText('family.emailRequiredAdult', 'Email is required for family members 18 years or older'));
+      return;
+    }
+    
+    // Photo consent required for minors (under 18)
+    if (memberAge < 18 && !memberForm.photoConsent) {
+      toast.error(getText('family.photoConsentRequired', 'Photo consent is required for family members under 18 years old'));
       return;
     }
     
@@ -173,6 +209,44 @@ const FamilyMembersSection = ({ t, user }) => {
   
   return (
     <div className="space-y-6">
+      {/* Photo Consent Required Banner */}
+      {minorsWithoutConsent.length > 0 && (
+        <div className="bg-amber-50 dark:bg-amber-900/20 border-2 border-amber-300 dark:border-amber-700 rounded-lg p-4">
+          <div className="flex items-start gap-3">
+            <div className="flex-shrink-0">
+              <span className="text-2xl">📸</span>
+            </div>
+            <div className="flex-1">
+              <h3 className="font-semibold text-amber-900 dark:text-amber-100 mb-1">
+                {getText('family.photoConsentNeeded', 'Photo Consent Required')}
+              </h3>
+              <p className="text-sm text-amber-800 dark:text-amber-200 mb-3">
+                {getText('family.photoConsentNeededDesc', 'We need your consent to photograph and publish pictures of your children on our website and social media.')}
+              </p>
+              <div className="space-y-2">
+                {minorsWithoutConsent.map((minor) => (
+                  <div 
+                    key={minor.id} 
+                    className="flex items-center justify-between bg-white dark:bg-gray-800 rounded-md p-2 border border-amber-200 dark:border-amber-700"
+                  >
+                    <span className="text-sm font-medium text-gray-900 dark:text-white">
+                      {minor.fullName} ({getText('family.yearOfBirth', 'Born')}: {minor.yearOfBirth})
+                    </span>
+                    <button
+                      onClick={() => handleGrantConsent(minor.id, minor.fullName)}
+                      className="px-3 py-1 bg-green-600 hover:bg-green-700 text-white text-sm font-medium rounded-md transition-colors"
+                      data-testid={`grant-consent-${minor.id}`}
+                    >
+                      {getText('family.grantConsent', 'Grant Consent')}
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Header with Add Button */}
       <div className="flex justify-between items-center">
         <div>
@@ -429,6 +503,30 @@ const FamilyMembersSection = ({ t, user }) => {
                   : getText('family.credentialsNote', '📧 Login credentials will be automatically sent to the email address provided.')}
               </p>
             </div>
+            
+            {/* Photo Consent - Required for minors */}
+            {memberForm.yearOfBirth && (new Date().getFullYear() - parseInt(memberForm.yearOfBirth)) < 18 && (
+              <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
+                <div className="flex items-start gap-3">
+                  <input
+                    type="checkbox"
+                    id="photoConsent"
+                    checked={memberForm.photoConsent}
+                    onChange={(e) => setMemberForm({...memberForm, photoConsent: e.target.checked})}
+                    className="mt-1 h-4 w-4 rounded border-gray-300 text-[var(--color-primary)] focus:ring-[var(--color-primary)]"
+                    data-testid="photo-consent-checkbox"
+                  />
+                  <label htmlFor="photoConsent" className="cursor-pointer">
+                    <span className="font-semibold text-blue-900 dark:text-blue-100 block mb-1">
+                      {getText('family.photoConsentTitle', 'Photo Consent')} *
+                    </span>
+                    <span className="text-sm text-blue-800 dark:text-blue-200">
+                      {getText('family.photoConsentText', 'I consent to my child being photographed and pictures being published on the SKUD Täby website and social media channels.')}
+                    </span>
+                  </label>
+                </div>
+              </div>
+            )}
             
             <div className="flex gap-3 pt-4">
               <Button

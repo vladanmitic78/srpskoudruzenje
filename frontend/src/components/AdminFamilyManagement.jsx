@@ -6,7 +6,7 @@ import { Input } from '../components/ui/input';
 import { Label } from '../components/ui/label';
 import { Badge } from '../components/ui/badge';
 import { toast } from 'sonner';
-import { Users, UserPlus, ChevronDown, ChevronUp, Trash2, Search } from 'lucide-react';
+import { Users, UserPlus, ChevronDown, ChevronUp, Trash2, Search, Mail } from 'lucide-react';
 import { familyAPI } from '../services/api';
 
 const AdminFamilyManagement = ({ t, users = [] }) => {
@@ -17,6 +17,7 @@ const AdminFamilyManagement = ({ t, users = [] }) => {
   const [expandedFamilies, setExpandedFamilies] = useState({});
   const [searchTerm, setSearchTerm] = useState('');
   const [submitting, setSubmitting] = useState(false);
+  const [sendingReminders, setSendingReminders] = useState(false);
   
   // Initial empty member template
   const emptyMember = {
@@ -26,7 +27,8 @@ const AdminFamilyManagement = ({ t, users = [] }) => {
     phone: '',
     address: '',
     trainingGroup: '',
-    relationship: 'child'
+    relationship: 'child',
+    photoConsent: false
   };
   
   // Form state for adding multiple members
@@ -49,6 +51,33 @@ const AdminFamilyManagement = ({ t, users = [] }) => {
   useEffect(() => {
     loadFamilies();
   }, []);
+  
+  // Send photo consent reminders to all parents
+  const handleSendConsentReminders = async () => {
+    const confirmed = window.confirm(
+      t('admin.family.sendRemindersConfirm') || 
+      'Are you sure you want to send photo consent reminder emails to ALL parents who have minors without consent?'
+    );
+    
+    if (!confirmed) return;
+    
+    setSendingReminders(true);
+    try {
+      const response = await familyAPI.sendConsentReminders();
+      if (response.emails_sent > 0) {
+        toast.success(
+          `${t('admin.family.remindersSent') || 'Reminder emails sent to'} ${response.parents_notified} ${t('admin.family.parents') || 'parent(s)'}`
+        );
+      } else {
+        toast.info(t('admin.family.noMinorsWithoutConsent') || 'No minors without consent found. No emails sent.');
+      }
+    } catch (error) {
+      console.error('Failed to send reminders:', error);
+      toast.error(t('admin.family.remindersFailed') || 'Failed to send reminder emails');
+    } finally {
+      setSendingReminders(false);
+    }
+  };
   
   // Filter users who can have family members added (for the dropdown)
   const eligibleUsers = users.filter(user => {
@@ -109,6 +138,12 @@ const AdminFamilyManagement = ({ t, users = [] }) => {
       // Email required only for members 18+
       if (memberAge >= 18 && !member.email) {
         toast.error(`${t('admin.family.emailRequiredAdult') || 'Email is required for family members 18 years or older'} (Member ${i + 1})`);
+        return;
+      }
+      
+      // Photo consent required for minors
+      if (memberAge < 18 && !member.photoConsent) {
+        toast.error(`${t('admin.family.photoConsentRequired') || 'Photo consent is required for family members under 18 years old'} (Member ${i + 1})`);
         return;
       }
     }
@@ -207,17 +242,32 @@ const AdminFamilyManagement = ({ t, users = [] }) => {
           </p>
         </div>
         
-        <Button
-          onClick={() => {
-            resetForm();
-            setAddModalOpen(true);
-          }}
-          className="bg-[var(--color-button-primary)] hover:bg-[var(--color-button-hover)]"
-          data-testid="admin-add-family-btn"
-        >
-          <UserPlus className="h-4 w-4 mr-2" />
-          {t('admin.family.addButton') || 'Add Family Member'}
-        </Button>
+        <div className="flex gap-2">
+          <Button
+            onClick={handleSendConsentReminders}
+            variant="outline"
+            className="border-blue-300 text-blue-600 hover:bg-blue-50"
+            disabled={sendingReminders}
+            data-testid="send-consent-reminders-btn"
+          >
+            <Mail className="h-4 w-4 mr-2" />
+            {sendingReminders 
+              ? (t('admin.family.sendingReminders') || 'Sending...') 
+              : (t('admin.family.sendConsentReminders') || 'Send Consent Reminders')}
+          </Button>
+          
+          <Button
+            onClick={() => {
+              resetForm();
+              setAddModalOpen(true);
+            }}
+            className="bg-[var(--color-button-primary)] hover:bg-[var(--color-button-hover)]"
+            data-testid="admin-add-family-btn"
+          >
+            <UserPlus className="h-4 w-4 mr-2" />
+            {t('admin.family.addButton') || 'Add Family Member'}
+          </Button>
+        </div>
       </div>
       
       {/* Existing Families List */}
@@ -529,6 +579,30 @@ const AdminFamilyManagement = ({ t, users = [] }) => {
                       />
                     </div>
                   </div>
+                  
+                  {/* Photo Consent - Required for minors */}
+                  {member.yearOfBirth && (new Date().getFullYear() - parseInt(member.yearOfBirth)) < 18 && (
+                    <div className="mt-3 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-3">
+                      <div className="flex items-start gap-3">
+                        <input
+                          type="checkbox"
+                          id={`photoConsent-${index}`}
+                          checked={member.photoConsent || false}
+                          onChange={(e) => updateMember(index, 'photoConsent', e.target.checked)}
+                          className="mt-1 h-4 w-4 rounded border-gray-300 text-[var(--color-primary)] focus:ring-[var(--color-primary)]"
+                          data-testid={`photo-consent-checkbox-${index}`}
+                        />
+                        <label htmlFor={`photoConsent-${index}`} className="cursor-pointer">
+                          <span className="font-semibold text-blue-900 dark:text-blue-100 block text-sm">
+                            {t('admin.family.photoConsentTitle') || 'Photo Consent'} *
+                          </span>
+                          <span className="text-xs text-blue-800 dark:text-blue-200">
+                            {t('admin.family.photoConsentText') || 'I consent to this child being photographed and pictures being published on the SKUD Täby website and social media channels.'}
+                          </span>
+                        </label>
+                      </div>
+                    </div>
+                  )}
                 </div>
               ))}
             </div>

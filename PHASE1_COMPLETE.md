@@ -3,7 +3,7 @@
 ## 🎉 Project Overview
 Successfully built a modern, multi-language website for the Serbian Cultural Association in Täby, Sweden.
 
-**Live URL**: https://performance-proxy.preview.emergentagent.com
+**Live URL**: https://frosty-pare-1.preview.emergentagent.com
 
 ---
 
@@ -314,7 +314,7 @@ All data is currently stored in `/app/frontend/src/utils/mock.js`:
 ### Test the Website:
 
 1. **Visit Homepage:**
-   - URL: https://performance-proxy.preview.emergentagent.com
+   - URL: https://frosty-pare-1.preview.emergentagent.com
    - Check language switcher (4 languages)
    - Test theme toggle (light/dark)
    - View news and events sections

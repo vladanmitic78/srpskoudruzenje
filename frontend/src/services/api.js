@@ -528,6 +528,24 @@ export const familyAPI = {
     const response = await api.delete(`/family/admin/members/${memberId}?delete_account=${deleteAccount}`);
     return response.data;
   },
+  
+  // Admin: Send photo consent reminders to all parents with minors without consent
+  sendConsentReminders: async () => {
+    const response = await api.post('/family/admin/send-consent-reminders');
+    return response.data;
+  },
+  
+  // Get minors without consent for current user
+  getMinorsWithoutConsent: async () => {
+    const response = await api.get('/family/minors-without-consent');
+    return response.data;
+  },
+  
+  // Update photo consent for a family member
+  updatePhotoConsent: async (memberId, consent) => {
+    const response = await api.put(`/family/members/${memberId}/photo-consent?consent=${consent}`);
+    return response.data;
+  },
 };
 
 // ==================== Documents APIs ====================

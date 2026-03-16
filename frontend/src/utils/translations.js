@@ -289,7 +289,17 @@ const translations = {
         adding: 'Dodavanje...',
         emailRequiredAdult: 'Email je obavezan za članove starije od 18 godina',
         optionalForChildren: 'opciono za decu ispod 18',
-        bulkNotice: 'Deca ispod 18 bez email-a će primati obaveštenja na email roditelja. Odrasli će dobiti pristupne podatke.'
+        bulkNotice: 'Deca ispod 18 bez email-a će primati obaveštenja na email roditelja. Odrasli će dobiti pristupne podatke.',
+        photoConsentTitle: 'Saglasnost za fotografisanje',
+        photoConsentText: 'Dajem saglasnost da se ovo dete fotografiše i da se fotografije objavljuju na web sajtu i društvenim mrežama SKUD Täby.',
+        photoConsentRequired: 'Saglasnost za fotografisanje je obavezna za članove mlađe od 18 godina',
+        sendConsentReminders: 'Pošalji podsetnice za saglasnost',
+        sendingReminders: 'Slanje...',
+        sendRemindersConfirm: 'Da li ste sigurni da želite da pošaljete email podsetnice za saglasnost za fotografisanje SVIM roditeljima koji imaju maloletnu decu bez saglasnosti?',
+        remindersSent: 'Email podsetnice poslate na',
+        parents: 'roditelja',
+        noMinorsWithoutConsent: 'Nema malolentne dece bez saglasnosti. Emailovi nisu poslati.',
+        remindersFailed: 'Slanje email podsetnica nije uspelo'
       },
       actions: {
         exportPDF: 'Izvezi PDF',
@@ -745,7 +755,17 @@ const translations = {
         unlinkConfirm: 'Да ли сте сигурни да желите да одвојите овог члана породице?',
         deleteSuccess: 'Налог члана обрисан',
         unlinkSuccess: 'Члан породице одвојен',
-        removeError: 'Грешка при уклањању члана породице'
+        removeError: 'Грешка при уклањању члана породице',
+        photoConsentTitle: 'Сагласност за фотографисање',
+        photoConsentText: 'Дајем сагласност да се ово дете фотографише и да се фотографије објављују на веб сајту и друштвеним мрежама СКУД Täby.',
+        photoConsentRequired: 'Сагласност за фотографисање је обавезна за чланове млађе од 18 година',
+        sendConsentReminders: 'Пошаљи подсетнице за сагласност',
+        sendingReminders: 'Слање...',
+        sendRemindersConfirm: 'Да ли сте сигурни да желите да пошаљете емаил подсетнице за сагласност за фотографисање СВИМ родитељима који имају малолетну децу без сагласности?',
+        remindersSent: 'Емаил подсетнице послате на',
+        parents: 'родитеља',
+        noMinorsWithoutConsent: 'Нема малолентне деце без сагласности. Емаилови нису послати.',
+        remindersFailed: 'Слање емаил подсетница није успело'
       },
       actions: {
         exportPDF: 'Извези PDF',
@@ -1211,7 +1231,17 @@ const translations = {
         adding: 'Adding...',
         emailRequiredAdult: 'Email is required for family members 18 years or older',
         optionalForChildren: 'optional for children under 18',
-        bulkNotice: 'Children under 18 without email will receive notifications via parent\'s email. Adults will receive login credentials.'
+        bulkNotice: 'Children under 18 without email will receive notifications via parent\'s email. Adults will receive login credentials.',
+        photoConsentTitle: 'Photo Consent',
+        photoConsentText: 'I consent to this child being photographed and pictures being published on the SKUD Täby website and social media channels.',
+        photoConsentRequired: 'Photo consent is required for family members under 18 years old',
+        sendConsentReminders: 'Send Consent Reminders',
+        sendingReminders: 'Sending...',
+        sendRemindersConfirm: 'Are you sure you want to send photo consent reminder emails to ALL parents who have minors without consent?',
+        remindersSent: 'Reminder emails sent to',
+        parents: 'parent(s)',
+        noMinorsWithoutConsent: 'No minors without consent found. No emails sent.',
+        remindersFailed: 'Failed to send reminder emails'
       },
       actions: {
         exportPDF: 'Export PDF',
@@ -1667,7 +1697,17 @@ const translations = {
         unlinkConfirm: 'Är du säker på att du vill koppla bort denna familjemedlem?',
         deleteSuccess: 'Medlemskonto raderat',
         unlinkSuccess: 'Familjemedlem bortkopplad',
-        removeError: 'Det gick inte att ta bort familjemedlem'
+        removeError: 'Det gick inte att ta bort familjemedlem',
+        photoConsentTitle: 'Fotosamtycke',
+        photoConsentText: 'Jag samtycker till att detta barn fotograferas och att bilder publiceras på SKUD Täbys webbplats och sociala medier.',
+        photoConsentRequired: 'Fotosamtycke krävs för familjemedlemmar under 18 år',
+        sendConsentReminders: 'Skicka påminnelser om samtycke',
+        sendingReminders: 'Skickar...',
+        sendRemindersConfirm: 'Är du säker på att du vill skicka e-postpåminnelser om fotosamtycke till ALLA föräldrar som har minderåriga utan samtycke?',
+        remindersSent: 'Påminnelse-e-post skickade till',
+        parents: 'förälder/föräldrar',
+        noMinorsWithoutConsent: 'Inga minderåriga utan samtycke hittades. Inga e-postmeddelanden skickades.',
+        remindersFailed: 'Det gick inte att skicka påminnelse-e-post'
       },
       actions: {
         exportPDF: 'Exportera PDF',
