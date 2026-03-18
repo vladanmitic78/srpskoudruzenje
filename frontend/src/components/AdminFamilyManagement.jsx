@@ -19,8 +19,12 @@ const AdminFamilyManagement = ({ t, users = [] }) => {
   const [submitting, setSubmitting] = useState(false);
   const [sendingReminders, setSendingReminders] = useState(false);
   
+  // Generate unique temporary ID for form members
+  const generateTempId = () => `temp_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+  
   // Initial empty member template
-  const emptyMember = {
+  const createEmptyMember = () => ({
+    tempId: generateTempId(),
     fullName: '',
     email: '',
     yearOfBirth: '',
@@ -29,10 +33,10 @@ const AdminFamilyManagement = ({ t, users = [] }) => {
     trainingGroup: '',
     relationship: 'child',
     photoConsent: false
-  };
+  });
   
   // Form state for adding multiple members
-  const [members, setMembers] = useState([{ ...emptyMember }]);
+  const [members, setMembers] = useState([createEmptyMember()]);
   
   // Load all family relationships
   const loadFamilies = async () => {
@@ -90,14 +94,14 @@ const AdminFamilyManagement = ({ t, users = [] }) => {
   
   // Reset form
   const resetForm = () => {
-    setMembers([{ ...emptyMember }]);
+    setMembers([createEmptyMember()]);
     setSelectedUser(null);
     setSearchTerm('');
   };
   
   // Add another member row
   const addMemberRow = () => {
-    setMembers([...members, { ...emptyMember }]);
+    setMembers([...members, createEmptyMember()]);
   };
   
   // Remove a member row
@@ -468,7 +472,7 @@ const AdminFamilyManagement = ({ t, users = [] }) => {
               {/* Member Cards */}
               {members.map((member, index) => (
                 <div 
-                  key={index} 
+                  key={member.tempId} 
                   className="border-2 border-gray-200 dark:border-gray-700 rounded-lg p-4 space-y-3 bg-gray-50 dark:bg-gray-800/50"
                 >
                   {/* Member Header */}

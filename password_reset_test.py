@@ -17,7 +17,7 @@ from dotenv import load_dotenv
 load_dotenv('/app/backend/.env')
 
 # Get backend URL from environment
-BACKEND_URL = "https://frosty-pare-1.preview.emergentagent.com/api"
+BACKEND_URL = "https://form-localize-1.preview.emergentagent.com/api"
 MONGO_URL = os.environ['MONGO_URL']
 DB_NAME = os.environ['DB_NAME']
 

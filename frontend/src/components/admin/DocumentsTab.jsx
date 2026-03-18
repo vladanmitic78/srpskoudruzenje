@@ -58,7 +58,7 @@ const formatDate = (dateStr) => {
 };
 
 // Document Card Component
-const DocumentCard = ({ doc, onDelete, onDownload, showAssignees = false }) => (
+const DocumentCard = ({ doc, onDelete, onDownload, showAssignees = false, getText = (key, fallback) => fallback }) => (
   <Card className="hover:shadow-md transition-shadow">
     <CardContent className="p-4">
       <div className="flex items-start gap-3">
@@ -77,7 +77,7 @@ const DocumentCard = ({ doc, onDelete, onDownload, showAssignees = false }) => (
             {doc.category && <Badge variant="outline" className="text-xs">{doc.category}</Badge>}
             {doc.visibility && (
               <Badge variant={doc.visibility === 'public' ? 'default' : 'secondary'} className="text-xs">
-                {doc.visibility === 'public' ? 'Public' : doc.visibility === 'members_only' ? 'Members' : 'Internal'}
+                {doc.visibility === 'public' ? getText('visibilityPublic', 'Public').split(' ')[0] : doc.visibility === 'members_only' ? getText('visibilityMembers', 'Members Only').split(' ')[0] : getText('visibilityInternal', 'Internal').split(' ')[0]}
               </Badge>
             )}
           </div>
@@ -85,7 +85,7 @@ const DocumentCard = ({ doc, onDelete, onDownload, showAssignees = false }) => (
             <div className="mt-2 text-xs text-gray-500">
               <span className="flex items-center gap-1">
                 <Users className="h-3 w-3" />
-                Assigned to: {doc.assignedUsers.map(u => u.fullName).join(', ')}
+                {getText('assignedTo', 'Assigned to:')} {doc.assignedUsers.map(u => u.fullName).join(', ')}
               </span>
             </div>
           )}
@@ -95,7 +95,7 @@ const DocumentCard = ({ doc, onDelete, onDownload, showAssignees = false }) => (
             size="sm"
             variant="ghost"
             onClick={() => onDownload(doc)}
-            title="Download"
+            title={getText('download', 'Download')}
           >
             <Download className="h-4 w-4" />
           </Button>
@@ -104,7 +104,7 @@ const DocumentCard = ({ doc, onDelete, onDownload, showAssignees = false }) => (
             variant="ghost"
             className="text-red-500 hover:text-red-700"
             onClick={() => onDelete(doc)}
-            title="Delete"
+            title={getText('delete', 'Delete')}
           >
             <Trash2 className="h-4 w-4" />
           </Button>
@@ -137,7 +137,7 @@ const UploadDialog = ({
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!file || !title) {
-      toast.error('Please provide a file and title');
+      toast.error(getText('provideFileAndTitle', 'Please provide a file and title'));
       return;
     }
 
@@ -156,7 +156,7 @@ const UploadDialog = ({
         formData.append('user_ids', selectedUsers.join(','));
       } else {
         if (selectedUsers.length !== 1) {
-          toast.error('Please select a user');
+          toast.error(getText('selectUser', 'Please select a user'));
           return;
         }
         formData.append('user_id', selectedUsers[0]);
@@ -259,13 +259,13 @@ const UploadDialog = ({
                     <SelectValue placeholder={getText('category', 'Select category')} />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="general">General</SelectItem>
-                    <SelectItem value="forms">Forms</SelectItem>
-                    <SelectItem value="rules">Rules & Policies</SelectItem>
-                    <SelectItem value="schedules">Schedules</SelectItem>
-                    <SelectItem value="official">Official Documents</SelectItem>
-                    <SelectItem value="reports">Reports</SelectItem>
-                    <SelectItem value="minutes">Meeting Minutes</SelectItem>
+                    <SelectItem value="general">{getText('categories.general', 'General')}</SelectItem>
+                    <SelectItem value="forms">{getText('categories.forms', 'Forms')}</SelectItem>
+                    <SelectItem value="rules">{getText('categories.rules', 'Rules & Policies')}</SelectItem>
+                    <SelectItem value="schedules">{getText('categories.schedules', 'Schedules')}</SelectItem>
+                    <SelectItem value="official">{getText('categories.official', 'Official Documents')}</SelectItem>
+                    <SelectItem value="reports">{getText('categories.reports', 'Reports')}</SelectItem>
+                    <SelectItem value="minutes">{getText('categories.minutes', 'Meeting Minutes')}</SelectItem>
                     {existingCategories.filter(c => !['general', 'forms', 'rules', 'schedules', 'official', 'reports', 'minutes'].includes(c)).map(c => (
                       <SelectItem key={c} value={c}>{c}</SelectItem>
                     ))}
@@ -274,7 +274,7 @@ const UploadDialog = ({
                 <Input
                   value={customCategory}
                   onChange={(e) => setCustomCategory(e.target.value)}
-                  placeholder="Or custom..."
+                  placeholder={getText('orCustom', 'Or custom...')}
                   className="w-32"
                 />
               </div>
@@ -405,7 +405,7 @@ const DocumentsTab = ({ t }) => {
       setStats(statsRes);
     } catch (error) {
       console.error('Error fetching documents:', error);
-      toast.error('Failed to load documents');
+      toast.error(getText('loadFailed', 'Failed to load documents'));
     } finally {
       setLoading(false);
     }
@@ -443,17 +443,17 @@ const DocumentsTab = ({ t }) => {
         default:
           throw new Error('Invalid document type');
       }
-      toast.success(result.message || 'Document uploaded successfully');
+      toast.success(result.message || getText('uploadSuccess', 'Document uploaded successfully'));
       fetchDocuments();
     } catch (error) {
       console.error('Upload error:', error);
-      toast.error(error.response?.data?.detail || 'Failed to upload document');
+      toast.error(error.response?.data?.detail || getText('uploadFailed', 'Failed to upload document'));
       throw error;
     }
   };
 
   const handleDelete = async (doc, type) => {
-    if (!window.confirm(`Are you sure you want to delete "${doc.title}"?`)) return;
+    if (!window.confirm(`${getText('deleteConfirm', 'Are you sure you want to delete')} "${doc.title}"?`)) return;
     
     try {
       switch(type) {
@@ -469,11 +469,11 @@ const DocumentsTab = ({ t }) => {
         default:
           throw new Error('Invalid document type');
       }
-      toast.success('Document deleted');
+      toast.success(getText('deleteSuccess', 'Document deleted'));
       fetchDocuments();
     } catch (error) {
       console.error('Delete error:', error);
-      toast.error('Failed to delete document');
+      toast.error(getText('deleteFailed', 'Failed to delete document'));
     }
   };
 
@@ -495,7 +495,7 @@ const DocumentsTab = ({ t }) => {
       })
       .catch(err => {
         console.error('Download error:', err);
-        toast.error('Failed to download file');
+        toast.error(getText('downloadFailed', 'Failed to download file'));
       });
   };
 
@@ -575,7 +575,7 @@ const DocumentsTab = ({ t }) => {
                 </div>
                 <Select value={categoryFilter} onValueChange={setCategoryFilter}>
                   <SelectTrigger className="w-full sm:w-40">
-                    <SelectValue placeholder="Category" />
+                    <SelectValue placeholder={getText('category', 'Category')} />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="all">{getText('allCategories', 'All Categories')}</SelectItem>
@@ -588,7 +588,7 @@ const DocumentsTab = ({ t }) => {
 
               {/* Document Grid */}
               {loading ? (
-                <div className="text-center py-8 text-gray-500">Loading...</div>
+                <div className="text-center py-8 text-gray-500">{getText('loading', 'Loading...')}</div>
               ) : publicDocs.length === 0 ? (
                 <div className="text-center py-8 text-gray-500">
                   <FolderOpen className="h-12 w-12 mx-auto mb-2 opacity-50" />
@@ -602,6 +602,7 @@ const DocumentsTab = ({ t }) => {
                       doc={doc}
                       onDelete={() => handleDelete(doc, 'public')}
                       onDownload={handleDownload}
+                      getText={getText}
                     />
                   ))}
                 </div>
@@ -625,7 +626,7 @@ const DocumentsTab = ({ t }) => {
             </CardHeader>
             <CardContent>
               {loading ? (
-                <div className="text-center py-8 text-gray-500">Loading...</div>
+                <div className="text-center py-8 text-gray-500">{getText('loading', 'Loading...')}</div>
               ) : personalDocs.length === 0 ? (
                 <div className="text-center py-8 text-gray-500">
                   <Users className="h-12 w-12 mx-auto mb-2 opacity-50" />
@@ -640,6 +641,7 @@ const DocumentsTab = ({ t }) => {
                       onDelete={() => handleDelete(doc, 'personal')}
                       onDownload={handleDownload}
                       showAssignees
+                      getText={getText}
                     />
                   ))}
                 </div>
@@ -663,7 +665,7 @@ const DocumentsTab = ({ t }) => {
             </CardHeader>
             <CardContent>
               {loading ? (
-                <div className="text-center py-8 text-gray-500">Loading...</div>
+                <div className="text-center py-8 text-gray-500">{getText('loading', 'Loading...')}</div>
               ) : associationDocs.length === 0 ? (
                 <div className="text-center py-8 text-gray-500">
                   <Building2 className="h-12 w-12 mx-auto mb-2 opacity-50" />
@@ -677,6 +679,7 @@ const DocumentsTab = ({ t }) => {
                       doc={doc}
                       onDelete={() => handleDelete(doc, 'association')}
                       onDownload={handleDownload}
+                      getText={getText}
                     />
                   ))}
                 </div>

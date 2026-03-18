@@ -38,6 +38,19 @@ Build and maintain a comprehensive membership management platform for the Serbia
 - **Frontend User:** `/app/frontend/src/components/UserDocumentsSection.jsx`
 - **API Service:** `/app/frontend/src/services/api.js` (documentsAPI)
 
+### Document Management UI Translations (COMPLETED - Mar 18, 2026)
+- **Full i18n support** for all 4 languages (English, Swedish, Serbian Latin, Serbian Cyrillic)
+- **Translated strings:**
+  - Upload dialogs (Public/Personal/Association documents)
+  - Category names (General, Forms, Rules & Policies, Schedules, Official Documents, Reports, Meeting Minutes)
+  - Error messages and toast notifications
+  - Loading states and placeholders
+  - Action buttons and labels
+- **Files Updated:**
+  - `/app/frontend/src/utils/translations.js` - Added `admin.documents.categories.*`, loading, orCustom, assignedTo, download, delete, error messages
+  - `/app/frontend/src/components/admin/DocumentsTab.jsx` - Updated all hardcoded strings to use `getText()` translation function
+- **Bug Fix:** React unique key warning in AdminFamilyManagement.jsx - Changed from using array index to unique tempId for member list items
+
 ### Performance Optimizations (COMPLETED - Mar 6-9, 2026)
 - **Hero Background Optimization**:
   - Downloaded and converted hero images to WebP format
