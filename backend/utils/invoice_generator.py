@@ -101,9 +101,8 @@ def generate_invoice_pdf(
     # Use provided bank details or defaults
     bd = bank_details or DEFAULT_BANK_DETAILS
     
-    # Get VAT rate from bank_details if not provided directly
-    if vat_rate == 0.0 and bd.get('vatRate'):
-        vat_rate = float(bd.get('vatRate', 0))
+    # VAT rate is now explicitly passed - don't fallback to bank_details vatRate
+    # This allows invoices to be created with or without VAT regardless of global setting
     
     # Calculate VAT amounts
     if vat_rate > 0:
