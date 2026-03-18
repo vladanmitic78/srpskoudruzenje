@@ -16,9 +16,11 @@ const Login = () => {
     username: '',
     password: ''
   });
+  const [loginError, setLoginError] = useState(null);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoginError(null);
     console.log('Login form submitted', formData);
     
     try {
@@ -35,11 +37,20 @@ const Login = () => {
           navigate('/dashboard');
         }
       } else {
-        toast.error(t('auth.invalidCredentials'));
+        // Show error in form and toast
+        setLoginError(true);
+        toast.error(t('auth.invalidCredentials') || 'Incorrect username or password', {
+          description: `${t('auth.tryAgainOrForgot') || 'Please try again or click'} "${t('auth.forgotPassword') || 'Forgot Password'}"`,
+          duration: 6000
+        });
       }
     } catch (error) {
       console.error('Login error:', error);
-      toast.error(t('auth.invalidCredentials'));
+      setLoginError(true);
+      toast.error(t('auth.invalidCredentials') || 'Incorrect username or password', {
+        description: `${t('auth.tryAgainOrForgot') || 'Please try again or click'} "${t('auth.forgotPassword') || 'Forgot Password'}"`,
+        duration: 6000
+      });
     }
   };
 
@@ -60,14 +71,37 @@ const Login = () => {
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
+            {/* Error Alert Box */}
+            {loginError && (
+              <div className="bg-red-50 dark:bg-red-900/30 border-2 border-red-300 dark:border-red-700 rounded-lg p-4 mb-4">
+                <div className="flex items-start gap-3">
+                  <span className="text-xl">⚠️</span>
+                  <div>
+                    <p className="font-semibold text-red-800 dark:text-red-200">
+                      {t('auth.invalidCredentials') || 'Incorrect username or password'}
+                    </p>
+                    <p className="text-sm text-red-700 dark:text-red-300 mt-1">
+                      {t('auth.tryAgainOrForgot') || 'Please try again or click'}{' '}
+                      <Link to="/forgot-password" className="underline font-semibold hover:text-red-900 dark:hover:text-red-100">
+                        {t('auth.forgotPassword') || 'Forgot Password'}
+                      </Link>
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )}
+            
             <div className="space-y-2">
               <Label htmlFor="username">{t('auth.username')}</Label>
               <Input
                 id="username"
                 required
                 value={formData.username}
-                onChange={(e) => setFormData({ ...formData, username: e.target.value })}
-                className="border-gray-300 focus:border-[var(--color-primary)]"
+                onChange={(e) => {
+                  setFormData({ ...formData, username: e.target.value });
+                  setLoginError(null);
+                }}
+                className={`border-gray-300 focus:border-[var(--color-primary)] ${loginError ? 'border-red-300' : ''}`}
               />
             </div>
 
@@ -78,8 +112,11 @@ const Login = () => {
                 type="password"
                 required
                 value={formData.password}
-                onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                className="border-gray-300 focus:border-[var(--color-primary)]"
+                onChange={(e) => {
+                  setFormData({ ...formData, password: e.target.value });
+                  setLoginError(null);
+                }}
+                className={`border-gray-300 focus:border-[var(--color-primary)] ${loginError ? 'border-red-300' : ''}`}
               />
             </div>
 

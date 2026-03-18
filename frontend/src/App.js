@@ -101,7 +101,7 @@ const AppContent = () => {
         </Suspense>
       </main>
       <Footer />
-      <Toaster position="top-right" />
+      <Toaster position="top-right" richColors expand={true} />
     </div>
   );
 };

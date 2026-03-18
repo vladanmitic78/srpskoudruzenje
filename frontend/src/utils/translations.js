@@ -83,7 +83,8 @@ const translations = {
       confirmNewPassword: 'Potvrdite novu lozinku',
       loginSuccess: 'Uspešna prijava!',
       loginFailed: 'Prijava neuspešna',
-      invalidCredentials: 'Netačno korisničko ime ili lozinka'
+      invalidCredentials: 'Netačno korisničko ime ili lozinka',
+      tryAgainOrForgot: 'Pokušajte ponovo ili koristite'
     },
     contact: {
       title: 'Kontaktirajte nas',
@@ -588,7 +589,8 @@ const translations = {
       confirmNewPassword: 'Потврдите нову лозинку',
       loginSuccess: 'Успешна пријава!',
       loginFailed: 'Пријава неуспешна',
-      invalidCredentials: 'Нетачно корисничко име или лозинка'
+      invalidCredentials: 'Нетачно корисничко име или лозинка',
+      tryAgainOrForgot: 'Покушајте поново или користите'
     },
     contact: {
       title: 'Контактирајте нас',
@@ -1083,7 +1085,8 @@ const translations = {
       confirmNewPassword: 'Confirm new password',
       loginSuccess: 'Login successful!',
       loginFailed: 'Login failed',
-      invalidCredentials: 'Incorrect username or password'
+      invalidCredentials: 'Incorrect username or password',
+      tryAgainOrForgot: 'Please try again or use'
     },
     contact: {
       title: 'Contact Us',
@@ -1588,7 +1591,8 @@ const translations = {
       confirmNewPassword: 'Bekräfta nytt lösenord',
       loginSuccess: 'Inloggningen lyckades!',
       loginFailed: 'Inloggningen misslyckades',
-      invalidCredentials: 'Felaktigt användarnamn eller lösenord'
+      invalidCredentials: 'Felaktigt användarnamn eller lösenord',
+      tryAgainOrForgot: 'Försök igen eller använd'
     },
     contact: {
       title: 'Kontakta oss',
