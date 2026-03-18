@@ -215,12 +215,23 @@ const UploadDialog = ({
           {/* File Upload */}
           <div>
             <Label>{getText('selectFile', 'File')} *</Label>
-            <Input
-              type="file"
-              onChange={(e) => setFile(e.target.files[0])}
-              accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.csv,.jpg,.jpeg,.png,.webp"
-              className="mt-1"
-            />
+            <div className="mt-1">
+              <label className="flex items-center gap-2 cursor-pointer">
+                <input
+                  type="file"
+                  onChange={(e) => setFile(e.target.files[0])}
+                  accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.csv,.jpg,.jpeg,.png,.webp"
+                  className="hidden"
+                  id="file-upload"
+                />
+                <span className="px-4 py-2 bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 border border-gray-300 dark:border-gray-600 rounded-md text-sm font-medium transition-colors">
+                  {getText('chooseFile', 'Choose File')}
+                </span>
+                <span className="text-sm text-gray-500 dark:text-gray-400 truncate max-w-[200px]">
+                  {file ? file.name : getText('noFileChosen', 'No file chosen')}
+                </span>
+              </label>
+            </div>
             <p className="text-xs text-gray-500 mt-1">
               {getText('fileTypes', 'Allowed: PDF, Word, Excel, PowerPoint, Images, Text (max 50MB)')}
             </p>

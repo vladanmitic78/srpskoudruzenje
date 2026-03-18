@@ -263,6 +263,8 @@ const translations = {
         deleteFailed: 'Brisanje dokumenta nije uspelo',
         deleteSuccess: 'Dokument obrisan',
         downloadFailed: 'Preuzimanje nije uspelo',
+        chooseFile: 'Izaberite fajl',
+        noFileChosen: 'Fajl nije izabran',
         categories: {
           general: 'Opšte',
           forms: 'Obrasci',
@@ -792,6 +794,8 @@ const translations = {
         deleteFailed: 'Брисање документа није успело',
         deleteSuccess: 'Документ обрисан',
         downloadFailed: 'Преузимање није успело',
+        chooseFile: 'Изаберите фајл',
+        noFileChosen: 'Фајл није изабран',
         categories: {
           general: 'Опште',
           forms: 'Обрасци',
@@ -1311,6 +1315,8 @@ const translations = {
         deleteFailed: 'Failed to delete document',
         deleteSuccess: 'Document deleted',
         downloadFailed: 'Failed to download file',
+        chooseFile: 'Choose File',
+        noFileChosen: 'No file chosen',
         categories: {
           general: 'General',
           forms: 'Forms',
@@ -1840,6 +1846,8 @@ const translations = {
         deleteFailed: 'Det gick inte att radera dokumentet',
         deleteSuccess: 'Dokumentet har raderats',
         downloadFailed: 'Det gick inte att ladda ner filen',
+        chooseFile: 'Välj fil',
+        noFileChosen: 'Ingen fil vald',
         categories: {
           general: 'Allmänt',
           forms: 'Formulär',
