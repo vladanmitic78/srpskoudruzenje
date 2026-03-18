@@ -3398,7 +3398,6 @@ const AdminDashboard = () => {
                 {/* Member checkboxes */}
                 <div className="max-h-48 overflow-y-auto border rounded-lg p-2 space-y-1">
                   {users
-                    .filter(u => u.role === 'user')
                     .filter(u => {
                       if (!invoiceMemberSearch) return true;
                       const search = invoiceMemberSearch.toLowerCase();
@@ -3425,11 +3424,16 @@ const AdminDashboard = () => {
                         <div className="flex-1">
                           <span className="font-medium">{user.fullName}</span>
                           <span className="text-sm text-gray-500 ml-2">({user.email})</span>
+                          {user.role !== 'user' && (
+                            <span className="ml-2 px-2 py-0.5 text-xs rounded bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200">
+                              {user.role === 'superadmin' ? 'Super Admin' : 'Admin'}
+                            </span>
+                          )}
                         </div>
                       </label>
                     ))
                   }
-                  {users.filter(u => u.role === 'user').length === 0 && (
+                  {users.length === 0 && (
                     <p className="text-gray-500 text-sm p-2">No members found</p>
                   )}
                 </div>
@@ -3439,7 +3443,7 @@ const AdminDashboard = () => {
                   <button
                     type="button"
                     onClick={() => {
-                      const allUserIds = users.filter(u => u.role === 'user').map(u => u.id);
+                      const allUserIds = users.map(u => u.id);
                       setNewInvoice({...newInvoice, userIds: allUserIds});
                     }}
                     className="text-xs px-2 py-1 bg-gray-100 dark:bg-gray-700 rounded hover:bg-gray-200 dark:hover:bg-gray-600"
@@ -3454,7 +3458,7 @@ const AdminDashboard = () => {
                         .filter(inv => inv.status === 'unpaid')
                         .map(inv => inv.userId);
                       const eligibleMembers = users
-                        .filter(u => u.role === 'user' && !membersWithUnpaid.includes(u.id))
+                        .filter(u => !membersWithUnpaid.includes(u.id))
                         .map(u => u.id);
                       setNewInvoice({...newInvoice, userIds: eligibleMembers});
                     }}

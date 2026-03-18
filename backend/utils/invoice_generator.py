@@ -208,10 +208,9 @@ def generate_invoice_pdf(
     <font face="{FONT_NORMAL}" size="9" color="#666666">{ORG_DETAILS['address']}</font>
     """
     
-    # Invoice label
+    # Invoice label - Swedish only for professional look
     invoice_label = f"""
-    <font face="{FONT_BOLD}" size="24" color="#{PRIMARY_COLOR.hexval()[2:]}">FAKTURA</font><br/>
-    <font face="{FONT_NORMAL}" size="10" color="#666666">Invoice / Račun</font>
+    <font face="{FONT_BOLD}" size="24" color="#{PRIMARY_COLOR.hexval()[2:]}">FAKTURA</font>
     """
     
     if logo_element:
@@ -253,13 +252,13 @@ def generate_invoice_pdf(
         created_date = created_at[:10] if created_at else datetime.now().strftime('%Y-%m-%d')
     
     info_left = f"""
-    <font face="{FONT_NORMAL}" size="9" color="#666666">FAKTURA TILL / INVOICE TO:</font><br/><br/>
+    <font face="{FONT_NORMAL}" size="9" color="#666666">FAKTURA TILL:</font><br/><br/>
     <font face="{FONT_BOLD}" size="12">{member_name}</font><br/>
     <font face="{FONT_NORMAL}" size="10">{member_email}</font>
     """
     
     status_color = "#28a745" if status == "paid" else "#dc3545"
-    status_text = "BETALD / PAID" if status == "paid" else "OBETALD / UNPAID"
+    status_text = "BETALD" if status == "paid" else "OBETALD"
     
     info_right = f"""
     <font face="{FONT_NORMAL}" size="9" color="#666666">FAKTURAINFORMATION:</font><br/><br/>
@@ -285,10 +284,10 @@ def generate_invoice_pdf(
     content.append(Spacer(1, 10*mm))
     
     # ===== INVOICE ITEMS TABLE =====
-    content.append(Paragraph("<b>FAKTURADETALJER / INVOICE DETAILS</b>", header_style))
+    content.append(Paragraph("<b>FAKTURADETALJER</b>", header_style))
     
     items_data = [
-        ['Beskrivning / Description', 'Belopp / Amount'],
+        ['Beskrivning', 'Belopp'],
         [description, f"{subtotal:,.2f} {currency}"]
     ]
     
@@ -322,9 +321,9 @@ def generate_invoice_pdf(
     if vat_rate > 0:
         # Show subtotal, VAT, and total
         totals_data = [
-            ['Delsumma / Subtotal:', f"{subtotal:,.2f} {currency}"],
-            [f'Moms / VAT ({vat_rate:.1f}%):', f"{vat_amount:,.2f} {currency}"],
-            ['TOTALT ATT BETALA / TOTAL DUE:', f"{amount:,.2f} {currency}"],
+            ['Delsumma:', f"{subtotal:,.2f} {currency}"],
+            [f'Moms ({vat_rate:.1f}%):', f"{vat_amount:,.2f} {currency}"],
+            ['TOTALT ATT BETALA:', f"{amount:,.2f} {currency}"],
         ]
         
         totals_table = Table(totals_data, colWidths=[100*mm, 70*mm])
@@ -355,7 +354,6 @@ def generate_invoice_pdf(
         # No VAT - show simple total
         total_data = [
             ['TOTALT ATT BETALA:', f"{amount:,.2f} {currency}"],
-            ['TOTAL DUE:', '']
         ]
         
         total_table = Table(total_data, colWidths=[100*mm, 70*mm])
@@ -364,25 +362,19 @@ def generate_invoice_pdf(
             ('ALIGN', (1, 0), (1, -1), 'RIGHT'),
             ('FONTNAME', (0, 0), (-1, -1), FONT_BOLD),
             ('FONTSIZE', (0, 0), (0, 0), 11),
-            ('FONTSIZE', (0, 1), (0, 1), 9),
             ('FONTSIZE', (1, 0), (1, 0), 16),
             ('TEXTCOLOR', (1, 0), (1, 0), PRIMARY_COLOR),
-            ('TEXTCOLOR', (0, 1), (0, 1), colors.grey),
             ('BACKGROUND', (0, 0), (-1, -1), colors.HexColor('#FFF3CD')),
-            ('BOTTOMPADDING', (0, 0), (-1, 0), 5),
+            ('BOTTOMPADDING', (0, 0), (-1, 0), 10),
             ('TOPPADDING', (0, 0), (-1, 0), 10),
-            ('BOTTOMPADDING', (0, 1), (-1, 1), 10),
-            ('TOPPADDING', (0, 1), (-1, 1), 0),
             ('BOX', (0, 0), (-1, -1), 1, GOLD_COLOR),
-            ('SPAN', (1, 0), (1, 1)),
-            ('VALIGN', (1, 0), (1, 0), 'MIDDLE'),
         ]))
         content.append(total_table)
     
     content.append(Spacer(1, 12*mm))
     
     # ===== PAYMENT INFORMATION =====
-    content.append(Paragraph("<b>BETALNINGSINFORMATION / PAYMENT DETAILS</b>", header_style))
+    content.append(Paragraph("<b>BETALNINGSINFORMATION</b>", header_style))
     
     # Build bank info with Swish if available
     swish_line = ""
@@ -391,13 +383,13 @@ def generate_invoice_pdf(
     
     bank_info = f"""
     <font face="{FONT_NORMAL}" size="10">
-    <font face="{FONT_BOLD}">Banknamn / Bank:</font> {bd.get('bankName', '____________________')}<br/>
+    <font face="{FONT_BOLD}">Bank:</font> {bd.get('bankName', '____________________')}<br/>
     <font face="{FONT_BOLD}">Kontoinnehavare:</font> {bd.get('accountHolder', 'Srpsko Kulturno Udruženje Täby')}<br/>
     <font face="{FONT_BOLD}">IBAN:</font> {bd.get('iban', 'SE__ ____ ____ ____ ____ ____')}<br/>
     <font face="{FONT_BOLD}">BIC/SWIFT:</font> {bd.get('bicSwift', '________')}<br/>
     <font face="{FONT_BOLD}">Bankgiro:</font> {bd.get('bankgiro', '___-____')}<br/>
     {swish_line}<font face="{FONT_BOLD}">Org.nummer:</font> {bd.get('orgNumber', '______-____')}<br/><br/>
-    <font face="{FONT_BOLD}">Referens / Reference:</font> {invoice_number}
+    <font face="{FONT_BOLD}">Referens:</font> {invoice_number}
     </font>
     """
     
@@ -418,9 +410,7 @@ def generate_invoice_pdf(
     footer_text = f"""
     <font face="{FONT_BOLD}" size="8" color="#666666">{ORG_DETAILS['name']}</font><br/>
     <font face="{FONT_NORMAL}" size="8" color="#666666">{ORG_DETAILS['address']} | {ORG_DETAILS['email']} | {ORG_DETAILS['website']}</font><br/><br/>
-    <font face="{FONT_NORMAL}" size="8" color="#666666">Vänligen ange fakturanummer ({invoice_number}) som referens vid betalning.</font><br/>
-    <font face="{FONT_NORMAL}" size="8" color="#666666">Please use invoice number ({invoice_number}) as reference when making payment.</font><br/>
-    <font face="{FONT_NORMAL}" size="8" color="#666666">Molimo navedite broj fakture ({invoice_number}) kao referencu pri plaćanju.</font>
+    <font face="{FONT_NORMAL}" size="8" color="#666666">Vänligen ange fakturanummer ({invoice_number}) som referens vid betalning.</font>
     """
     
     content.append(Paragraph(footer_text, ParagraphStyle('Footer', alignment=TA_CENTER, fontSize=8, textColor=colors.grey, fontName=FONT_NORMAL)))
