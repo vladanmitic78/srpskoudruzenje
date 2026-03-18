@@ -189,22 +189,14 @@ def generate_invoice_pdf(
     content = []
     
     # ===== HEADER SECTION =====
-    # Create header with logo and organization info
-    header_data = []
+    # Create header with text-based organization info (no logo)
     
-    # Try to add logo
-    logo_element = None
-    if logo_path and os.path.exists(logo_path):
-        try:
-            logo_element = Image(logo_path, width=25*mm, height=25*mm)
-        except:
-            logo_element = None
-    
-    # Organization info - using font face for Serbian character support
+    # Organization info - Text only header
     org_info = f"""
-    <font face="{FONT_BOLD}" size="16" color="#{PRIMARY_COLOR.hexval()[2:]}">{ORG_DETAILS['name_short']}</font><br/>
-    <font face="{FONT_NORMAL}" size="9" color="#666666">{ORG_DETAILS['name']}</font><br/>
-    <font face="{FONT_NORMAL}" size="9" color="#666666">{ORG_DETAILS['address']}</font>
+    <font face="{FONT_BOLD}" size="18" color="#{PRIMARY_COLOR.hexval()[2:]}">SKUD Täby</font><br/>
+    <font face="{FONT_NORMAL}" size="10" color="#666666">Srpsko Kulturno Udruženje Täby</font><br/>
+    <font face="{FONT_NORMAL}" size="10" color="#666666">Serbiska Kulturföreningen i Täby</font><br/>
+    <font face="{FONT_NORMAL}" size="10" color="#666666">Täby, Sweden</font>
     """
     
     # Invoice label - Swedish only for professional look
@@ -212,14 +204,9 @@ def generate_invoice_pdf(
     <font face="{FONT_BOLD}" size="24" color="#{PRIMARY_COLOR.hexval()[2:]}">FAKTURA</font>
     """
     
-    if logo_element:
-        header_table = Table([
-            [logo_element, Paragraph(org_info, normal_style), Paragraph(invoice_label, ParagraphStyle('Right', alignment=TA_RIGHT, fontSize=10, fontName=FONT_NORMAL))]
-        ], colWidths=[30*mm, 80*mm, 60*mm])
-    else:
-        header_table = Table([
-            [Paragraph(org_info, normal_style), '', Paragraph(invoice_label, ParagraphStyle('Right', alignment=TA_RIGHT, fontSize=10, fontName=FONT_NORMAL))]
-        ], colWidths=[80*mm, 30*mm, 60*mm])
+    header_table = Table([
+        [Paragraph(org_info, normal_style), '', Paragraph(invoice_label, ParagraphStyle('Right', alignment=TA_RIGHT, fontSize=10, fontName=FONT_NORMAL))]
+    ], colWidths=[90*mm, 20*mm, 60*mm])
     
     header_table.setStyle(TableStyle([
         ('VALIGN', (0, 0), (-1, -1), 'TOP'),
