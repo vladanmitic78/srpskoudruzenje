@@ -401,9 +401,13 @@ async def confirm_participation(
     # If member_id is provided, verify it's a family member of the current user
     if member_id and member_id != current_user["_id"]:
         # Check if this member is a family member of the current user
+        # Family members can have either parentId or primaryAccountId
         family_member = await db.users.find_one({
             "_id": member_id,
-            "parentId": current_user["_id"]
+            "$or": [
+                {"parentId": current_user["_id"]},
+                {"primaryAccountId": current_user["_id"]}
+            ]
         })
         
         if not family_member:
@@ -490,9 +494,13 @@ async def cancel_participation(
     # If member_id is provided, verify it's a family member of the current user
     if member_id and member_id != current_user["_id"]:
         # Check if this member is a family member of the current user
+        # Family members can have either parentId or primaryAccountId
         family_member = await db.users.find_one({
             "_id": member_id,
-            "parentId": current_user["_id"]
+            "$or": [
+                {"parentId": current_user["_id"]},
+                {"primaryAccountId": current_user["_id"]}
+            ]
         })
         
         if not family_member:
