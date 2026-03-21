@@ -46,10 +46,28 @@ Build and maintain a comprehensive membership management platform for the Serbia
   - Error messages and toast notifications
   - Loading states and placeholders
   - Action buttons and labels
+  - Custom file input (Choose File / No file chosen)
 - **Files Updated:**
-  - `/app/frontend/src/utils/translations.js` - Added `admin.documents.categories.*`, loading, orCustom, assignedTo, download, delete, error messages
-  - `/app/frontend/src/components/admin/DocumentsTab.jsx` - Updated all hardcoded strings to use `getText()` translation function
+  - `/app/frontend/src/utils/translations.js` - Added `admin.documents.categories.*`, loading, orCustom, assignedTo, download, delete, error messages, chooseFile, noFileChosen
+  - `/app/frontend/src/components/admin/DocumentsTab.jsx` - Updated all hardcoded strings to use `getText()` translation function, custom styled file input
 - **Bug Fix:** React unique key warning in AdminFamilyManagement.jsx - Changed from using array index to unique tempId for member list items
+
+### Family Member Event Registration (COMPLETED - Mar 21, 2026)
+- **Feature:** Parents can now register their children for events/trainings
+- **User Flow:**
+  1. User goes to Dashboard → Treninzi (Trainings) tab
+  2. If user has family members, a dropdown appears: "Prijavi za:" (Register for:)
+  3. User can select themselves or any of their children
+  4. Blue info banner shows who they're registering for
+  5. Confirm/Cancel buttons work for the selected family member
+- **Backend Changes:**
+  - `/app/backend/routes/events.py` - Updated `confirm_participation` and `cancel_participation` endpoints to accept optional `member_id` parameter
+  - Validates that the member_id is actually a family member (child) of the current user
+  - Email notifications include who registered on behalf of whom
+- **Frontend Changes:**
+  - `/app/frontend/src/pages/Dashboard.js` - Added family member selector in Trainings tab, updated confirm/cancel logic
+  - `/app/frontend/src/services/api.js` - Updated `confirmParticipation` and `cancelParticipation` to accept optional memberId
+  - `/app/frontend/src/utils/translations.js` - Added new translation keys for family registration UI in all 4 languages
 
 ### Performance Optimizations (COMPLETED - Mar 6-9, 2026)
 - **Hero Background Optimization**:
