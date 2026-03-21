@@ -9,6 +9,8 @@ const translations = {
       login: 'Prijava',
       register: 'Registracija',
       dashboard: 'Kontrolna tabla',
+      adminDashboard: 'Admin panel',
+      myDashboard: 'Moja kontrolna tabla',
       logout: 'Odjava'
     },
     photoConsent: {
@@ -563,6 +565,8 @@ const translations = {
       login: 'Пријава',
       register: 'Регистрација',
       dashboard: 'Контролна табла',
+      adminDashboard: 'Админ панел',
+      myDashboard: 'Моја контролна табла',
       logout: 'Одјава'
     },
     photoConsent: {
@@ -1107,6 +1111,8 @@ const translations = {
       login: 'Login',
       register: 'Register',
       dashboard: 'Dashboard',
+      adminDashboard: 'Admin Dashboard',
+      myDashboard: 'My Dashboard',
       logout: 'Logout'
     },
     photoConsent: {
@@ -1661,6 +1667,8 @@ const translations = {
       login: 'Logga in',
       register: 'Registrera',
       dashboard: 'Instrumentpanel',
+      adminDashboard: 'Adminpanel',
+      myDashboard: 'Min instrumentpanel',
       logout: 'Logga ut'
     },
     photoConsent: {

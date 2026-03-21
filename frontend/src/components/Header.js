@@ -170,9 +170,16 @@ const Header = () => {
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
+                  {(user?.role === 'admin' || user?.role === 'superadmin' || user?.role === 'moderator') && (
+                    <DropdownMenuItem asChild>
+                      <Link to="/admin">
+                        {t('nav.adminDashboard') || 'Admin Dashboard'}
+                      </Link>
+                    </DropdownMenuItem>
+                  )}
                   <DropdownMenuItem asChild>
-                    <Link to={user?.role === 'admin' || user?.role === 'superadmin' ? '/admin' : '/dashboard'}>
-                      {t('nav.dashboard')}
+                    <Link to="/dashboard">
+                      {t('nav.myDashboard') || 'My Dashboard'}
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuItem onClick={logout}>
@@ -227,12 +234,21 @@ const Header = () => {
               ))}
               {isAuthenticated ? (
                 <>
+                  {(user?.role === 'admin' || user?.role === 'superadmin' || user?.role === 'moderator') && (
+                    <Link
+                      to="/admin"
+                      onClick={() => setMobileMenuOpen(false)}
+                      className="px-4 py-2 rounded-md text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-[var(--color-primary)]/10"
+                    >
+                      {t('nav.adminDashboard') || 'Admin Dashboard'}
+                    </Link>
+                  )}
                   <Link
-                    to={user?.role === 'admin' || user?.role === 'superadmin' ? '/admin' : '/dashboard'}
+                    to="/dashboard"
                     onClick={() => setMobileMenuOpen(false)}
                     className="px-4 py-2 rounded-md text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-[var(--color-primary)]/10"
                   >
-                    {t('nav.dashboard')}
+                    {t('nav.myDashboard') || 'My Dashboard'}
                   </Link>
                   <button
                     onClick={() => {
