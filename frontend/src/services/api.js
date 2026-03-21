@@ -138,15 +138,16 @@ export const eventsAPI = {
     return response.data;
   },
   
-  confirmParticipation: async (id) => {
-    const response = await api.post(`/events/${id}/confirm`);
+  confirmParticipation: async (id, memberId = null) => {
+    const params = memberId ? { member_id: memberId } : {};
+    const response = await api.post(`/events/${id}/confirm`, null, { params });
     return response.data;
   },
   
-  cancelParticipation: async (id, reason) => {
-    const response = await api.delete(`/events/${id}/confirm`, {
-      params: { reason }
-    });
+  cancelParticipation: async (id, reason, memberId = null) => {
+    const params = { reason };
+    if (memberId) params.member_id = memberId;
+    const response = await api.delete(`/events/${id}/confirm`, { params });
     return response.data;
   },
   

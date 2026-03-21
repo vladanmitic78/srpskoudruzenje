@@ -381,10 +381,11 @@ async def update_event(
 @router.post("/{event_id}/confirm")
 async def confirm_participation(
     event_id: str,
+    member_id: str = None,
     current_user: dict = Depends(get_current_user),
     request: Request = None
 ):
-    """User confirms participation"""
+    """User confirms participation for themselves or a family member"""
     db = request.app.state.db
     
     # Get event details for email
@@ -392,9 +393,32 @@ async def confirm_participation(
     if not event:
         raise HTTPException(status_code=404, detail="Event not found")
     
+    # Determine who we're registering
+    participant_id = current_user["_id"]
+    participant_name = current_user.get("fullName", current_user.get("email"))
+    participant_email = current_user.get("email")
+    
+    # If member_id is provided, verify it's a family member of the current user
+    if member_id and member_id != current_user["_id"]:
+        # Check if this member is a family member of the current user
+        family_member = await db.users.find_one({
+            "_id": member_id,
+            "parentId": current_user["_id"]
+        })
+        
+        if not family_member:
+            raise HTTPException(
+                status_code=403, 
+                detail="You can only register yourself or your family members"
+            )
+        
+        participant_id = member_id
+        participant_name = family_member.get("fullName", "Family Member")
+        participant_email = family_member.get("email") or current_user.get("email")
+    
     await db.events.update_one(
         {"_id": event_id},
-        {"$addToSet": {"participants": current_user["_id"]}}
+        {"$addToSet": {"participants": participant_id}}
     )
     
     # Find moderator for this training group
@@ -412,11 +436,16 @@ async def confirm_participation(
         
         if moderators:
             notify_emails = [m.get("email") for m in moderators if m.get("email")]
+    
+    # Add note if registering a family member
+    registered_by = ""
+    if member_id and member_id != current_user["_id"]:
+        registered_by = f" (registered by {current_user.get('fullName', current_user.get('email'))})"
         
     try:
         admin_html, admin_text = get_admin_event_participation_notification(
-            user_name=current_user.get("fullName", current_user.get("email")),
-            user_email=current_user.get("email"),
+            user_name=participant_name + registered_by,
+            user_email=participant_email,
             event_title=event["title"].get("en", "Event"),
             event_date=event["date"],
             event_time=event["time"],
@@ -435,16 +464,17 @@ async def confirm_participation(
     except Exception as e:
         logger.error(f"Failed to send participation notification: {str(e)}")
     
-    return {"success": True, "confirmed": True}
+    return {"success": True, "confirmed": True, "participant_id": participant_id}
 
 @router.delete("/{event_id}/confirm")
 async def cancel_participation(
     event_id: str,
     reason: str = None,
+    member_id: str = None,
     current_user: dict = Depends(get_current_user),
     request: Request = None
 ):
-    """User cancels participation with optional reason"""
+    """User cancels participation for themselves or a family member"""
     db = request.app.state.db
     
     # Get event details for email
@@ -452,17 +482,41 @@ async def cancel_participation(
     if not event:
         raise HTTPException(status_code=404, detail="Event not found")
     
+    # Determine who we're cancelling for
+    participant_id = current_user["_id"]
+    participant_name = current_user.get("fullName", current_user.get("email"))
+    participant_email = current_user.get("email")
+    
+    # If member_id is provided, verify it's a family member of the current user
+    if member_id and member_id != current_user["_id"]:
+        # Check if this member is a family member of the current user
+        family_member = await db.users.find_one({
+            "_id": member_id,
+            "parentId": current_user["_id"]
+        })
+        
+        if not family_member:
+            raise HTTPException(
+                status_code=403, 
+                detail="You can only cancel for yourself or your family members"
+            )
+        
+        participant_id = member_id
+        participant_name = family_member.get("fullName", "Family Member")
+        participant_email = family_member.get("email") or current_user.get("email")
+    
     # Track cancellation in cancellations array
     cancellation_record = {
-        "userId": current_user["_id"],
+        "userId": participant_id,
         "reason": reason,
-        "cancelledAt": datetime.utcnow().isoformat()
+        "cancelledAt": datetime.utcnow().isoformat(),
+        "cancelledBy": current_user["_id"] if member_id else None
     }
     
     await db.events.update_one(
         {"_id": event_id},
         {
-            "$pull": {"participants": current_user["_id"]},
+            "$pull": {"participants": participant_id},
             "$push": {"cancellations": cancellation_record}
         }
     )
@@ -483,10 +537,15 @@ async def cancel_participation(
         if moderators:
             notify_emails = [m.get("email") for m in moderators if m.get("email")]
     
+    # Add note if cancelling for a family member
+    cancelled_by = ""
+    if member_id and member_id != current_user["_id"]:
+        cancelled_by = f" (cancelled by {current_user.get('fullName', current_user.get('email'))})"
+    
     try:
         admin_html, admin_text = get_admin_event_participation_notification(
-            user_name=current_user.get("fullName", current_user.get("email")),
-            user_email=current_user.get("email"),
+            user_name=participant_name + cancelled_by,
+            user_email=participant_email,
             event_title=event["title"].get("en", "Event"),
             event_date=event["date"],
             event_time=event["time"],
@@ -506,7 +565,7 @@ async def cancel_participation(
     except Exception as e:
         logger.error(f"Failed to send cancellation notification: {str(e)}")
     
-    return {"success": True, "confirmed": False}
+    return {"success": True, "confirmed": False, "participant_id": participant_id}
 
 @router.get("/{event_id}/participants")
 async def get_participants(

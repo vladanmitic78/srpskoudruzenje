@@ -7,9 +7,10 @@ import { Label } from '../components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../components/ui/tabs';
 import { Badge } from '../components/ui/badge';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../components/ui/select';
 import { toast } from 'sonner';
 import { User, FileText, Calendar, AlertCircle, Users, FolderOpen } from 'lucide-react';
-import { userAPI, invoicesAPI, eventsAPI } from '../services/api';
+import { userAPI, invoicesAPI, eventsAPI, familyAPI } from '../services/api';
 import FamilyMembersSection from '../components/FamilyMembersSection';
 import UserDocumentsSection from '../components/UserDocumentsSection';
 
@@ -117,6 +118,8 @@ const Dashboard = () => {
   const [creditNotes, setCreditNotes] = useState([]);
   const [events, setEvents] = useState([]);
   const [confirmedEvents, setConfirmedEvents] = useState([]);
+  const [familyMembers, setFamilyMembers] = useState([]);
+  const [selectedMember, setSelectedMember] = useState('self'); // 'self' or member id
   const [loading, setLoading] = useState(true);
   const [showParentFields, setShowParentFields] = useState(false);
   const [showProfileModal, setShowProfileModal] = useState(false);
@@ -131,12 +134,16 @@ const Dashboard = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [invoicesData, eventsData, statsData] = await Promise.all([
+        const [invoicesData, eventsData, statsData, familyData] = await Promise.all([
           invoicesAPI.getMy(),
           eventsAPI.getAll(),
           eventsAPI.getMyStats().catch(err => {
             console.error('Stats error:', err);
             return { totalTrainings: 0, attended: 0, cancelled: 0, trainingGroups: 0, attendanceRate: 0 };
+          }),
+          familyAPI.getMembers().catch(err => {
+            console.error('Family members fetch error:', err);
+            return { members: [] };
           })
         ]);
         setInvoices(invoicesData.invoices || []);
@@ -151,6 +158,9 @@ const Dashboard = () => {
         
         const allEvents = eventsData.events || [];
         setEvents(allEvents);
+        
+        // Set family members
+        setFamilyMembers(familyData.members || []);
         
         // Set training statistics
         setTrainingStats(statsData);
@@ -330,10 +340,30 @@ const Dashboard = () => {
     }
   };
 
+  // Get the current selected member's name for UI display
+  const getSelectedMemberName = () => {
+    if (selectedMember === 'self') {
+      return user?.fullName || t('dashboard.trainings.yourself') || 'yourself';
+    }
+    const member = familyMembers.find(m => m.id === selectedMember);
+    return member?.fullName || t('dashboard.trainings.familyMember') || 'family member';
+  };
+
+  // Check if selected member is confirmed for an event
+  const isSelectedMemberConfirmed = (event) => {
+    const memberId = selectedMember === 'self' ? user?.id : selectedMember;
+    return event.participants && event.participants.includes(memberId);
+  };
+
   const handleConfirmEvent = async (eventId, eventTitle) => {
+    const memberName = getSelectedMemberName();
+    const isForSelf = selectedMember === 'self';
+    
     // Show confirmation dialog
     const confirmed = window.confirm(
-      `Are you sure you want to confirm your participation in "${eventTitle}"?\n\nClick OK to confirm or Cancel to go back.`
+      isForSelf 
+        ? `${t('dashboard.trainings.confirmForSelf') || 'Are you sure you want to confirm your participation in'} "${eventTitle}"?`
+        : `${t('dashboard.trainings.confirmForMember') || 'Are you sure you want to confirm participation for'} ${memberName} ${t('dashboard.trainings.inEvent') || 'in'} "${eventTitle}"?`
     );
     
     if (!confirmed) {
@@ -341,39 +371,64 @@ const Dashboard = () => {
     }
     
     try {
-      await eventsAPI.confirmParticipation(eventId);
-      setConfirmedEvents([...confirmedEvents, eventId]);
-      toast.success('Training participation confirmed! Admin has been notified.');
+      const memberId = selectedMember === 'self' ? null : selectedMember;
+      await eventsAPI.confirmParticipation(eventId, memberId);
+      
+      // Update local state
+      if (selectedMember === 'self') {
+        setConfirmedEvents([...confirmedEvents, eventId]);
+      }
+      
+      toast.success(
+        isForSelf 
+          ? t('dashboard.trainings.confirmSuccess') || 'Training participation confirmed! Admin has been notified.'
+          : `${t('dashboard.trainings.confirmSuccessFor') || 'Participation confirmed for'} ${memberName}!`
+      );
       
       // Refresh events to get updated participant list
       const eventsData = await eventsAPI.getAll();
       setEvents(eventsData.events || []);
     } catch (error) {
-      toast.error('Failed to confirm participation');
+      toast.error(t('dashboard.trainings.confirmFailed') || 'Failed to confirm participation');
       console.error(error);
     }
   };
 
   const handleCancelEvent = async (eventId, eventTitle) => {
+    const memberName = getSelectedMemberName();
+    const isForSelf = selectedMember === 'self';
+    
     const reason = prompt(
-      `Please provide a reason for cancelling your participation in "${eventTitle}":\n\n(This is mandatory and will be sent to the admin)`
+      isForSelf
+        ? `${t('dashboard.trainings.cancelReasonPrompt') || 'Please provide a reason for cancelling your participation in'} "${eventTitle}":`
+        : `${t('dashboard.trainings.cancelReasonPromptFor') || 'Please provide a reason for cancelling'} ${memberName}'s ${t('dashboard.trainings.participationIn') || 'participation in'} "${eventTitle}":`
     );
     
     if (!reason || reason.trim() === '') {
-      toast.error('Cancellation reason is required');
+      toast.error(t('dashboard.trainings.cancelReasonRequired') || 'Cancellation reason is required');
       return;
     }
     
     try {
-      await eventsAPI.cancelParticipation(eventId, reason);
-      setConfirmedEvents(confirmedEvents.filter(id => id !== eventId));
-      toast.info('Training participation cancelled. Admin has been notified.');
+      const memberId = selectedMember === 'self' ? null : selectedMember;
+      await eventsAPI.cancelParticipation(eventId, reason, memberId);
+      
+      // Update local state
+      if (selectedMember === 'self') {
+        setConfirmedEvents(confirmedEvents.filter(id => id !== eventId));
+      }
+      
+      toast.info(
+        isForSelf
+          ? t('dashboard.trainings.cancelSuccess') || 'Training participation cancelled. Admin has been notified.'
+          : `${t('dashboard.trainings.cancelSuccessFor') || 'Participation cancelled for'} ${memberName}.`
+      );
       
       // Refresh events to get updated participant list
       const eventsData = await eventsAPI.getAll();
       setEvents(eventsData.events || []);
     } catch (error) {
-      toast.error('Failed to cancel participation');
+      toast.error(t('dashboard.trainings.cancelFailed') || 'Failed to cancel participation');
       console.error(error);
     }
   };
@@ -794,59 +849,103 @@ const Dashboard = () => {
 
             <Card className="border-2 border-[var(--color-primary)]/20">
               <CardHeader>
-                <CardTitle>{t('dashboard.trainingsTab')}</CardTitle>
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                  <CardTitle>{t('dashboard.trainingsTab')}</CardTitle>
+                  
+                  {/* Family Member Selector */}
+                  {familyMembers.length > 0 && (
+                    <div className="flex items-center gap-2">
+                      <Label className="text-sm text-gray-600 dark:text-gray-400 whitespace-nowrap">
+                        {t('dashboard.trainings.registerFor') || 'Register for:'}
+                      </Label>
+                      <Select value={selectedMember} onValueChange={setSelectedMember}>
+                        <SelectTrigger className="w-[200px]">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="self">
+                            {user?.fullName || t('dashboard.trainings.myself') || 'Myself'}
+                          </SelectItem>
+                          {familyMembers.map(member => (
+                            <SelectItem key={member.id} value={member.id}>
+                              {member.fullName} ({member.relationship || t('dashboard.trainings.child') || 'child'})
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  )}
+                </div>
+                
+                {/* Info banner when family member is selected */}
+                {selectedMember !== 'self' && (
+                  <div className="mt-3 p-3 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
+                    <p className="text-sm text-blue-700 dark:text-blue-300">
+                      <Users className="inline h-4 w-4 mr-1" />
+                      {t('dashboard.trainings.registeringFor') || 'You are registering for:'} <strong>{getSelectedMemberName()}</strong>
+                    </p>
+                  </div>
+                )}
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
                   {loading ? (
-                    <p className="text-gray-600 dark:text-gray-300">Loading trainings...</p>
+                    <p className="text-gray-600 dark:text-gray-300">{t('dashboard.trainings.loading') || 'Loading trainings...'}</p>
                   ) : events.length === 0 ? (
-                    <p className="text-gray-600 dark:text-gray-300">No trainings scheduled.</p>
+                    <p className="text-gray-600 dark:text-gray-300">{t('dashboard.trainings.noTrainings') || 'No trainings scheduled.'}</p>
                   ) : (
-                    events.map((event) => (
-                    <div key={event.id} className={`p-4 border-2 rounded-lg ${
-                      confirmedEvents.includes(event.id) 
-                        ? 'border-green-200 bg-green-50 dark:bg-green-900/20' 
-                        : 'border-gray-200 dark:border-gray-700'
-                    }`}>
-                      <div className="flex items-start justify-between">
-                        <div className="flex-1">
-                          <h3 className="font-semibold text-lg text-gray-900 dark:text-white">
-                            {event.title[language]}
-                          </h3>
-                          <p className="text-sm text-gray-600 dark:text-gray-300 mt-1">
-                            📅 {event.date} at {event.time}
-                          </p>
-                          <p className="text-sm text-gray-600 dark:text-gray-300">
-                            📍 {event.location}
-                          </p>
-                          {confirmedEvents.includes(event.id) && (
-                            <p className="text-sm text-green-600 dark:text-green-400 mt-2 font-semibold">
-                              ✓ You confirmed participation
-                            </p>
-                          )}
+                    events.map((event) => {
+                      const isConfirmed = isSelectedMemberConfirmed(event);
+                      return (
+                        <div key={event.id} className={`p-4 border-2 rounded-lg ${
+                          isConfirmed 
+                            ? 'border-green-200 bg-green-50 dark:bg-green-900/20' 
+                            : 'border-gray-200 dark:border-gray-700'
+                        }`}>
+                          <div className="flex items-start justify-between">
+                            <div className="flex-1">
+                              <h3 className="font-semibold text-lg text-gray-900 dark:text-white">
+                                {event.title[language]}
+                              </h3>
+                              <p className="text-sm text-gray-600 dark:text-gray-300 mt-1">
+                                📅 {event.date} at {event.time}
+                              </p>
+                              <p className="text-sm text-gray-600 dark:text-gray-300">
+                                📍 {event.location}
+                              </p>
+                              {isConfirmed && (
+                                <p className="text-sm text-green-600 dark:text-green-400 mt-2 font-semibold">
+                                  ✓ {selectedMember === 'self' 
+                                    ? (t('dashboard.trainings.youConfirmed') || 'You confirmed participation')
+                                    : (t('dashboard.trainings.memberConfirmed') || 'Participation confirmed for') + ' ' + getSelectedMemberName()
+                                  }
+                                </p>
+                              )}
+                            </div>
+                            <div className="flex gap-2">
+                              {!isConfirmed ? (
+                                <Button
+                                  onClick={() => handleConfirmEvent(event.id, event.title[language] || event.title['en'])}
+                                  className="bg-green-600 hover:bg-green-700 text-white"
+                                  data-testid={`confirm-event-${event.id}`}
+                                >
+                                  ✓ {t('dashboard.trainings.confirm') || 'Confirm'}
+                                </Button>
+                              ) : (
+                                <Button
+                                  onClick={() => handleCancelEvent(event.id, event.title[language] || event.title['en'])}
+                                  variant="destructive"
+                                  className="bg-red-600 hover:bg-red-700"
+                                  data-testid={`cancel-event-${event.id}`}
+                                >
+                                  ✗ {t('dashboard.trainings.cancel') || 'Cancel'}
+                                </Button>
+                              )}
+                            </div>
+                          </div>
                         </div>
-                        <div className="flex gap-2">
-                          {!confirmedEvents.includes(event.id) ? (
-                            <Button
-                              onClick={() => handleConfirmEvent(event.id, event.title[language] || event.title['en'])}
-                              className="bg-green-600 hover:bg-green-700 text-white"
-                            >
-                              ✓ Confirm
-                            </Button>
-                          ) : (
-                            <Button
-                              onClick={() => handleCancelEvent(event.id, event.title[language] || event.title['en'])}
-                              variant="destructive"
-                              className="bg-red-600 hover:bg-red-700"
-                            >
-                              ✗ Cancel
-                            </Button>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                  )))}
+                      );
+                    }))}
                 </div>
               </CardContent>
             </Card>
