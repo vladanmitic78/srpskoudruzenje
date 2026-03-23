@@ -4,6 +4,7 @@ import { Card, CardContent } from '../components/ui/card';
 import { Button } from '../components/ui/button';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { galleryAPI } from '../services/api';
+import SEOHead from '../components/SEOHead';
 
 const ALBUMS_PER_PAGE = 9;
 
@@ -95,6 +96,7 @@ const Gallery = () => {
 
   return (
     <div className="min-h-screen py-16">
+      <SEOHead page="gallery" />
       <div className="container mx-auto px-4">
         <h1 className="text-4xl md:text-5xl font-bold text-[var(--color-secondary)] dark:text-[var(--color-primary)] mb-12 text-center">
           {t('nav.gallery')}

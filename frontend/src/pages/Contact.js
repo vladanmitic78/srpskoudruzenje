@@ -15,6 +15,7 @@ import { Card, CardContent } from '../components/ui/card';
 import { toast } from 'sonner';
 import { Mail, Phone, MapPin } from 'lucide-react';
 import { contactAPI, settingsAPI } from '../services/api';
+import SEOHead from '../components/SEOHead';
 
 const Contact = () => {
   const { t, language } = useLanguage();
@@ -57,6 +58,7 @@ const Contact = () => {
 
   return (
     <div className="min-h-screen py-16">
+      <SEOHead page="contact" />
       <div className="container mx-auto px-4">
         <h1 className="text-4xl md:text-5xl font-bold text-[var(--color-secondary)] dark:text-[var(--color-primary)] mb-12 text-center">
           {t('contact.title')}

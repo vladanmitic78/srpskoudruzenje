@@ -14,6 +14,7 @@ import {
 import { Calendar, MapPin, ChevronRight, ChevronLeft, X } from 'lucide-react';
 import { newsAPI, eventsAPI } from '../services/api';
 import LazyImage from '../components/ui/LazyImage';
+import SEOHead from '../components/SEOHead';
 
 const Home = () => {
   const { language, setLanguage, t } = useLanguage();
@@ -87,6 +88,7 @@ const Home = () => {
 
   return (
     <div className="min-h-screen">
+      <SEOHead page="home" />
       {/* Hero Section with Dynamic Background */}
       <section className="relative bg-gradient-to-br from-blue-50 via-white to-blue-50 dark:from-gray-800 dark:via-gray-900 dark:to-gray-800 py-20 md:py-32 overflow-hidden">
         {/* Dynamic Background Pattern */}

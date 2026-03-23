@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:xhtml="http://www.w3.org/1999/xhtml">
+  
+  <!-- Homepage - All Languages -->
+  <url>
+    <loc>https://srpskoudruzenjetaby.se/</loc>
+    <xhtml:link rel="alternate" hreflang="sv" href="https://srpskoudruzenjetaby.se/?lang=sv"/>
+    <xhtml:link rel="alternate" hreflang="sr" href="https://srpskoudruzenjetaby.se/?lang=sr"/>
+    <xhtml:link rel="alternate" hreflang="sr-Cyrl" href="https://srpskoudruzenjetaby.se/?lang=sr-cyrillic"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://srpskoudruzenjetaby.se/?lang=en"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://srpskoudruzenjetaby.se/"/>
+    <lastmod>2026-03-21</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+  </url>
+  
+  <!-- About Page -->
+  <url>
+    <loc>https://srpskoudruzenjetaby.se/about</loc>
+    <xhtml:link rel="alternate" hreflang="sv" href="https://srpskoudruzenjetaby.se/about?lang=sv"/>
+    <xhtml:link rel="alternate" hreflang="sr" href="https://srpskoudruzenjetaby.se/about?lang=sr"/>
+    <xhtml:link rel="alternate" hreflang="sr-Cyrl" href="https://srpskoudruzenjetaby.se/about?lang=sr-cyrillic"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://srpskoudruzenjetaby.se/about?lang=en"/>
+    <lastmod>2026-03-21</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  
+  <!-- Gallery Page -->
+  <url>
+    <loc>https://srpskoudruzenjetaby.se/gallery</loc>
+    <xhtml:link rel="alternate" hreflang="sv" href="https://srpskoudruzenjetaby.se/gallery?lang=sv"/>
+    <xhtml:link rel="alternate" hreflang="sr" href="https://srpskoudruzenjetaby.se/gallery?lang=sr"/>
+    <xhtml:link rel="alternate" hreflang="sr-Cyrl" href="https://srpskoudruzenjetaby.se/gallery?lang=sr-cyrillic"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://srpskoudruzenjetaby.se/gallery?lang=en"/>
+    <lastmod>2026-03-21</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  
+  <!-- Serbian Story Page -->
+  <url>
+    <loc>https://srpskoudruzenjetaby.se/serbian-story</loc>
+    <xhtml:link rel="alternate" hreflang="sv" href="https://srpskoudruzenjetaby.se/serbian-story?lang=sv"/>
+    <xhtml:link rel="alternate" hreflang="sr" href="https://srpskoudruzenjetaby.se/serbian-story?lang=sr"/>
+    <xhtml:link rel="alternate" hreflang="sr-Cyrl" href="https://srpskoudruzenjetaby.se/serbian-story?lang=sr-cyrillic"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://srpskoudruzenjetaby.se/serbian-story?lang=en"/>
+    <lastmod>2026-03-21</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  
+  <!-- Contact Page -->
+  <url>
+    <loc>https://srpskoudruzenjetaby.se/contact</loc>
+    <xhtml:link rel="alternate" hreflang="sv" href="https://srpskoudruzenjetaby.se/contact?lang=sv"/>
+    <xhtml:link rel="alternate" hreflang="sr" href="https://srpskoudruzenjetaby.se/contact?lang=sr"/>
+    <xhtml:link rel="alternate" hreflang="sr-Cyrl" href="https://srpskoudruzenjetaby.se/contact?lang=sr-cyrillic"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://srpskoudruzenjetaby.se/contact?lang=en"/>
+    <lastmod>2026-03-21</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  
+  <!-- Login Page -->
+  <url>
+    <loc>https://srpskoudruzenjetaby.se/login</loc>
+    <lastmod>2026-03-21</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <!-- Register Page -->
+  <url>
+    <loc>https://srpskoudruzenjetaby.se/register</loc>
+    <lastmod>2026-03-21</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+
+</urlset>

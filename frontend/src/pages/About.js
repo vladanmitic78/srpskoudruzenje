@@ -3,6 +3,7 @@ import { useLanguage } from '../context/LanguageContext';
 import { Card, CardContent } from '../components/ui/card';
 import { contentAPI } from '../services/api';
 import { Users, Heart, Music, BookOpen } from 'lucide-react';
+import SEOHead from '../components/SEOHead';
 
 const About = () => {
   const { language } = useLanguage();
@@ -96,6 +97,7 @@ const About = () => {
 
   return (
     <div className="min-h-screen py-16">
+      <SEOHead page="about" />
       <div className="container mx-auto px-4">
         {/* Header */}
         <div className="text-center mb-16">

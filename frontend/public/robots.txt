@@ -1,0 +1,25 @@
+# Robots.txt for Serbiska Kulturföreningen i Täby
+# https://srpskoudruzenjetaby.se
+
+User-agent: *
+Allow: /
+
+# Sitemap location
+Sitemap: https://srpskoudruzenjetaby.se/sitemap.xml
+
+# Disallow admin and private areas
+Disallow: /admin
+Disallow: /dashboard
+Disallow: /api/
+
+# Allow search engines to crawl all public pages
+Allow: /
+Allow: /about
+Allow: /gallery
+Allow: /serbian-story
+Allow: /contact
+Allow: /login
+Allow: /register
+
+# Crawl delay (optional, be nice to the server)
+Crawl-delay: 1
