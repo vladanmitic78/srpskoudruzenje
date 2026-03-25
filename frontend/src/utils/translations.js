@@ -50,7 +50,9 @@ const translations = {
       designedBy: 'Dizajnirano i razvijeno od strane',
       quickLinks: 'Brze veze',
       contactInfo: 'Kontakt informacije',
-      followUs: 'Pratite nas'
+      followUs: 'Pratite nas',
+      platformDeveloped: 'Platforma je ponosno razvijena od strane',
+      ipRights: ', koja zadržava puna prava intelektualne svojine. Srpsko Kulturno Udruženje Täby je ovlašćeno da je koristi pod licencom.'
     },
     auth: {
       loginTitle: 'Prijavite se',
@@ -606,7 +608,9 @@ const translations = {
       designedBy: 'Дизајнирано и развијено од стране',
       quickLinks: 'Брзе везе',
       contactInfo: 'Контакт информације',
-      followUs: 'Пратите нас'
+      followUs: 'Пратите нас',
+      platformDeveloped: 'Платформа је поносно развијена од стране',
+      ipRights: ', која задржава пуна права интелектуалне својине. Српско Културно Удружење Теби је овлашћено да је користи под лиценцом.'
     },
     auth: {
       loginTitle: 'Пријавите се',
@@ -1152,7 +1156,9 @@ const translations = {
       designedBy: 'Designed and developed by',
       quickLinks: 'Quick Links',
       contactInfo: 'Contact Information',
-      followUs: 'Follow Us'
+      followUs: 'Follow Us',
+      platformDeveloped: 'The platform is proudly developed by',
+      ipRights: ', which retains full intellectual property rights. Srpsko Kulturno Udruženje Täby is authorised to use it under license.'
     },
     auth: {
       loginTitle: 'Login',
@@ -1708,7 +1714,9 @@ const translations = {
       designedBy: 'Designad och utvecklad av',
       quickLinks: 'Snabblänkar',
       contactInfo: 'Kontaktinformation',
-      followUs: 'Följ oss'
+      followUs: 'Följ oss',
+      platformDeveloped: 'Plattformen är stolt utvecklad av',
+      ipRights: ', som behåller fullständiga immateriella rättigheter. Srpsko Kulturno Udruženje Täby är auktoriserad att använda den under licens.'
     },
     auth: {
       loginTitle: 'Logga in',

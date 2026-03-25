@@ -162,18 +162,19 @@ const Footer = () => {
         {/* Bottom Bar */}
         <div className="border-t border-white/20 mt-8 pt-8 text-center space-y-2">
           <p className="text-sm text-gray-200">
-            © {currentYear} Srpsko Kulturno Udruženje Täby. {t('footer.rights')}.
+            © {currentYear} Srpsko Kulturno Udruženje Täby.
           </p>
-          <p className="text-xs text-gray-300">
-            {t('footer.designedBy')}{' '}
+          <p className="text-xs text-gray-300 max-w-2xl mx-auto">
+            {t('footer.platformDeveloped')}{' '}
             <a
               href="https://www.mitaict.com/"
               target="_blank"
               rel="noopener noreferrer"
-              className="hover:text-white transition-colors font-medium"
+              className="hover:text-white transition-colors font-medium underline"
             >
               MITA ICT AB
             </a>
+            {t('footer.ipRights')}
           </p>
         </div>
       </div>
