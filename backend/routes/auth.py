@@ -47,19 +47,30 @@ async def register(user_data: UserCreate, request: Request):
     
     # Send verification email
     # Get frontend URL from environment or use production URL
-    frontend_url = os.environ.get('FRONTEND_URL', 'https://form-localize-1.preview.emergentagent.com')
+    frontend_url = os.environ.get('FRONTEND_URL', 'https://srpskoudruzenjetaby.se')
     verification_link = f"{frontend_url}/verify-email?token={verification_token}"
     html_content, text_content = get_verification_email_template(
         user_data.fullName,
         verification_link
     )
     
-    await send_email(
+    email_sent = await send_email(
         user_data.email,
         "Verifikacija email adrese / E-postverifiering - SKUD Täby",
         html_content,
         text_content
     , db=request.app.state.db)
+    
+    # Log email status for debugging
+    if email_sent:
+        logger.info(f"Verification email sent successfully to {user_data.email}")
+    else:
+        logger.error(f"FAILED to send verification email to {user_data.email}")
+        # Update user record to track email failure
+        await db.users.update_one(
+            {"_id": user_id},
+            {"$set": {"verificationEmailFailed": True, "verificationEmailFailedAt": datetime.utcnow()}}
+        )
     
     # Send admin notification email
     admin_email = "info@srpskoudruzenjetaby.se"
@@ -150,6 +161,54 @@ async def verify_email(token: str, request: Request):
     )
     
     return {"success": True, "message": "Email verified successfully"}
+
+@router.post("/resend-verification")
+async def resend_verification_email(email: str, request: Request):
+    """Resend verification email to user"""
+    db = request.app.state.db
+    
+    # Find user by email
+    user = await db.users.find_one({"email": email})
+    
+    if not user:
+        # Don't reveal if email exists for security
+        return {"success": True, "message": "If email exists and is not verified, verification email has been sent."}
+    
+    # Check if already verified
+    if user.get("emailVerified"):
+        return {"success": True, "message": "Email is already verified. You can login."}
+    
+    # Generate new verification token
+    verification_token = generate_verification_token()
+    
+    # Update user with new token
+    await db.users.update_one(
+        {"_id": user["_id"]},
+        {"$set": {"verificationToken": verification_token}}
+    )
+    
+    # Send verification email
+    frontend_url = os.environ.get('FRONTEND_URL', 'https://srpskoudruzenjetaby.se')
+    verification_link = f"{frontend_url}/verify-email?token={verification_token}"
+    html_content, text_content = get_verification_email_template(
+        user.get("fullName", user.get("username")),
+        verification_link
+    )
+    
+    email_sent = await send_email(
+        email,
+        "Verifikacija email adrese / E-postverifiering - SKUD Täby",
+        html_content,
+        text_content,
+        db=db
+    )
+    
+    if email_sent:
+        logger.info(f"Verification email resent successfully to {email}")
+    else:
+        logger.error(f"Failed to resend verification email to {email}")
+    
+    return {"success": True, "message": "If email exists and is not verified, verification email has been sent."}
 
 @router.post("/forgot-password")
 async def forgot_password(email: str, request: Request):

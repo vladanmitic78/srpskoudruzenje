@@ -88,7 +88,12 @@ const translations = {
       loginSuccess: 'Uspešna prijava!',
       loginFailed: 'Prijava neuspešna',
       invalidCredentials: 'Netačno korisničko ime ili lozinka',
-      tryAgainOrForgot: 'Pokušajte ponovo ili koristite'
+      tryAgainOrForgot: 'Pokušajte ponovo ili koristite',
+      resendVerification: 'Ponovo pošalji verifikacioni email',
+      sendingVerification: 'Šaljem...',
+      verificationResent: 'Verifikacioni email poslat! Proverite inbox i spam folder.',
+      verificationResendFailed: 'Nije moguće poslati verifikacioni email',
+      enterEmailFirst: 'Prvo unesite email/korisničko ime'
     },
     contact: {
       title: 'Kontaktirajte nas',
@@ -646,7 +651,12 @@ const translations = {
       loginSuccess: 'Успешна пријава!',
       loginFailed: 'Пријава неуспешна',
       invalidCredentials: 'Нетачно корисничко име или лозинка',
-      tryAgainOrForgot: 'Покушајте поново или користите'
+      tryAgainOrForgot: 'Покушајте поново или користите',
+      resendVerification: 'Поново пошаљи верификациони емаил',
+      sendingVerification: 'Шаљем...',
+      verificationResent: 'Верификациони емаил послат! Проверите инбокс и спам фолдер.',
+      verificationResendFailed: 'Није могу|ће послати верификациони емаил',
+      enterEmailFirst: 'Прво унесите емаил/корисничко име'
     },
     contact: {
       title: 'Контактирајте нас',
@@ -1194,7 +1204,12 @@ const translations = {
       loginSuccess: 'Login successful!',
       loginFailed: 'Login failed',
       invalidCredentials: 'Incorrect username or password',
-      tryAgainOrForgot: 'Please try again or use'
+      tryAgainOrForgot: 'Please try again or use',
+      resendVerification: 'Resend verification email',
+      sendingVerification: 'Sending...',
+      verificationResent: 'Verification email sent! Please check your inbox and spam folder.',
+      verificationResendFailed: 'Failed to resend verification email',
+      enterEmailFirst: 'Please enter your email/username first'
     },
     contact: {
       title: 'Contact Us',
@@ -1752,7 +1767,12 @@ const translations = {
       loginSuccess: 'Inloggningen lyckades!',
       loginFailed: 'Inloggningen misslyckades',
       invalidCredentials: 'Felaktigt användarnamn eller lösenord',
-      tryAgainOrForgot: 'Försök igen eller använd'
+      tryAgainOrForgot: 'Försök igen eller använd',
+      resendVerification: 'Skicka verifieringsmail igen',
+      sendingVerification: 'Skickar...',
+      verificationResent: 'Verifieringsmail skickat! Kontrollera din inkorg och skräppost.',
+      verificationResendFailed: 'Kunde inte skicka verifieringsmail',
+      enterEmailFirst: 'Ange din e-post/användarnamn först'
     },
     contact: {
       title: 'Kontakta oss',

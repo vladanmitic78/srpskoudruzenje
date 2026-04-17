@@ -68,6 +68,13 @@ export const authAPI = {
     });
     return response.data;
   },
+  
+  resendVerification: async (email) => {
+    const response = await api.post('/auth/resend-verification', null, {
+      params: { email }
+    });
+    return response.data;
+  },
 };
 
 // ==================== User APIs ====================

@@ -7,6 +7,7 @@ import { Input } from '../components/ui/input';
 import { Label } from '../components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
 import { toast } from 'sonner';
+import { authAPI } from '../services/api';
 
 const Login = () => {
   const { t } = useLanguage();
@@ -17,6 +18,24 @@ const Login = () => {
     password: ''
   });
   const [loginError, setLoginError] = useState(null);
+  const [resendingVerification, setResendingVerification] = useState(false);
+
+  const handleResendVerification = async () => {
+    if (!formData.username) {
+      toast.error(t('auth.enterEmailFirst') || 'Please enter your email/username first');
+      return;
+    }
+    
+    setResendingVerification(true);
+    try {
+      await authAPI.resendVerification(formData.username);
+      toast.success(t('auth.verificationResent') || 'Verification email sent! Please check your inbox and spam folder.');
+    } catch (error) {
+      toast.error(t('auth.verificationResendFailed') || 'Failed to resend verification email');
+    } finally {
+      setResendingVerification(false);
+    }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -120,7 +139,17 @@ const Login = () => {
               />
             </div>
 
-            <div className="flex justify-end">
+            <div className="flex justify-between items-center">
+              <button
+                type="button"
+                onClick={handleResendVerification}
+                disabled={resendingVerification}
+                className="text-sm text-gray-600 dark:text-gray-400 hover:text-[var(--color-primary)] hover:underline disabled:opacity-50"
+              >
+                {resendingVerification 
+                  ? (t('auth.sendingVerification') || 'Sending...') 
+                  : (t('auth.resendVerification') || 'Resend verification email')}
+              </button>
               <Link to="/forgot-password" className="text-sm text-[var(--color-primary)] hover:underline">
                 {t('auth.forgotPassword')}
               </Link>
