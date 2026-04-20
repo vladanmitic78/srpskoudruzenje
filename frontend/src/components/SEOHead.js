@@ -1,61 +1,67 @@
 import { useEffect } from 'react';
 import { useLanguage } from '../context/LanguageContext';
 
-// SEO metadata for each language
+const BASE_URL = 'https://srpskoudruzenjetaby.se';
+
+// SEO metadata per language - maximized for search rankings
 const seoData = {
-  'sr': {
+  'sr-latin': {
+    siteName: 'Srpsko Kulturno Udruženje Täby - SKUD Täby',
     title: 'Srpsko Kulturno Udruženje Täby | SKUD Täby',
-    description: 'Srpsko Kulturno Udruženje Täby (SKUD Täby) - Kulturna zajednica Srba u Täby, Stokholm, Švedska. Narodni ples, tradicija, događaji.',
-    keywords: 'Srpsko Kulturno Udruženje Täby, SKUD Täby, srpsko udruženje Švedska, Srbi u Švedskoj, srpski narodni ples, srpska tradicija, srpski događaji Stokholm'
+    description: 'Srpsko Kulturno Udruženje Täby (SKUD Täby) - Kulturna zajednica Srba u Täbiju, Stokholmu, Švedska. Narodni ples, srpska tradicija, kulturni događaji, folklor. Pridružite nam se!',
+    keywords: 'Srpsko Kulturno Udruženje Täby, SKUD Täby, Srpsko Kulturno Društvo Täby, Srpsko Udruženje Täby, srpsko udruženje u Švedskoj, srpsko udruženje Stokholm, Srbi u Täbiju, Srbi u Stokholmu, Srbi u Švedskoj, srpska dijaspora Švedska, srpski narodni ples, srpska kultura Švedska, srpski folklor, srpska tradicija, srpski događaji Stokholm, srpska zajednica Stokholm, srpska zajednica Švedska, narodni ples Švedska'
   },
   'sr-cyrillic': {
+    siteName: 'Српско Културно Удружење Теби - СКУД Теби',
     title: 'Српско Културно Удружење Теби | СКУД Теби',
-    description: 'Српско Културно Удружење Теби (СКУД Теби) - Културна заједница Срба у Теби, Стокхолм, Шведска. Народни плес, традиција, догађаји.',
-    keywords: 'Српско Културно Удружење Теби, СКУД Теби, српско удружење Шведска, Срби у Шведској, српски народни плес, српска традиција'
+    description: 'Српско Културно Удружење Теби (СКУД Теби) - Културна заједница Срба у Тебију, Стокхолму, Шведска. Народни плес, српска традиција, културни догађаји, фолклор.',
+    keywords: 'Српско Културно Удружење Теби, СКУД Теби, Српско Удружење Теби, Срби у Шведској, Срби у Стокхолму, српска дијаспора Шведска, српски народни плес, српска култура Шведска, српски фолклор, српска традиција, српски догађаји Стокхолм, српска заједница Стокхолм'
   },
   'sv': {
+    siteName: 'Serbiska Kulturföreningen i Täby - SKUD Täby',
     title: 'Serbiska Kulturföreningen i Täby | SKUD Täby',
-    description: 'Serbiska Kulturföreningen i Täby (SKUD Täby) - Serbisk kulturförening i Stockholm/Täby, Sverige. Folkdans, traditioner, evenemang för den serbiska gemenskapen.',
-    keywords: 'Serbiska Kulturföreningen i Täby, Serbiska Kulturföreningen Täby, SKUD Täby, serbisk förening Stockholm, serbisk kulturförening, serbisk folkdans, serbiska evenemang Stockholm, Serber i Sverige'
+    description: 'Serbiska Kulturföreningen i Täby (SKUD Täby) - Serbisk kulturförening i Täby, Stockholm, Sverige. Folkdans, serbiska traditioner, kulturevenemang, folklore. Välkommen att bli medlem!',
+    keywords: 'Serbiska Kulturföreningen i Täby, Serbiska Kulturföreningen Täby, Serbiska föreningen Täby, Serbiska föreningen i Täby, SKUD Täby, serbisk förening Täby, serbisk kulturförening Täby, serbisk förening Stockholm, serbisk kulturförening Stockholm, serbiska evenemang Täby, serbiska evenemang Stockholm, serbisk folkdans Täby, serbisk folkdans Stockholm, serbiska traditioner Sverige, Serber i Täby, Serber i Stockholm, Serber i Sverige, serbisk community Stockholm, serbisk folklore Sverige'
   },
   'en': {
+    siteName: 'Serbian Cultural Association Täby - SKUD Täby',
     title: 'Serbian Cultural Association Täby | SKUD Täby',
-    description: 'Serbian Cultural Association Täby (SKUD Täby) - Serbian cultural community in Täby, Stockholm, Sweden. Folk dance, traditions, events.',
-    keywords: 'Serbian Cultural Association Täby, SKUD Täby, Serbian association Sweden, Serbs in Sweden, Serbian folk dance, Serbian traditions, Serbian events Stockholm'
+    description: 'Serbian Cultural Association Täby (SKUD Täby) - Serbian cultural community in Täby, Stockholm, Sweden. Folk dance, Serbian traditions, cultural events, folklore. Join us!',
+    keywords: 'Serbian Cultural Association Täby, Serbian Association Täby, SKUD Täby, Serbian community Täby, Serbian community Stockholm, Serbian community Sweden, Serbs in Täby, Serbs in Stockholm, Serbs in Sweden, Serbian diaspora Sweden, Serbian folk dance Sweden, Serbian culture Sweden, Serbian events Stockholm, Serbian traditions Sweden, Serbian folklore Sweden'
   }
 };
 
-// Page-specific SEO data
+// Page-specific SEO - every page has unique titles and descriptions
 const pageSeoData = {
   home: {
-    'sr': { title: 'Početna', path: '/' },
-    'sr-cyrillic': { title: 'Почетна', path: '/' },
-    'sv': { title: 'Hem', path: '/' },
-    'en': { title: 'Home', path: '/' }
+    'sr-latin': { title: 'Početna' },
+    'sr-cyrillic': { title: 'Почетна' },
+    'sv': { title: 'Hem' },
+    'en': { title: 'Home' }
   },
   about: {
-    'sr': { title: 'O nama', description: 'Saznajte više o Srpskom Kulturnom Udruženju Täby, našoj istoriji i misiji.' },
-    'sr-cyrillic': { title: 'О нама', description: 'Сазнајте више о Српском Културном Удружењу Теби, нашој историји и мисији.' },
-    'sv': { title: 'Om oss', description: 'Läs mer om Serbiska Kulturföreningen i Täby, vår historia och mission.' },
-    'en': { title: 'About Us', description: 'Learn more about Serbian Cultural Association Täby, our history and mission.' }
+    'sr-latin': { title: 'O nama - Srpsko Kulturno Udruženje Täby', description: 'Saznajte više o Srpskom Kulturnom Udruženju Täby (SKUD Täby) - naša istorija, misija i vizija. Čuvamo i promovišemo srpsku kulturu u Švedskoj.' },
+    'sr-cyrillic': { title: 'О нама - Српско Културно Удружење Теби', description: 'Сазнајте више о Српском Културном Удружењу Теби (СКУД Теби) - наша историја, мисија и визија.' },
+    'sv': { title: 'Om oss - Serbiska Kulturföreningen i Täby', description: 'Läs mer om Serbiska Kulturföreningen i Täby (SKUD Täby) - vår historia, mission och vision. Vi bevarar och främjar serbisk kultur i Sverige.' },
+    'en': { title: 'About Us - Serbian Cultural Association Täby', description: 'Learn about Serbian Cultural Association Täby (SKUD Täby) - our history, mission and vision. Preserving Serbian culture in Sweden.' }
   },
   gallery: {
-    'sr': { title: 'Galerija', description: 'Pogledajte fotografije sa naših događaja i aktivnosti.' },
-    'sr-cyrillic': { title: 'Галерија', description: 'Погледајте фотографије са наших догађаја и активности.' },
-    'sv': { title: 'Galleri', description: 'Se bilder från våra evenemang och aktiviteter.' },
-    'en': { title: 'Gallery', description: 'View photos from our events and activities.' }
+    'sr-latin': { title: 'Galerija - Srpsko Kulturno Udruženje Täby', description: 'Pogledajte fotografije sa kulturnih događaja, folklornih nastupa i aktivnosti Srpskog Kulturnog Udruženja Täby.' },
+    'sr-cyrillic': { title: 'Галерија - Српско Културно Удружење Теби', description: 'Погледајте фотографије са културних догађаја и активности Српског Културног Удружења Теби.' },
+    'sv': { title: 'Galleri - Serbiska Kulturföreningen i Täby', description: 'Se bilder från kulturevenemang, folkdansföreställningar och aktiviteter från Serbiska Kulturföreningen i Täby.' },
+    'en': { title: 'Gallery - Serbian Cultural Association Täby', description: 'View photos from cultural events, folk dance performances and activities of the Serbian Cultural Association Täby.' }
   },
   contact: {
-    'sr': { title: 'Kontakt', description: 'Kontaktirajte Srpsko Kulturno Udruženje Täby. Adresa, email, telefon.' },
-    'sr-cyrillic': { title: 'Контакт', description: 'Контактирајте Српско Културно Удружење Теби. Адреса, имејл, телефон.' },
-    'sv': { title: 'Kontakt', description: 'Kontakta Serbiska Kulturföreningen i Täby. Adress, e-post, telefon.' },
-    'en': { title: 'Contact', description: 'Contact Serbian Cultural Association Täby. Address, email, phone.' }
+    'sr-latin': { title: 'Kontakt - Srpsko Kulturno Udruženje Täby', description: 'Kontaktirajte Srpsko Kulturno Udruženje Täby. Adresa: Rösvägen 84, Täby, Stokholm. Email: info@srpskoudruzenjetaby.se' },
+    'sr-cyrillic': { title: 'Контакт - Српско Културно Удружење Теби', description: 'Контактирајте Српско Културно Удружење Теби. Адреса: Rösvägen 84, Теби, Стокхолм.' },
+    'sv': { title: 'Kontakt - Serbiska Kulturföreningen i Täby', description: 'Kontakta Serbiska Kulturföreningen i Täby. Adress: Rösvägen 84, 187 43 Täby, Stockholm. E-post: info@srpskoudruzenjetaby.se' },
+    'en': { title: 'Contact - Serbian Cultural Association Täby', description: 'Contact Serbian Cultural Association Täby. Address: Rösvägen 84, 187 43 Täby, Stockholm, Sweden. Email: info@srpskoudruzenjetaby.se' }
   },
   'serbian-story': {
-    'sr': { title: 'Srpska priča', description: 'Istorija i tradicija srpskog naroda.' },
-    'sr-cyrillic': { title: 'Српска прича', description: 'Историја и традиција српског народа.' },
-    'sv': { title: 'Serbisk historia', description: 'Historia och tradition av det serbiska folket.' },
-    'en': { title: 'Serbian Story', description: 'History and tradition of the Serbian people.' }
+    'sr-latin': { title: 'Srpska priča - Istorija i tradicija srpskog naroda', description: 'Istorija i tradicija srpskog naroda. Srpska kultura, tradicija i običaji predstavljeni od strane SKUD Täby.' },
+    'sr-cyrillic': { title: 'Српска прича - Историја и традиција српског народа', description: 'Историја и традиција српског народа. Српска култура и обичаји.' },
+    'sv': { title: 'Serbisk historia - Serbiska Kulturföreningen i Täby', description: 'Serbisk historia, kultur och traditioner presenterade av Serbiska Kulturföreningen i Täby.' },
+    'en': { title: 'Serbian Story - History and traditions of Serbian people', description: 'Serbian history, culture and traditions presented by the Serbian Cultural Association Täby.' }
   }
 };
 
@@ -66,56 +72,46 @@ const SEOHead = ({ page = 'home' }) => {
     const baseSeo = seoData[language] || seoData['sv'];
     const pageSeo = pageSeoData[page]?.[language] || pageSeoData[page]?.['sv'] || {};
     
-    // Build page title
+    // Build page title - include site name for brand reinforcement
     const pageTitle = pageSeo.title 
-      ? `${pageSeo.title} | ${baseSeo.title}`
+      ? `${pageSeo.title} | ${baseSeo.siteName}`
       : baseSeo.title;
     
-    // Build page description
     const pageDescription = pageSeo.description || baseSeo.description;
     
     // Update document title
     document.title = pageTitle;
     
-    // Update meta description
-    const metaDescription = document.querySelector('meta[name="description"]');
-    if (metaDescription) {
-      metaDescription.setAttribute('content', pageDescription);
-    }
+    // Update or create meta tags
+    const updateMeta = (selector, content) => {
+      const el = document.querySelector(selector);
+      if (el) el.setAttribute('content', content);
+    };
     
-    // Update meta keywords
-    const metaKeywords = document.querySelector('meta[name="keywords"]');
-    if (metaKeywords) {
-      metaKeywords.setAttribute('content', baseSeo.keywords);
-    }
+    updateMeta('meta[name="description"]', pageDescription);
+    updateMeta('meta[name="title"]', pageTitle);
+    updateMeta('meta[name="keywords"]', baseSeo.keywords);
+    updateMeta('meta[property="og:title"]', pageTitle);
+    updateMeta('meta[property="og:description"]', pageDescription);
+    updateMeta('meta[property="og:site_name"]', baseSeo.siteName);
+    updateMeta('meta[name="twitter:title"]', pageTitle);
+    updateMeta('meta[name="twitter:description"]', pageDescription);
     
-    // Update Open Graph tags
-    const ogTitle = document.querySelector('meta[property="og:title"]');
-    if (ogTitle) ogTitle.setAttribute('content', pageTitle);
+    // Update canonical URL
+    const path = page === 'home' ? '/' : `/${page === 'serbian-story' ? 'serbian-story' : page}`;
+    const canonical = document.querySelector('link[rel="canonical"]');
+    if (canonical) canonical.setAttribute('href', `${BASE_URL}${path}`);
     
-    const ogDescription = document.querySelector('meta[property="og:description"]');
-    if (ogDescription) ogDescription.setAttribute('content', pageDescription);
-    
-    // Update Twitter tags
-    const twitterTitle = document.querySelector('meta[name="twitter:title"]');
-    if (twitterTitle) twitterTitle.setAttribute('content', pageTitle);
-    
-    const twitterDescription = document.querySelector('meta[name="twitter:description"]');
-    if (twitterDescription) twitterDescription.setAttribute('content', pageDescription);
+    // Update OG URL
+    updateMeta('meta[property="og:url"]', `${BASE_URL}${path}`);
     
     // Update html lang attribute
-    const langMap = {
-      'sr': 'sr',
-      'sr-cyrillic': 'sr-Cyrl',
-      'sv': 'sv',
-      'en': 'en'
-    };
+    const langMap = { 'sr-latin': 'sr', 'sr-cyrillic': 'sr-Cyrl', 'sv': 'sv', 'en': 'en' };
     document.documentElement.lang = langMap[language] || 'sv';
     
   }, [language, page]);
   
-  return null; // This component doesn't render anything
+  return null;
 };
 
 export default SEOHead;
-export { seoData, pageSeoData };
