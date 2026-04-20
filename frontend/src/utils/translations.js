@@ -32,8 +32,15 @@ const translations = {
       noData: 'Nema dostupnih podataka',
       page: 'Stranica',
       of: 'od',
+      previous: 'Prethodna',
+      next: 'Sledeća',
       switchToSerbian: 'Prebaci na srpski',
       switchToSwedish: 'Prebaci na švedski'
+    },
+    news: {
+      showing: 'Prikazano',
+      of: 'od',
+      articles: 'vesti'
     },
     home: {
       welcome: 'Dobrodošli',
@@ -595,8 +602,15 @@ const translations = {
       noData: 'Нема доступних података',
       page: 'Страница',
       of: 'од',
+      previous: 'Претходна',
+      next: 'Следећа',
       switchToSerbian: 'Пребаци на српски',
       switchToSwedish: 'Пребаци на шведски'
+    },
+    news: {
+      showing: 'Приказано',
+      of: 'од',
+      articles: 'вести'
     },
     home: {
       welcome: 'Добродошли',
@@ -1148,8 +1162,15 @@ const translations = {
       noData: 'No data available',
       page: 'Page',
       of: 'of',
+      previous: 'Previous',
+      next: 'Next',
       switchToSerbian: 'Switch to Serbian',
       switchToSwedish: 'Switch to Swedish'
+    },
+    news: {
+      showing: 'Showing',
+      of: 'of',
+      articles: 'articles'
     },
     home: {
       welcome: 'Welcome',
@@ -1711,8 +1732,15 @@ const translations = {
       noData: 'Ingen data tillgänglig',
       page: 'Sida',
       of: 'av',
+      previous: 'Föregående',
+      next: 'Nästa',
       switchToSerbian: 'Byt till serbiska',
       switchToSwedish: 'Byt till svenska'
+    },
+    news: {
+      showing: 'Visar',
+      of: 'av',
+      articles: 'artiklar'
     },
     home: {
       welcome: 'Välkommen',
