@@ -7,7 +7,7 @@ from datetime import datetime, timedelta, timezone
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from apscheduler.triggers.cron import CronTrigger
 from motor.motor_asyncio import AsyncIOMotorDatabase
-from email_service import send_email, get_training_reminder_template
+from email_service import send_email, get_training_reminder_template, get_training_call_to_confirm_template
 
 logger = logging.getLogger(__name__)
 
@@ -17,8 +17,9 @@ scheduler = None
 
 async def send_event_reminders(db: AsyncIOMotorDatabase):
     """
-    Send reminder emails to all participants for events happening tomorrow
-    This function runs daily at 9:00 AM
+    Send reminder emails for events happening tomorrow:
+    1. Confirmed participants get a reminder
+    2. All other members in the training group get a "call to confirm" email
     """
     try:
         logger.info("Starting daily event reminder check...")
@@ -45,34 +46,34 @@ async def send_event_reminders(db: AsyncIOMotorDatabase):
         # Process each event
         total_emails_sent = 0
         for event in events:
-            event_id = event.get("id")
-            event_title = event.get("title", {}).get("en", "Event")
+            event_title_sr = event.get("title", {}).get("sr-latin", "Trening")
+            event_title_sv = event.get("title", {}).get("sv", event_title_sr)
             event_date = event.get("date")
             event_time = event.get("time", "TBD")
             event_location = event.get("location", "TBD")
             participants = event.get("participants", [])
+            cancellations = event.get("cancellations", [])
+            cancelled_user_ids = [c.get("userId") for c in cancellations]
+            training_group = event.get("trainingGroup")
             
-            if not participants:
-                logger.info(f"Event '{event_title}' has no registered participants")
-                continue
-            
-            logger.info(f"Processing event '{event_title}' with {len(participants)} participant(s)")
-            
-            # Send reminder to each participant
+            # 1. Send reminder to confirmed participants
             for participant_id in participants:
                 try:
-                    # Fetch user details
-                    user = await db.users.find_one(
-                        {"id": participant_id},
-                        {"_id": 0, "name": 1, "email": 1}
-                    )
+                    user = await db.users.find_one({"_id": participant_id})
                     
                     if not user:
                         logger.warning(f"User {participant_id} not found")
                         continue
                     
-                    user_name = user.get("name", "Member")
+                    user_name = user.get("fullName", user.get("username", "Member"))
                     user_email = user.get("email")
+                    
+                    if not user_email:
+                        # Check if it's a child - use parent email
+                        parent_id = user.get("primaryAccountId")
+                        if parent_id:
+                            parent = await db.users.find_one({"_id": parent_id})
+                            user_email = parent.get("email") if parent else None
                     
                     if not user_email:
                         logger.warning(f"User {participant_id} has no email address")
@@ -81,7 +82,8 @@ async def send_event_reminders(db: AsyncIOMotorDatabase):
                     # Generate reminder email
                     html_content, text_content = get_training_reminder_template(
                         name=user_name,
-                        event_title=event_title,
+                        event_title=event_title_sr,
+                        event_title_sv=event_title_sv,
                         event_date=event_date,
                         event_time=event_time,
                         location=event_location
@@ -90,7 +92,7 @@ async def send_event_reminders(db: AsyncIOMotorDatabase):
                     # Send email
                     success = await send_email(
                         to_email=user_email,
-                        subject=f"Podsetnik: {event_title} - Sutra! / Påminnelse: {event_title} - Imorgon!",
+                        subject=f"Podsetnik: {event_title_sr} - Sutra! / Påminnelse: {event_title_sv} - Imorgon!",
                         html_content=html_content,
                         text_content=text_content,
                         db=db
@@ -98,15 +100,63 @@ async def send_event_reminders(db: AsyncIOMotorDatabase):
                     
                     if success:
                         total_emails_sent += 1
-                        logger.info(f"✓ Reminder sent to {user_email} for event '{event_title}'")
+                        logger.info(f"✓ Reminder sent to {user_email} for event '{event_title_sr}'")
                     else:
                         logger.error(f"✗ Failed to send reminder to {user_email}")
                         
                 except Exception as e:
                     logger.error(f"Error sending reminder to participant {participant_id}: {str(e)}")
                     continue
+            
+            # 2. Send "call to confirm" to members who haven't responded
+            # Find all active users who are NOT in participants and NOT in cancellations
+            query = {
+                "role": {"$in": ["user", "admin", "superadmin", "moderator"]},
+                "_id": {"$nin": participants + cancelled_user_ids},
+                "emailVerified": True
+            }
+            
+            # If event has a training group, only email members of that group
+            if training_group:
+                query["trainingGroups"] = training_group
+            
+            unconfirmed_users = await db.users.find(query).to_list(length=200)
+            
+            for user in unconfirmed_users:
+                try:
+                    user_name = user.get("fullName", user.get("username", "Member"))
+                    user_email = user.get("email")
+                    
+                    if not user_email:
+                        continue
+                    
+                    # Generate "call to confirm" email
+                    html_content, text_content = get_training_call_to_confirm_template(
+                        name=user_name,
+                        event_title=event_title_sr,
+                        event_title_sv=event_title_sv,
+                        event_date=event_date,
+                        event_time=event_time,
+                        location=event_location
+                    )
+                    
+                    success = await send_email(
+                        to_email=user_email,
+                        subject=f"Potvrdite učešće: {event_title_sr} - Sutra! / Bekräfta deltagande: {event_title_sv} - Imorgon!",
+                        html_content=html_content,
+                        text_content=text_content,
+                        db=db
+                    )
+                    
+                    if success:
+                        total_emails_sent += 1
+                        logger.info(f"✓ Call-to-confirm sent to {user_email}")
+                    
+                except Exception as e:
+                    logger.error(f"Error sending call-to-confirm to {user.get('email')}: {str(e)}")
+                    continue
         
-        logger.info(f"Event reminder job completed. Sent {total_emails_sent} reminder email(s)")
+        logger.info(f"Event reminder job completed. Sent {total_emails_sent} email(s)")
         
     except Exception as e:
         logger.error(f"Error in send_event_reminders job: {str(e)}", exc_info=True)

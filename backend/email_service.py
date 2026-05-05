@@ -253,8 +253,9 @@ Srpsko Kulturno Udruženje, Täby
     
     return html_content, text_content
 
-def get_training_reminder_template(name: str, event_title: str, event_date: str, event_time: str, location: str):
-    """Generate training reminder email"""
+def get_training_reminder_template(name: str, event_title: str, event_date: str, event_time: str, location: str, event_title_sv: str = None):
+    """Generate training reminder email in Serbian and Swedish"""
+    title_sv = event_title_sv or event_title
     
     html_content = f"""
     <!DOCTYPE html>
@@ -277,7 +278,7 @@ def get_training_reminder_template(name: str, event_title: str, event_date: str,
             </div>
             <div class="content">
                 <h2>Poštovani/a {name},</h2>
-                <p>Podsetamo vas da imate potvrđen trening sutra:</p>
+                <p>Podsećamo vas da imate potvrđen trening sutra:</p>
                 <div class="event-details">
                     <h3>{event_title}</h3>
                     <p><strong>Datum:</strong> {event_date}</p>
@@ -289,7 +290,7 @@ def get_training_reminder_template(name: str, event_title: str, event_date: str,
                 <h2>Bästa {name},</h2>
                 <p>Vi påminner dig om din bekräftade träning imorgon:</p>
                 <div class="event-details">
-                    <h3>{event_title}</h3>
+                    <h3>{title_sv}</h3>
                     <p><strong>Datum:</strong> {event_date}</p>
                     <p><strong>Tid:</strong> {event_time}</p>
                     <p><strong>Plats:</strong> {location}</p>
@@ -297,7 +298,7 @@ def get_training_reminder_template(name: str, event_title: str, event_date: str,
                 <p>Vi ses!</p>
             </div>
             <div class="footer">
-                <p>Srpsko Kulturno Udruženje Täby</p>
+                <p>Srpsko Kulturno Udruženje Täby / Serbiska Kulturföreningen i Täby</p>
             </div>
         </div>
     </body>
@@ -305,6 +306,69 @@ def get_training_reminder_template(name: str, event_title: str, event_date: str,
     """
     
     return html_content, f"Podsetnik: {event_title} - {event_date} u {event_time}"
+
+
+def get_training_call_to_confirm_template(name: str, event_title: str, event_date: str, event_time: str, location: str, event_title_sv: str = None):
+    """Generate 'call to confirm' email for unconfirmed members - Serbian and Swedish"""
+    title_sv = event_title_sv or event_title
+    
+    html_content = f"""
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <meta charset="UTF-8">
+        <style>
+            body {{ font-family: Arial, sans-serif; line-height: 1.6; color: #333; }}
+            .container {{ max-width: 600px; margin: 0 auto; padding: 20px; }}
+            .header {{ background-color: #C1272D; color: white; padding: 20px; text-align: center; }}
+            .content {{ background-color: #f9f9f9; padding: 30px; }}
+            .event-details {{ background-color: white; padding: 20px; border-left: 4px solid #C1272D; margin: 20px 0; }}
+            .cta {{ text-align: center; margin: 25px 0; }}
+            .cta a {{ background-color: #28a745; color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px; font-weight: bold; }}
+            .footer {{ text-align: center; padding: 20px; color: #666; font-size: 12px; }}
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <div class="header">
+                <h1>Potvrdite učešće / Bekräfta deltagande</h1>
+            </div>
+            <div class="content">
+                <h2>Poštovani/a {name},</h2>
+                <p>Sutra se održava trening i još nismo primili vašu potvrdu učešća:</p>
+                <div class="event-details">
+                    <h3>{event_title}</h3>
+                    <p><strong>Datum:</strong> {event_date}</p>
+                    <p><strong>Vreme:</strong> {event_time}</p>
+                    <p><strong>Lokacija:</strong> {location}</p>
+                </div>
+                <p><strong>Molimo vas da potvrdite ili otkažete učešće</strong> prijavom na sajt.</p>
+                <div class="cta">
+                    <a href="https://srpskoudruzenjetaby.se/dashboard">Potvrdi učešće / Bekräfta</a>
+                </div>
+                <hr>
+                <h2>Bästa {name},</h2>
+                <p>Det är träning imorgon och vi har inte fått din bekräftelse ännu:</p>
+                <div class="event-details">
+                    <h3>{title_sv}</h3>
+                    <p><strong>Datum:</strong> {event_date}</p>
+                    <p><strong>Tid:</strong> {event_time}</p>
+                    <p><strong>Plats:</strong> {location}</p>
+                </div>
+                <p><strong>Vänligen bekräfta eller avboka ditt deltagande</strong> genom att logga in.</p>
+                <div class="cta">
+                    <a href="https://srpskoudruzenjetaby.se/dashboard">Bekräfta deltagande / Potvrdi</a>
+                </div>
+            </div>
+            <div class="footer">
+                <p>Srpsko Kulturno Udruženje Täby / Serbiska Kulturföreningen i Täby</p>
+            </div>
+        </div>
+    </body>
+    </html>
+    """
+    
+    return html_content, f"Potvrdite učešće: {event_title} - Sutra {event_date} u {event_time} / Bekräfta: {title_sv}"
 
 def get_cancellation_email_template(name: str, event_title: str, reason: str):
     """Generate event cancellation email"""
