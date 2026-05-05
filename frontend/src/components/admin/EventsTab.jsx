@@ -8,6 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 const EventsTab = ({ 
   t, 
   events,
+  users = [],
   setAttendanceEvent,
   setShowAttendanceReport,
   setSelectedEvent,
@@ -17,6 +18,12 @@ const EventsTab = ({
   handleCancelEvent,
   handleDeleteEvent
 }) => {
+  // Helper to get user name from ID
+  const getUserName = (userId) => {
+    const user = users.find(u => u.id === userId);
+    return user?.fullName || user?.username || userId;
+  };
+
   const resetEventForm = () => {
     setEventForm({
       date: '',
@@ -109,14 +116,30 @@ const EventsTab = ({
                       </p>
                     )}
                     {event.participants && (
-                      <p className="text-sm text-gray-500 dark:text-gray-400 mt-2">
-                        👥 {event.participants.length} {t('admin.events.participantsConfirmed')}
-                        {event.attendance && Object.keys(event.attendance).length > 0 && (
-                          <span className="ml-2 text-green-600">
-                            (✓ {Object.values(event.attendance).filter(a => a.attended).length} prisutnih)
-                          </span>
+                      <div className="mt-3 space-y-1">
+                        <p className="text-sm text-gray-500 dark:text-gray-400">
+                          👥 {event.participants.length} {t('admin.events.participantsConfirmed')}
+                          {event.attendance && Object.keys(event.attendance).length > 0 && (
+                            <span className="ml-2 text-green-600">
+                              (✓ {Object.values(event.attendance).filter(a => a.attended).length} {t('admin.events.attended') || 'attended'})
+                            </span>
+                          )}
+                        </p>
+                        {/* Confirmed participants list */}
+                        {event.participants.length > 0 && (
+                          <div className="text-xs text-green-700 dark:text-green-400 pl-6">
+                            <span className="font-medium">{t('admin.events.confirmedList') || 'Confirmed'}:</span>{' '}
+                            {event.participants.map(id => getUserName(id)).join(', ')}
+                          </div>
                         )}
-                      </p>
+                        {/* Rejected/Declined participants list */}
+                        {event.cancellations && event.cancellations.length > 0 && (
+                          <div className="text-xs text-red-600 dark:text-red-400 pl-6">
+                            <span className="font-medium">{t('admin.events.rejectedList') || 'Declined'}:</span>{' '}
+                            {event.cancellations.map(c => getUserName(c.userId)).join(', ')}
+                          </div>
+                        )}
+                      </div>
                     )}
                   </div>
                   <div className="flex flex-wrap gap-2">

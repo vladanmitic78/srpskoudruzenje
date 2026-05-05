@@ -1993,6 +1993,7 @@ const AdminDashboard = () => {
             <EventsTab
               t={t}
               events={events}
+              users={users}
               setAttendanceEvent={setAttendanceEvent}
               setShowAttendanceReport={setShowAttendanceReport}
               setSelectedEvent={setSelectedEvent}
