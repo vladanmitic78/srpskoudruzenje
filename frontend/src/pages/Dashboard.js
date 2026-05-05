@@ -924,13 +924,23 @@ const Dashboard = () => {
                             </div>
                             <div className="flex gap-2">
                               {!isConfirmed ? (
-                                <Button
-                                  onClick={() => handleConfirmEvent(event.id, event.title[language] || event.title['en'])}
-                                  className="bg-green-600 hover:bg-green-700 text-white"
-                                  data-testid={`confirm-event-${event.id}`}
-                                >
-                                  ✓ {t('dashboard.trainings.confirm') || 'Confirm'}
-                                </Button>
+                                <>
+                                  <Button
+                                    onClick={() => handleConfirmEvent(event.id, event.title[language] || event.title['en'])}
+                                    className="bg-green-600 hover:bg-green-700 text-white"
+                                    data-testid={`confirm-event-${event.id}`}
+                                  >
+                                    ✓ {t('dashboard.trainings.confirm') || 'Confirm'}
+                                  </Button>
+                                  <Button
+                                    onClick={() => handleCancelEvent(event.id, event.title[language] || event.title['en'])}
+                                    variant="outline"
+                                    className="border-red-300 text-red-600 hover:bg-red-50 hover:text-red-700"
+                                    data-testid={`decline-event-${event.id}`}
+                                  >
+                                    ✗ {t('dashboard.trainings.wontAttend') || "Won't attend"}
+                                  </Button>
+                                </>
                               ) : (
                                 <Button
                                   onClick={() => handleCancelEvent(event.id, event.title[language] || event.title['en'])}
