@@ -124,21 +124,12 @@ const EventsTab = ({
                               (✓ {Object.values(event.attendance).filter(a => a.attended).length} {t('admin.events.attended') || 'attended'})
                             </span>
                           )}
+                          {event.cancellations && event.cancellations.length > 0 && (
+                            <span className="ml-2 text-red-600">
+                              (✗ {event.cancellations.length} {t('admin.events.rejectedList') || 'Declined'})
+                            </span>
+                          )}
                         </p>
-                        {/* Confirmed participants list */}
-                        {event.participants.length > 0 && (
-                          <div className="text-xs text-green-700 dark:text-green-400 pl-6">
-                            <span className="font-medium">{t('admin.events.confirmedList') || 'Confirmed'}:</span>{' '}
-                            {event.participants.map(id => getUserName(id)).join(', ')}
-                          </div>
-                        )}
-                        {/* Rejected/Declined participants list */}
-                        {event.cancellations && event.cancellations.length > 0 && (
-                          <div className="text-xs text-red-600 dark:text-red-400 pl-6">
-                            <span className="font-medium">{t('admin.events.rejectedList') || 'Declined'}:</span>{' '}
-                            {event.cancellations.map(c => getUserName(c.userId)).join(', ')}
-                          </div>
-                        )}
                       </div>
                     )}
                   </div>
