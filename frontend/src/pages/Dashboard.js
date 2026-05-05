@@ -355,6 +355,13 @@ const Dashboard = () => {
     return event.participants && event.participants.includes(memberId);
   };
 
+  // Check if selected member has declined an event
+  const isSelectedMemberDeclined = (event) => {
+    const memberId = selectedMember === 'self' ? user?.id : selectedMember;
+    if (!event.cancellations || event.cancellations.length === 0) return false;
+    return event.cancellations.some(c => c.userId === memberId);
+  };
+
   const handleConfirmEvent = async (eventId, eventTitle) => {
     const memberName = getSelectedMemberName();
     const isForSelf = selectedMember === 'self';
@@ -896,10 +903,13 @@ const Dashboard = () => {
                   ) : (
                     events.map((event) => {
                       const isConfirmed = isSelectedMemberConfirmed(event);
+                      const isDeclined = isSelectedMemberDeclined(event);
                       return (
                         <div key={event.id} className={`p-4 border-2 rounded-lg ${
                           isConfirmed 
-                            ? 'border-green-200 bg-green-50 dark:bg-green-900/20' 
+                            ? 'border-green-200 bg-green-50 dark:bg-green-900/20'
+                            : isDeclined
+                            ? 'border-red-200 bg-red-50 dark:bg-red-900/20'
                             : 'border-gray-200 dark:border-gray-700'
                         }`}>
                           <div className="flex items-start justify-between">
@@ -925,9 +935,34 @@ const Dashboard = () => {
                                   }
                                 </p>
                               )}
+                              {isDeclined && !isConfirmed && (
+                                <p className="text-sm text-red-600 dark:text-red-400 mt-2 font-semibold">
+                                  ✗ {selectedMember === 'self'
+                                    ? (t('dashboard.trainings.youDeclined') || 'You declined this training')
+                                    : (t('dashboard.trainings.memberDeclined') || 'Declined for') + ' ' + getSelectedMemberName()
+                                  }
+                                </p>
+                              )}
                             </div>
                             <div className="flex gap-2">
-                              {!isConfirmed ? (
+                              {isConfirmed ? (
+                                <Button
+                                  onClick={() => handleCancelEvent(event.id, event.title[language] || event.title['en'])}
+                                  variant="destructive"
+                                  className="bg-red-600 hover:bg-red-700"
+                                  data-testid={`cancel-event-${event.id}`}
+                                >
+                                  ✗ {t('dashboard.trainings.cancel') || 'Cancel'}
+                                </Button>
+                              ) : isDeclined ? (
+                                <Button
+                                  onClick={() => handleConfirmEvent(event.id, event.title[language] || event.title['en'])}
+                                  className="bg-green-600 hover:bg-green-700 text-white"
+                                  data-testid={`confirm-event-${event.id}`}
+                                >
+                                  ✓ {t('dashboard.trainings.changeToConfirm') || 'Change to Confirm'}
+                                </Button>
+                              ) : (
                                 <>
                                   <Button
                                     onClick={() => handleConfirmEvent(event.id, event.title[language] || event.title['en'])}
@@ -945,15 +980,6 @@ const Dashboard = () => {
                                     ✗ {t('dashboard.trainings.wontAttend') || "Won't attend"}
                                   </Button>
                                 </>
-                              ) : (
-                                <Button
-                                  onClick={() => handleCancelEvent(event.id, event.title[language] || event.title['en'])}
-                                  variant="destructive"
-                                  className="bg-red-600 hover:bg-red-700"
-                                  data-testid={`cancel-event-${event.id}`}
-                                >
-                                  ✗ {t('dashboard.trainings.cancel') || 'Cancel'}
-                                </Button>
                               )}
                             </div>
                           </div>

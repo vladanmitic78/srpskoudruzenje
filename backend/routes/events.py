@@ -18,7 +18,7 @@ async def get_events(request: Request):
     events_list = await cursor.to_list(length=100)
     
     return {
-        "events": [{**item, "id": str(item["_id"])} for item in events_list]
+        "events": [{**{k: v for k, v in item.items() if k != '_id'}, "id": str(item["_id"])} for item in events_list]
     }
 
 @router.post("/", response_model=EventResponse)

@@ -188,7 +188,10 @@ const translations = {
         cancelFailed: 'Nije moguće otkazati učešće',
         wontAttend: 'Neće doći',
         createdOn: 'Kreirano',
-        by: 'od'
+        by: 'od',
+        youDeclined: 'Odbijeno učešće na ovom treningu',
+        memberDeclined: 'Odbijeno za',
+        changeToConfirm: 'Ipak dolazi'
       },
       passwordChange: {
         title: 'Promena lozinke',
@@ -763,7 +766,10 @@ const translations = {
         cancelFailed: 'Није могу|ће отказати учешће',
         wontAttend: 'Неће доћи',
         createdOn: 'Креирано',
-        by: 'од'
+        by: 'од',
+        youDeclined: 'Одбијено учешће на овом тренингу',
+        memberDeclined: 'Одбијено за',
+        changeToConfirm: 'Ипак долази'
       },
       passwordChange: {
         title: 'Промена лозинке',
@@ -1328,7 +1334,10 @@ const translations = {
         cancelFailed: 'Failed to cancel participation',
         wontAttend: "Won't attend",
         createdOn: 'Created',
-        by: 'by'
+        by: 'by',
+        youDeclined: "You declined this training",
+        memberDeclined: 'Declined for',
+        changeToConfirm: 'Change to Confirm'
       },
       passwordChange: {
         title: 'Change Password',
@@ -1903,7 +1912,10 @@ const translations = {
         cancelFailed: 'Kunde inte avboka deltagande',
         wontAttend: 'Kommer inte',
         createdOn: 'Skapad',
-        by: 'av'
+        by: 'av',
+        youDeclined: 'Du har avböjt denna träning',
+        memberDeclined: 'Avböjt för',
+        changeToConfirm: 'Ändra till Bekräfta'
       },
       passwordChange: {
         title: 'Ändra lösenord',
