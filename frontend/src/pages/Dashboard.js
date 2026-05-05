@@ -913,6 +913,10 @@ const Dashboard = () => {
                               <p className="text-sm text-gray-600 dark:text-gray-300">
                                 📍 {event.location}
                               </p>
+                              <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">
+                                {t('dashboard.trainings.createdOn') || 'Created'}: {event.createdAt ? new Date(event.createdAt).toLocaleDateString() + ' ' + new Date(event.createdAt).toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'}) : '-'}
+                                {event.createdBy && ` · ${t('dashboard.trainings.by') || 'by'} ${event.createdBy}`}
+                              </p>
                               {isConfirmed && (
                                 <p className="text-sm text-green-600 dark:text-green-400 mt-2 font-semibold">
                                   ✓ {selectedMember === 'self' 

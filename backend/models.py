@@ -152,6 +152,8 @@ class EventInDB(EventBase):
 class EventResponse(EventBase):
     id: str
     createdAt: datetime
+    createdBy: Optional[str] = None
+    participants: List[str] = []
 
 # Invoice Models
 class InvoiceBase(BaseModel):

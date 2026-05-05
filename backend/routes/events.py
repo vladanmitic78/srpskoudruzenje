@@ -30,6 +30,7 @@ async def create_event(event: EventCreate, admin: dict = Depends(get_admin_user)
     event_dict["participants"] = []  # Users who confirmed attendance (RSVP)
     event_dict["attendance"] = {}    # Actual attendance: {userId: {attended: bool, markedAt: datetime, markedBy: str}}
     event_dict["createdAt"] = datetime.utcnow()
+    event_dict["createdBy"] = admin.get("fullName", admin.get("username", "Admin"))
     
     await db.events.insert_one(event_dict)
     

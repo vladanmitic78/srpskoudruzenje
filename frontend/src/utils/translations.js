@@ -186,7 +186,9 @@ const translations = {
         cancelSuccessFor: 'Učešće otkazano za',
         confirmFailed: 'Nije moguće potvrditi učešće',
         cancelFailed: 'Nije moguće otkazati učešće',
-        wontAttend: 'Neće doći'
+        wontAttend: 'Neće doći',
+        createdOn: 'Kreirano',
+        by: 'od'
       },
       passwordChange: {
         title: 'Promena lozinke',
@@ -438,6 +440,8 @@ const translations = {
         cancelEvent: 'Otkaži',
         attendance: 'Prisustvo',
         report: 'Izveštaj',
+        createdOn: 'Kreirano',
+        by: 'od',
         deleteConfirmation: 'Da li ste sigurni da želite da obrišete ovaj događaj? Ova akcija se ne može poništiti.',
         deleteSuccess: 'Događaj uspešno obrisan',
         deleteFailed: 'Brisanje događaja nije uspelo',
@@ -757,7 +761,9 @@ const translations = {
         cancelSuccessFor: 'Учешће отказано за',
         confirmFailed: 'Није могу|ће потврдити учешће',
         cancelFailed: 'Није могу|ће отказати учешће',
-        wontAttend: 'Неће доћи'
+        wontAttend: 'Неће доћи',
+        createdOn: 'Креирано',
+        by: 'од'
       },
       passwordChange: {
         title: 'Промена лозинке',
@@ -999,6 +1005,8 @@ const translations = {
         cancelEvent: 'Откажи',
         attendance: 'Присуство',
         report: 'Извештај',
+        createdOn: 'Креирано',
+        by: 'од',
         deleteConfirmation: 'Да ли сте сигурни да желите да обришете овај догађај? Ова акција се не може поништити.',
         deleteSuccess: 'Догађај успешно обрисан',
         deleteFailed: 'Брисање догађаја није успело',
@@ -1318,7 +1326,9 @@ const translations = {
         cancelSuccessFor: 'Participation cancelled for',
         confirmFailed: 'Failed to confirm participation',
         cancelFailed: 'Failed to cancel participation',
-        wontAttend: "Won't attend"
+        wontAttend: "Won't attend",
+        createdOn: 'Created',
+        by: 'by'
       },
       passwordChange: {
         title: 'Change Password',
@@ -1570,6 +1580,8 @@ const translations = {
         cancelEvent: 'Cancel',
         attendance: 'Attendance',
         report: 'Report',
+        createdOn: 'Created',
+        by: 'by',
         deleteConfirmation: 'Are you sure you want to delete this event? This action cannot be undone.',
         deleteSuccess: 'Event deleted successfully',
         deleteFailed: 'Failed to delete event',
@@ -1889,7 +1901,9 @@ const translations = {
         cancelSuccessFor: 'Deltagande avbokat för',
         confirmFailed: 'Kunde inte bekräfta deltagande',
         cancelFailed: 'Kunde inte avboka deltagande',
-        wontAttend: 'Kommer inte'
+        wontAttend: 'Kommer inte',
+        createdOn: 'Skapad',
+        by: 'av'
       },
       passwordChange: {
         title: 'Ändra lösenord',
@@ -2131,6 +2145,8 @@ const translations = {
         cancelEvent: 'Avbryt',
         attendance: 'Närvaro',
         report: 'Rapport',
+        createdOn: 'Skapad',
+        by: 'av',
         deleteConfirmation: 'Är du säker på att du vill radera detta evenemang? Denna åtgärd kan inte ångras.',
         deleteSuccess: 'Evenemanget raderades',
         deleteFailed: 'Misslyckades med att radera evenemanget',

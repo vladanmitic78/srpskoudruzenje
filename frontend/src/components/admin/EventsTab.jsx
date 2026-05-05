@@ -96,6 +96,10 @@ const EventsTab = ({
                     <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">
                       📍 {event.location}
                     </p>
+                    <p className="text-xs text-gray-400 dark:text-gray-500 mb-1">
+                      {t('admin.events.createdOn') || 'Created'}: {event.createdAt ? new Date(event.createdAt).toLocaleDateString() + ' ' + new Date(event.createdAt).toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'}) : '-'}
+                      {event.createdBy && ` · ${t('admin.events.by') || 'by'} ${event.createdBy}`}
+                    </p>
                     <p className="text-sm text-gray-600 dark:text-gray-400">
                       {event.description?.['sr-latin'] || event.description?.en || ''}
                     </p>
