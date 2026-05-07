@@ -1246,7 +1246,7 @@ const AdminDashboard = () => {
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
           {/* Mobile Dropdown - Show on mobile and tablet */}
           <div className="block lg:hidden mb-4">
-            <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">Select Section</label>
+            <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">{t('admin.selectSection') || 'Select Section'}</label>
             <select
               value={activeTab}
               onChange={(e) => setActiveTab(e.target.value)}

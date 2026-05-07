@@ -246,6 +246,7 @@ const translations = {
       }
     },
     admin: {
+      selectSection: 'Izaberite sekciju',
       stats: {
         totalMembers: 'Ukupno članova',
         paidInvoices: 'Plaćene fakture',
@@ -833,6 +834,7 @@ const translations = {
       }
     },
     admin: {
+      selectSection: 'Изаберите секцију',
       stats: {
         totalMembers: 'Укупно чланова',
         paidInvoices: 'Плаћене фактуре',
@@ -1410,6 +1412,7 @@ const translations = {
       }
     },
     admin: {
+      selectSection: 'Select Section',
       stats: {
         totalMembers: 'Total Members',
         paidInvoices: 'Paid Invoices',
@@ -1997,6 +2000,7 @@ const translations = {
       }
     },
     admin: {
+      selectSection: 'Välj sektion',
       stats: {
         totalMembers: 'Totalt antal medlemmar',
         paidInvoices: 'Betalda fakturor',

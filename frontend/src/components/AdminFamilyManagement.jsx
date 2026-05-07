@@ -230,7 +230,7 @@ const AdminFamilyManagement = ({ t, users = [] }) => {
   return (
     <div className="space-y-6">
       {/* Header with Add Button */}
-      <div className="flex justify-between items-center">
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3">
         <div>
           <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
             {t('admin.family.title') || 'Family Member Management'}
@@ -240,18 +240,18 @@ const AdminFamilyManagement = ({ t, users = [] }) => {
           </p>
         </div>
         
-        <div className="flex gap-2">
+        <div className="flex flex-col sm:flex-row gap-2">
           <Button
             onClick={handleSendConsentReminders}
             variant="outline"
-            className="border-blue-300 text-blue-600 hover:bg-blue-50"
+            className="border-blue-300 text-blue-600 hover:bg-blue-50 text-sm"
             disabled={sendingReminders}
             data-testid="send-consent-reminders-btn"
           >
-            <Mail className="h-4 w-4 mr-2" />
-            {sendingReminders 
+            <Mail className="h-4 w-4 mr-2 flex-shrink-0" />
+            <span className="truncate">{sendingReminders 
               ? (t('admin.family.sendingReminders') || 'Sending...') 
-              : (t('admin.family.sendConsentReminders') || 'Send Consent Reminders')}
+              : (t('admin.family.sendConsentReminders') || 'Send Consent Reminders')}</span>
           </Button>
           
           <Button
@@ -259,11 +259,11 @@ const AdminFamilyManagement = ({ t, users = [] }) => {
               resetForm();
               setAddModalOpen(true);
             }}
-            className="bg-[var(--color-button-primary)] hover:bg-[var(--color-button-hover)]"
+            className="bg-[var(--color-button-primary)] hover:bg-[var(--color-button-hover)] text-sm"
             data-testid="admin-add-family-btn"
           >
-            <UserPlus className="h-4 w-4 mr-2" />
-            {t('admin.family.addButton') || 'Add Family Member'}
+            <UserPlus className="h-4 w-4 mr-2 flex-shrink-0" />
+            <span className="truncate">{t('admin.family.addButton') || 'Add Family Member'}</span>
           </Button>
         </div>
       </div>
