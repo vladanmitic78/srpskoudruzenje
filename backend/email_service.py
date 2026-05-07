@@ -262,45 +262,55 @@ def get_training_reminder_template(name: str, event_title: str, event_date: str,
     <html>
     <head>
         <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <!--[if mso]><xml><o:OfficeDocumentSettings><o:PixelsPerInch>96</o:PixelsPerInch></o:OfficeDocumentSettings></xml><![endif]-->
         <style>
-            body {{ font-family: Arial, sans-serif; line-height: 1.6; color: #333; }}
-            .container {{ max-width: 600px; margin: 0 auto; padding: 20px; }}
-            .header {{ background-color: #C1272D; color: white; padding: 20px; text-align: center; }}
-            .content {{ background-color: #f9f9f9; padding: 30px; }}
-            .event-details {{ background-color: white; padding: 20px; border-left: 4px solid #C1272D; margin: 20px 0; }}
-            .footer {{ text-align: center; padding: 20px; color: #666; font-size: 12px; }}
+            body {{ margin: 0; padding: 0; font-family: Arial, Helvetica, sans-serif; font-size: 15px; line-height: 1.5; color: #333333; background-color: #f4f4f4; -webkit-text-size-adjust: 100%; }}
+            table {{ border-collapse: collapse; }}
+            img {{ border: 0; display: block; }}
+            .wrapper {{ width: 100%; max-width: 600px; margin: 0 auto; }}
+            .header {{ background-color: #C1272D; }}
+            .header h1 {{ color: #ffffff; margin: 0; padding: 18px 20px; font-size: 18px; text-align: center; }}
+            .body-content {{ background-color: #ffffff; padding: 24px 20px; }}
+            .body-content h2 {{ font-size: 17px; margin: 0 0 8px 0; color: #222; }}
+            .body-content p {{ margin: 0 0 12px 0; font-size: 14px; color: #444; }}
+            .event-box {{ border-left: 4px solid #C1272D; background-color: #f9f9f9; padding: 14px 16px; margin: 14px 0; }}
+            .event-box h3 {{ margin: 0 0 6px 0; font-size: 15px; color: #222; }}
+            .event-box p {{ margin: 2px 0; font-size: 13px; color: #555; }}
+            .divider {{ border: none; border-top: 1px solid #e0e0e0; margin: 20px 0; }}
+            .footer {{ background-color: #f4f4f4; text-align: center; padding: 14px 20px; font-size: 12px; color: #888; }}
         </style>
     </head>
     <body>
-        <div class="container">
-            <div class="header">
-                <h1>Podsetnik za trening / Träningspåminnelse</h1>
-            </div>
-            <div class="content">
-                <h2>Poštovani/a {name},</h2>
-                <p>Podsećamo vas da imate potvrđen trening sutra:</p>
-                <div class="event-details">
-                    <h3>{event_title}</h3>
-                    <p><strong>Datum:</strong> {event_date}</p>
-                    <p><strong>Vreme:</strong> {event_time}</p>
-                    <p><strong>Lokacija:</strong> {location}</p>
-                </div>
-                <p>Vidimo se!</p>
-                <hr>
-                <h2>Bästa {name},</h2>
-                <p>Vi påminner dig om din bekräftade träning imorgon:</p>
-                <div class="event-details">
-                    <h3>{title_sv}</h3>
-                    <p><strong>Datum:</strong> {event_date}</p>
-                    <p><strong>Tid:</strong> {event_time}</p>
-                    <p><strong>Plats:</strong> {location}</p>
-                </div>
-                <p>Vi ses!</p>
-            </div>
-            <div class="footer">
-                <p>Srpsko Kulturno Udruženje Täby / Serbiska Kulturföreningen i Täby</p>
-            </div>
-        </div>
+        <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#f4f4f4;">
+            <tr><td align="center" style="padding:16px 8px;">
+                <table role="presentation" class="wrapper" width="100%" cellpadding="0" cellspacing="0" style="max-width:600px;background:#ffffff;border-radius:6px;overflow:hidden;">
+                    <tr><td class="header"><h1>Podsetnik za trening / Träningspåminnelse</h1></td></tr>
+                    <tr><td class="body-content">
+                        <h2>Poštovani/a {name},</h2>
+                        <p>Podsećamo vas da imate potvrđen trening sutra:</p>
+                        <div class="event-box">
+                            <h3>{event_title}</h3>
+                            <p><strong>Datum:</strong> {event_date}</p>
+                            <p><strong>Vreme:</strong> {event_time}</p>
+                            <p><strong>Lokacija:</strong> {location}</p>
+                        </div>
+                        <p>Vidimo se!</p>
+                        <hr class="divider">
+                        <h2>Bästa {name},</h2>
+                        <p>Vi påminner dig om din bekräftade träning imorgon:</p>
+                        <div class="event-box">
+                            <h3>{title_sv}</h3>
+                            <p><strong>Datum:</strong> {event_date}</p>
+                            <p><strong>Tid:</strong> {event_time}</p>
+                            <p><strong>Plats:</strong> {location}</p>
+                        </div>
+                        <p>Vi ses!</p>
+                    </td></tr>
+                    <tr><td class="footer">Srpsko Kulturno Udruženje Täby / Serbiska Kulturföreningen i Täby</td></tr>
+                </table>
+            </td></tr>
+        </table>
     </body>
     </html>
     """
@@ -317,53 +327,63 @@ def get_training_call_to_confirm_template(name: str, event_title: str, event_dat
     <html>
     <head>
         <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <!--[if mso]><xml><o:OfficeDocumentSettings><o:PixelsPerInch>96</o:PixelsPerInch></o:OfficeDocumentSettings></xml><![endif]-->
         <style>
-            body {{ font-family: Arial, sans-serif; line-height: 1.6; color: #333; }}
-            .container {{ max-width: 600px; margin: 0 auto; padding: 20px; }}
-            .header {{ background-color: #C1272D; color: white; padding: 20px; text-align: center; }}
-            .content {{ background-color: #f9f9f9; padding: 30px; }}
-            .event-details {{ background-color: white; padding: 20px; border-left: 4px solid #C1272D; margin: 20px 0; }}
-            .cta {{ text-align: center; margin: 25px 0; }}
-            .cta a {{ background-color: #28a745; color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px; font-weight: bold; }}
-            .footer {{ text-align: center; padding: 20px; color: #666; font-size: 12px; }}
+            body {{ margin: 0; padding: 0; font-family: Arial, Helvetica, sans-serif; font-size: 15px; line-height: 1.5; color: #333333; background-color: #f4f4f4; -webkit-text-size-adjust: 100%; }}
+            table {{ border-collapse: collapse; }}
+            img {{ border: 0; display: block; }}
+            .wrapper {{ width: 100%; max-width: 600px; margin: 0 auto; }}
+            .header {{ background-color: #C1272D; }}
+            .header h1 {{ color: #ffffff; margin: 0; padding: 18px 20px; font-size: 18px; text-align: center; }}
+            .body-content {{ background-color: #ffffff; padding: 24px 20px; }}
+            .body-content h2 {{ font-size: 17px; margin: 0 0 8px 0; color: #222; }}
+            .body-content p {{ margin: 0 0 12px 0; font-size: 14px; color: #444; }}
+            .event-box {{ border-left: 4px solid #C1272D; background-color: #f9f9f9; padding: 14px 16px; margin: 14px 0; }}
+            .event-box h3 {{ margin: 0 0 6px 0; font-size: 15px; color: #222; }}
+            .event-box p {{ margin: 2px 0; font-size: 13px; color: #555; }}
+            .cta {{ text-align: center; margin: 20px 0; }}
+            .cta a {{ display: inline-block; background-color: #28a745; color: #ffffff; padding: 12px 28px; text-decoration: none; border-radius: 4px; font-size: 14px; font-weight: bold; }}
+            .divider {{ border: none; border-top: 1px solid #e0e0e0; margin: 20px 0; }}
+            .footer {{ background-color: #f4f4f4; text-align: center; padding: 14px 20px; font-size: 12px; color: #888; }}
         </style>
     </head>
     <body>
-        <div class="container">
-            <div class="header">
-                <h1>Potvrdite učešće / Bekräfta deltagande</h1>
-            </div>
-            <div class="content">
-                <h2>Poštovani/a {name},</h2>
-                <p>Sutra se održava trening i još nismo primili vašu potvrdu učešća:</p>
-                <div class="event-details">
-                    <h3>{event_title}</h3>
-                    <p><strong>Datum:</strong> {event_date}</p>
-                    <p><strong>Vreme:</strong> {event_time}</p>
-                    <p><strong>Lokacija:</strong> {location}</p>
-                </div>
-                <p><strong>Molimo vas da potvrdite ili otkažete učešće</strong> prijavom na sajt.</p>
-                <div class="cta">
-                    <a href="https://srpskoudruzenjetaby.se/dashboard">Potvrdi učešće / Bekräfta</a>
-                </div>
-                <hr>
-                <h2>Bästa {name},</h2>
-                <p>Det är träning imorgon och vi har inte fått din bekräftelse ännu:</p>
-                <div class="event-details">
-                    <h3>{title_sv}</h3>
-                    <p><strong>Datum:</strong> {event_date}</p>
-                    <p><strong>Tid:</strong> {event_time}</p>
-                    <p><strong>Plats:</strong> {location}</p>
-                </div>
-                <p><strong>Vänligen bekräfta eller avboka ditt deltagande</strong> genom att logga in.</p>
-                <div class="cta">
-                    <a href="https://srpskoudruzenjetaby.se/dashboard">Bekräfta deltagande / Potvrdi</a>
-                </div>
-            </div>
-            <div class="footer">
-                <p>Srpsko Kulturno Udruženje Täby / Serbiska Kulturföreningen i Täby</p>
-            </div>
-        </div>
+        <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#f4f4f4;">
+            <tr><td align="center" style="padding:16px 8px;">
+                <table role="presentation" class="wrapper" width="100%" cellpadding="0" cellspacing="0" style="max-width:600px;background:#ffffff;border-radius:6px;overflow:hidden;">
+                    <tr><td class="header"><h1>Potvrdite učešće / Bekräfta deltagande</h1></td></tr>
+                    <tr><td class="body-content">
+                        <h2>Poštovani/a {name},</h2>
+                        <p>Sutra se održava trening i još nismo primili vašu potvrdu učešća:</p>
+                        <div class="event-box">
+                            <h3>{event_title}</h3>
+                            <p><strong>Datum:</strong> {event_date}</p>
+                            <p><strong>Vreme:</strong> {event_time}</p>
+                            <p><strong>Lokacija:</strong> {location}</p>
+                        </div>
+                        <p><strong>Molimo vas da potvrdite ili otkažete učešće</strong> prijavom na sajt.</p>
+                        <div class="cta">
+                            <a href="https://srpskoudruzenjetaby.se/dashboard">Potvrdi učešće</a>
+                        </div>
+                        <hr class="divider">
+                        <h2>Bästa {name},</h2>
+                        <p>Det är träning imorgon och vi har inte fått din bekräftelse ännu:</p>
+                        <div class="event-box">
+                            <h3>{title_sv}</h3>
+                            <p><strong>Datum:</strong> {event_date}</p>
+                            <p><strong>Tid:</strong> {event_time}</p>
+                            <p><strong>Plats:</strong> {location}</p>
+                        </div>
+                        <p><strong>Vänligen bekräfta eller avboka ditt deltagande</strong> genom att logga in.</p>
+                        <div class="cta">
+                            <a href="https://srpskoudruzenjetaby.se/dashboard">Bekräfta deltagande</a>
+                        </div>
+                    </td></tr>
+                    <tr><td class="footer">Srpsko Kulturno Udruženje Täby / Serbiska Kulturföreningen i Täby</td></tr>
+                </table>
+            </td></tr>
+        </table>
     </body>
     </html>
     """
