@@ -168,87 +168,129 @@ async def add_family_member(
         notification_email = member_email if member_email else parent_email
         
         if member_email:
-            # Member has own email - send credentials to them
+            # Member has own email - send credentials to them (bilingual SR + SV)
             html_content = f"""
-            <h2>Welcome to Srpsko Kulturno Društvo Täby!</h2>
-            <p>Dear {member_data.fullName},</p>
-            <p>You have been added as a family member by {user.get('fullName', 'your family member')}.</p>
-            <p>You can now log in to your own account using the following credentials:</p>
-            <p><strong>Email:</strong> {member_email}</p>
-            <p><strong>Temporary Password:</strong> {temp_password}</p>
-            <p><strong>⚠️ Important:</strong> Please change your password after your first login.</p>
-            <p><a href="{request.base_url}login">Login Here</a></p>
-            <br>
-            <p>Best regards,<br>SKUD Täby Team</p>
+            <!DOCTYPE html>
+            <html>
+            <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <style>
+                body {{ margin: 0; padding: 0; font-family: Arial, Helvetica, sans-serif; font-size: 15px; line-height: 1.5; color: #333; background-color: #f4f4f4; -webkit-text-size-adjust: 100%; }}
+                .wrapper {{ max-width: 600px; margin: 0 auto; }}
+                .header {{ background-color: #C1272D; color: #fff; padding: 18px 20px; text-align: center; }}
+                .header h1 {{ margin: 0; font-size: 18px; }}
+                .body-content {{ background-color: #fff; padding: 24px 20px; }}
+                .body-content h2 {{ font-size: 17px; margin: 0 0 8px; color: #222; }}
+                .body-content p {{ margin: 0 0 12px; font-size: 14px; color: #444; }}
+                .credentials {{ background-color: #f9f9f9; border-left: 4px solid #C1272D; padding: 14px 16px; margin: 14px 0; }}
+                .credentials p {{ margin: 2px 0; font-size: 13px; }}
+                .divider {{ border: none; border-top: 1px solid #e0e0e0; margin: 20px 0; }}
+                .footer {{ background-color: #f4f4f4; text-align: center; padding: 14px 20px; font-size: 12px; color: #888; }}
+            </style>
+            </head>
+            <body>
+            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#f4f4f4;">
+            <tr><td align="center" style="padding:16px 8px;">
+            <table role="presentation" class="wrapper" width="100%" cellpadding="0" cellspacing="0" style="max-width:600px;background:#fff;border-radius:6px;overflow:hidden;">
+                <tr><td class="header"><h1>Dobrodošli / Välkommen - SKUD Täby</h1></td></tr>
+                <tr><td class="body-content">
+                    <h2>Poštovani/a {member_data.fullName},</h2>
+                    <p>Dodati ste kao član porodice od strane korisnika {user.get('fullName', 'vaš član porodice')}.</p>
+                    <p>Sada se možete prijaviti na svoj nalog sa sledećim podacima:</p>
+                    <div class="credentials">
+                        <p><strong>Email:</strong> {member_email}</p>
+                        <p><strong>Privremena lozinka:</strong> {temp_password}</p>
+                    </div>
+                    <p><strong>Važno:</strong> Molimo promenite lozinku nakon prve prijave.</p>
+                    <hr class="divider">
+                    <h2>Bästa {member_data.fullName},</h2>
+                    <p>Du har lagts till som familjemedlem av {user.get('fullName', 'din familjemedlem')}.</p>
+                    <p>Du kan nu logga in på ditt konto med följande uppgifter:</p>
+                    <div class="credentials">
+                        <p><strong>E-post:</strong> {member_email}</p>
+                        <p><strong>Tillfälligt lösenord:</strong> {temp_password}</p>
+                    </div>
+                    <p><strong>Viktigt:</strong> Vänligen ändra ditt lösenord efter din första inloggning.</p>
+                </td></tr>
+                <tr><td class="footer">Srpsko Kulturno Udruženje Täby / Serbiska Kulturföreningen i Täby</td></tr>
+            </table>
+            </td></tr>
+            </table>
+            </body>
+            </html>
             """
             
-            text_content = f"""
-            Welcome to Srpsko Kulturno Društvo Täby!
-            
-            Dear {member_data.fullName},
-            
-            You have been added as a family member by {user.get('fullName', 'your family member')}.
-            
-            You can now log in to your own account:
-            Email: {member_email}
-            Temporary Password: {temp_password}
-            
-            ⚠️ Important: Please change your password after your first login.
-            
-            Best regards,
-            SKUD Täby Team
-            """
+            text_content = f"Dobrodošli / Välkommen - SKUD Täby\n\nEmail: {member_email}\nLozinka/Lösenord: {temp_password}"
             
             logger.info(f"Sending welcome email to new family member: {member_email}")
             await send_email(
                 to_email=member_email,
-                subject="Welcome to SKUD Täby - Your Account Has Been Created",
+                subject="Dobrodošli / Välkommen - SKUD Täby",
                 html_content=html_content,
                 text_content=text_content,
                 db=db
             )
         
-        # Always notify parent about the new family member
+        # Always notify parent about the new family member (bilingual SR + SV)
         parent_html = f"""
-        <h2>Family Member Added - Srpsko Kulturno Društvo Täby</h2>
-        <p>Dear {user.get('fullName', 'Parent')},</p>
-        <p>You have successfully added <strong>{member_data.fullName}</strong> as a family member to your account.</p>
-        {'<p>Since ' + member_data.fullName + ' is under 18, all platform communications will be sent to your email address.</p>' if not member_email else '<p>Login credentials have been sent to their email address.</p>'}
-        <p><strong>Member Details:</strong></p>
-        <ul>
-            <li>Name: {member_data.fullName}</li>
-            <li>Year of Birth: {member_data.yearOfBirth}</li>
-            <li>Relationship: {member_data.relationship}</li>
-            <li>Training Group: {member_data.trainingGroup or 'Not assigned'}</li>
-        </ul>
-        <p>You can manage this family member from your dashboard.</p>
-        <br>
-        <p>Best regards,<br>SKUD Täby Team</p>
+        <!DOCTYPE html>
+        <html>
+        <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <style>
+            body {{ margin: 0; padding: 0; font-family: Arial, Helvetica, sans-serif; font-size: 15px; line-height: 1.5; color: #333; background-color: #f4f4f4; -webkit-text-size-adjust: 100%; }}
+            .wrapper {{ max-width: 600px; margin: 0 auto; }}
+            .header {{ background-color: #C1272D; color: #fff; padding: 18px 20px; text-align: center; }}
+            .header h1 {{ margin: 0; font-size: 18px; }}
+            .body-content {{ background-color: #fff; padding: 24px 20px; }}
+            .body-content h2 {{ font-size: 17px; margin: 0 0 8px; color: #222; }}
+            .body-content p {{ margin: 0 0 12px; font-size: 14px; color: #444; }}
+            .details {{ background-color: #f9f9f9; border-left: 4px solid #C1272D; padding: 14px 16px; margin: 14px 0; }}
+            .details p {{ margin: 2px 0; font-size: 13px; }}
+            .divider {{ border: none; border-top: 1px solid #e0e0e0; margin: 20px 0; }}
+            .footer {{ background-color: #f4f4f4; text-align: center; padding: 14px 20px; font-size: 12px; color: #888; }}
+        </style>
+        </head>
+        <body>
+        <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#f4f4f4;">
+        <tr><td align="center" style="padding:16px 8px;">
+        <table role="presentation" class="wrapper" width="100%" cellpadding="0" cellspacing="0" style="max-width:600px;background:#fff;border-radius:6px;overflow:hidden;">
+            <tr><td class="header"><h1>Član porodice dodat / Familjemedlem tillagd</h1></td></tr>
+            <tr><td class="body-content">
+                <h2>Poštovani/a {user.get('fullName', 'Roditelj')},</h2>
+                <p>Uspešno ste dodali <strong>{member_data.fullName}</strong> kao člana porodice.</p>
+                {'<p>Pošto ' + member_data.fullName + ' ima manje od 18 godina, sva obaveštenja će biti poslata na vašu email adresu.</p>' if not member_email else '<p>Podaci za prijavu su poslati na email adresu člana.</p>'}
+                <div class="details">
+                    <p><strong>Ime:</strong> {member_data.fullName}</p>
+                    <p><strong>Godina rođenja:</strong> {member_data.yearOfBirth}</p>
+                    <p><strong>Odnos:</strong> {member_data.relationship}</p>
+                    <p><strong>Trening grupa:</strong> {member_data.trainingGroup or 'Nije dodeljena'}</p>
+                </div>
+                <p>Možete upravljati ovim članom porodice sa vaše kontrolne table.</p>
+                <hr class="divider">
+                <h2>Bästa {user.get('fullName', 'Förälder')},</h2>
+                <p>Du har framgångsrikt lagt till <strong>{member_data.fullName}</strong> som familjemedlem.</p>
+                {'<p>Eftersom ' + member_data.fullName + ' är under 18 år kommer all kommunikation att skickas till din e-postadress.</p>' if not member_email else '<p>Inloggningsuppgifter har skickats till deras e-postadress.</p>'}
+                <div class="details">
+                    <p><strong>Namn:</strong> {member_data.fullName}</p>
+                    <p><strong>Födelseår:</strong> {member_data.yearOfBirth}</p>
+                    <p><strong>Relation:</strong> {member_data.relationship}</p>
+                    <p><strong>Träningsgrupp:</strong> {member_data.trainingGroup or 'Inte tilldelad'}</p>
+                </div>
+                <p>Du kan hantera denna familjemedlem från din instrumentpanel.</p>
+            </td></tr>
+            <tr><td class="footer">Srpsko Kulturno Udruženje Täby / Serbiska Kulturföreningen i Täby</td></tr>
+        </table>
+        </td></tr>
+        </table>
+        </body>
+        </html>
         """
         
-        parent_text = f"""
-        Family Member Added - Srpsko Kulturno Društvo Täby
-        
-        Dear {user.get('fullName', 'Parent')},
-        
-        You have successfully added {member_data.fullName} as a family member to your account.
-        
-        Member Details:
-        - Name: {member_data.fullName}
-        - Year of Birth: {member_data.yearOfBirth}
-        - Relationship: {member_data.relationship}
-        - Training Group: {member_data.trainingGroup or 'Not assigned'}
-        
-        You can manage this family member from your dashboard.
-        
-        Best regards,
-        SKUD Täby Team
-        """
+        parent_text = f"Član porodice dodat / Familjemedlem tillagd - {member_data.fullName} - SKUD Täby"
         
         logger.info(f"Sending confirmation email to parent: {parent_email}")
         await send_email(
             to_email=parent_email,
-            subject=f"Family Member Added: {member_data.fullName}",
+            subject=f"Član porodice dodat / Familjemedlem tillagd: {member_data.fullName} - SKUD Täby",
             html_content=parent_html,
             text_content=parent_text,
             db=db
@@ -696,47 +738,67 @@ async def admin_add_family_member(
                 db=db
             )
         
-        # Always notify parent about the new family member
+        # Always notify parent about the new family member (bilingual SR + SV)
+        admin_added_sr = 'Administrator je dodao/la' if admin else 'Uspešno ste dodali'
+        admin_added_sv = 'En administratör har lagt till' if admin else 'Du har framgångsrikt lagt till'
         parent_html = f"""
-        <h2>Family Member Added - Srpsko Kulturno Društvo Täby</h2>
-        <p>Dear {parent_user.get('fullName', 'Parent')},</p>
-        <p>{'An administrator has added' if admin else 'You have successfully added'} <strong>{member_data.fullName}</strong> as a family member to your account.</p>
-        {'<p>Since ' + member_data.fullName + ' is under 18, all platform communications will be sent to your email address.</p>' if not member_email else '<p>Login credentials have been sent to their email address.</p>'}
-        <p><strong>Member Details:</strong></p>
-        <ul>
-            <li>Name: {member_data.fullName}</li>
-            <li>Year of Birth: {member_data.yearOfBirth}</li>
-            <li>Relationship: {member_data.relationship}</li>
-            <li>Training Group: {member_data.trainingGroup or 'Not assigned'}</li>
-        </ul>
-        <p>You can manage this family member from your dashboard.</p>
-        <br>
-        <p>Best regards,<br>SKUD Täby Team</p>
+        <!DOCTYPE html>
+        <html>
+        <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <style>
+            body {{ margin: 0; padding: 0; font-family: Arial, Helvetica, sans-serif; font-size: 15px; line-height: 1.5; color: #333; background-color: #f4f4f4; -webkit-text-size-adjust: 100%; }}
+            .wrapper {{ max-width: 600px; margin: 0 auto; }}
+            .header {{ background-color: #C1272D; color: #fff; padding: 18px 20px; text-align: center; }}
+            .header h1 {{ margin: 0; font-size: 18px; }}
+            .body-content {{ background-color: #fff; padding: 24px 20px; }}
+            .body-content h2 {{ font-size: 17px; margin: 0 0 8px; color: #222; }}
+            .body-content p {{ margin: 0 0 12px; font-size: 14px; color: #444; }}
+            .details {{ background-color: #f9f9f9; border-left: 4px solid #C1272D; padding: 14px 16px; margin: 14px 0; }}
+            .details p {{ margin: 2px 0; font-size: 13px; }}
+            .divider {{ border: none; border-top: 1px solid #e0e0e0; margin: 20px 0; }}
+            .footer {{ background-color: #f4f4f4; text-align: center; padding: 14px 20px; font-size: 12px; color: #888; }}
+        </style>
+        </head>
+        <body>
+        <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#f4f4f4;">
+        <tr><td align="center" style="padding:16px 8px;">
+        <table role="presentation" class="wrapper" width="100%" cellpadding="0" cellspacing="0" style="max-width:600px;background:#fff;border-radius:6px;overflow:hidden;">
+            <tr><td class="header"><h1>Član porodice dodat / Familjemedlem tillagd</h1></td></tr>
+            <tr><td class="body-content">
+                <h2>Poštovani/a {parent_user.get('fullName', 'Roditelj')},</h2>
+                <p>{admin_added_sr} <strong>{member_data.fullName}</strong> kao člana porodice.</p>
+                {'<p>Pošto ' + member_data.fullName + ' ima manje od 18 godina, sva obaveštenja će biti poslata na vašu email adresu.</p>' if not member_email else '<p>Podaci za prijavu su poslati na email adresu člana.</p>'}
+                <div class="details">
+                    <p><strong>Ime:</strong> {member_data.fullName}</p>
+                    <p><strong>Godina rođenja:</strong> {member_data.yearOfBirth}</p>
+                    <p><strong>Odnos:</strong> {member_data.relationship}</p>
+                    <p><strong>Trening grupa:</strong> {member_data.trainingGroup or 'Nije dodeljena'}</p>
+                </div>
+                <hr class="divider">
+                <h2>Bästa {parent_user.get('fullName', 'Förälder')},</h2>
+                <p>{admin_added_sv} <strong>{member_data.fullName}</strong> som familjemedlem.</p>
+                {'<p>Eftersom ' + member_data.fullName + ' är under 18 år kommer all kommunikation att skickas till din e-postadress.</p>' if not member_email else '<p>Inloggningsuppgifter har skickats till deras e-postadress.</p>'}
+                <div class="details">
+                    <p><strong>Namn:</strong> {member_data.fullName}</p>
+                    <p><strong>Födelseår:</strong> {member_data.yearOfBirth}</p>
+                    <p><strong>Relation:</strong> {member_data.relationship}</p>
+                    <p><strong>Träningsgrupp:</strong> {member_data.trainingGroup or 'Inte tilldelad'}</p>
+                </div>
+            </td></tr>
+            <tr><td class="footer">Srpsko Kulturno Udruženje Täby / Serbiska Kulturföreningen i Täby</td></tr>
+        </table>
+        </td></tr>
+        </table>
+        </body>
+        </html>
         """
         
-        parent_text = f"""
-        Family Member Added - Srpsko Kulturno Društvo Täby
-        
-        Dear {parent_user.get('fullName', 'Parent')},
-        
-        {'An administrator has added' if admin else 'You have successfully added'} {member_data.fullName} as a family member to your account.
-        
-        Member Details:
-        - Name: {member_data.fullName}
-        - Year of Birth: {member_data.yearOfBirth}
-        - Relationship: {member_data.relationship}
-        - Training Group: {member_data.trainingGroup or 'Not assigned'}
-        
-        You can manage this family member from your dashboard.
-        
-        Best regards,
-        SKUD Täby Team
-        """
+        parent_text = f"Član porodice dodat / Familjemedlem tillagd - {member_data.fullName} - SKUD Täby"
         
         logger.info(f"Sending confirmation email to parent: {parent_email}")
         await send_email(
             to_email=parent_email,
-            subject=f"Family Member Added: {member_data.fullName}",
+            subject=f"Član porodice dodat / Familjemedlem tillagd: {member_data.fullName} - SKUD Täby",
             html_content=parent_html,
             text_content=parent_text,
             db=db
