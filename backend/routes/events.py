@@ -430,7 +430,7 @@ async def confirm_participation(
     from email_service import send_email, get_admin_event_participation_notification
     
     training_group = event.get("trainingGroup")
-    notify_emails = ["info@srpskoudruzenjetaby.se"]  # Default admin
+    notify_emails = set(["info@srpskoudruzenjetaby.se"])  # Default admin
     
     if training_group:
         # Find moderators assigned to this training group
@@ -440,7 +440,9 @@ async def confirm_participation(
         }).to_list(length=10)
         
         if moderators:
-            notify_emails = [m.get("email") for m in moderators if m.get("email")]
+            for m in moderators:
+                if m.get("email"):
+                    notify_emails.add(m.get("email"))
     
     # Add note if registering a family member
     registered_by = ""
@@ -534,7 +536,7 @@ async def cancel_participation(
     from email_service import send_email, get_admin_event_participation_notification
     
     training_group = event.get("trainingGroup")
-    notify_emails = ["info@srpskoudruzenjetaby.se"]  # Default admin
+    notify_emails = set(["info@srpskoudruzenjetaby.se"])  # Default admin
     
     if training_group:
         # Find moderators assigned to this training group
@@ -544,7 +546,9 @@ async def cancel_participation(
         }).to_list(length=10)
         
         if moderators:
-            notify_emails = [m.get("email") for m in moderators if m.get("email")]
+            for m in moderators:
+                if m.get("email"):
+                    notify_emails.add(m.get("email"))
     
     # Add note if cancelling for a family member
     cancelled_by = ""

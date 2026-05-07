@@ -56,6 +56,9 @@ async def send_event_reminders(db: AsyncIOMotorDatabase):
             cancelled_user_ids = [c.get("userId") for c in cancellations]
             training_group = event.get("trainingGroup")
             
+            # Track emails already sent to avoid duplicates
+            emails_sent_to = set()
+            
             # 1. Send reminder to confirmed participants
             for participant_id in participants:
                 try:
@@ -74,9 +77,9 @@ async def send_event_reminders(db: AsyncIOMotorDatabase):
                         if parent_id:
                             parent = await db.users.find_one({"_id": parent_id})
                             user_email = parent.get("email") if parent else None
+                            user_name = f"{user_name} ({parent.get('fullName', 'parent')})" if parent else user_name
                     
-                    if not user_email:
-                        logger.warning(f"User {participant_id} has no email address")
+                    if not user_email or user_email in emails_sent_to:
                         continue
                     
                     # Generate reminder email
@@ -100,6 +103,7 @@ async def send_event_reminders(db: AsyncIOMotorDatabase):
                     
                     if success:
                         total_emails_sent += 1
+                        emails_sent_to.add(user_email)
                         logger.info(f"✓ Reminder sent to {user_email} for event '{event_title_sr}'")
                     else:
                         logger.error(f"✗ Failed to send reminder to {user_email}")
@@ -108,17 +112,19 @@ async def send_event_reminders(db: AsyncIOMotorDatabase):
                     logger.error(f"Error sending reminder to participant {participant_id}: {str(e)}")
                     continue
             
-            # 2. Send "call to confirm" to members who haven't responded
-            # Find all active users who are NOT in participants and NOT in cancellations
+            # 2. Send "call to confirm" ONLY if event has a training group
+            # Without a group, we don't know who to send to
+            if not training_group:
+                logger.info(f"Event '{event_title_sr}' has no training group, skipping call-to-confirm")
+                continue
+            
+            # Find members of this training group who haven't responded
             query = {
                 "role": {"$in": ["user", "admin", "superadmin", "moderator"]},
                 "_id": {"$nin": participants + cancelled_user_ids},
-                "emailVerified": True
+                "emailVerified": True,
+                "trainingGroups": training_group
             }
-            
-            # If event has a training group, only email members of that group
-            if training_group:
-                query["trainingGroups"] = training_group
             
             unconfirmed_users = await db.users.find(query).to_list(length=200)
             
@@ -127,7 +133,7 @@ async def send_event_reminders(db: AsyncIOMotorDatabase):
                     user_name = user.get("fullName", user.get("username", "Member"))
                     user_email = user.get("email")
                     
-                    if not user_email:
+                    if not user_email or user_email in emails_sent_to:
                         continue
                     
                     # Generate "call to confirm" email
@@ -150,6 +156,7 @@ async def send_event_reminders(db: AsyncIOMotorDatabase):
                     
                     if success:
                         total_emails_sent += 1
+                        emails_sent_to.add(user_email)
                         logger.info(f"✓ Call-to-confirm sent to {user_email}")
                     
                 except Exception as e:
