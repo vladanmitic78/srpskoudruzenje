@@ -479,36 +479,36 @@ const Dashboard = () => {
         )}
 
         <Tabs defaultValue="invoices" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-6 max-w-4xl">
-            <TabsTrigger value="invoices">
-              <FileText className="h-4 w-4 mr-2" />
+          <TabsList className="flex w-full max-w-4xl overflow-x-auto">
+            <TabsTrigger value="invoices" className="flex-shrink-0">
+              <FileText className="h-4 w-4 sm:mr-2" />
               <span className="hidden sm:inline">{t('dashboard.invoices')}</span>
-              <span className="sm:hidden">Bills</span>
+              <span className="sm:hidden text-xs">{t('dashboard.invoicesMobile') || 'Fakture'}</span>
             </TabsTrigger>
-            <TabsTrigger value="trainings">
-              <Calendar className="h-4 w-4 mr-2" />
+            <TabsTrigger value="trainings" className="flex-shrink-0">
+              <Calendar className="h-4 w-4 sm:mr-2" />
               <span className="hidden sm:inline">{t('dashboard.trainingsTab')}</span>
-              <span className="sm:hidden">Events</span>
+              <span className="sm:hidden text-xs">{t('dashboard.trainingsMobile') || 'Treninzi'}</span>
             </TabsTrigger>
-            <TabsTrigger value="documents" data-testid="documents-tab">
-              <FolderOpen className="h-4 w-4 mr-2" />
+            <TabsTrigger value="documents" data-testid="documents-tab" className="flex-shrink-0">
+              <FolderOpen className="h-4 w-4 sm:mr-2" />
               <span className="hidden sm:inline">{t('dashboard.documentsTab') || 'Documents'}</span>
-              <span className="sm:hidden">Docs</span>
+              <span className="sm:hidden text-xs">{t('dashboard.documentsMobile') || 'Dok.'}</span>
             </TabsTrigger>
-            <TabsTrigger value="family" data-testid="family-tab">
-              <Users className="h-4 w-4 mr-2" />
+            <TabsTrigger value="family" data-testid="family-tab" className="flex-shrink-0">
+              <Users className="h-4 w-4 sm:mr-2" />
               <span className="hidden sm:inline">{t('dashboard.familyTab') || 'Family'}</span>
-              <span className="sm:hidden">Family</span>
+              <span className="sm:hidden text-xs">{t('dashboard.familyMobile') || 'Porodica'}</span>
             </TabsTrigger>
-            <TabsTrigger value="membership">
-              <AlertCircle className="h-4 w-4 mr-2" />
+            <TabsTrigger value="membership" className="flex-shrink-0">
+              <AlertCircle className="h-4 w-4 sm:mr-2" />
               <span className="hidden sm:inline">{t('dashboard.membership')}</span>
-              <span className="sm:hidden">Info</span>
+              <span className="sm:hidden text-xs">{t('dashboard.membershipMobile') || 'Članstvo'}</span>
             </TabsTrigger>
-            <TabsTrigger value="personal">
-              <User className="h-4 w-4 mr-2" />
+            <TabsTrigger value="personal" className="flex-shrink-0">
+              <User className="h-4 w-4 sm:mr-2" />
               <span className="hidden sm:inline">{t('dashboard.personalDataTab')}</span>
-              <span className="sm:hidden">Profile</span>
+              <span className="sm:hidden text-xs">{t('dashboard.personalMobile') || 'Profil'}</span>
             </TabsTrigger>
           </TabsList>
 

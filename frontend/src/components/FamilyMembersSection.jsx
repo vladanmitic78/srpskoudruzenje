@@ -389,7 +389,7 @@ const FamilyMembersSection = ({ t, user }) => {
       
       {/* Add Member Modal */}
       <Dialog open={addModalOpen} onOpenChange={setAddModalOpen}>
-        <DialogContent className="max-w-lg">
+        <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="flex items-center">
               <UserPlus className="h-5 w-5 mr-2" />
@@ -545,7 +545,7 @@ const FamilyMembersSection = ({ t, user }) => {
       
       {/* Edit Member Modal */}
       <Dialog open={editModalOpen} onOpenChange={setEditModalOpen}>
-        <DialogContent className="max-w-lg">
+        <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="flex items-center">
               <Edit className="h-5 w-5 mr-2" />
