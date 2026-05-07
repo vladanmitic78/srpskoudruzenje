@@ -119,17 +119,17 @@ const EventsTab = ({
                       <div className="mt-3 space-y-1">
                         <p className="text-sm text-gray-500 dark:text-gray-400">
                           👥 {event.participants.length} {t('admin.events.participantsConfirmed')}
-                          {event.attendance && Object.keys(event.attendance).length > 0 && (
-                            <span className="ml-2 text-green-600">
-                              (✓ {Object.values(event.attendance).filter(a => a.attended).length} {t('admin.events.attended') || 'attended'})
-                            </span>
-                          )}
                           {event.cancellations && event.cancellations.length > 0 && (
                             <span className="ml-2 text-red-600">
-                              (✗ {event.cancellations.length} {t('admin.events.rejectedList') || 'Declined'})
+                              · ✗ {event.cancellations.length} {t('admin.events.rejectedList') || 'Declined'}
                             </span>
                           )}
                         </p>
+                        {event.attendance && Object.keys(event.attendance).length > 0 && (
+                          <p className="text-sm text-green-600 dark:text-green-400">
+                            ✓ {Object.values(event.attendance).filter(a => a.attended).length} {t('admin.events.attended') || 'attended'}
+                          </p>
+                        )}
                       </div>
                     )}
                   </div>
