@@ -912,8 +912,8 @@ const Dashboard = () => {
                             ? 'border-red-200 bg-red-50 dark:bg-red-900/20'
                             : 'border-gray-200 dark:border-gray-700'
                         }`}>
-                          <div className="flex items-start justify-between">
-                            <div className="flex-1">
+                          <div className="space-y-3">
+                            <div>
                               <h3 className="font-semibold text-lg text-gray-900 dark:text-white">
                                 {event.title[language]}
                               </h3>
@@ -944,12 +944,12 @@ const Dashboard = () => {
                                 </p>
                               )}
                             </div>
-                            <div className="flex gap-2">
+                            <div className="flex flex-wrap gap-2">
                               {isConfirmed ? (
                                 <Button
                                   onClick={() => handleCancelEvent(event.id, event.title[language] || event.title['en'])}
                                   variant="destructive"
-                                  className="bg-red-600 hover:bg-red-700"
+                                  className="bg-red-600 hover:bg-red-700 text-sm"
                                   data-testid={`cancel-event-${event.id}`}
                                 >
                                   ✗ {t('dashboard.trainings.cancel') || 'Cancel'}
@@ -957,7 +957,7 @@ const Dashboard = () => {
                               ) : isDeclined ? (
                                 <Button
                                   onClick={() => handleConfirmEvent(event.id, event.title[language] || event.title['en'])}
-                                  className="bg-green-600 hover:bg-green-700 text-white"
+                                  className="bg-green-600 hover:bg-green-700 text-white text-sm"
                                   data-testid={`confirm-event-${event.id}`}
                                 >
                                   ✓ {t('dashboard.trainings.changeToConfirm') || 'Change to Confirm'}
@@ -966,7 +966,7 @@ const Dashboard = () => {
                                 <>
                                   <Button
                                     onClick={() => handleConfirmEvent(event.id, event.title[language] || event.title['en'])}
-                                    className="bg-green-600 hover:bg-green-700 text-white"
+                                    className="bg-green-600 hover:bg-green-700 text-white text-sm"
                                     data-testid={`confirm-event-${event.id}`}
                                   >
                                     ✓ {t('dashboard.trainings.confirm') || 'Confirm'}
@@ -974,7 +974,7 @@ const Dashboard = () => {
                                   <Button
                                     onClick={() => handleCancelEvent(event.id, event.title[language] || event.title['en'])}
                                     variant="outline"
-                                    className="border-red-300 text-red-600 hover:bg-red-50 hover:text-red-700"
+                                    className="border-red-300 text-red-600 hover:bg-red-50 hover:text-red-700 text-sm"
                                     data-testid={`decline-event-${event.id}`}
                                   >
                                     ✗ {t('dashboard.trainings.wontAttend') || "Won't attend"}
