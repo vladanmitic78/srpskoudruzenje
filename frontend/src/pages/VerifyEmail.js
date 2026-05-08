@@ -12,6 +12,8 @@ const VerifyEmail = () => {
   const [message, setMessage] = useState('');
 
   useEffect(() => {
+    let cancelled = false;
+    
     const verifyEmail = async () => {
       const token = searchParams.get('token');
       
@@ -24,26 +26,38 @@ const VerifyEmail = () => {
       try {
         const response = await authAPI.verifyEmail(token);
         
-        if (response.success) {
+        if (!cancelled && response.success) {
           setStatus('success');
-          setMessage('Your email has been verified successfully! You can now log in.');
+          setMessage(t('auth.emailVerifiedSuccess') || 'Your email has been verified successfully! You can now log in.');
           
-          // Redirect to login after 3 seconds
           setTimeout(() => {
             navigate('/login');
           }, 3000);
-        } else {
-          setStatus('error');
-          setMessage('Failed to verify email. The link may be invalid or expired.');
         }
       } catch (error) {
-        setStatus('error');
-        setMessage(error.response?.data?.detail || 'Failed to verify email. The link may be invalid or expired.');
+        // If token is invalid, it might be because it was already used (already verified)
+        // Don't overwrite success state
+        if (!cancelled && status !== 'success') {
+          const detail = error.response?.data?.detail || '';
+          if (detail === 'Invalid verification token') {
+            // Token was already used = email already verified
+            setStatus('success');
+            setMessage(t('auth.emailAlreadyVerified') || 'Your email is already verified! You can log in.');
+            setTimeout(() => {
+              navigate('/login');
+            }, 3000);
+          } else {
+            setStatus('error');
+            setMessage(detail || t('auth.emailVerificationFailed') || 'Failed to verify email.');
+          }
+        }
       }
     };
 
     verifyEmail();
-  }, [searchParams, navigate]);
+    
+    return () => { cancelled = true; };
+  }, [searchParams, navigate, t, status]);
 
   return (
     <div className="min-h-screen flex items-center justify-center py-16 px-4 bg-gray-50 dark:bg-gray-900">
@@ -57,7 +71,7 @@ const VerifyEmail = () => {
             />
           </div>
           <CardTitle className="text-2xl font-bold text-center text-[#8B1F1F] dark:text-[#C1272D]">
-            Email Verification
+            {t('auth.emailVerificationTitle') || 'Verifikacija email adrese'}
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -65,7 +79,7 @@ const VerifyEmail = () => {
             {status === 'verifying' && (
               <>
                 <div className="w-16 h-16 border-4 border-[#C1272D] border-t-transparent rounded-full animate-spin mx-auto"></div>
-                <p className="text-gray-600 dark:text-gray-400">Verifying your email...</p>
+                <p className="text-gray-600 dark:text-gray-400">{t('auth.verifyingEmail') || 'Verifikacija u toku...'}</p>
               </>
             )}
 
@@ -76,9 +90,9 @@ const VerifyEmail = () => {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
                   </svg>
                 </div>
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Email Verified!</h3>
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white">{t('auth.emailVerifiedTitle') || 'Email je verifikovan!'}</h3>
                 <p className="text-gray-600 dark:text-gray-400">{message}</p>
-                <p className="text-sm text-gray-500 dark:text-gray-500">Redirecting to login page...</p>
+                <p className="text-sm text-gray-500 dark:text-gray-500">{t('auth.redirectingToLogin') || 'Preusmeravanje na stranicu za prijavu...'}</p>
               </>
             )}
 
@@ -89,7 +103,7 @@ const VerifyEmail = () => {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
                   </svg>
                 </div>
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Verification Failed</h3>
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white">{t('auth.verificationFailedTitle') || 'Verifikacija neuspešna'}</h3>
                 <p className="text-gray-600 dark:text-gray-400">{message}</p>
               </>
             )}
@@ -97,7 +111,7 @@ const VerifyEmail = () => {
 
           <div className="mt-6 text-center">
             <Link to="/login" className="text-sm text-[#C1272D] hover:underline">
-              Back to Login
+              {t('auth.backToLogin') || 'Nazad na prijavu'}
             </Link>
           </div>
         </CardContent>
