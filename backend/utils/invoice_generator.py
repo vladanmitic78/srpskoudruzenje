@@ -309,8 +309,8 @@ def generate_invoice_pdf(
 <font face="{FONT_NORMAL}" size="8" color="#666666">Anges vid betalning.</font>
 </font>"""
     
-    att_betala = f"""<font face="{FONT_BOLD}" size="12">Att betala</font><br/>
-<font face="{FONT_BOLD}" size="16" color="#{PRIMARY_COLOR.hexval()[2:]}">{amount:,.2f} {currency}</font>"""
+    att_betala = f"""<font face="{FONT_BOLD}" size="10">Att betala</font><br/>
+<font face="{FONT_BOLD}" size="12" color="#{PRIMARY_COLOR.hexval()[2:]}">{amount:,.2f} {currency}</font>"""
     
     # Payment table layout
     if qr_image:
