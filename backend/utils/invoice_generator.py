@@ -59,20 +59,21 @@ DEFAULT_BANK_DETAILS = {
 }
 
 
-def generate_payment_qr(bankgiro: str, amount: float, reference: str) -> io.BytesIO:
-    """Generate QR code with Swedish payment information"""
-    # Swedish Bankgiro payment string format
+def generate_payment_qr(bankgiro: str, amount: float, reference: str, output_path: str = None) -> str:
+    """Generate QR code with Swedish payment information, save to file"""
     payment_data = f"BG:{bankgiro};AMOUNT:{amount:.2f};REF:{reference}"
     
-    qr = qrcode.QRCode(version=1, box_size=4, border=2, error_correction=qrcode.constants.ERROR_CORRECT_M)
+    qr = qrcode.QRCode(version=1, box_size=6, border=2, error_correction=qrcode.constants.ERROR_CORRECT_M)
     qr.add_data(payment_data)
     qr.make(fit=True)
     
     img = qr.make_image(fill_color="black", back_color="white")
-    buffer = io.BytesIO()
-    img.save(buffer, format='PNG')
-    buffer.seek(0)
-    return buffer
+    
+    if not output_path:
+        output_path = f"/tmp/qr_{reference}.png"
+    
+    img.save(output_path)
+    return output_path
 
 
 def generate_invoice_pdf(
@@ -118,8 +119,7 @@ def generate_invoice_pdf(
     content = []
     
     # ===== HEADER =====
-    org_info = f"""<font face="{FONT_BOLD}" size="16" color="#{PRIMARY_COLOR.hexval()[2:]}">SKUD Täby</font><br/>
-<font face="{FONT_NORMAL}" size="9" color="#666666">Serbiska Kulturföreningen i Täby</font>"""
+    org_info = f"""<font face="{FONT_BOLD}" size="16" color="#{PRIMARY_COLOR.hexval()[2:]}">Serbiska Kulturföreningen i Täby</font>"""
     
     invoice_label = f"""<font face="{FONT_BOLD}" size="22" color="#{PRIMARY_COLOR.hexval()[2:]}">Faktura</font>"""
     
@@ -167,8 +167,7 @@ def generate_invoice_pdf(
     info_right = f"""<font face="{FONT_BOLD}" size="9" color="#999999">FAKTURAINFORMATION:</font><br/><br/>
 <font face="{FONT_NORMAL}" size="10"><font face="{FONT_BOLD}">Fakturanummer:</font> {invoice_number}</font><br/>
 <font face="{FONT_NORMAL}" size="10"><font face="{FONT_BOLD}">Fakturadatum:</font> {created_date}</font><br/>
-<font face="{FONT_NORMAL}" size="10"><font face="{FONT_BOLD}">Förfallodatum:</font> {due_date}</font><br/>
-<font face="{FONT_BOLD}" size="10">Status: <font color="{status_color}">{status_text}</font></font>"""
+<font face="{FONT_NORMAL}" size="10"><font face="{FONT_BOLD}">Förfallodatum:</font> {due_date}</font>"""
     
     if payment_date and status == "paid":
         info_right += f"""<br/><font face="{FONT_NORMAL}" size="10"><font face="{FONT_BOLD}">Betalningsdatum:</font> {payment_date}</font>"""
@@ -262,8 +261,8 @@ def generate_invoice_pdf(
     
     # Generate QR code
     bankgiro = bd.get('bankgiro', '___-____')
-    qr_buffer = generate_payment_qr(bankgiro, amount, invoice_number)
-    qr_image = Image(qr_buffer, width=28*mm, height=28*mm)
+    qr_path = generate_payment_qr(bankgiro, amount, invoice_number)
+    qr_image = Image(qr_path, width=28*mm, height=28*mm)
     
     # Build bank info text
     swish_line = ""
