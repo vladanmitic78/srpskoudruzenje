@@ -59,12 +59,26 @@ DEFAULT_BANK_DETAILS = {
 }
 
 
-def generate_payment_qr(bankgiro: str, amount: float, reference: str, output_path: str = None) -> str:
-    """Generate QR code with Swedish payment information, save to file"""
-    payment_data = f"BG:{bankgiro};AMOUNT:{amount:.2f};REF:{reference}"
+def generate_payment_qr(swish_number: str, amount: float, reference: str, output_path: str = None) -> str:
+    """Generate Swish-compatible QR code that Swedish bank apps can read.
+    Uses official Swish QR format: swish://payment?payee=...&amount=...&message=...&lock=3
+    """
+    import urllib.parse
+    
+    # Format Swish number: remove spaces, ensure starts with country code format
+    clean_number = swish_number.replace(' ', '').replace('-', '')
+    
+    # Format amount with comma as decimal separator (Swedish standard)
+    amount_str = f"{amount:.2f}".replace('.', ',')
+    
+    # URL-encode the message/reference
+    message = urllib.parse.quote(reference)
+    
+    # Official Swish QR format - lock=3 locks both amount and message
+    swish_url = f"swish://payment?payee={clean_number}&amount={amount_str}&message={message}&lock=3"
     
     qr = qrcode.QRCode(version=1, box_size=6, border=2, error_correction=qrcode.constants.ERROR_CORRECT_M)
-    qr.add_data(payment_data)
+    qr.add_data(swish_url)
     qr.make(fit=True)
     
     img = qr.make_image(fill_color="black", back_color="white")
@@ -262,10 +276,14 @@ def generate_invoice_pdf(
         ParagraphStyle('PayHeader', spaceBefore=3*mm, spaceAfter=3*mm, fontName=FONT_BOLD)
     ))
     
-    # Generate QR code
+    # Generate Swish QR code (only if Swish number is configured)
+    swish_number = bd.get('swish', '')
     bankgiro = bd.get('bankgiro', '___-____')
-    qr_path = generate_payment_qr(bankgiro, amount, invoice_number)
-    qr_image = Image(qr_path, width=28*mm, height=28*mm)
+    qr_image = None
+    
+    if swish_number:
+        qr_path = generate_payment_qr(swish_number, amount, invoice_number)
+        qr_image = Image(qr_path, width=28*mm, height=28*mm)
     
     # Build bank info text
     swish_line = ""
@@ -291,10 +309,31 @@ def generate_invoice_pdf(
     att_betala = f"""<font face="{FONT_BOLD}" size="12">Att betala</font><br/>
 <font face="{FONT_BOLD}" size="16" color="#{PRIMARY_COLOR.hexval()[2:]}">{amount:,.2f} {currency}</font>"""
     
-    # Payment table: [QR | Bank Info | Amount]
-    payment_table = Table([
-        [qr_image, Paragraph(bank_text, normal), Paragraph(att_betala, ParagraphStyle('AttBetala', alignment=TA_RIGHT, fontName=FONT_BOLD, leading=20))]
-    ], colWidths=[32*mm, 95*mm, 43*mm])
+    # Payment table layout
+    if qr_image:
+        # Build QR cell with label
+        qr_cell = []
+        qr_cell.append(qr_image)
+        qr_label = Paragraph(f'<font face="{FONT_BOLD}" size="7" color="#4CAF50">Skanna med Swish</font>', 
+                             ParagraphStyle('QRLabel', alignment=TA_CENTER, fontName=FONT_BOLD, spaceBefore=2*mm))
+        
+        # With QR: [QR+label | Bank Info | Amount]
+        qr_with_label = Table([[qr_image], [qr_label]], colWidths=[30*mm])
+        qr_with_label.setStyle(TableStyle([
+            ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+            ('VALIGN', (0, 0), (-1, -1), 'TOP'),
+            ('TOPPADDING', (0, 0), (-1, -1), 0),
+            ('BOTTOMPADDING', (0, 0), (-1, -1), 0),
+        ]))
+        
+        payment_table = Table([
+            [qr_with_label, Paragraph(bank_text, normal), Paragraph(att_betala, ParagraphStyle('AttBetala', alignment=TA_RIGHT, fontName=FONT_BOLD, leading=20))]
+        ], colWidths=[34*mm, 93*mm, 43*mm])
+    else:
+        # Without QR: [Bank Info | Amount]
+        payment_table = Table([
+            [Paragraph(bank_text, normal), Paragraph(att_betala, ParagraphStyle('AttBetala', alignment=TA_RIGHT, fontName=FONT_BOLD, leading=20))]
+        ], colWidths=[127*mm, 43*mm])
     payment_table.setStyle(TableStyle([
         ('VALIGN', (0, 0), (-1, -1), 'TOP'),
         ('BACKGROUND', (0, 0), (-1, -1), colors.HexColor('#F0F4F8')),
@@ -305,14 +344,7 @@ def generate_invoice_pdf(
         ('BOTTOMPADDING', (0, 0), (-1, -1), 8),
     ]))
     content.append(payment_table)
-    content.append(Spacer(1, 8*mm))
-    
-    # ===== LATE PAYMENT NOTE =====
-    content.append(Paragraph(
-        f'<font face="{FONT_NORMAL}" size="8" color="#666666"><font face="{FONT_BOLD}">Dröjsmålsränta:</font> Vid betalning efter förfallodagen debiteras ränta enligt räntelagen.</font>',
-        small
-    ))
-    content.append(Spacer(1, 5*mm))
+    content.append(Spacer(1, 10*mm))
     
     # ===== FOOTER =====
     org_nr = bd.get('orgNumber', '______-____')
