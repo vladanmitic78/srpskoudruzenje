@@ -182,6 +182,7 @@ class InvoiceInDB(InvoiceBase):
 
 class InvoiceResponse(InvoiceBase):
     id: str
+    invoiceNumber: Optional[str] = None
     status: str
     paymentDate: Optional[str] = None
     createdAt: datetime

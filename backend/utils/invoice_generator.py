@@ -104,7 +104,8 @@ def generate_invoice_pdf(
     status: str = "unpaid",
     payment_date: str = None,
     bank_details: dict = None,
-    vat_rate: float = 0.0
+    vat_rate: float = 0.0,
+    invoice_number: str = None
 ) -> str:
     """Generate a Swedish-standard professional PDF invoice"""
     
@@ -165,7 +166,9 @@ def generate_invoice_pdf(
     content.append(Spacer(1, 8*mm))
     
     # ===== INVOICE INFO + MEMBER INFO =====
-    invoice_number = invoice_id[-12:].upper() if len(invoice_id) > 12 else invoice_id.upper()
+    # Use sequential invoice number or fallback to ID-based
+    if not invoice_number:
+        invoice_number = invoice_id[-12:].upper() if len(invoice_id) > 12 else invoice_id.upper()
     
     try:
         created_date = datetime.fromisoformat(created_at.replace('Z', '+00:00')).strftime('%Y-%m-%d')

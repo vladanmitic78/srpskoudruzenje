@@ -68,6 +68,15 @@ async def create_invoice(
     invoice_id = f"invoice_{int(datetime.utcnow().timestamp() * 1000)}"
     created_at = datetime.utcnow()
     
+    # Generate sequential invoice number (0001, 0002, etc.)
+    counter_doc = await db.counters.find_one_and_update(
+        {"_id": "invoice_number"},
+        {"$inc": {"seq": 1}},
+        upsert=True,
+        return_document=True
+    )
+    invoice_number = str(counter_doc["seq"]).zfill(4)  # 0001, 0002, etc.
+    
     # Calculate VAT amounts
     base_amount = float(invoice.amount)
     vat_rate = float(invoice.vatRate) if invoice.includeVat and invoice.vatRate else 0
@@ -76,6 +85,7 @@ async def create_invoice(
     
     invoice_dict = invoice.dict()
     invoice_dict["_id"] = invoice_id
+    invoice_dict["invoiceNumber"] = invoice_number
     invoice_dict["userId"] = primary_user_id  # Store primary userId for backward compatibility
     invoice_dict["status"] = "unpaid"
     invoice_dict["paymentDate"] = None
@@ -99,6 +109,7 @@ async def create_invoice(
         
         generate_invoice_pdf(
             invoice_id=invoice_id,
+            invoice_number=invoice_number,
             member_name=user.get("fullName", user.get("username", "Member")),
             member_email=user.get("email", ""),
             description=invoice.description,
