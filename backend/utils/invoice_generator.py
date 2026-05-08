@@ -96,6 +96,9 @@ def generate_invoice_pdf(
     
     bd = bank_details or DEFAULT_BANK_DETAILS
     
+    # Always use Swedish name for accountHolder on invoice
+    bd['accountHolder'] = 'Serbiska Kulturföreningen i Täby'
+    
     # Calculate VAT
     if vat_rate > 0:
         subtotal = amount / (1 + vat_rate / 100)
