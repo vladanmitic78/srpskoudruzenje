@@ -305,7 +305,7 @@ def generate_invoice_pdf(
 <font face="{FONT_BOLD}">IBAN:</font> {bd.get('iban', 'SE__ ____ ____ ____ ____ ____')}<br/>
 <font face="{FONT_BOLD}">BIC/SWIFT:</font> {bd.get('bicSwift', '________')}<br/>
 {swish_line}<font face="{FONT_BOLD}">Org.nummer:</font> {bd.get('orgNumber', '______-____')}<br/>
-{vat_line}<font face="{FONT_BOLD}">OCR/Referens:</font> {invoice_number}<br/>
+{vat_line}<font face="{FONT_BOLD}">Referens:</font> {invoice_number}<br/>
 <font face="{FONT_NORMAL}" size="8" color="#666666">Anges vid betalning.</font>
 </font>"""
     
