@@ -1,25 +1,23 @@
 """
 Professional PDF Invoice Generator for SKUD Täby
-Generates beautiful invoices with Serbian cultural design elements
-Supports Serbian Latin characters (š, ž, đ, č, ć)
+Swedish-standard invoices aligned with Swedish law (Bokföringslagen)
+All text in Swedish only. QR code for payment info.
 """
 
 import os
+import io
 from datetime import datetime
 from reportlab.lib import colors
 from reportlab.lib.pagesizes import A4
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
-from reportlab.lib.units import mm, cm
+from reportlab.lib.units import mm
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle, Image
 from reportlab.lib.enums import TA_CENTER, TA_RIGHT, TA_LEFT
-from reportlab.pdfgen import canvas
-from reportlab.graphics.shapes import Drawing, Rect, Line
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
-from io import BytesIO
-import requests
+import qrcode
 
-# Register DejaVu fonts for Serbian Latin character support
+# Register DejaVu fonts for Swedish character support (å, ä, ö)
 DEJAVU_FONT_PATH = "/usr/share/fonts/truetype/dejavu/"
 try:
     pdfmetrics.registerFont(TTFont('DejaVuSans', f'{DEJAVU_FONT_PATH}DejaVuSans.ttf'))
@@ -27,49 +25,54 @@ try:
     FONT_NORMAL = 'DejaVuSans'
     FONT_BOLD = 'DejaVuSans-Bold'
 except Exception as e:
-    print(f"Warning: Could not load DejaVu fonts, falling back to Helvetica: {e}")
+    print(f"Warning: Could not load DejaVu fonts: {e}")
     FONT_NORMAL = 'Helvetica'
     FONT_BOLD = 'Helvetica-Bold'
 
-# SKUD Täby Brand Colors
-PRIMARY_COLOR = colors.HexColor('#C1272D')  # Serbian Red
-SECONDARY_COLOR = colors.HexColor('#8B1F1F')  # Dark Red
-GOLD_COLOR = colors.HexColor('#D4AF37')  # Gold accent
-BLUE_COLOR = colors.HexColor('#003399')  # Serbian Blue
+# Brand Colors
+PRIMARY_COLOR = colors.HexColor('#C1272D')
+DARK_COLOR = colors.HexColor('#333333')
+GREY_COLOR = colors.HexColor('#666666')
+LIGHT_BG = colors.HexColor('#F8F9FA')
+BORDER_COLOR = colors.HexColor('#DDDDDD')
 
-# Default Bank Account Details (fallback if not set in database)
+# Organization Details
+ORG_DETAILS = {
+    "name": "Serbiska Kulturföreningen i Täby",
+    "name_short": "SKUD Täby",
+    "address_line1": "",
+    "address_line2": "Täby",
+    "email": "info@srpskoudruzenjetaby.se",
+    "website": "www.srpskoudruzenjetaby.se",
+    "phone": "",
+}
+
 DEFAULT_BANK_DETAILS = {
     "bankName": "____________________",
-    "accountHolder": "Srpsko Kulturno Udruženje Täby",
+    "accountHolder": "Serbiska Kulturföreningen i Täby",
     "iban": "SE__ ____ ____ ____ ____ ____",
     "bicSwift": "________",
     "bankgiro": "___-____",
     "orgNumber": "______-____",
+    "vatNumber": "",
     "swish": "",
 }
 
-# Organization Details
-ORG_DETAILS = {
-    "name": "Srpsko Kulturno Udruženje Täby",
-    "name_short": "SKUD Täby",
-    "address": "Täby, Sweden",
-    "email": "info@srpskoudruzenjetaby.se",
-    "website": "www.srpskoudruzenjetaby.se",
-}
 
-
-def download_logo(logo_url: str, save_path: str) -> str:
-    """Download logo from URL and save locally"""
-    try:
-        if logo_url.startswith('http'):
-            response = requests.get(logo_url, timeout=10)
-            if response.status_code == 200:
-                with open(save_path, 'wb') as f:
-                    f.write(response.content)
-                return save_path
-    except Exception as e:
-        print(f"Failed to download logo: {e}")
-    return None
+def generate_payment_qr(bankgiro: str, amount: float, reference: str) -> io.BytesIO:
+    """Generate QR code with Swedish payment information"""
+    # Swedish Bankgiro payment string format
+    payment_data = f"BG:{bankgiro};AMOUNT:{amount:.2f};REF:{reference}"
+    
+    qr = qrcode.QRCode(version=1, box_size=4, border=2, error_correction=qrcode.constants.ERROR_CORRECT_M)
+    qr.add_data(payment_data)
+    qr.make(fit=True)
+    
+    img = qr.make_image(fill_color="black", back_color="white")
+    buffer = io.BytesIO()
+    img.save(buffer, format='PNG')
+    buffer.seek(0)
+    return buffer
 
 
 def generate_invoice_pdf(
@@ -88,353 +91,268 @@ def generate_invoice_pdf(
     bank_details: dict = None,
     vat_rate: float = 0.0
 ) -> str:
-    """
-    Generate a professional PDF invoice
+    """Generate a Swedish-standard professional PDF invoice"""
     
-    Args:
-        bank_details: Dict with bankName, accountHolder, iban, bicSwift, bankgiro, orgNumber, swish, vatRate
-        vat_rate: VAT percentage (e.g., 25 for 25%)
-    
-    Returns: Path to generated PDF file
-    """
-    
-    # Use provided bank details or defaults
     bd = bank_details or DEFAULT_BANK_DETAILS
     
-    # VAT rate is now explicitly passed - don't fallback to bank_details vatRate
-    # This allows invoices to be created with or without VAT regardless of global setting
-    
-    # Calculate VAT amounts
+    # Calculate VAT
     if vat_rate > 0:
-        # Amount is inclusive of VAT, calculate backwards
         subtotal = amount / (1 + vat_rate / 100)
         vat_amount = amount - subtotal
     else:
         subtotal = amount
         vat_amount = 0
     
-    # Create the PDF document
     doc = SimpleDocTemplate(
-        output_path,
-        pagesize=A4,
-        rightMargin=20*mm,
-        leftMargin=20*mm,
-        topMargin=15*mm,
-        bottomMargin=20*mm
+        output_path, pagesize=A4,
+        rightMargin=20*mm, leftMargin=20*mm,
+        topMargin=15*mm, bottomMargin=20*mm
     )
-    
-    # Get page dimensions
-    width, height = A4
     
     # Styles
-    styles = getSampleStyleSheet()
+    normal = ParagraphStyle('N', fontSize=10, fontName=FONT_NORMAL, textColor=DARK_COLOR, leading=14)
+    bold = ParagraphStyle('B', fontSize=10, fontName=FONT_BOLD, textColor=DARK_COLOR, leading=14)
+    small = ParagraphStyle('S', fontSize=8, fontName=FONT_NORMAL, textColor=GREY_COLOR, leading=11)
+    small_bold = ParagraphStyle('SB', fontSize=8, fontName=FONT_BOLD, textColor=GREY_COLOR, leading=11)
     
-    # Custom styles with DejaVu font for Serbian characters
-    title_style = ParagraphStyle(
-        'CustomTitle',
-        parent=styles['Heading1'],
-        fontSize=28,
-        textColor=PRIMARY_COLOR,
-        spaceAfter=5*mm,
-        alignment=TA_LEFT,
-        fontName=FONT_BOLD
-    )
-    
-    subtitle_style = ParagraphStyle(
-        'Subtitle',
-        parent=styles['Normal'],
-        fontSize=11,
-        textColor=colors.grey,
-        spaceAfter=3*mm,
-        alignment=TA_LEFT,
-        fontName=FONT_NORMAL
-    )
-    
-    header_style = ParagraphStyle(
-        'Header',
-        parent=styles['Heading2'],
-        fontSize=14,
-        textColor=SECONDARY_COLOR,
-        spaceBefore=8*mm,
-        spaceAfter=3*mm,
-        fontName=FONT_BOLD
-    )
-    
-    normal_style = ParagraphStyle(
-        'CustomNormal',
-        parent=styles['Normal'],
-        fontSize=10,
-        textColor=colors.black,
-        spaceAfter=2*mm,
-        fontName=FONT_NORMAL
-    )
-    
-    bold_style = ParagraphStyle(
-        'CustomBold',
-        parent=styles['Normal'],
-        fontSize=10,
-        textColor=colors.black,
-        fontName=FONT_BOLD
-    )
-    
-    small_style = ParagraphStyle(
-        'Small',
-        parent=styles['Normal'],
-        fontSize=8,
-        textColor=colors.grey,
-        fontName=FONT_NORMAL
-    )
-    
-    # Build content
     content = []
     
-    # ===== HEADER SECTION =====
-    # Create header with text-based organization info (no logo)
+    # ===== HEADER =====
+    org_info = f"""<font face="{FONT_BOLD}" size="16" color="#{PRIMARY_COLOR.hexval()[2:]}">SKUD Täby</font><br/>
+<font face="{FONT_NORMAL}" size="9" color="#666666">Serbiska Kulturföreningen i Täby</font>"""
     
-    # Organization info - Text only header
-    org_info = f"""
-    <font face="{FONT_BOLD}" size="18" color="#{PRIMARY_COLOR.hexval()[2:]}">SKUD Täby</font><br/>
-    <font face="{FONT_NORMAL}" size="10" color="#666666">Srpsko Kulturno Udruženje Täby</font><br/>
-    <font face="{FONT_NORMAL}" size="10" color="#666666">Serbiska Kulturföreningen i Täby</font><br/>
-    <font face="{FONT_NORMAL}" size="10" color="#666666">Täby, Sweden</font>
-    """
+    invoice_label = f"""<font face="{FONT_BOLD}" size="22" color="#{PRIMARY_COLOR.hexval()[2:]}">Faktura</font>"""
     
-    # Invoice label - Swedish only for professional look
-    invoice_label = f"""
-    <font face="{FONT_BOLD}" size="24" color="#{PRIMARY_COLOR.hexval()[2:]}">FAKTURA</font>
-    """
-    
-    header_table = Table([
-        [Paragraph(org_info, normal_style), '', Paragraph(invoice_label, ParagraphStyle('Right', alignment=TA_RIGHT, fontSize=10, fontName=FONT_NORMAL))]
-    ], colWidths=[90*mm, 20*mm, 60*mm])
-    
+    header_data = [[
+        Paragraph(org_info, normal),
+        '',
+        Paragraph(invoice_label, ParagraphStyle('R', alignment=TA_RIGHT, fontSize=10, fontName=FONT_NORMAL))
+    ]]
+    header_table = Table(header_data, colWidths=[90*mm, 20*mm, 60*mm])
     header_table.setStyle(TableStyle([
         ('VALIGN', (0, 0), (-1, -1), 'TOP'),
         ('ALIGN', (2, 0), (2, 0), 'RIGHT'),
     ]))
-    
     content.append(header_table)
-    content.append(Spacer(1, 8*mm))
+    content.append(Spacer(1, 3*mm))
     
-    # ===== DECORATIVE LINE =====
-    # Serbian tricolor line
-    line_table = Table([['', '', '']], colWidths=[56.7*mm, 56.7*mm, 56.7*mm], rowHeights=[2*mm])
-    line_table.setStyle(TableStyle([
+    # Thin red line
+    line = Table([['', '', '']], colWidths=[56.7*mm, 56.7*mm, 56.7*mm], rowHeights=[1.5*mm])
+    line.setStyle(TableStyle([
         ('BACKGROUND', (0, 0), (0, 0), PRIMARY_COLOR),
         ('BACKGROUND', (1, 0), (1, 0), colors.HexColor('#0C4DA2')),
         ('BACKGROUND', (2, 0), (2, 0), colors.white),
-        ('LINEBELOW', (2, 0), (2, 0), 1, colors.HexColor('#DDDDDD')),
+        ('LINEBELOW', (2, 0), (2, 0), 0.5, BORDER_COLOR),
     ]))
-    content.append(line_table)
+    content.append(line)
     content.append(Spacer(1, 8*mm))
     
-    # ===== INVOICE INFO SECTION =====
+    # ===== INVOICE INFO + MEMBER INFO =====
     invoice_number = invoice_id[-12:].upper() if len(invoice_id) > 12 else invoice_id.upper()
     
-    # Format dates
     try:
         created_date = datetime.fromisoformat(created_at.replace('Z', '+00:00')).strftime('%Y-%m-%d')
-    except:
+    except Exception:
         created_date = created_at[:10] if created_at else datetime.now().strftime('%Y-%m-%d')
-    
-    info_left = f"""
-    <font face="{FONT_NORMAL}" size="9" color="#666666">FAKTURA TILL:</font><br/><br/>
-    <font face="{FONT_BOLD}" size="12">{member_name}</font><br/>
-    <font face="{FONT_NORMAL}" size="10">{member_email}</font>
-    """
     
     status_color = "#28a745" if status == "paid" else "#dc3545"
     status_text = "BETALD" if status == "paid" else "OBETALD"
     
-    info_right = f"""
-    <font face="{FONT_NORMAL}" size="9" color="#666666">FAKTURAINFORMATION:</font><br/><br/>
-    <font face="{FONT_NORMAL}" size="10">Fakturanummer: {invoice_number}</font><br/>
-    <font face="{FONT_NORMAL}" size="10">Fakturadatum: {created_date}</font><br/>
-    <font face="{FONT_NORMAL}" size="10">Förfallodatum: {due_date}</font><br/>
-    <font face="{FONT_BOLD}" size="10">Status: <font color="{status_color}">{status_text}</font></font>
-    """
+    # Left: Member info
+    member_left = f"""<font face="{FONT_BOLD}" size="9" color="#999999">MEDLEM:</font><br/><br/>
+<font face="{FONT_BOLD}" size="11">{member_name}</font><br/>
+<font face="{FONT_NORMAL}" size="10">{member_email}</font>"""
+
+    # Right: Invoice details
+    info_right = f"""<font face="{FONT_BOLD}" size="9" color="#999999">FAKTURAINFORMATION:</font><br/><br/>
+<font face="{FONT_NORMAL}" size="10"><font face="{FONT_BOLD}">Fakturanummer:</font> {invoice_number}</font><br/>
+<font face="{FONT_NORMAL}" size="10"><font face="{FONT_BOLD}">Fakturadatum:</font> {created_date}</font><br/>
+<font face="{FONT_NORMAL}" size="10"><font face="{FONT_BOLD}">Förfallodatum:</font> {due_date}</font><br/>
+<font face="{FONT_BOLD}" size="10">Status: <font color="{status_color}">{status_text}</font></font>"""
     
     if payment_date and status == "paid":
-        info_right += f"""<br/><font face="{FONT_NORMAL}" size="10">Betalningsdatum: {payment_date}</font>"""
+        info_right += f"""<br/><font face="{FONT_NORMAL}" size="10"><font face="{FONT_BOLD}">Betalningsdatum:</font> {payment_date}</font>"""
     
     info_table = Table([
-        [Paragraph(info_left, normal_style), Paragraph(info_right, normal_style)]
+        [Paragraph(member_left, normal), Paragraph(info_right, normal)]
     ], colWidths=[85*mm, 85*mm])
-    
     info_table.setStyle(TableStyle([
         ('VALIGN', (0, 0), (-1, -1), 'TOP'),
-        ('ALIGN', (1, 0), (1, 0), 'RIGHT'),
     ]))
-    
     content.append(info_table)
     content.append(Spacer(1, 10*mm))
     
-    # ===== INVOICE ITEMS TABLE =====
-    content.append(Paragraph("<b>FAKTURADETALJER</b>", header_style))
-    
-    items_data = [
-        ['Beskrivning', 'Belopp'],
-        [description, f"{subtotal:,.2f} {currency}"]
+    # ===== ITEM TABLE =====
+    # Table header: Art.nr | Beskrivning | Antal | Enhet | À-pris | Summa
+    items_header = [
+        Paragraph(f'<font face="{FONT_BOLD}" size="9" color="#FFFFFF">Beskrivning</font>', normal),
+        Paragraph(f'<font face="{FONT_BOLD}" size="9" color="#FFFFFF">Antal</font>', ParagraphStyle('RC', alignment=TA_CENTER, fontName=FONT_BOLD)),
+        Paragraph(f'<font face="{FONT_BOLD}" size="9" color="#FFFFFF">Enhet</font>', ParagraphStyle('RC2', alignment=TA_CENTER, fontName=FONT_BOLD)),
+        Paragraph(f'<font face="{FONT_BOLD}" size="9" color="#FFFFFF">À-pris</font>', ParagraphStyle('RR', alignment=TA_RIGHT, fontName=FONT_BOLD)),
+        Paragraph(f'<font face="{FONT_BOLD}" size="9" color="#FFFFFF">Summa</font>', ParagraphStyle('RR2', alignment=TA_RIGHT, fontName=FONT_BOLD)),
     ]
     
-    items_table = Table(items_data, colWidths=[120*mm, 50*mm])
+    items_row = [
+        Paragraph(f'<font face="{FONT_NORMAL}" size="10">{description}</font>', normal),
+        Paragraph(f'<font face="{FONT_NORMAL}" size="10">1</font>', ParagraphStyle('DC', alignment=TA_CENTER, fontName=FONT_NORMAL)),
+        Paragraph(f'<font face="{FONT_NORMAL}" size="10">st</font>', ParagraphStyle('DC2', alignment=TA_CENTER, fontName=FONT_NORMAL)),
+        Paragraph(f'<font face="{FONT_NORMAL}" size="10">{subtotal:,.2f}</font>', ParagraphStyle('DR', alignment=TA_RIGHT, fontName=FONT_NORMAL)),
+        Paragraph(f'<font face="{FONT_NORMAL}" size="10">{subtotal:,.2f}</font>', ParagraphStyle('DR2', alignment=TA_RIGHT, fontName=FONT_NORMAL)),
+    ]
+    
+    items_table = Table([items_header, items_row], colWidths=[75*mm, 20*mm, 20*mm, 27.5*mm, 27.5*mm])
     items_table.setStyle(TableStyle([
-        # Header row
         ('BACKGROUND', (0, 0), (-1, 0), PRIMARY_COLOR),
         ('TEXTCOLOR', (0, 0), (-1, 0), colors.white),
-        ('FONTNAME', (0, 0), (-1, 0), FONT_BOLD),
-        ('FONTSIZE', (0, 0), (-1, 0), 10),
-        ('ALIGN', (0, 0), (-1, 0), 'LEFT'),
-        ('ALIGN', (1, 0), (1, -1), 'RIGHT'),
         ('BOTTOMPADDING', (0, 0), (-1, 0), 8),
         ('TOPPADDING', (0, 0), (-1, 0), 8),
-        
-        # Data rows
-        ('FONTNAME', (0, 1), (-1, -1), FONT_NORMAL),
-        ('FONTSIZE', (0, 1), (-1, -1), 10),
+        ('LEFTPADDING', (0, 0), (-1, -1), 6),
+        ('RIGHTPADDING', (0, 0), (-1, -1), 6),
+        ('BACKGROUND', (0, 1), (-1, -1), LIGHT_BG),
         ('BOTTOMPADDING', (0, 1), (-1, -1), 10),
         ('TOPPADDING', (0, 1), (-1, -1), 10),
-        ('BACKGROUND', (0, 1), (-1, -1), colors.HexColor('#F8F9FA')),
-        
-        # Grid
-        ('GRID', (0, 0), (-1, -1), 0.5, colors.HexColor('#DDDDDD')),
+        ('GRID', (0, 0), (-1, -1), 0.5, BORDER_COLOR),
     ]))
-    
     content.append(items_table)
     content.append(Spacer(1, 5*mm))
     
-    # ===== VAT AND TOTAL SECTION =====
+    # ===== TOTALS =====
+    totals_rows = []
+    
     if vat_rate > 0:
-        # Show subtotal, VAT, and total
-        totals_data = [
-            ['Delsumma:', f"{subtotal:,.2f} {currency}"],
-            [f'Moms ({vat_rate:.1f}%):', f"{vat_amount:,.2f} {currency}"],
-            ['TOTALT ATT BETALA:', f"{amount:,.2f} {currency}"],
-        ]
-        
-        totals_table = Table(totals_data, colWidths=[100*mm, 70*mm])
-        totals_table.setStyle(TableStyle([
-            ('ALIGN', (0, 0), (0, -1), 'RIGHT'),
-            ('ALIGN', (1, 0), (1, -1), 'RIGHT'),
-            ('FONTNAME', (0, 0), (-1, -1), FONT_NORMAL),
-            ('FONTSIZE', (0, 0), (-1, -1), 10),
-            # Subtotal row
-            ('BOTTOMPADDING', (0, 0), (-1, 0), 5),
-            ('TOPPADDING', (0, 0), (-1, 0), 5),
-            # VAT row  
-            ('BOTTOMPADDING', (0, 1), (-1, 1), 5),
-            ('TOPPADDING', (0, 1), (-1, 1), 5),
-            ('TEXTCOLOR', (0, 1), (-1, 1), colors.HexColor('#666666')),
-            # Total row - highlighted
-            ('FONTNAME', (0, 2), (-1, 2), FONT_BOLD),
-            ('FONTSIZE', (0, 2), (0, 2), 11),
-            ('FONTSIZE', (1, 2), (1, 2), 14),
-            ('TEXTCOLOR', (1, 2), (1, 2), PRIMARY_COLOR),
-            ('BACKGROUND', (0, 2), (-1, 2), colors.HexColor('#FFF3CD')),
-            ('BOTTOMPADDING', (0, 2), (-1, 2), 10),
-            ('TOPPADDING', (0, 2), (-1, 2), 10),
-            ('BOX', (0, 2), (-1, 2), 1, GOLD_COLOR),
-        ]))
-        content.append(totals_table)
-    else:
-        # No VAT - show simple total
-        total_data = [
-            ['TOTALT ATT BETALA:', f"{amount:,.2f} {currency}"],
-        ]
-        
-        total_table = Table(total_data, colWidths=[100*mm, 70*mm])
-        total_table.setStyle(TableStyle([
-            ('ALIGN', (0, 0), (0, -1), 'RIGHT'),
-            ('ALIGN', (1, 0), (1, -1), 'RIGHT'),
-            ('FONTNAME', (0, 0), (-1, -1), FONT_BOLD),
-            ('FONTSIZE', (0, 0), (0, 0), 11),
-            ('FONTSIZE', (1, 0), (1, 0), 16),
-            ('TEXTCOLOR', (1, 0), (1, 0), PRIMARY_COLOR),
-            ('BACKGROUND', (0, 0), (-1, -1), colors.HexColor('#FFF3CD')),
-            ('BOTTOMPADDING', (0, 0), (-1, 0), 10),
-            ('TOPPADDING', (0, 0), (-1, 0), 10),
-            ('BOX', (0, 0), (-1, -1), 1, GOLD_COLOR),
-        ]))
-        content.append(total_table)
+        totals_rows.append([
+            Paragraph(f'<font face="{FONT_NORMAL}" size="10">Exkl. moms:</font>', ParagraphStyle('TR', alignment=TA_RIGHT, fontName=FONT_NORMAL)),
+            Paragraph(f'<font face="{FONT_NORMAL}" size="10">{subtotal:,.2f} {currency}</font>', ParagraphStyle('TV', alignment=TA_RIGHT, fontName=FONT_NORMAL))
+        ])
+        totals_rows.append([
+            Paragraph(f'<font face="{FONT_NORMAL}" size="10" color="#666666">Moms ({vat_rate:.0f}%):</font>', ParagraphStyle('TR2', alignment=TA_RIGHT, fontName=FONT_NORMAL)),
+            Paragraph(f'<font face="{FONT_NORMAL}" size="10" color="#666666">{vat_amount:,.2f} {currency}</font>', ParagraphStyle('TV2', alignment=TA_RIGHT, fontName=FONT_NORMAL))
+        ])
+        totals_rows.append([
+            Paragraph(f'<font face="{FONT_NORMAL}" size="10" color="#666666">Avrundning:</font>', ParagraphStyle('TR3', alignment=TA_RIGHT, fontName=FONT_NORMAL)),
+            Paragraph(f'<font face="{FONT_NORMAL}" size="10" color="#666666">0,00 {currency}</font>', ParagraphStyle('TV3', alignment=TA_RIGHT, fontName=FONT_NORMAL))
+        ])
     
-    content.append(Spacer(1, 12*mm))
+    # Total row - always shown
+    totals_rows.append([
+        Paragraph(f'<font face="{FONT_BOLD}" size="11">Att betala:</font>', ParagraphStyle('TTR', alignment=TA_RIGHT, fontName=FONT_BOLD)),
+        Paragraph(f'<font face="{FONT_BOLD}" size="14" color="#{PRIMARY_COLOR.hexval()[2:]}">{amount:,.2f} {currency}</font>', ParagraphStyle('TTV', alignment=TA_RIGHT, fontName=FONT_BOLD))
+    ])
     
-    # ===== PAYMENT INFORMATION =====
-    content.append(Paragraph("<b>BETALNINGSINFORMATION</b>", header_style))
-    
-    # Build bank info with Swish if available
-    swish_line = ""
-    if bd.get('swish'):
-        swish_line = f"<font face=\"{FONT_BOLD}\">Swish:</font> {bd.get('swish')}<br/>"
-    
-    bank_info = f"""
-    <font face="{FONT_NORMAL}" size="10">
-    <font face="{FONT_BOLD}">Bank:</font> {bd.get('bankName', '____________________')}<br/>
-    <font face="{FONT_BOLD}">Kontoinnehavare:</font> {bd.get('accountHolder', 'Srpsko Kulturno Udruženje Täby')}<br/>
-    <font face="{FONT_BOLD}">IBAN:</font> {bd.get('iban', 'SE__ ____ ____ ____ ____ ____')}<br/>
-    <font face="{FONT_BOLD}">BIC/SWIFT:</font> {bd.get('bicSwift', '________')}<br/>
-    <font face="{FONT_BOLD}">Bankgiro:</font> {bd.get('bankgiro', '___-____')}<br/>
-    {swish_line}<font face="{FONT_BOLD}">Org.nummer:</font> {bd.get('orgNumber', '______-____')}<br/><br/>
-    <font face="{FONT_BOLD}">Referens:</font> {invoice_number}
-    </font>
-    """
-    
-    bank_table = Table([[Paragraph(bank_info, normal_style)]], colWidths=[170*mm])
-    bank_table.setStyle(TableStyle([
-        ('BACKGROUND', (0, 0), (-1, -1), colors.HexColor('#F0F4F8')),
-        ('BOX', (0, 0), (-1, -1), 1, colors.HexColor('#CCCCCC')),
-        ('LEFTPADDING', (0, 0), (-1, -1), 10),
-        ('RIGHTPADDING', (0, 0), (-1, -1), 10),
-        ('TOPPADDING', (0, 0), (-1, -1), 10),
-        ('BOTTOMPADDING', (0, 0), (-1, -1), 10),
-    ]))
-    
-    content.append(bank_table)
+    totals_table = Table(totals_rows, colWidths=[100*mm, 70*mm])
+    total_row_idx = len(totals_rows) - 1
+    style_commands = [
+        ('ALIGN', (0, 0), (-1, -1), 'RIGHT'),
+        ('BOTTOMPADDING', (0, 0), (-1, -1), 4),
+        ('TOPPADDING', (0, 0), (-1, -1), 4),
+        ('BACKGROUND', (0, total_row_idx), (-1, total_row_idx), colors.HexColor('#FFF3CD')),
+        ('BOTTOMPADDING', (0, total_row_idx), (-1, total_row_idx), 10),
+        ('TOPPADDING', (0, total_row_idx), (-1, total_row_idx), 10),
+        ('BOX', (0, total_row_idx), (-1, total_row_idx), 1, colors.HexColor('#D4AF37')),
+    ]
+    totals_table.setStyle(TableStyle(style_commands))
+    content.append(totals_table)
     content.append(Spacer(1, 10*mm))
     
-    # ===== FOOTER =====
-    footer_text = f"""
-    <font face="{FONT_BOLD}" size="8" color="#666666">{ORG_DETAILS['name']}</font><br/>
-    <font face="{FONT_NORMAL}" size="8" color="#666666">{ORG_DETAILS['address']} | {ORG_DETAILS['email']} | {ORG_DETAILS['website']}</font><br/><br/>
-    <font face="{FONT_NORMAL}" size="8" color="#666666">Vänligen ange fakturanummer ({invoice_number}) som referens vid betalning.</font>
-    """
+    # ===== PAYMENT INFO WITH QR CODE =====
+    content.append(Paragraph(
+        f'<font face="{FONT_BOLD}" size="12" color="#{PRIMARY_COLOR.hexval()[2:]}">Betalningsinformation</font>',
+        ParagraphStyle('PayHeader', spaceBefore=3*mm, spaceAfter=3*mm, fontName=FONT_BOLD)
+    ))
     
-    content.append(Paragraph(footer_text, ParagraphStyle('Footer', alignment=TA_CENTER, fontSize=8, textColor=colors.grey, fontName=FONT_NORMAL)))
+    # Generate QR code
+    bankgiro = bd.get('bankgiro', '___-____')
+    qr_buffer = generate_payment_qr(bankgiro, amount, invoice_number)
+    qr_image = Image(qr_buffer, width=28*mm, height=28*mm)
     
-    # ===== DECORATIVE BOTTOM LINE =====
+    # Build bank info text
+    swish_line = ""
+    if bd.get('swish'):
+        swish_line = f"""<font face="{FONT_BOLD}">Swish:</font> {bd.get('swish')}<br/>"""
+    
+    vat_line = ""
+    if bd.get('vatNumber'):
+        vat_line = f"""<font face="{FONT_BOLD}">Momsreg.nr:</font> {bd.get('vatNumber')}<br/>"""
+    
+    bank_text = f"""<font face="{FONT_NORMAL}" size="10">
+<font face="{FONT_BOLD}">Förfallodatum:</font> {due_date}<br/>
+<font face="{FONT_BOLD}">Bankgiro:</font> {bankgiro}<br/>
+<font face="{FONT_BOLD}">Bank:</font> {bd.get('bankName', '____________________')}<br/>
+<font face="{FONT_BOLD}">Kontoinnehavare:</font> {bd.get('accountHolder', 'Serbiska Kulturföreningen i Täby')}<br/>
+<font face="{FONT_BOLD}">IBAN:</font> {bd.get('iban', 'SE__ ____ ____ ____ ____ ____')}<br/>
+<font face="{FONT_BOLD}">BIC/SWIFT:</font> {bd.get('bicSwift', '________')}<br/>
+{swish_line}<font face="{FONT_BOLD}">Org.nummer:</font> {bd.get('orgNumber', '______-____')}<br/>
+{vat_line}<font face="{FONT_BOLD}">OCR/Referens:</font> {invoice_number}<br/>
+<font face="{FONT_NORMAL}" size="8" color="#666666">Anges vid betalning.</font>
+</font>"""
+    
+    att_betala = f"""<font face="{FONT_BOLD}" size="12">Att betala</font><br/>
+<font face="{FONT_BOLD}" size="16" color="#{PRIMARY_COLOR.hexval()[2:]}">{amount:,.2f} {currency}</font>"""
+    
+    # Payment table: [QR | Bank Info | Amount]
+    payment_table = Table([
+        [qr_image, Paragraph(bank_text, normal), Paragraph(att_betala, ParagraphStyle('AttBetala', alignment=TA_RIGHT, fontName=FONT_BOLD, leading=20))]
+    ], colWidths=[32*mm, 95*mm, 43*mm])
+    payment_table.setStyle(TableStyle([
+        ('VALIGN', (0, 0), (-1, -1), 'TOP'),
+        ('BACKGROUND', (0, 0), (-1, -1), colors.HexColor('#F0F4F8')),
+        ('BOX', (0, 0), (-1, -1), 1, BORDER_COLOR),
+        ('LEFTPADDING', (0, 0), (-1, -1), 8),
+        ('RIGHTPADDING', (0, 0), (-1, -1), 8),
+        ('TOPPADDING', (0, 0), (-1, -1), 8),
+        ('BOTTOMPADDING', (0, 0), (-1, -1), 8),
+    ]))
+    content.append(payment_table)
+    content.append(Spacer(1, 8*mm))
+    
+    # ===== LATE PAYMENT NOTE =====
+    content.append(Paragraph(
+        f'<font face="{FONT_NORMAL}" size="8" color="#666666"><font face="{FONT_BOLD}">Dröjsmålsränta:</font> Vid betalning efter förfallodagen debiteras ränta enligt räntelagen.</font>',
+        small
+    ))
     content.append(Spacer(1, 5*mm))
-    content.append(line_table)
     
-    # Build PDF
+    # ===== FOOTER =====
+    org_nr = bd.get('orgNumber', '______-____')
+    footer_text = f"""<font face="{FONT_BOLD}" size="8" color="#666666">Serbiska Kulturföreningen i Täby</font><br/>
+<font face="{FONT_NORMAL}" size="8" color="#666666">{ORG_DETAILS.get('address_line2', 'Täby')} | {ORG_DETAILS['email']} | {ORG_DETAILS['website']}</font><br/>
+<font face="{FONT_NORMAL}" size="8" color="#666666">Organisationsnr: {org_nr} | Godkänd för F-skatt</font><br/><br/>
+<font face="{FONT_NORMAL}" size="8" color="#666666">Vänligen ange fakturanummer ({invoice_number}) som referens vid betalning.</font>"""
+    
+    content.append(Paragraph(footer_text, ParagraphStyle('Footer', alignment=TA_CENTER, fontSize=8, textColor=GREY_COLOR, fontName=FONT_NORMAL)))
+    
+    # Bottom decorative line
+    content.append(Spacer(1, 3*mm))
+    content.append(line)
+    
     doc.build(content)
-    
     return output_path
 
 
-# Test function
 if __name__ == "__main__":
-    # Example with custom bank details
     test_bank_details = {
         "bankName": "Swedbank",
-        "accountHolder": "Srpsko Kulturno Udruženje Täby",
+        "accountHolder": "Serbiska Kulturföreningen i Täby",
         "iban": "SE12 3456 7890 1234 5678 90",
         "bicSwift": "SWEDSESS",
         "bankgiro": "123-4567",
         "orgNumber": "802123-4567",
+        "vatNumber": "SE802123456701",
         "swish": "123 456 78 90"
     }
     
     output = generate_invoice_pdf(
         invoice_id="INV-2024-001234",
-        member_name="Test Member",
+        member_name="Test Medlem",
         member_email="test@example.com",
-        description="Medlemsavgift 2024 / Membership Fee 2024",
+        description="Medlemsavgift 2024",
         amount=500.00,
         currency="SEK",
         due_date="2024-12-31",
         created_at="2024-11-15T10:30:00Z",
         output_path="/tmp/test_invoice.pdf",
         status="unpaid",
-        bank_details=test_bank_details
+        bank_details=test_bank_details,
+        vat_rate=25.0
     )
     print(f"Generated: {output}")
